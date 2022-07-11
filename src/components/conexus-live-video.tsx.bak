@@ -1,0 +1,151 @@
+import React from 'react'
+import { ViewProperties, ViewStyle, View, StyleSheet, StyleProp, Text, TextStyle } from 'react-native'
+import { observer, inject } from 'mobx-react'
+import { logger } from 'react-native-logger'
+import { AppFonts, AppColors, AppSizes, calcLineHeight } from '../theme'
+import OpenTok, { Publisher, Subscriber } from 'react-native-opentok'
+import { VideoStore } from '../stores'
+import Analytics from 'appcenter-analytics'
+import InCallManager from 'react-native-incall-manager'
+
+export interface ConexusLiveVideoProps extends ViewProperties {
+    videoStore?: VideoStore
+    record?: boolean
+    style?: StyleProp<ViewStyle>
+}
+
+export interface ConexusLiveVideoState {
+    
+}
+
+@inject('videoStore') @observer
+export class ConexusLiveVideo extends React.Component<ConexusLiveVideoProps, ConexusLiveVideoState>  {
+    private _publisher: Publisher
+
+   
+        componentWillMount() {
+            InCallManager.start('audio')
+            // OpenTok.disconnectAll()
+            // OpenTok.removeListener(OpenTok.events.ON_SIGNAL_RECEIVED)
+            // OpenTok.removeListener(OpenTok.events.ON_SESSION_DID_CONNECT)
+            // OpenTok.removeListener(OpenTok.events.ON_SESSION_DID_FAIL_WITH_ERROR)
+            // OpenTok.removeListener(OpenTok.events.ON_SESSION_DID_DISCONNECT)
+            // OpenTok.removeListener(OpenTok.events.ON_SESSION_STREAM_CREATED)
+            // OpenTok.removeListener(OpenTok.events.ON_SESSION_STREAM_DESTROYED)
+            if (InCallManager.recordPermission !== 'granted') {
+                InCallManager.requestRecordPermission()
+                .then((requestedRecordPermissionResult) => {
+                    //logger.log('InCallManager.requestRecordPermission() requestedRecordPermissionResult: ', requestedRecordPermissionResult);
+                })
+                .catch((err) => {
+                    logger.log('InCallManager.requestRecordPermission() catch: ', err);
+                })
+            }
+            this.props.videoStore.connect().then(() => {
+                OpenTok.on(OpenTok.events.ON_SIGNAL_RECEIVED, (e) => { logger.log(OpenTok.events.ON_SIGNAL_RECEIVED, e)  
+                    Analytics.trackEvent('OPENTOK_ON_SIGNAL_RECEIVED', { data: JSON.stringify(e) })
+                    logger.log('OPENTOK_SESSION_ON_SIGNAL_RECEIVED', { data: JSON.stringify(e) })
+                  })
+                  OpenTok.on(OpenTok.events.ON_SESSION_DID_CONNECT, (e) => {
+                    // Analytics.trackEvent('OPENTOK_CONNECTED', { data: JSON.stringify(e) })
+                    logger.log('OPENTOK_CONNECTED', { data: JSON.stringify(e), id: this.props.videoStore.sessionId, id2: e.sessionId })
+                    if (this.props.videoStore.sessionId === e.sessionId) {
+                        setTimeout(() => {
+                            this.props.videoStore.setConnected(true)
+                        }, 1000)
+                        
+                    }
+                    
+                  })
+                  
+                  OpenTok.on(OpenTok.events.ON_SESSION_DID_FAIL_WITH_ERROR, (e) => { 
+                    Analytics.trackEvent('OPENTOK_ERROR', { data: JSON.stringify(e) })
+                    logger.log('OPENTOK_ERROR', { data: JSON.stringify(e) })
+                    if (this.props.videoStore.sessionId !== e.sessionId) {
+                        this.props.videoStore.setRemoteConnected(false)
+                    } else if (this.props.videoStore.sessionId === e.sessionId) {
+                        this.props.videoStore.setConnected(false)
+                    }
+                  })
+                  
+                  OpenTok.on(OpenTok.events.ON_SESSION_DID_DISCONNECT, (e) => {
+                    Analytics.trackEvent('OPENTOK_DISCONNECT', { data: JSON.stringify(e) })
+                    logger.log('OPENTOK_DISCONNECT', { data: JSON.stringify(e) })
+                    if (this.props.videoStore.sessionId !== e.sessionId) {
+                        this.props.videoStore.setRemoteConnected(false)
+                    } else if (this.props.videoStore.sessionId === e.sessionId) {
+                        this.props.videoStore.setConnected(false)
+                    }
+                  })
+                  
+                  OpenTok.on(OpenTok.events.ON_SESSION_STREAM_CREATED, (e) => { logger.log(OpenTok.events.ON_SESSION_STREAM_CREATED, e) 
+                    Analytics.trackEvent('OPENTOK_SESSION_STREAM_CREATED', { data: JSON.stringify(e) })
+                    logger.log('OPENTOK_SESSION_STREAM_CREATED', { data: JSON.stringify(e) })
+                  })
+                  OpenTok.on(OpenTok.events.ON_SESSION_STREAM_DESTROYED, (e) => { logger.log(OpenTok.events.ON_SESSION_STREAM_DESTROYED, e) 
+                    Analytics.trackEvent('OPENTOK_SESSION_STREAM_DESTROYED', { data: JSON.stringify(e) })
+                    logger.log('OPENTOK_SESSION_STREAM_DESTROYED', { data: JSON.stringify(e) })
+                  })
+                logger.log('token', this.props.videoStore.token)
+                OpenTok.connect(this.props.videoStore.sessionId, this.props.videoStore.token).then(() => {
+
+                })
+            })
+           
+            
+        }
+    
+    componentWillUnmount() {
+        InCallManager.stop()
+        OpenTok.removeListener(OpenTok.events.ON_SIGNAL_RECEIVED)
+        OpenTok.removeListener(OpenTok.events.ON_SESSION_DID_CONNECT)
+        OpenTok.removeListener(OpenTok.events.ON_SESSION_DID_FAIL_WITH_ERROR)
+        OpenTok.removeListener(OpenTok.events.ON_SESSION_DID_DISCONNECT)
+        OpenTok.removeListener(OpenTok.events.ON_SESSION_STREAM_CREATED)
+        OpenTok.removeListener(OpenTok.events.ON_SESSION_STREAM_DESTROYED)
+    }
+
+    render() {
+        const { style, videoStore } = this.props
+        return (
+            <View style={ StyleSheet.flatten([style, styles.container]) } >
+                <View style={ styles.content }>
+                    <Subscriber style={ styles.subscriber } sessionId={ videoStore.sessionId } />
+                    { videoStore.isConnected && <Publisher ref={(p) => this._publisher = p} style={ styles.publisher } sessionId={ videoStore.sessionId } /> }
+                    <View style={{ zIndex: 10 }}>
+                        <Text style={ styles.text }>Connecting...</Text>
+                    </View>
+                </View>
+                
+            </View>
+        )
+    }
+}
+
+const styles = StyleSheet.create({
+    container: {
+        backgroundColor: 'yellow',
+        alignItems: 'stretch',
+        alignSelf: 'stretch',
+    },
+    content: {
+        flex: 1,
+        position: 'relative',
+        backgroundColor: 'green',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 0
+    },
+    text: {
+
+        color: 'white',
+    },
+    publisher: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'blue'
+    },
+    subscriber: {
+        backgroundColor: 'red',
+        zIndex: 0
+      }
+})
