@@ -2,7 +2,7 @@ import { logger } from 'react-native-logs'
 import { Alert } from 'react-native';
 
 export type LogFn = (log: (...args: Array<any>) => void) => void
-
+//Changes done
 export type ConexusApiErrorAlertOptions = {
     defaultTitle: string,
     defaultDescription: string,
