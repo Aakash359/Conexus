@@ -55,7 +55,7 @@ const defaultBaseUrl = deviceStore.isDebugEnabled ? devUrl : productionUrl
   }
  
 
-  login(username, password) {
+  login(userName, password) {
     return new Promise<IUser>((resolve, reject) => {
         const payload = { username, password, app: true }
         rest.post('/user/login-with-credentials', payload)

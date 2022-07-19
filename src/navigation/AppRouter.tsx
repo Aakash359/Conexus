@@ -6,11 +6,10 @@ import AuthStack from './AuthStack';
 const AppRouter = () => {
   const isAuth = false;
   return (
-    <NavigationContainer>
-      {/* <AppStack /> */}
-      <AuthStack />
-      {/* {isAuth ? <AppStack /> : <AuthStack />} */}
-    </NavigationContainer>
+    <AuthStack />
+    //  <AppStack />
+
+    // {isAuth ? <AppStack /> : <AuthStack />}
   );
 };
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   KeyboardAvoidingView,
@@ -9,13 +9,14 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import NavigationService from '../navigation/NavigationService';
+import {loginWithPass} from '../services/auth';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 // import {Switch} from 'native-base';
 // import {observer, inject} from 'mobx-react';
 // import {logger} from 'react-native-logs';
 // import {Actions} from 'react-native-router-flux';
 // import {Images} from '../components';
-import {ConexusIcon} from '../components/conexus-icon';
+// import {ConexusIcon} from '../components/conexus-icon';
 // import {setConexusApiEnvironment, getConexusApiEnvironment} from '../services';
 // import {UserStore} from '../stores/userStore';
 // import {ScreenType, StoreType} from '../common/constants';
@@ -23,23 +24,17 @@ import variables from '../theme';
 import {Field} from '../components/field';
 import {windowDimensions} from '../common';
 import {AppFonts, AppColors} from '../theme';
+import Icon from 'react-native-vector-icons/Ionicons';
 
+const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 const SafeAreaView = require('react-native').SafeAreaView;
-// type Props = NativeStackScreenProps<Pama, 'any'>
-// import {DeviceStore} from '../stores/index';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
-// interface LoginProps {
-//   userStore: UserStore;
-//   deviceStore: DeviceStore;
-//   // videoStore: VideoStore
-// }
-// interface LoginState {
-//   username: string;
-//   password: string;
-//   displayMode: 'login' | 'splash';
-//   busy: boolean;
-// }
+interface LoginState {
+  username: string;
+  password: string;
+  displayMode: 'login' | 'splash';
+  busy: boolean;
+}
 
 // // Email : kbujarski@trshealthcare.com
 // //Password: temp
@@ -89,36 +84,36 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 //     this.forceUpdate();
 //   }
 
-//   componentWillMount() {
-//     const {userStore, deviceStore} = this.props;
+// componentWillMount() {
+//   const {userStore, deviceStore} = this.props;
 
-//     if (Actions.currentScene === ScreenType.CALL) {
-//       return;
-//     }
-
-//     this.setDefaultState().then(() => {
-//       if (!this.state.username) {
-//         this.setState({displayMode: 'login'});
-//         return Promise.resolve();
-//       }
-//       return userStore.tryLoadFromCache().then(
-//         (nextViewName: string) => {
-//           if (nextViewName === ScreenType.LOGIN) {
-//             this.setState({displayMode: 'login'});
-//           } else if (nextViewName) {
-//             if (Actions.currentScene !== ScreenType.CALL) {
-//               Actions[nextViewName]();
-//             }
-//             // deviceStore.checkPermissions();
-//           }
-//         },
-//         error => {
-//           log.info('LoginContainer', 'tryLoadFromCache: No Login Data', error);
-//           this.setState({displayMode: 'login'});
-//         },
-//       );
-//     });
+//   if (Actions.currentScene === ScreenType.CALL) {
+//     return;
 //   }
+
+//   this.setDefaultState().then(() => {
+//     if (!this.state.username) {
+//       this.setState({displayMode: 'login'});
+//       return Promise.resolve();
+//     }
+//     return userStore.tryLoadFromCache().then(
+//       (nextViewName: string) => {
+//         if (nextViewName === ScreenType.LOGIN) {
+//           this.setState({displayMode: 'login'});
+//         } else if (nextViewName) {
+//           if (Actions.currentScene !== ScreenType.CALL) {
+//             Actions[nextViewName]();
+//           }
+//           // deviceStore.checkPermissions();
+//         }
+//       },
+//       error => {
+//         log.info('LoginContainer', 'tryLoadFromCache: No Login Data', error);
+//         this.setState({displayMode: 'login'});
+//       },
+//     );
+//   });
+// }
 
 //   handleChange(name, value) {
 //     const newState = Object.assign({}, this.state);
@@ -126,35 +121,6 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 //     this.setState(newState);
 //   }
 
-const loginFn = ({navigation}: Props) => {
-  props.navigation.navigate('PositionsScreen');
-  // const {deviceStore, userStore} = this.props;
-  // if (userStore.isAuthenticating) {
-  //   log.info('LoginContainer', 'Already logging in...aborting');
-  //   return;
-  // }
-  // userStore
-  //   .login({username: this.state.username, password: this.state.password})
-  //   .then(nextViewName => {
-  //     // deviceStore.checkPermissions();
-  //     return AsyncStorage.setItem(
-  //       LOGIN_LAST_USER_STORAGE_KEY,
-  //       this.state.username,
-  //     ).then(() => {
-  //       log.info('LoginContainer', 'NextViewName: ' + nextViewName);
-  //       if (nextViewName) {
-  //         Actions[nextViewName]();
-  //       } else {
-  //         this.setDefaultState('login');
-  //       }
-  //     });
-  //   });
-};
-
-const forgotPasswordFn = () => {
-  alert('hi');
-  // Actions[ScreenType.FORGOT_PASSWORD]({username: this.state.username});
-};
 //   requestAccount = () => {
 //     Actions[ScreenType.SELECT_ACCOUNT]();
 //   };
@@ -254,45 +220,116 @@ const forgotPasswordFn = () => {
 //   }
 // }
 
-const LoginScreen = props => {
+const LoginScreen: React.FC<LoginState> = ({
+  username = '',
+  displayMode,
+  busy = false,
+}) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [emailErrorMsg, setEmailErrorMsg] = useState('');
+  const [passwordError, setPasswordError] = useState(false);
+  const [error, setError] = useState('');
+
+  const loginFn = async () => {
+    if (
+      email &&
+      email.length &&
+      email.match(emailRegex) &&
+      password &&
+      password.length
+    ) {
+      try {
+        setLoading(true);
+        // setError(false);
+        const {data} = await loginWithPass({
+          username: email,
+          password: password,
+          App: true,
+        });
+        console.log('Data====>', data);
+
+        if (data.success) {
+          setLoading(false);
+          // onLogin(data, `email`);
+        } else {
+          setLoading(false);
+          setError(data.message);
+        }
+      } catch (e) {
+        console.log('Data====>', e);
+        setLoading(false);
+      }
+    } else {
+      alert('password');
+      // onEmailBlur();
+      // onPasswordBlur();
+    }
+
+    // const {deviceStore, userStore} = this.props;
+    // if (userStore.isAuthenticating) {
+    //   log.info('LoginContainer', 'Already logging in...aborting');
+    //   return;
+    // }
+    // userStore
+    //   .login({username: this.state.username, password: this.state.password})
+    //   .then(nextViewName => {
+    //     // deviceStore.checkPermissions();
+    //     return AsyncStorage.setItem(
+    //       LOGIN_LAST_USER_STORAGE_KEY,
+    //       this.state.username,
+    //     ).then(() => {
+    //       log.info('LoginContainer', 'NextViewName: ' + nextViewName);
+    //       if (nextViewName) {
+    //         Actions[nextViewName]();
+    //       } else {
+    //         this.setDefaultState('login');
+    //       }
+    //     });
+    //   });
+  };
+
+  const forgotPasswordFn = () => {
+    NavigationService.navigate('ForgotPassword');
+  };
+  const requestAccount = () => {
+    NavigationService.navigate('RequestAccount');
+  };
+
   return (
     <SafeAreaView style={[{backgroundColor: 'white'}]}>
       <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={-190}>
         <View style={style.content}>
           <View style={style.form}>
-            <ConexusIcon
-              name="cn-logo"
+            <Icon
+              name="leaf"
               size={100}
               color={AppColors.blue}
               style={style.logo}
             />
             <Text style={style.title}>Sign-In</Text>
             <View style={style.field}>
-              {/* <Field
-                placeholder="Email Address"
-                autoCapitalize="none"
-                autoCorrect={false}
+              <Field
+                placeholder="Email Id"
+                onTextChange={setEmail}
+                value={email}
                 returnKeyType="next"
-                inverse
                 // value={this.state.username}
                 // onChange={this.handleChange.bind(this, 'username')}
-              /> */}
+              />
             </View>
             <View style={style.field}>
-              {/* <Field
+              <Field
                 placeholder="Password"
-                secureTextEntry
-                autoCapitalize="none"
-                returnKeyType="go"
-                value={this.state.password}
-                onSubmitEditing={this.loginFn}
-                onChange={this.handleChange.bind(this, 'password')}
-                last
-                inverse
-              /> */}
+                secureTextEntry={true}
+                value={password}
+                onTextChange={setPassword}
+                returnKeyType="done"
+              />
             </View>
             <TouchableOpacity onPress={forgotPasswordFn}>
-              <Text style={style.forgotPass}>Forgot password?</Text>
+              <Text style={style.forgotPass}>FORGOT PASSWORD?</Text>
             </TouchableOpacity>
             {/* {this.props.deviceStore.isDebugEnabled
               ? this.renderEnvironentToggle()
@@ -304,7 +341,7 @@ const LoginScreen = props => {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity>
+          <TouchableOpacity onPress={requestAccount}>
             <Text style={style.newUser}>
               New to Conexus? Request an account now!
             </Text>
@@ -323,7 +360,7 @@ const style = StyleSheet.create({
     alignItems: 'center',
   },
   field: {
-    marginTop: 5,
+    marginTop: 10,
   },
   btnContainer: {
     marginTop: 20,
@@ -345,6 +382,7 @@ const style = StyleSheet.create({
   },
   forgotPass: {
     marginTop: 10,
+    fontSize: 12,
     textAlign: 'right',
     color: AppColors.blue,
   },

@@ -18,19 +18,12 @@ import {AppColors, AppFonts} from '../theme';
 
 interface ForgotPasswordProps {
   username?: string;
-  userStore?: UserStore;
 }
 interface ForgotPasswordState {
   username: string;
 }
 
-const ForgotPassword: React.FC = () => {
-  // {
-  //   constructor(props: ForgotPasswordProps, context?: any) {
-  //     super(props, context);
-  //     this.state = {username: props.username || ''};
-  //   }
-
+const ForgotPassword = () => {
   // handleChange(name: any, value: any) {
   //   this.setState({
   //     username: value.nativeEvent.text,
@@ -38,6 +31,7 @@ const ForgotPassword: React.FC = () => {
   // }
 
   const recoverPasswordFn = () => {
+    // NavigationService.navigate('ForgotPassword');
     // this.props.userStore
     //   .recoverPassword(this.state.username)
     //   .then(Actions.pop);
@@ -60,24 +54,23 @@ const ForgotPassword: React.FC = () => {
         </View>
         <View style={style.content}>
           <View style={style.form}>
-            {/* <Field
-                placeholder="Email Address"
-                autoCapitalize="none"
-                returnKeyType="go"
-                value={this.state.username}
-                onSubmitEditing={recoverPasswordFn}
-                onChange={this.handleChange.bind(this, 'username')}
-                last
-                inverse
-              /> */}
+            <Field
+            // placeholder="Email Address"
+            // autoCapitalize="none"
+            // returnKeyType="go"
+            // value={this.state.username}
+            // onSubmitEditing={recoverPasswordFn}
+            // onChange={this.handleChange.bind(this, 'username')}
+            // last
+            // inverse
+            />
           </View>
 
           <TouchableOpacity
-            onPress={loginFn}
-            disabled={
-              !!!this.state.username ||
-              this.props.userStore.isRecoveringPassword
-            }
+            // disabled={
+            //   !!!this.state.username ||
+            //   this.props.userStore.isRecoveringPassword
+            // }
             onPress={recoverPasswordFn}>
             <View style={style.btnContainer}>
               <Text style={style.signIn}>SIGN IN</Text>
@@ -138,3 +131,5 @@ const style = StyleSheet.create({
     justifyContent: 'space-around',
   },
 });
+
+export default ForgotPassword;
