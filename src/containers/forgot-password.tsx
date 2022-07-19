@@ -12,8 +12,6 @@ import variables from '../theme';
 import {Field} from '../components/field';
 import {windowDimensions} from '../common';
 import Styles from '../theme/styles';
-import {Actions} from 'react-native-router-flux';
-import {observer, inject} from 'mobx-react';
 import {UserStore} from '../stores/userStore';
 import {ConexusIcon} from '../components/conexus-icon';
 import {AppColors, AppFonts} from '../theme';
@@ -26,50 +24,43 @@ interface ForgotPasswordState {
   username: string;
 }
 
-@inject('userStore')
-@observer
-export class ForgotPassword extends React.Component<
-  ForgotPasswordProps,
-  ForgotPasswordState
-> {
-  constructor(props: ForgotPasswordProps, context?: any) {
-    super(props, context);
-    this.state = {username: props.username || ''};
-  }
+const ForgotPassword: React.FC = () => {
+  // {
+  //   constructor(props: ForgotPasswordProps, context?: any) {
+  //     super(props, context);
+  //     this.state = {username: props.username || ''};
+  //   }
 
-  handleChange(name: any, value: any) {
-    this.setState({
-      username: value.nativeEvent.text,
-    });
-  }
-  render() {
-    const recoverPasswordFn = () => {
-      this.props.userStore
-        .recoverPassword(this.state.username)
-        .then(Actions.pop);
-    };
+  // handleChange(name: any, value: any) {
+  //   this.setState({
+  //     username: value.nativeEvent.text,
+  //   });
+  // }
 
-    return (
-      <ScrollView
-        contentContainerStyle={style.rootContainer}
-        keyboardShouldPersistTaps="always">
-        <KeyboardAvoidingView behavior="position" style={style.rootContainer}>
-          <View
-            style={StyleSheet.flatten([
-              Styles.cnxWhiteHeader,
-              {paddingTop: 56},
-            ])}>
-            <ConexusIcon
-              name="cn-logo"
-              size={100}
-              color={AppColors.blue}
-              style={style.logo}
-            />
-            <Text style={style.title}>Sign In</Text>
-          </View>
-          <View style={style.content}>
-            <View style={style.form}>
-              <Field
+  const recoverPasswordFn = () => {
+    // this.props.userStore
+    //   .recoverPassword(this.state.username)
+    //   .then(Actions.pop);
+  };
+
+  return (
+    <ScrollView
+      contentContainerStyle={style.rootContainer}
+      keyboardShouldPersistTaps="always">
+      <KeyboardAvoidingView behavior="position" style={style.rootContainer}>
+        <View
+          style={StyleSheet.flatten([Styles.cnxWhiteHeader, {paddingTop: 56}])}>
+          <ConexusIcon
+            name="cn-logo"
+            size={100}
+            color={AppColors.blue}
+            style={style.logo}
+          />
+          <Text style={style.title}>Sign In</Text>
+        </View>
+        <View style={style.content}>
+          <View style={style.form}>
+            {/* <Field
                 placeholder="Email Address"
                 autoCapitalize="none"
                 returnKeyType="go"
@@ -78,26 +69,25 @@ export class ForgotPassword extends React.Component<
                 onChange={this.handleChange.bind(this, 'username')}
                 last
                 inverse
-              />
-            </View>
-
-            <TouchableOpacity
-              onPress={this.loginFn}
-              disabled={
-                !!!this.state.username ||
-                this.props.userStore.isRecoveringPassword
-              }
-              onPress={recoverPasswordFn}>
-              <View style={style.btnContainer}>
-                <Text style={style.signIn}>SIGN IN</Text>
-              </View>
-            </TouchableOpacity>
+              /> */}
           </View>
-        </KeyboardAvoidingView>
-      </ScrollView>
-    );
-  }
-}
+
+          <TouchableOpacity
+            onPress={loginFn}
+            disabled={
+              !!!this.state.username ||
+              this.props.userStore.isRecoveringPassword
+            }
+            onPress={recoverPasswordFn}>
+            <View style={style.btnContainer}>
+              <Text style={style.signIn}>SIGN IN</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+    </ScrollView>
+  );
+};
 
 const style = StyleSheet.create({
   rootContainer: {

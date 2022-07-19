@@ -1,154 +1,177 @@
-
-import React from 'react'
-import { ViewProperties, StyleSheet, Alert } from 'react-native'
-import { inject, observer } from 'mobx-react'
-import { FacilitySubmissionsStore, FacilityModel, UserStore } from '../../../stores'
-import { FacilitySelectionContainer } from '../../../components'
-import { logger } from 'react-native-logs'
-import { PositionList } from './position-list'
+import React from 'react';
+import {ViewProperties, StyleSheet, Alert} from 'react-native';
+import {inject, observer} from 'mobx-react';
+import {UserStore} from '../../../stores/userStore';
+import {FacilitySubmissionsStore} from '../../../stores/facility/facility-submissions-store';
+import {FacilitySelectionContainer} from '../../../components/facility-selection-container';
+import {logger} from 'react-native-logs';
+import {PositionList} from './position-list';
+import {FacilityModel} from '../../../stores/facility/facility-model';
 
 export interface ReviewContainerProps extends ViewProperties {
-    facilitySubmissionsStore: typeof FacilitySubmissionsStore.Type,
-    userStore: UserStore,
-    forceRefresh?: boolean
+  facilitySubmissionsStore: typeof FacilitySubmissionsStore.Type;
+  userStore: UserStore;
+  forceRefresh?: boolean;
 }
 
 export interface ReviewContainerState {
-    refreshing: boolean
+  refreshing: boolean;
 }
-const log = logger.createLogger()
+const log = logger.createLogger();
 let submissionsStorePromise: Promise<any>;
 
 @inject('facilitySubmissionsStore', 'userStore')
 //@observer
-export class ReviewContainer extends React.Component<ReviewContainerProps, ReviewContainerState>  {
+export class ReviewContainer extends React.Component<
+  ReviewContainerProps,
+  ReviewContainerState
+> {
+  mounted: boolean = false;
 
-    mounted: boolean = false;
+  get selectedFacility(): typeof FacilityModel.Type {
+    const {facilitySubmissionsStore, userStore} = this.props;
 
-    get selectedFacility(): typeof FacilityModel.Type {
-        const { facilitySubmissionsStore, userStore } = this.props
-
-        if (facilitySubmissionsStore.loading) {
-            return null
-        }
-
-        if (userStore.selectedFacilityId) {
-            return facilitySubmissionsStore.submissions.find(facility => facility.facilityId === userStore.selectedFacilityId)
-        }
-
-        return null;
+    if (facilitySubmissionsStore.loading) {
+      return null;
     }
 
-    get showNoData(): boolean {
-        const { facilitySubmissionsStore } = this.props
-        if (this.state.refreshing || facilitySubmissionsStore.loading) {
-            return false
-        }
-
-        return !this.selectedFacility
-            || this.selectedFacility.positions.length === 0
+    if (userStore.selectedFacilityId) {
+      return facilitySubmissionsStore.submissions.find(
+        facility => facility.facilityId === userStore.selectedFacilityId,
+      );
     }
 
-    get showLoading(): boolean {
-        const { facilitySubmissionsStore } = this.props
+    return null;
+  }
 
-        if (this.state.refreshing) {
-            return false
-        }
-        return facilitySubmissionsStore.loading
+  get showNoData(): boolean {
+    const {facilitySubmissionsStore} = this.props;
+    if (this.state.refreshing || facilitySubmissionsStore.loading) {
+      return false;
     }
 
-    constructor(props, state) {
-        super(props, state);
-        this.state = {
-            refreshing: false
-        }
+    return (
+      !this.selectedFacility || this.selectedFacility.positions.length === 0
+    );
+  }
 
-        log.info('ReviewContainer', 'constructor') // This component is being inited more than once on startup
+  get showLoading(): boolean {
+    const {facilitySubmissionsStore} = this.props;
+
+    if (this.state.refreshing) {
+      return false;
+    }
+    return facilitySubmissionsStore.loading;
+  }
+
+  constructor(props, state) {
+    super(props, state);
+    this.state = {
+      refreshing: false,
+    };
+
+    log.info('ReviewContainer', 'constructor'); // This component is being inited more than once on startup
+  }
+
+  componentDidMount() {
+    console.log('Yehi Problem hai====>', FacilitySubmissionsStore);
+
+    this.mounted = true;
+
+    if (this.props.userStore.isFacilityUser) {
+      this.load(false);
+    }
+  }
+
+  componentWillUnmount() {
+    this.mounted = false;
+  }
+
+  private load(refreshing: boolean = false) {
+    const {facilitySubmissionsStore} = this.props;
+
+    log.info('ReviewContainer', 'Load', refreshing);
+    this.setState({refreshing: refreshing});
+
+    if (!submissionsStorePromise) {
+      log.info('ReviewContainer', 'Loading Submissions', refreshing);
+      submissionsStorePromise = facilitySubmissionsStore.load();
+    } else {
+      log.info(
+        'ReviewContainer',
+        'Joining existing submission store load',
+        refreshing,
+      );
     }
 
-    componentDidMount() {
-        this.mounted = true;
+    submissionsStorePromise.then(
+      () => {
+        if (this.mounted) {
+          log.info('ReviewContainer', 'Submissions loaded');
 
-        if (this.props.userStore.isFacilityUser) {
-            this.load(false)
-        }
-    }
-
-    componentWillUnmount() {
-        this.mounted = false
-    }
-
-    private load(refreshing: boolean = false) {
-        const { facilitySubmissionsStore } = this.props
-
-        log.info('ReviewContainer', 'Load', refreshing)
-        this.setState({ refreshing: refreshing });
-
-
-        if (!submissionsStorePromise) {
-            log.info('ReviewContainer', 'Loading Submissions', refreshing)
-            submissionsStorePromise = facilitySubmissionsStore.load()
+          this.setState({refreshing: false}, () => {
+            submissionsStorePromise = undefined;
+          });
         } else {
-            log.info('ReviewContainer', 'Joining existing submission store load', refreshing)
+          log.info(
+            'ReviewContainer',
+            'Not mounted so doing nothing after data loaded.',
+          );
+        }
+      },
+      error => {
+        if (this.mounted) {
+          submissionsStorePromise = undefined;
+          this.setState({refreshing: false});
+        } else {
+          log.info(
+            'ReviewContainer',
+            'Not mounted so doing nothing after data loaded.',
+          );
         }
 
-        submissionsStorePromise
-            .then(() => {
-                if (this.mounted) {
-                    log.info('ReviewContainer', 'Submissions loaded')
+        log.info('ReviewContainer', 'ERROR', error);
+        Alert.alert(
+          'Error',
+          'We are having trouble loading your positions and candidates. Please try again.',
+        );
+      },
+    );
+  }
 
-                    this.setState({ refreshing: false }, () => {
-                        submissionsStorePromise = undefined
-                    })
-                } else {
-                    log.info('ReviewContainer', 'Not mounted so doing nothing after data loaded.')
-                }
-            },
-                (error) => {
-                    if (this.mounted) {
-                        submissionsStorePromise = undefined
-                        this.setState({ refreshing: false })
-                    } else {
-                        log.info('ReviewContainer', 'Not mounted so doing nothing after data loaded.')
-                    }
+  renderPositionList() {
+    const {facilitySubmissionsStore} = this.props;
+    const {refreshing} = this.state;
 
-                    log.info('ReviewContainer', 'ERROR', error)
-                    Alert.alert('Error', 'We are having trouble loading your positions and candidates. Please try again.')
-                })
-    }
+    return (
+      <PositionList
+        style={{flex: 1}}
+        submissions={facilitySubmissionsStore.getSnapshot().submissions}
+        selectedFacilityId={
+          this.selectedFacility ? this.selectedFacility.facilityId : ''
+        }
+        refreshing={refreshing}
+        onRefresh={this.load.bind(this, true)}
+      />
+    );
+  }
 
-    renderPositionList() {
-        const { facilitySubmissionsStore } = this.props
-        const { refreshing } = this.state;
+  render() {
+    const {facilitySubmissionsStore} = this.props;
 
-        return <PositionList
-            style={{ flex: 1 }}
-            submissions={facilitySubmissionsStore.getSnapshot().submissions}
-            selectedFacilityId={this.selectedFacility ? this.selectedFacility.facilityId : ''}
-            refreshing={refreshing}
-            onRefresh={this.load.bind(this, true)}
-        />
-    }
+    return (
+      <FacilitySelectionContainer
+        showNoData={this.showNoData}
+        showLoading={this.showLoading}
+        noDataText="No Positions Available"
+        facilityHeaderCaption="Showing positions for"
+        refreshing={this.state.refreshing}
+        onRefresh={this.load.bind(this, true)}
+        onFacilityChosen={(facilityId: string) => this.forceUpdate()}>
+        {!!facilitySubmissionsStore.submissions && this.renderPositionList()}
+      </FacilitySelectionContainer>
+    );
+  }
 
-    render() {
-        const { facilitySubmissionsStore } = this.props
-
-        return <FacilitySelectionContainer
-            showNoData={this.showNoData}
-            showLoading={this.showLoading}
-            noDataText="No Positions Available"
-            facilityHeaderCaption="Showing positions for"
-            refreshing={this.state.refreshing}
-            onRefresh={this.load.bind(this, true)}
-            onFacilityChosen={(facilityId: string) => this.forceUpdate()}>
-
-            {!!facilitySubmissionsStore.submissions && this.renderPositionList()}
-
-        </FacilitySelectionContainer>
-    }
-
-    styles = StyleSheet.create({
-
-    })
+  styles = StyleSheet.create({});
 }

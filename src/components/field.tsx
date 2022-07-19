@@ -3,8 +3,6 @@ import React, {Component} from 'react';
 import {windowDimensions} from '../common';
 import {AppColors} from '../theme';
 // import {Item, Input, View} from 'native-base';
-import {observable, action} from 'mobx';
-import {observer} from 'mobx-react/native';
 import {
   TextInputProps,
   TextStyle,
@@ -25,20 +23,19 @@ interface FieldProps extends TextInputProps {
   disabled?: boolean;
 }
 
-@observer
-export class Field extends Component<FieldProps, any> {
+
+export const Field  Component<FieldProps, any> {
   props: FieldProps;
-  @observable value: string;
 
   componentWillMount() {
     this.setValue(this.props.defaultValue || '');
   }
 
-  @autobind
-  @action
-  setValue(value: string) {
-    this.value = value;
-  }
+  // @autobind
+  // @action
+  // setValue(value: string) {
+  //   this.value = value;
+  // }
 
   getStyle() {
     const {inverse} = this.props;
@@ -67,7 +64,7 @@ export class Field extends Component<FieldProps, any> {
   }
 }
 
-@observer
+
 export class PhoneNumberField extends Field {
   constructor(props: FieldProps, context: any) {
     super(props, context);

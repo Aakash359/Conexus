@@ -13,6 +13,7 @@ import {
   Tabs,
   Actions,
 } from 'react-native-router-flux';
+// import Drawer from 'react-native-drawer';
 import {onPatch} from 'mobx-state-tree';
 
 import {ScreenType} from '../common/constants';
@@ -32,11 +33,11 @@ import {
   CatalogSectionContainer,
   CatalogContainer,
   NeedsContainer,
-  ReviewContainer,
+  // ReviewContainer,
   SchedulingContainer,
   ScheduleAvailabilityContainer,
 } from '../containers/facility';
-
+import {ReviewContainer} from '../containers/facility/review/review-container';
 import {
   ConversationContainer,
   FacilityMessageCenterContainer,
@@ -100,7 +101,6 @@ export class AppRouter extends React.Component<
     super(props, state);
 
     this.state = {};
-
     onPatch(props.conversationStore, patch => {
       if (patch.path === '/unreadCount') {
         this.forceUpdate();
@@ -167,196 +167,154 @@ export class AppRouter extends React.Component<
             key="modal"
             backButtonTintColor={AppColors.blue}
             component={undefined}>
-            <Stack key="root">
+            {/* <Lightbox key="root"> */}
+            <Scene
+              key={ScreenType.LOGIN}
+              backButtonTintColor={AppColors.blue}
+              component={Login}
+              hideNavBar={true}
+              navigationBarStyle={style.navigationBarStyleTransparent}
+              title=""
+            />
+            <Scene
+              key={ScreenType.FORGOT_PASSWORD}
+              backButtonTintColor={AppColors.blue}
+              component={ForgotPassword}
+              navigationBarStyle={style.navigationBarStyleTransparent}
+              titleStyle={style.titleStyle}
+              back
+              backTitle="Sign In"
+            />
+            <Scene
+              key={ScreenType.WALKTHROUGH}
+              backButtonTintColor={AppColors.blue}
+              component={EditProfile}
+            />
+            <Scene
+              key={ScreenType.PROFILE}
+              backButtonTintColor={AppColors.blue}
+              title="Your Profile"
+              titleStyle={style.titleStyle}
+              back
+              backTitle="Back"
+              component={Profile}
+              navigationBarStyle={style.navigationBarStyleWhite}
+            />
+            <Scene
+              key={ScreenType.PROFILE_EDIT}
+              backButtonTintColor={AppColors.blue}
+              title="Edit Your Profile"
+              titleStyle={style.titleStyle}
+              back
+              backTitle="Back"
+              component={EditProfile}
+              navigationBarStyle={style.navigationBarStyleWhite}
+            />
+            <Scene
+              key={ScreenType.SELECT_ACCOUNT}
+              backButtonTintColor={AppColors.blue}
+              title="Account Type"
+              titleStyle={style.titleStyle}
+              back
+              backTitle="Login"
+              component={SelectAccount}
+              navigationBarStyle={style.navigationBarStyleWhite}
+            />
+            <Scene
+              key={ScreenType.REQUEST_ACCOUNT}
+              backButtonTintColor={AppColors.blue}
+              title="Request Account"
+              titleStyle={style.titleStyle}
+              back
+              backTitle="Type"
+              component={RequestAccount}
+              navigationBarStyle={style.navigationBarStyleWhite}
+            />
+            <Drawer
+              hideNavBar
+              key={ScreenType.DRAWER}
+              contentComponent={DrawerContent}
+              drawerIcon={menuicon}
+              drawerWidth={CONEXUS_DRAWER_WIDTH}
+              component={undefined}>
               <Scene
-                key="login"
-                component={Login}
-                title="Login"
-                hideNavBar={true}
-              />
-              {/* <Lightbox key="root"> */}
-              <Scene
-                key="register"
-                component={ForgotPassword}
-                title="Register"
-              />
-              <Scene
-                key={ScreenType.FORGOT_PASSWORD}
-                backButtonTintColor={AppColors.blue}
-                component={ForgotPassword}
-                navigationBarStyle={style.navigationBarStyleTransparent}
-                backTitle="Sign In"
-                hideNavBar={true}
-              />
-              <Scene
-                key={ScreenType.SELECT_ACCOUNT}
-                backButtonTintColor={AppColors.blue}
-                title="Account Type"
-                titleStyle={style.titleStyle}
-                back
-                backTitle="Login"
-                component={SelectAccount}
-                navigationBarStyle={style.navigationBarStyleWhite}
-                // hideNavBar={true}
-              />
-              <Scene
-                key={ScreenType.WALKTHROUGH}
-                backButtonTintColor={AppColors.blue}
-                component={EditProfile}
-              />
-              <Scene
-                key={ScreenType.PROFILE}
-                backButtonTintColor={AppColors.blue}
-                title="Your Profile"
-                titleStyle={style.titleStyle}
-                back
-                backTitle="Back"
-                component={Profile}
-                navigationBarStyle={style.navigationBarStyleWhite}
-              />
-              <Scene
-                key={ScreenType.REQUEST_ACCOUNT}
-                backButtonTintColor={AppColors.blue}
-                title="Request Account"
-                titleStyle={style.titleStyle}
-                back
-                backTitle="Type"
-                component={RequestAccount}
-                navigationBarStyle={style.navigationBarStyleWhite}
-              />
-              <Scene
-                key={ScreenType.NURSES.HOME}
-                title="Positions"
-                backButtonTintColor={AppColors.blue}
-                component={NurseHome}
-                navigationBarStyle={style.navigationBarStyleElevated}
-                renderRightButton={this.renderMessageCenterButton.bind(this)}
-              />
-              {/* <Drawer
-                hideNavBar
-                key={ScreenType.DRAWER}
-                contentComponent={DrawerContent}
-                drawerIcon={menuicon}
-                drawerWidth={CONEXUS_DRAWER_WIDTH}
-                component={undefined}>
-                <Scene key="drawer-scenes" component={undefined}></Scene>
-              </Drawer> */}
-              {/* </Lightbox> */}
-            </Stack>
+                key="tabbar"
+                swipeEnabled
+                showLabel={true}
+                tabBarPosition="bottom"
+                tabBarStyle={{backgroundColor: AppColors.white}}
+                tabStyle={{backgroundColor: 'white'}}
+                labelStyle={{...AppFonts.tabLabelText}}
+                activeTintColor={AppColors.blue}
+                inactiveBackgroundColor="rgba(255, 255, 255, 1)">
+                <Stack
+                  key="review_tab"
+                  title="Positions"
+                  tabBarLabel="Review"
+                  icon={({focused}) => {
+                    return (
+                      <ConexusIcon
+                        color={getTabIconColor(focused)}
+                        size={16}
+                        name="cn-review"
+                      />
+                    );
+                  }}>
+                  <Scene
+                    key={ScreenType.FACILITIES.REVIEW_HOME}
+                    backButtonTintColor={AppColors.blue}
+                    component={ReviewContainer}
+                    title="Review Candidates"
+                    renderRightButton={this.renderMessageCenterButton.bind(
+                      this,
+                    )}
+                  />
+                </Stack>
+              </Scene>
+
+              {/* <Scene key="drawer-scenes" component={undefined}> */}
+              {/* <Tabs
+                    key="tabbar"
+                    swipeEnabled
+                    showLabel={true}
+                    tabBarPosition="bottom"
+                    tabBarStyle={{backgroundColor: AppColors.white}}
+                    tabStyle={{backgroundColor: 'white'}}
+                    labelStyle={{...AppFonts.tabLabelText}}
+                    activeTintColor={AppColors.blue}
+                    inactiveBackgroundColor="rgba(255, 255, 255, 1)"
+                    >
+                      <Stack
+                        key="review_tab"
+                        title="Positions"
+                        tabBarLabel="Review"
+                        icon={({focused}) => {
+                          return (
+                            <ConexusIcon
+                              color={getTabIconColor(focused)}
+                              size={16}
+                              name="cn-review"
+                            />
+                          );
+                        }}>
+                        <Scene
+                          key={ScreenType.FACILITIES.REVIEW_HOME}
+                          backButtonTintColor={AppColors.blue}
+                          component={ReviewContainer}
+                          title="Review Candidates"
+                          renderRightButton={this.renderMessageCenterButton.bind(
+                            this,
+                          )}
+                        />
+                      </Stack>
+                    </Tabs> */}
+              {/* </Scene> */}
+            </Drawer>
+            {/* </Lightbox> */}
           </Modal>
         </Overlay>
       </Router>
     );
-
-    // this._router = (
-    // <Root key="root">
-    // <Router key="router" wrapBy={observer} backAndroidHandler={this.backHandler}>
-    //   <Overlay key="overlay" component={undefined}>
-    //     <Modal hideNavBar key="modal" backButtonTintColor={AppColors.blue} component={undefined}>
-    //       {/* <Lightbox key="root">
-    //         <Scene key="root-scenes" component={undefined}>
-    //           <Scene key={ScreenType.LOGIN} backButtonTintColor={AppColors.blue} component={Login} navigationBarStyle={style.navigationBarStyleTransparent} title="" />
-    //           <Scene key={ScreenType.FORGOT_PASSWORD} backButtonTintColor={AppColors.blue} component={ForgotPassword} navigationBarStyle={style.navigationBarStyleTransparent} backTitle="Sign In" />
-    //           <Scene key={ScreenType.WALKTHROUGH} backButtonTintColor={AppColors.blue} component={EditProfile} />
-    //           <Scene key={ScreenType.PROFILE} backButtonTintColor={AppColors.blue} title="Your Profile" titleStyle={style.titleStyle} back backTitle="Back" component={Profile} navigationBarStyle={style.navigationBarStyleWhite} />
-    //           <Scene key={ScreenType.PROFILE_EDIT} backButtonTintColor={AppColors.blue} title="Edit Your Profile" titleStyle={style.titleStyle} back backTitle="Back" component={EditProfile} navigationBarStyle={style.navigationBarStyleWhite} />
-    //           <Scene key={ScreenType.REQUEST_ACCOUNT} backButtonTintColor={AppColors.blue} title='Request Account' titleStyle={style.titleStyle} back backTitle="Type" component={RequestAccount} navigationBarStyle={style.navigationBarStyleWhite} />
-    //           <Scene key={ScreenType.SELECT_ACCOUNT} backButtonTintColor={AppColors.blue} title='Account Type' titleStyle={style.titleStyle} back backTitle="Login" component={SelectAccount} navigationBarStyle={style.navigationBarStyleWhite} />
-    //           <Drawer
-    //             hideNavBar
-    //             key={ScreenType.DRAWER}
-    //             contentComponent={DrawerContent}
-    //             drawerIcon={menuicon}
-    //             drawerWidth={CONEXUS_DRAWER_WIDTH}
-    //             component={undefined}>
-    //             <Scene key="drawer-scenes" component={undefined}>
-    //               <Scene hideNavBar panHandlers={null} component={undefined} key="drawer-container">
-    //                 <Tabs
-    //                   key="tabbar"
-    //                   swipeEnabled
-    //                   showLabel={true}
-    //                   tabBarPosition="bottom"
-    //                   tabBarStyle={{ backgroundColor: AppColors.white }}
-    //                   tabStyle={{ backgroundColor: 'white' }}
-    //                   labelStyle={{ ...AppFonts.tabLabelText }}
-    //                   activeTintColor={AppColors.blue}
-    //                   inactiveBackgroundColor="rgba(255, 255, 255, 1)">
-
-    //                   <Stack
-    //                     key="review_tab"
-    //                     title="Positions"
-    //                     tabBarLabel="Review"
-    //                     icon={({ focused }) => { return (<ConexusIcon color={getTabIconColor(focused)} size={16} name="cn-review" />) }}>
-    //                     <Scene
-    //                       key={ScreenType.FACILITIES.REVIEW_HOME}
-    //                       backButtonTintColor={AppColors.blue}
-    //                       component={ReviewContainer}
-    //                       title="Review Candidates"
-    //                       renderRightButton={this.renderMessageCenterButton.bind(this)}
-    //                     />
-    //                   </Stack>
-    //                    <Stack
-    //                     key="requests_tab"
-    //                     tabBarLabel="Positions"
-    //                     icon={({ focused }) => { return (<ConexusIcon color={getTabIconColor(focused)} size={16} name="cn-person-add" />) }}>
-    //                     <Scene
-    //                       key={ScreenType.FACILITIES.REQUESTS_HOME}
-    //                       backButtonTintColor={AppColors.blue}
-    //                       component={NeedsContainer}
-    //                       title="Positions"
-    //                       renderRightButton={this.renderMessageCenterButton.bind(this)}
-    //                     />
-    //                   </Stack>
-
-    //                 </Tabs>
-    //               </Scene>
-
-    //               <Scene key={ScreenType.MESSAGE_CENTER.CONVERSATION} title="Conversation" back backButtonTintColor={AppColors.blue} component={ConversationContainer} navigationBarStyle={style.navigationBarStyleElevated} />
-    //               <Scene key={ScreenType.FACILITIES.CATALOG_SECTION} back backButtonTintColor={AppColors.blue} title="Interview Questions" component={CatalogSectionContainer} navigationBarStyle={style.navigationBarStyleElevated} />
-    //               <Scene key={ScreenType.FACILITIES.CATALOG_QUESTION} back backButtonTintColor={AppColors.blue} title="Add a Question" component={CatalogQuestionContainer} navigationBarStyle={style.navigationBarStyleElevated} />
-    //               <Scene key={ScreenType.NURSES.HOME} title="Positions" backButtonTintColor={AppColors.blue} component={NurseHome} navigationBarStyle={style.navigationBarStyleElevated} renderRightButton={this.renderMessageCenterButton.bind(this)} />
-    //               <Scene key={ScreenType.FACILITIES.CATALOG} backButtonTintColor={AppColors.blue} title="Interview Questions" component={CatalogContainer} navigationBarStyle={style.navigationBarStyleElevated} renderRightButton={this.renderMessageCenterButton.bind(this)} />
-    //               <Scene key={ScreenType.MESSAGE_CENTER.CONVERSATION_LIST} backButtonTintColor={AppColors.blue} title="Message Center" component={FacilityMessageCenterContainer} navigationBarStyle={style.navigationBarStyleElevated} />
-    //               <Scene key={ScreenType.MESSAGE_CENTER.NURSE_CONVERSATION_LIST} backButtonTintColor={AppColors.blue} title="Message Center" component={NurseMessageCenterContainer} navigationBarStyle={style.navigationBarStyleElevated} />
-    //               <Scene key={ScreenType.FACILITIES.HCP_DETAIL} backButtonTintColor={AppColors.blue} component={HcpDetailContainer} title="" hideNavBar navigationBarStyle={style.navigationBarStyleElevated} />
-    //             </Scene>
-    //           </Drawer>
-    //         </Scene>
-    //         <Scene key={ScreenType.AUDIO_PLAYER_LIGHTBOX} component={AudioPlayerLightbox} />
-    //         <Scene key={ScreenType.FACILITIES.MAKE_OFFER_LIGHTBOX} component={MakeOfferLightbox} />
-    //         <Scene key={ScreenType.ANSWER_RATINGS_LIGHTBOX} component={AnswerRatingsLightbox} />
-    //         <Scene key={ScreenType.VIDEO_RECORDER_LIGHTBOX} component={VideoRecorderLightbox} />
-    //         <Scene key={ScreenType.NURSES.INTERVIEW} hideNavBar={true} component={NurseInterview} />
-    //         <Scene key={ScreenType.FACILITIES.RECORD_QUESTION} component={CatalogVideoContainer} />
-    //         <Scene key={ScreenType.FACILITIES.QUESTION_PLAYBACK_LIGHTBOX} component={VideoPlaybackLightbox} />
-    //         <Scene key={ScreenType.HCP_PHONE_CALL_LIGHTBOX} component={HcpPhoneCallLightbox} />
-    //         <Scene key={ScreenType.CONTENT_LIGHTBOX} component={ContentLightbox} />
-    //         <Scene key={ScreenType.RADIO_LIST_LIGHTBOX} component={RadioListLightbox} />
-    //         <Scene key={ScreenType.YES_NO_LIGHTBOX} component={YesNoLightbox} />
-    //         <Scene key={ScreenType.CONTACT_CANDIDATE_LIGHTBOX} component={ContactCandidateLightbox} />
-    //         <Scene key={ScreenType.DEVICE_INFO_LIGHTBOX} component={DeviceInfoLightbox} />
-    //         <Scene key={ScreenType.CALL} component={VideoCallLightbox} />
-    //       </Lightbox> */}
-
-    //                     <Scene
-    //                       key={ScreenType.FACILITIES.SCHEDULING.SCHEDULE_AVAILABILITY}
-    //                       component={ScheduleAvailabilityContainer}
-    //                       title="Schedule Availability"
-    //                     />
-    //       <Scene key={ScreenType.CONTENT_LIST_MODAL} component={ContentListModal} />
-    //       <Scene key={ScreenType.FACILITIES.AGENT_MESSAGE_MODAL} component={AgentMessageModal} />
-    //       <Scene key={ScreenType.FACILITIES.APP_FEEDBACK_MODAL} component={AppFeedbackModal} />
-    //       <Scene key={ScreenType.IMAGE_GALLERY}
-    //         component={ImageGallery} navigationBarStyle={style.navigationBarStyleWhite}
-    //         title="Profile Viewer"
-    //       />
-    //     </Modal>
-
-    //   </Overlay>
-    // </Router>
-    // </Root>)
-
-    // return this._router
   }
   render() {
     return this.props.deviceStore.isInBackground ? (

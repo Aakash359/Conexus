@@ -12,6 +12,7 @@ import com.facebook.soloader.SoLoader;
 import com.conexus.newarchitecture.MainApplicationReactNativeHost;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import android.os.Bundle;
 import com.microsoft.codepush.react.CodePush;
 import com.oblador.vectoricons.VectorIconsPackage;
 

@@ -137,12 +137,11 @@ const UserStore = types
                 return userType === 'HCP' ? true : false
             },
             get homeView(): string {
-                 
                 if (!self.user) {
                    return ScreenType.NURSES.HOME
                 }
                 const userType = (self.user.userType || 'HCP').toUpperCase()                
-                return userType != 'HCP' ? ScreenType.NURSES.HOME : ScreenType.FACILITIES.REVIEW_HOME
+                return userType === 'HCP' ? ScreenType.NURSES.HOME : ScreenType.FACILITIES.REVIEW_HOME
             },
             get shouldShowWalkThrough(): boolean {
                 if (!self.user) {
@@ -165,13 +164,14 @@ const UserStore = types
             },
 
             applyUserAuthorizationToken: flow(function* (token: string) {
+                console.log("Token====>",rest.defaults.headers.common.Authorization = `Bearer ${token}`);
                 rest.defaults.headers.common.Authorization = `Bearer ${token}`
                 deviceStore.setAuthToken(token)
                 yield AsyncStorage.setItem(USER_STORE_AUTH_TOKEN_STORAGE_KEY, JSON.stringify({token, environment: getConexusApiEnvironment()}))
             }),
 
             resetAuthorizationToken: flow(function* () {
-                // delete rest.defaults.headers.common.Authorization
+                delete rest.defaults.headers.common.Authorization
                 deviceStore.setAuthToken('')
                 yield AsyncStorage.removeItem(USER_STORE_AUTH_TOKEN_STORAGE_KEY)
             }),

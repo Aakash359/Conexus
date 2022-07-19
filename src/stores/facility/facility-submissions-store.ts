@@ -2,6 +2,7 @@ import { types, flow, getSnapshot } from 'mobx-state-tree'
 import { rest } from '../../services/rest'
 import { logger } from 'react-native-logs'
 import { FacilityModel } from './facility-model';
+
 const log = logger.createLogger()
 export const FacilitySubmissionsStore = types
     .model({
