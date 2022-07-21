@@ -1,10 +1,10 @@
 import React from 'react';
 import {Text} from 'native-base';
 import {ViewProperties, StyleSheet, View, TouchableOpacity} from 'react-native';
-import {inject, observer} from 'mobx-react';
+// import {inject, observer} from 'mobx-react';
 import {AppFonts, AppColors} from '../theme';
 import {ConexusIcon, Avatar} from '../components';
-import {Actions} from 'react-native-router-flux';
+// import {Actions} from 'react-native-router-flux';
 import {ScreenType} from '../common';
 import {UserStore, UserFacilityModel} from '../stores/userStore';
 
@@ -23,8 +23,8 @@ export interface FacilityListHeaderItemProps extends ViewProperties {
 
 export interface FacilityListHeaderItemState {}
 
-@inject('userStore')
-@observer
+// @inject('userStore')
+// @observer
 export class FacilityListHeaderItem extends React.Component<
   FacilityListHeaderItemProps,
   FacilityListHeaderItemState
@@ -39,7 +39,7 @@ export class FacilityListHeaderItem extends React.Component<
 
     return !!this.props.userStore.user &&
       !!this.props.userStore.user.userFacilities
-      ? this.props.userStore.user.userFacilities.map((i) => {
+      ? this.props.userStore.user.userFacilities.map(i => {
           return {
             facilityId: i.facilityId,
             facilityName: i.facilityName,
@@ -58,7 +58,7 @@ export class FacilityListHeaderItem extends React.Component<
     }
 
     if (!!overrideFacilities && overrideFacilities.length) {
-      return overrideFacilities.find((i) => i.facilityId === facilityId);
+      return overrideFacilities.find(i => i.facilityId === facilityId);
     }
 
     if (this.props.userStore.selectedFacility) {
@@ -85,7 +85,7 @@ export class FacilityListHeaderItem extends React.Component<
       !this.props.userStore.selectedFacility ||
       (!!this.props.overrideFacilities &&
         this.props.overrideFacilities
-          .map((f) => f.facilityId)
+          .map(f => f.facilityId)
           .indexOf(this.props.userStore.selectedFacilityId) === -1)
     ) {
       this._chooseFacility();
@@ -105,18 +105,18 @@ export class FacilityListHeaderItem extends React.Component<
   }
 
   _chooseFacility() {
-    const items = this.facilities.map((i) => {
+    const items = this.facilities.map(i => {
       return {value: i.facilityId, title: i.facilityName, imageUrl: i.photoUrl};
     });
-    Actions[ScreenType.RADIO_LIST_LIGHTBOX]({
-      title: 'Choose a Facility',
-      data: items,
-      value: this.selectedFacility,
-      showImages: true,
-      facilityImages: true,
-      hideSelectedIcon: true,
-      onClose: this._facilityChosen.bind(this),
-    });
+    // Actions[ScreenType.RADIO_LIST_LIGHTBOX]({
+    //   title: 'Choose a Facility',
+    //   data: items,
+    //   value: this.selectedFacility,
+    //   showImages: true,
+    //   facilityImages: true,
+    //   hideSelectedIcon: true,
+    //   onClose: this._facilityChosen.bind(this),
+    // });
   }
 
   render() {

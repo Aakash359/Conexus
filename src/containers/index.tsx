@@ -1,20 +1,19 @@
 import React from 'react';
-import {observer, inject} from 'mobx-react';
 import {Icon, Root} from 'native-base';
 import {StyleSheet, DeviceEventEmitter, TouchableOpacity} from 'react-native';
-import {
-  Drawer,
-  Lightbox,
-  Modal,
-  Overlay,
-  Router,
-  Scene,
-  Stack,
-  Tabs,
-  Actions,
-} from 'react-native-router-flux';
+// import {
+//   Drawer,
+//   Lightbox,
+//   Modal,
+//   Overlay,
+//   Router,
+//   Scene,
+//   Stack,
+//   Tabs,
+//   Actions,
+// } from 'react-native-router-flux';
 // import Drawer from 'react-native-drawer';
-import {onPatch} from 'mobx-state-tree';
+// import {onPatch} from 'mobx-state-tree';
 
 import {ScreenType} from '../common/constants';
 import {ConexusIcon, Circle} from '../components';
@@ -91,8 +90,6 @@ const preventBackButtonScenes = [
 ];
 const log = logger.createLogger();
 
-@inject('userStore', 'conversationStore', 'deviceStore')
-@observer
 export class AppRouter extends React.Component<
   IAppRouterProps,
   IAppRouterState
@@ -159,7 +156,7 @@ export class AppRouter extends React.Component<
     return (
       <Router
         key="router"
-        wrapBy={observer}
+        // wrapBy={observer}
         backAndroidHandler={this.backHandler}>
         <Overlay key="overlay" component={undefined}>
           <Modal

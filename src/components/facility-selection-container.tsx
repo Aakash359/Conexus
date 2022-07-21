@@ -12,11 +12,11 @@ import {
   FacilitySelectionItem,
   ScreenFooterButton,
 } from '../components';
-import {inject} from 'mobx-react';
+// import {inject} from 'mobx-react';
 import {AppColors} from '../theme';
 import {UserStore, FacilityModel} from '../stores';
 import {logger} from 'react-native-logs';
-import {Actions} from 'react-native-router-flux';
+// import {Actions} from 'react-native-router-flux';
 import {ScreenType, StoreType} from '../common';
 
 interface FacilitySelectionContainerProps extends ViewProperties {
@@ -37,7 +37,7 @@ interface FacilitySelectionContainerProps extends ViewProperties {
 
 interface FacilitySelectionContainerState {}
 const log = logger.createLogger();
-@inject(StoreType.USER)
+// @inject(StoreType.USER)
 export class FacilitySelectionContainer extends React.Component<
   FacilitySelectionContainerProps,
   FacilitySelectionContainerState
@@ -133,14 +133,14 @@ export class FacilitySelectionContainer extends React.Component<
   showNewQuestion() {
     const {needId} = this.props;
     log.info(`NeedID: ${needId}`);
-    Actions[ScreenType.FACILITIES.CATALOG_QUESTION]({
-      questionId: '0',
-      initialUnitId: '',
-      needId: needId,
-      onSave: () => {
-        this.forceUpdate();
-      },
-    });
+    // Actions[ScreenType.FACILITIES.CATALOG_QUESTION]({
+    //   questionId: '0',
+    //   initialUnitId: '',
+    //   needId: needId,
+    //   onSave: () => {
+    //     this.forceUpdate();
+    //   },
+    // });
   }
   render() {
     log.info(this.showNoData);

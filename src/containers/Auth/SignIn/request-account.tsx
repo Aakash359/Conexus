@@ -1,25 +1,27 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   KeyboardAvoidingView,
-  Picker,
   ScrollView,
   Button,
   Text,
   View,
+  Alert,
   TouchableOpacity,
 } from 'react-native';
-
-import variables from '../theme';
-import {Field} from '../components/field';
-import {windowDimensions} from '../common';
+import Icon from 'react-native-vector-icons/Ionicons';
+import {signUp} from '../../../services/auth';
+import variables from '../../../theme';
+import {Field} from '../../../components/field';
+import {windowDimensions} from '../../../common';
 import {ScreenType, StoreType} from '../common/constants';
 import {logger} from 'react-native-logs';
-import {UserStore} from '../stores/userStore';
 import {ConexusIcon} from '../components/conexus-icon';
-import {AppColors, AppFonts} from '../theme';
-import {Alert} from 'react-native';
+import {AppColors, AppFonts} from '../../../theme';
+import NavigationService from '../../../navigation/NavigationService';
+
 const SafeAreaView = require('react-native').SafeAreaView;
+const eMailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
 interface RequestAccountProps {
   firstName?: string;
@@ -29,23 +31,23 @@ interface RequestAccountProps {
   eMail?: string;
   phoneNumber?: string;
   howHeard?: string;
-  userStore: UserStore;
   userType: string;
 }
-interface RequestAccountState {
-  firstName: string;
-  lastName: string;
-  company: string;
-  title: string;
-  eMail: string;
-  phoneNumber: string;
-  howHeard: string;
-  userType: string;
-}
+
 const log = logger.createLogger();
-// @inject(StoreType.USER)
-// @observer
-const RequestAccount = () => {
+
+const RequestAccount: React.FC<RequestAccountProps> = props => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [company, setCompany] = useState('');
+  const [title, setTitle] = useState('');
+  const [eMail, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [howHeard, setHowHeard] = useState('');
+  const [userType, setUserType] = useState(props.userType || '-1');
+
   // constructor(props: RequestAccountProps, context?: any) {
   //   super(props, context);
   //   this.state = {
@@ -87,30 +89,58 @@ const RequestAccount = () => {
   //   const {userStore} = this.props;
   // }
 
-  // submitAccount = () => {
-  //   const {userStore} = this.props;
-  //   log.info('submit new account');
-  //   const o = {
-  //     firstName: this.state.firstName,
-  //     lastName: this.state.lastName,
-  //     company: this.state.company,
-  //     title: this.state.title,
-  //     eMail: this.state.eMail,
-  //     phoneNumber: this.state.phoneNumber,
-  //     howHeard: this.state.howHeard,
-  //     isFacility: this.state.userType == '1',
-  //   };
+  const submitAccount = async () => {
+    if (
+      firstName &&
+      firstName.length &&
+      lastName &&
+      lastName.length &&
+      company &&
+      company.length &&
+      title &&
+      title.length &&
+      eMail.match(eMailRegex) &&
+      phoneNumber &&
+      phoneNumber.length &&
+      howHeard &&
+      howHeard.length
+    ) {
+      const payload = {
+        firstName,
+        lastName,
+        company,
+        title,
+        eMail,
+        phoneNumber,
+        howHeard,
+        isFacility: userType == '1',
+      };
+      try {
+        setLoading(true);
+        // setError(false);
+        const {data} = await signUp(payload);
+        console.log('Data====>', data);
+        NavigationService.navigate('LoginScreen');
+        if (data.success) {
+          console.log('Yes yanah tak Aa raha hai');
 
-  // userStore.register(o).then(nextViewName => {
-  //   log.info('Register container', nextViewName);
-  //   if (nextViewName) {
-  //     Alert.alert(
-  //       'Thank You',
-  //       'Thank you for your request. A Conexus Account Manager will be in touch with you shortly',
-  //     );
-  //     Actions[ScreenType.LOGIN]();
-  //   }
-  // });
+          // setLoading(false);
+
+          // onLogin(data, `email`);
+        } else {
+          setLoading(false);
+          setError(data.message);
+        }
+      } catch (e) {
+        console.log('Data====>', e);
+        setLoading(false);
+      }
+    } else {
+      Alert.alert('error');
+      // onEmailBlur();
+      // onPasswordBlur();
+    }
+  };
 
   return (
     <SafeAreaView style={[{flex: 1, backgroundColor: AppColors.white}]}>
@@ -118,64 +148,61 @@ const RequestAccount = () => {
         <KeyboardAvoidingView behavior="position" style={style.rootContainer}>
           <View style={style.content}>
             <View style={style.form}>
-              <ConexusIcon
+              {/* <ConexusIcon
                 name="cn-logo"
                 size={70}
+                color={AppColors.blue}
+                style={style.logo}
+              /> */}
+              <Icon
+                name="leaf"
+                size={100}
                 color={AppColors.blue}
                 style={style.logo}
               />
               <View style={style.field}>
                 <Field
                   placeholder="First Name"
-                  autoCapitalize="none"
-                  returnKeyType="go"
-                  // onChange={this.handleChange.bind(this, 'firstName')}
-                  last
-                  inverse
+                  autoCapitalize="words"
+                  onTextChange={setFirstName}
+                  value={firstName}
                 />
               </View>
               <View style={style.field}>
                 <Field
                   placeholder="Last Name"
-                  autoCapitalize="none"
-                  returnKeyType="go"
-                  // onChange={this.handleChange.bind(this, 'lastName')}
-                  last
-                  inverse
+                  autoCapitalize="words"
+                  onTextChange={setLastName}
+                  value={lastName}
                 />
               </View>
-              {this.props.userType == '1' && (
-                <View style={style.field}>
-                  <Field
-                    placeholder="Company"
-                    autoCapitalize="none"
-                    returnKeyType="go"
-                    // onChange={handleChange('company')}
-                    last
-                    inverse
-                  />
-                </View>
-              )}
-              {this.props.userType == '1' && (
-                <View style={style.field}>
-                  <Field
-                    placeholder="Title"
-                    autoCapitalize="none"
-                    returnKeyType="go"
-                    // onChange={handleChange( 'title')}
-                    last
-                    inverse
-                  />
-                </View>
-              )}
+              {/* {this.props.userType == '1' && ( */}
+              <View style={style.field}>
+                <Field
+                  placeholder="Company"
+                  autoCapitalize="words"
+                  onTextChange={setCompany}
+                  value={company}
+                />
+              </View>
+              {/* )} */}
+              {/* {this.props.userType == '1' && ( */}
+              <View style={style.field}>
+                <Field
+                  placeholder="Title"
+                  autoCapitalize="words"
+                  onTextChange={setTitle}
+                  value={title}
+                />
+              </View>
+              {/* )} */}
               <View style={style.field}>
                 <Field
                   placeholder="E-Mail"
                   autoCapitalize="none"
-                  returnKeyType="go"
-                  // onChange={handleChange('eMail')}
-                  last
-                  inverse
+                  onTextChange={setEmail}
+                  value={eMail}
+                  returnKeyType={'none'}
                 />
               </View>
               <View style={style.field}>
@@ -183,20 +210,16 @@ const RequestAccount = () => {
                   placeholder="Phone Number"
                   autoCapitalize="none"
                   keyboardType="phone-pad"
-                  returnKeyType="go"
-                  // onChange={this.handleChange.bind(this, 'phoneNumber')}
-                  last
-                  inverse
+                  onTextChange={setPhoneNumber}
+                  value={phoneNumber}
                 />
               </View>
               <View style={style.field}>
                 <Field
                   placeholder="How did you hear about us?"
-                  autoCapitalize="none"
-                  returnKeyType="go"
-                  // onChange={this.handleChange.bind(this, 'howHeard')}
-                  last
-                  inverse
+                  autoCapitalize="words"
+                  onTextChange={setHowHeard}
+                  value={howHeard}
                 />
               </View>
             </View>
@@ -208,7 +231,7 @@ const RequestAccount = () => {
               //   !!!this.state.phoneNumber ||
               //   !!!this.state.howHeard
               // }
-              onPress={this.submitAccount}>
+              onPress={submitAccount}>
               <View style={style.btn}>
                 <Text style={style.submit}>SUBMIT</Text>
               </View>
@@ -231,6 +254,7 @@ const style = StyleSheet.create({
   },
   field: {
     marginTop: 5,
+    paddingVertical: 2,
   },
   submit: {
     justifyContent: 'center',
@@ -251,18 +275,15 @@ const style = StyleSheet.create({
     paddingLeft: variables.contentPadding * 4,
     paddingRight: variables.contentPadding * 4,
   },
-
   logo: {
     alignSelf: 'center',
     marginBottom: 5,
   },
-
   title: {
     marginTop: variables.contentPadding * 2,
     marginBottom: variables.contentPadding * 2,
     textAlign: 'center',
   },
-
   btn: {
     alignSelf: 'center',
     justifyContent: 'center',

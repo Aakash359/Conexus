@@ -2,14 +2,24 @@ import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import RestaurantCard from '../../components/RestaurantCard';
 import Menu from '../../components/Menu';
+import {RouteProp} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParams} from '../../../AppTabNavigator';
 import TopNavigation from '../../components/TopBackNavigation';
 import TopDrawerNavigation from '../../components/TopDrawerNavigation';
 
-type Props = NativeStackScreenProps<RootStackParams, 'ExploreStack'>;
+type ReviewCandidateProp = RouteProp<
+  {
+    ReviewCandidateHomeScreen: {
+      ReviewCandidateHomeScreen: string;
+    };
+  },
+  'ReviewCandidateHomeScreen'
+>;
 
-const ReviewCandidateHomeScreen = ({navigation}: Props) => {
+type ReviewCandidateProps = {
+  route: ReviewCandidateProp;
+};
+const ReviewCandidateHomeScreen = ({route}: ReviewCandidateProps) => {
   return (
     <View style={styles.container}>
       {/* <TopDrawerNavigation /> */}
@@ -20,10 +30,10 @@ const ReviewCandidateHomeScreen = ({navigation}: Props) => {
           name="Sushi restaurant"
           onPress={() => {
             // navigation.push('Restaurant', {name: 'Sushi restaurant'});
-            navigation.navigate('RestaurantsStack', {
-              screen: 'Restaurant',
-              params: {name: 'Hello from explore'},
-            });
+            // navigation.navigate('RestaurantsStack', {
+            //   screen: 'Restaurant',
+            //   params: {name: 'Hello from explore'},
+            // });
           }}
         />
         <RestaurantCard

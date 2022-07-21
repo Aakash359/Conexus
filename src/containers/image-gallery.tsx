@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react'
 import { Text } from 'native-base'
-import { observer } from 'mobx-react'
+
 import { ViewProperties, StyleSheet, View, InteractionManager } from 'react-native'
 import variables from '../theme'
 import { Actions } from 'react-native-router-flux'
@@ -24,7 +24,7 @@ interface ImageGalleryState {
     showGallery: boolean
 }
 
-@observer
+
 export class ImageGallery extends Component<ImageGalleryProps, ImageGalleryState> {
 
     constructor(props, state) {
@@ -86,7 +86,9 @@ export class ImageGallery extends Component<ImageGalleryProps, ImageGalleryState
         return (
             <View style={{ flex: 1, flexDirection: 'column', alignItems: 'stretch', backgroundColor: variables.baseGray }} >
                 <ModalHeader title={title} right={() =>
-                    <ConexusIconButton iconName="cn-x" iconSize={15} onPress={Actions.pop}></ConexusIconButton>
+                    // <ConexusIconButton iconName="cn-x" iconSize={15} 
+                    // onPress={Actions.pop}
+                    // ></ConexusIconButton>
                 } />
                 <View style={style.modalSubheader}>
                     <Text style={style.modalSubheaderText}>{index + 1} of {allImages.length}</Text>

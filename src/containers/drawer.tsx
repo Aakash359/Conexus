@@ -1,5 +1,5 @@
 import React from 'react';
-import {inject, observer} from 'mobx-react';
+// import {inject, observer} from 'mobx-react';
 import {Button} from 'native-base';
 import {
   StyleSheet,
@@ -8,7 +8,7 @@ import {
   View,
   ViewProperties,
 } from 'react-native';
-import {Actions} from 'react-native-router-flux';
+// import {Actions} from 'react-native-router-flux';
 // import codePush from 'react-native-code-push'
 import _ from 'lodash';
 import {logger} from 'react-native-logs';
@@ -31,8 +31,8 @@ interface State {
   version: string;
 }
 const log = logger.createLogger();
-@inject('userStore')
-@observer
+// @inject('userStore')
+// @observer
 export class Drawer extends React.Component<Props, State> {
   get activeMenuItem(): string {
     switch (this.state.tempScene || Actions.prevScene.toString()) {
@@ -62,10 +62,10 @@ export class Drawer extends React.Component<Props, State> {
       version: '',
     };
 
-    Actions.drawerOpen = _.wrap((drawerOpen: () => any) => {
-      this.forceUpdate();
-      //drawerOpen();
-    }, Actions.drawerOpen);
+    // Actions.drawerOpen = _.wrap((drawerOpen: () => any) => {
+    //   this.forceUpdate();
+    //   //drawerOpen();
+    // }, Actions.drawerOpen);
   }
   componentWillMount() {
     // codePush.getUpdateMetadata().then((metadata) => {
@@ -93,7 +93,7 @@ export class Drawer extends React.Component<Props, State> {
       tempScene: screenName,
     });
 
-    Actions[screenName](parameters);
+    // Actions[screenName](parameters);
 
     setTimeout(() => {
       this.setState({tempScene: undefined});
@@ -114,7 +114,7 @@ export class Drawer extends React.Component<Props, State> {
   }
 
   _sendAgentMessage() {
-    Actions.drawerClose();
+    // Actions.drawerClose();
     setTimeout(
       Actions[ScreenType.FACILITIES.AGENT_MESSAGE_MODAL].bind(this),
       400,
@@ -122,11 +122,11 @@ export class Drawer extends React.Component<Props, State> {
   }
 
   _sendAppFeedback() {
-    Actions.drawerClose();
-    setTimeout(
-      Actions[ScreenType.FACILITIES.APP_FEEDBACK_MODAL].bind(this),
-      400,
-    );
+    // Actions.drawerClose();
+    // setTimeout(
+    //   Actions[ScreenType.FACILITIES.APP_FEEDBACK_MODAL].bind(this),
+    //   400,
+    // );
   }
 
   render() {
@@ -148,7 +148,8 @@ export class Drawer extends React.Component<Props, State> {
           <Button
             style={styles.closeButton}
             transparent
-            onPress={Actions.drawerClose}>
+            // onPress={Actions.drawerClose}
+          >
             <ConexusIcon
               name="cn-x"
               color={AppColors.blue}
@@ -264,10 +265,11 @@ export class Drawer extends React.Component<Props, State> {
           <TouchableOpacity
             key="account-preferences-container"
             style={[styles.avatarRow, {paddingRight: 6, paddingBottom: 24}]}
-            onPress={() => {
-              Actions.drawerClose();
-              Actions[ScreenType.PROFILE]();
-            }}>
+            // onPress={() => {
+            //   Actions.drawerClose();
+            //   Actions[ScreenType.PROFILE]();
+            // }}
+          >
             <Avatar
               source={user.photoUrl}
               size={AVATAR_ICON_SIZE}

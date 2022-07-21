@@ -1,5 +1,3 @@
-import {inject} from 'mobx-react';
-import {observer} from 'mobx-react';
 import {Text, Content, Icon, Button} from 'native-base';
 import React from 'react';
 import {
@@ -79,8 +77,7 @@ interface PermissionsLightboxState {
   photoPermission?: boolean;
   permissions?: any;
 }
-@inject('deviceStore')
-@observer
+
 export class PermissionsLightbox extends React.Component<
   PermissionsLightboxProps,
   PermissionsLightboxState

@@ -144,6 +144,12 @@ interface TextFieldProps {
   value: string;
   returnKeyType: string;
   onFocus: Function;
+  autoCapitalize: any;
+  keyboardType: any;
+  showError: boolean;
+  errorMessage: string;
+  handleFocus: () => void;
+  onBlur: () => void;
 }
 
 export const Field: React.FC<TextFieldProps> = ({
@@ -152,20 +158,43 @@ export const Field: React.FC<TextFieldProps> = ({
   onTextChange,
   value,
   onFocus,
+  autoCapitalize,
   returnKeyType = 'next',
+  keyboardType = 'default',
+  showError,
+  errorMessage,
 }) => {
   const [isPassword, setIsPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
-  const handleFocus = () => {
+  const handleFocus = (props: any) => {
     setIsFocused(true);
-    // if (props.handleFocus) {
-    //   props.handleFocus();
-    // }
+    if (props.handleFocus) {
+      props.handleFocus();
+    }
   };
-  useEffect(() => {
-    setIsPassword(isSecure);
-  }, []);
+
+  // const handleBlur = (props: any) => {
+  //   if (props.hideLabel) {
+  //     setIsFocused(true);
+  //   } else {
+  //     if (!props.value) {
+  //       setIsFocused(false);
+  //     } else {
+  //       setIsFocused(true);
+  //     }
+  //   }
+  //   if (props.onBlur) {
+  //     props.onBlur();
+  //   }
+  // };
+  // useEffect(() => {
+  //   setIsPassword(isSecure);
+  //   handleBlur();
+  //   if (props.autoFocus) {
+  //     handleFocus();
+  //   }
+  // }, []);
 
   return (
     <View style={styles.container}>
@@ -173,9 +202,12 @@ export const Field: React.FC<TextFieldProps> = ({
         placeholder={placeholder}
         value={value}
         onFocus={handleFocus}
+        keyboardType={keyboardType}
         placeholderTextColor={AppColors.gray}
-        autoCapitalize="none"
+        autoCapitalize={autoCapitalize}
         secureTextEntry={isPassword}
+        // onBlur={() => handleBlur(true)}
+        errorMessage={showError ? errorMessage : null}
         returnKeyType={returnKeyType}
         onChangeText={text => onTextChange(text)}
         style={styles.textField}

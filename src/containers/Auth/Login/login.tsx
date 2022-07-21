@@ -8,8 +8,8 @@ import {
   Platform,
   TouchableOpacity,
 } from 'react-native';
-import NavigationService from '../navigation/NavigationService';
-import {loginWithPass} from '../services/auth';
+import NavigationService from '../../../navigation/NavigationService';
+import {loginWithPass} from '../../../services/auth';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 // import {Switch} from 'native-base';
 // import {observer, inject} from 'mobx-react';
@@ -20,10 +20,10 @@ import {loginWithPass} from '../services/auth';
 // import {setConexusApiEnvironment, getConexusApiEnvironment} from '../services';
 // import {UserStore} from '../stores/userStore';
 // import {ScreenType, StoreType} from '../common/constants';
-import variables from '../theme';
-import {Field} from '../components/field';
-import {windowDimensions} from '../common';
-import {AppFonts, AppColors} from '../theme';
+import variables from '../../../theme';
+import {Field} from '../../../components/field';
+import {windowDimensions} from '../../../common';
+import {AppFonts, AppColors} from '../../../theme';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
@@ -228,11 +228,11 @@ const LoginScreen: React.FC<LoginState> = ({
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [emailErrorMsg, setEmailErrorMsg] = useState('');
+  const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [error, setError] = useState('');
 
-  const loginFn = async () => {
+  const signInFn = async () => {
     if (
       email &&
       email.length &&
@@ -249,9 +249,10 @@ const LoginScreen: React.FC<LoginState> = ({
           App: true,
         });
         console.log('Data====>', data);
-
+        NavigationService.navigate('ReviewCandidateHomeScreen');
         if (data.success) {
           setLoading(false);
+
           // onLogin(data, `email`);
         } else {
           setLoading(false);
@@ -290,11 +291,31 @@ const LoginScreen: React.FC<LoginState> = ({
     //   });
   };
 
+  const onEmailBlur = () => {
+    // if (
+    //   email &&
+    //   email.length &&
+    //   (email.match(emailRegex) || email.length == 10)
+    // ) {
+    //   setEmailError(false);
+    // } else {
+    //   setEmailError(true);
+    // }
+  };
+
+  const onPasswordBlur = () => {
+    if (password && password.length && password.length > 4) {
+      setPasswordError(false);
+    } else {
+      setPasswordError(true);
+    }
+  };
+
   const forgotPasswordFn = () => {
     NavigationService.navigate('ForgotPassword');
   };
   const requestAccount = () => {
-    NavigationService.navigate('RequestAccount');
+    NavigationService.navigate('SelectAccount');
   };
 
   return (
@@ -314,9 +335,10 @@ const LoginScreen: React.FC<LoginState> = ({
                 placeholder="Email Id"
                 onTextChange={setEmail}
                 value={email}
+                showError={emailError}
                 returnKeyType="next"
-                // value={this.state.username}
-                // onChange={this.handleChange.bind(this, 'username')}
+                onBlur={onEmailBlur}
+                errorMessage={'Invalid email'}
               />
             </View>
             <View style={style.field}>
@@ -324,6 +346,9 @@ const LoginScreen: React.FC<LoginState> = ({
                 placeholder="Password"
                 secureTextEntry={true}
                 value={password}
+                errorMessage={'Invalid Password'}
+                showError={passwordError}
+                onBlur={onPasswordBlur}
                 onTextChange={setPassword}
                 returnKeyType="done"
               />
@@ -335,7 +360,7 @@ const LoginScreen: React.FC<LoginState> = ({
               ? this.renderEnvironentToggle()
               : null} */}
           </View>
-          <TouchableOpacity onPress={loginFn}>
+          <TouchableOpacity onPress={signInFn}>
             <View style={style.btnContainer}>
               <Text style={style.signIn}>SIGN IN</Text>
             </View>

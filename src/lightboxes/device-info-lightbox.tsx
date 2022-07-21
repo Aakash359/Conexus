@@ -1,6 +1,4 @@
 import React from 'react';
-import {inject} from 'mobx-react';
-import {observer} from 'mobx-react';
 import {Text, Content, Icon} from 'native-base';
 import {
   ActivityIndicator,
@@ -17,7 +15,6 @@ import {AppColors, AppFonts} from '../theme';
 import {ConexusLightbox} from './base-lightbox';
 import {DeviceStore, UserStore} from '../stores';
 import _ from 'lodash';
-import {getSnapshot} from 'mobx-state-tree';
 import PushNotification from 'react-native-push-notification';
 import {ActionButton} from '../components';
 const log = logger.createLogger();
@@ -113,8 +110,7 @@ interface DeviceInfoLightboxState {
   photoPermission?: boolean;
   permissions?: any;
 }
-@inject('deviceStore', 'userStore')
-@observer
+
 export class DeviceInfoLightbox extends React.Component<
   DeviceInfoLightboxProps,
   DeviceInfoLightboxState
@@ -139,7 +135,7 @@ export class DeviceInfoLightbox extends React.Component<
     let {loading, title} = this.state;
     let {userStore} = this.props;
     let {pushToken, authToken, permissions} = this.props.deviceStore;
-    let perms = JSON.stringify(getSnapshot(permissions));
+    // let perms = JSON.stringify(getSnapshot(permissions));
     title = 'Device Info';
     let items = [
       {label: 'User', value: userStore.user ? userStore.user.username : ''},

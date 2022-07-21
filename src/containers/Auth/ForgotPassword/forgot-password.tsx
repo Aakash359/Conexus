@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   ScrollView,
@@ -8,13 +8,13 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
-import variables from '../theme';
-import {Field} from '../components/field';
-import {windowDimensions} from '../common';
-import Styles from '../theme/styles';
+import variables from '../../../theme';
+import {Field} from '../../../components/field';
+import {windowDimensions} from '../../../common';
+import Styles from '../../../theme/styles';
 import {UserStore} from '../stores/userStore';
-import {ConexusIcon} from '../components/conexus-icon';
-import {AppColors, AppFonts} from '../theme';
+import {ConexusIcon} from '../../../components/conexus-icon';
+import {AppColors, AppFonts} from '../../../theme';
 
 interface ForgotPasswordProps {
   username?: string;
@@ -24,6 +24,7 @@ interface ForgotPasswordState {
 }
 
 const ForgotPassword = () => {
+  const [email, setEmail] = useState('');
   // handleChange(name: any, value: any) {
   //   this.setState({
   //     username: value.nativeEvent.text,
@@ -55,14 +56,15 @@ const ForgotPassword = () => {
         <View style={style.content}>
           <View style={style.form}>
             <Field
-            // placeholder="Email Address"
-            // autoCapitalize="none"
-            // returnKeyType="go"
-            // value={this.state.username}
-            // onSubmitEditing={recoverPasswordFn}
-            // onChange={this.handleChange.bind(this, 'username')}
-            // last
-            // inverse
+              placeholder="Email Address"
+              onTextChange={setEmail}
+              value={email}
+              returnKeyType="go"
+              // value={this.state.username}
+              // onSubmitEditing={recoverPasswordFn}
+              // onChange={this.handleChange.bind(this, 'username')}
+              // last
+              // inverse
             />
           </View>
 
@@ -73,7 +75,7 @@ const ForgotPassword = () => {
             // }
             onPress={recoverPasswordFn}>
             <View style={style.btnContainer}>
-              <Text style={style.signIn}>SIGN IN</Text>
+              <Text style={style.signIn}>RECOVER NOW</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -89,11 +91,10 @@ const style = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   btnContainer: {
-    marginTop: 20,
-    backgroundColor: AppColors.blue,
+    backgroundColor: AppColors.gray,
     borderRadius: 22,
+    marginHorizontal: 50,
     justifyContent: 'center',
-    paddingHorizontal: 10,
     height: 45,
   },
   signIn: {
@@ -113,7 +114,6 @@ const style = StyleSheet.create({
     alignSelf: 'center',
   },
   title: {
-    marginTop: variables.contentPadding * 2,
     marginBottom: variables.contentPadding * 2,
     textAlign: 'center',
     fontSize: 25,

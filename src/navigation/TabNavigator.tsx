@@ -23,6 +23,16 @@ const HomeStack = () => {
         component={ReviewCandidateHomeScreen}
         options={{headerShown: false}}
       />
+      <Stack.Screen
+        name="Positions"
+        component={PositionsScreen}
+        // options={{
+        //   tabBarIcon: ({color, size}) => (
+        //     <Feather name="shopping-bag" color={color} size={size} />
+        //   ),
+        //   tabBarLabel: 'Positions',
+        // }}
+      />
       {/* <Stack.Screen
         name="GameDetails"
         component={GameDetailsScreen}
@@ -45,39 +55,7 @@ const TabNavigator = () => {
         tabBarActiveTintColor: AppColors.blue,
         tabBarInactiveTintColor: AppColors.mediumGray,
       }}>
-      {/* <Tab.Screen
-        name="Home2"
-        component={HomeStack}
-        options={({route}) => ({
-          tabBarStyle: {
-            display: getTabBarVisibility(route),
-            backgroundColor: '#AD40AF',
-          },
-          tabBarIcon: ({color, size}) => (
-            <Ionicons name="home-outline" color={color} size={size} />
-          ),
-        })}
-      /> */}
-      <Tab.Screen
-        name="Review Candidates"
-        component={ReviewCandidateHomeScreen}
-        options={{
-          tabBarIcon: ({color, size}) => (
-            <ExploreIcon color={color} size={size} />
-          ),
-          tabBarLabel: 'Review',
-        }}
-      />
-      <Tab.Screen
-        name="Positions"
-        component={PositionsScreen}
-        options={{
-          tabBarIcon: ({color, size}) => (
-            <Feather name="shopping-bag" color={color} size={size} />
-          ),
-          tabBarLabel: 'Positions',
-        }}
-      />
+      <Tab.Screen name="Review Candidates" component={HomeStack} />
     </Tab.Navigator>
   );
 };

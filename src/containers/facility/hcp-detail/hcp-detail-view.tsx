@@ -8,7 +8,6 @@ import {
   Alert,
 } from 'react-native';
 import {Text, View, Icon} from 'native-base';
-import {observer, inject} from 'mobx-react';
 import {Actions} from 'react-native-router-flux';
 import {ScreenType} from '../../../common/constants';
 import {logger} from 'react-native-logs';
@@ -58,8 +57,8 @@ const tabs = [
 const imageCacheManager = ImageCacheManager();
 const preloadResumeCount = 3;
 const log = logger.createLogger();
-@inject('facilitySubmissionsStore')
-@observer
+// @inject('facilitySubmissionsStore')
+// @observer
 export class HcpDetailContainer extends React.Component<
   HcpDetailProps,
   HcpDetailState

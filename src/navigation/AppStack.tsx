@@ -30,7 +30,7 @@ const AppStack = () => {
           fontSize: 18,
         },
       }}>
-      <Drawer.Screen name="Review Candidates" component={TabNavigator} />
+      <Drawer.Screen name="TabNavigator" component={TabNavigator} />
       <Drawer.Screen name="Interview Questions" component={PositionsScreen} />
       <Drawer.Screen name="Message Center" component={MessageCenterScreen} />
     </Drawer.Navigator>

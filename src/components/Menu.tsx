@@ -2,33 +2,36 @@ import {useNavigation} from '@react-navigation/core';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {RootStackParams} from '../../AppTabNavigator';
+// import {RootStackParams} from '../../AppTabNavigator';
 
 const Menu = () => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParams>>();
+  // const navigation =
+  //   useNavigation<NativeStackNavigationProp<RootStackParams>>();
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Navigation</Text>
       <TouchableOpacity
-        onPress={() => {
-          // go to explore
-          navigation.navigate('ExploreStack');
-        }}>
+      // onPress={() => {
+      //   // go to explore
+      //   navigation.navigate('ExploreStack');
+      // }}
+      >
         <Text style={styles.link}>Explore</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => {
-          // go to restaurants
-          navigation.navigate('RestaurantsStack');
-        }}>
+      // onPress={() => {
+      //   // go to restaurants
+      //   navigation.navigate('RestaurantsStack');
+      // }}
+      >
         <Text style={styles.link}>Restaurants</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => {
-          // go to profile
-          navigation.navigate('Profile');
-        }}>
+      // onPress={() => {
+      //   // go to profile
+      //   navigation.navigate('Profile');
+      // }}
+      >
         <Text style={styles.link}>Profile</Text>
       </TouchableOpacity>
     </View>

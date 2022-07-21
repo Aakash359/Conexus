@@ -4,7 +4,7 @@ import {Container, View, ActionSheet} from 'native-base';
 // import ImagePicker from 'react-native-image-crop-picker'
 import variables from '../theme';
 import {ActionButton, Avatar, Field, PhoneNumberField} from '../components';
-import {observer, inject} from 'mobx-react';
+
 import {showApiErrorAlert, creatInputChangeHandler} from '../common';
 import {UserStore} from '../stores';
 import {windowDimensions} from '../common';
@@ -26,8 +26,6 @@ interface EditProfileState {
 const log = logger.createLogger();
 export const EDIT_PROFILE_COMPONENT_NAME = 'EditProfileComponent';
 
-@inject('userStore')
-@observer
 export class EditProfile extends React.Component<
   EditProfileProps,
   EditProfileState
