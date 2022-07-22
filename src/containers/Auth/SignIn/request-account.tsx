@@ -24,6 +24,7 @@ const SafeAreaView = require('react-native').SafeAreaView;
 const eMailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
 interface RequestAccountProps {
+  route: any;
   firstName?: string;
   lastName?: string;
   company?: string;
@@ -46,7 +47,16 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
   const [eMail, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [howHeard, setHowHeard] = useState('');
-  const [userType, setUserType] = useState(props.userType || '-1');
+  const [userType, setUserType] = useState(props.route.params.userType || '-1');
+  console.log('Props===>', props.route.params.userType);
+
+  useEffect(() => {
+    setDefaultState();
+  }, []);
+
+  const setDefaultState = () => {
+    setUserType(props.userType || '-1');
+  };
 
   // constructor(props: RequestAccountProps, context?: any) {
   //   super(props, context);
@@ -120,12 +130,10 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
         // setError(false);
         const {data} = await signUp(payload);
         console.log('Data====>', data);
-        NavigationService.navigate('LoginScreen');
+        NavigationService.goBack();
         if (data.success) {
-          console.log('Yes yanah tak Aa raha hai');
-
+          // console.log('Yes yanah tak Aa raha hai');
           // setLoading(false);
-
           // onLogin(data, `email`);
         } else {
           setLoading(false);
@@ -176,26 +184,26 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
                   value={lastName}
                 />
               </View>
-              {/* {this.props.userType == '1' && ( */}
-              <View style={style.field}>
-                <Field
-                  placeholder="Company"
-                  autoCapitalize="words"
-                  onTextChange={setCompany}
-                  value={company}
-                />
-              </View>
-              {/* )} */}
-              {/* {this.props.userType == '1' && ( */}
-              <View style={style.field}>
-                <Field
-                  placeholder="Title"
-                  autoCapitalize="words"
-                  onTextChange={setTitle}
-                  value={title}
-                />
-              </View>
-              {/* )} */}
+              {props.route.params.userType == '1' && (
+                <View style={style.field}>
+                  <Field
+                    placeholder="Company"
+                    autoCapitalize="words"
+                    onTextChange={setCompany}
+                    value={company}
+                  />
+                </View>
+              )}
+              {props.route.params.userType == '1' && (
+                <View style={style.field}>
+                  <Field
+                    placeholder="Title"
+                    autoCapitalize="words"
+                    onTextChange={setTitle}
+                    value={title}
+                  />
+                </View>
+              )}
               <View style={style.field}>
                 <Field
                   placeholder="E-Mail"

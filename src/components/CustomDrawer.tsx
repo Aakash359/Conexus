@@ -11,7 +11,7 @@ import {
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
-import {ConexusIcon, Avatar} from '../components';
+import {ConexusIcon, Avatar} from '../components/conexus-icon';
 import {AppFonts, AppColors} from '.././theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 

@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import NavigationService from '../../../navigation/NavigationService';
 import {loginWithPass} from '../../../services/auth';
+import {ActionButton} from '../../../components/action-button';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 // import {Switch} from 'native-base';
 // import {observer, inject} from 'mobx-react';
@@ -360,11 +361,17 @@ const LoginScreen: React.FC<LoginState> = ({
               ? this.renderEnvironentToggle()
               : null} */}
           </View>
-          <TouchableOpacity onPress={signInFn}>
+          <ActionButton
+            textColor={variables.blue}
+            title="Sign-In"
+            // onPress={on}
+            // style={style.changePhotoButton}
+          />
+          {/* <TouchableOpacity onPress={signInFn}>
             <View style={style.btnContainer}>
               <Text style={style.signIn}>SIGN IN</Text>
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <TouchableOpacity onPress={requestAccount}>
             <Text style={style.newUser}>

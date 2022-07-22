@@ -1,7 +1,6 @@
 import React from 'react';
 import {Button} from 'native-base';
 import {StyleSheet, Text, View} from 'react-native';
-import {observer, inject} from 'mobx-react';
 import Permissions from 'react-native-permissions';
 import {windowDimensions} from '../common';
 import {DeviceStore} from '../stores';
@@ -20,8 +19,6 @@ const style = StyleSheet.create({
   },
 });
 
-@inject('deviceStore')
-@observer
 export class PermissionCheck extends React.Component<
   PermissionCheckProps,
   PermissionCheckState

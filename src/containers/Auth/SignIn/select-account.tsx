@@ -44,10 +44,10 @@ const SelectAccount = () => {
   // }
   const requestFacilityAccount = () => {
     // Actions[ScreenType.REQUEST_ACCOUNT]({userType: '1'});
-    NavigationService.navigate('RequestAccount');
+    NavigationService.navigate('RequestAccount', {userType: '1'});
   };
   const requestCandidateAccount = () => {
-    NavigationService.navigate('RequestAccount');
+    NavigationService.navigate('RequestAccount', {userType: '0'});
     // Actions[ScreenType.REQUEST_ACCOUNT]({userType: '0'});
   };
 

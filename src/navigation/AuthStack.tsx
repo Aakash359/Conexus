@@ -8,6 +8,7 @@ import SelectAccount from '../containers/Auth/SignIn/select-account';
 import RequestAccount from '../containers/Auth/SignIn/request-account';
 import {navigationRef} from './NavigationService';
 import AppStack from './AppStack';
+import {AppColors} from '../theme';
 
 const Stack = createNativeStackNavigator();
 const OtherStack = createNativeStackNavigator();
@@ -32,9 +33,35 @@ const AuthNavigator = () => {
         component={LoginScreen}
         options={{headerShown: false}}
       />
-      <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
-      <Stack.Screen name="SelectAccount" component={SelectAccount} />
-      <Stack.Screen name="RequestAccount" component={RequestAccount} />
+      <Stack.Screen
+        name="ForgotPassword"
+        component={ForgotPassword}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="SelectAccount"
+        component={SelectAccount}
+        options={{
+          title: 'Account Type',
+          headerTitleStyle: {
+            color: AppColors.mediumGray,
+            fontWeight: 'bold',
+            fontSize: 22,
+          },
+        }}
+      />
+      <Stack.Screen
+        name="RequestAccount"
+        component={RequestAccount}
+        options={{
+          title: 'Request Account',
+          headerTitleStyle: {
+            color: AppColors.mediumGray,
+            fontWeight: 'bold',
+            fontSize: 22,
+          },
+        }}
+      />
       <Stack.Screen name="AppStack" component={AppStack} />
     </OtherStack.Navigator>
   );

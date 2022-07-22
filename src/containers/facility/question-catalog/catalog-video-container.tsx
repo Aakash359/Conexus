@@ -5,8 +5,8 @@ import { StyleSheet, View, ViewProperties, FlexAlignType, ActivityIndicator, Sta
 import { Text } from 'native-base'
 import { ScreenFooterButton, ConexusVideoPlayer, QuestionPlaybackHeader } from '../../../components'
 import { ConexusLightbox } from '../../../lightboxes'
-import { observer, inject } from 'mobx-react'
-import { Actions } from 'react-native-router-flux'
+// import { observer, inject } from 'mobx-react'
+// import { Actions } from 'react-native-router-flux'
 import { logger } from 'react-native-logs'
 import { AppColors, AppSizes } from '../../../theme'
 import { VideoStore } from '../../../stores'
@@ -40,8 +40,7 @@ interface Step {
     onComplete: () => any
 }
 
-@inject('videoStore')
-@observer
+
 export class CatalogVideoContainer extends React.Component<CatalogVideoContainerProps, CatalogVideoContainerState> {
     // private _publisher: Publisher;
     private steps: Array<any> = [];
@@ -118,7 +117,7 @@ export class CatalogVideoContainer extends React.Component<CatalogVideoContainer
                                     return {
                                         title: 'Cancel',
                                         onPress: () => {
-                                            Actions.pop();
+                                            // Actions.pop();
                                         },
                                         showOnError: true,
                                     }
@@ -138,7 +137,11 @@ export class CatalogVideoContainer extends React.Component<CatalogVideoContainer
                             // replayTitle="Play"
                             menuButtons={[
                                 { title: 'Re-Record', onPress: () => { self.goFirstStep() }, showOnError: false, },
-                                { title: 'Cancel', onPress: () => { Actions.pop() } }
+                                { title: 'Cancel', onPress: () => 
+                                { 
+                                    // Actions.pop() 
+                                } 
+                            }
                             ]}
                             showActionsOnEnd={true}
                             renderPlayOverlay={() => {

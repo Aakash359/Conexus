@@ -12,9 +12,11 @@ import variables from '../../../theme';
 import {Field} from '../../../components/field';
 import {windowDimensions} from '../../../common';
 import Styles from '../../../theme/styles';
-import {UserStore} from '../stores/userStore';
+import {forgotPassword} from '../../../services/auth';
 import {ConexusIcon} from '../../../components/conexus-icon';
 import {AppColors, AppFonts} from '../../../theme';
+import NavigationService from '../../../navigation/NavigationService';
+import {showApiErrorAlert} from '../../../common';
 
 interface ForgotPasswordProps {
   username?: string;
@@ -25,17 +27,47 @@ interface ForgotPasswordState {
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
   // handleChange(name: any, value: any) {
   //   this.setState({
   //     username: value.nativeEvent.text,
   //   });
   // }
 
-  const recoverPasswordFn = () => {
-    // NavigationService.navigate('ForgotPassword');
-    // this.props.userStore
-    //   .recoverPassword(this.state.username)
-    //   .then(Actions.pop);
+  const recoverPasswordFn = async () => {
+    if (email && email.length) {
+      try {
+        setLoading(true);
+        // setError(false);
+        const {data} = await forgotPassword({
+          username: email,
+        });
+        console.log('Data====>', data);
+        NavigationService.navigate('ReviewCandidateHomeScreen');
+        if (data.success) {
+          setLoading(false);
+
+          // onLogin(data, `email`);
+        } else {
+          setLoading(false);
+          setError(data.message);
+        }
+      } catch (error) {
+        showApiErrorAlert({
+          defaultTitle: 'Password Recovery Error',
+          defaultDescription:
+            'An unexpected error occurred while recovering your password. Please try again.',
+          loggerName: 'UserStore',
+          loggerTitle: 'recoverPassword',
+          error: error,
+        });
+        setLoading(false);
+      }
+    } else {
+      alert('password');
+      // onEmailBlur();
+      // onPasswordBlur();
+    }
   };
 
   return (
@@ -60,11 +92,6 @@ const ForgotPassword = () => {
               onTextChange={setEmail}
               value={email}
               returnKeyType="go"
-              // value={this.state.username}
-              // onSubmitEditing={recoverPasswordFn}
-              // onChange={this.handleChange.bind(this, 'username')}
-              // last
-              // inverse
             />
           </View>
 

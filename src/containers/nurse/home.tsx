@@ -9,8 +9,8 @@ import {
   ActivityIndicator,
   ViewProperties,
 } from 'react-native';
-import {Actions} from 'react-native-router-flux';
-import {inject, observer} from 'mobx-react';
+// import {Actions} from 'react-native-router-flux';
+
 import Styles from '../../theme/styles';
 import {ScreenType} from '../../common/constants';
 import {NurseSubmissionsStore} from '../../stores';
@@ -29,8 +29,6 @@ interface NurseHomeState {
   refreshing: boolean;
 }
 
-@inject('nurseSubmissionsStore')
-@observer
 export class NurseHome extends React.Component<NurseHomeProps, NurseHomeState> {
   constructor(props, state) {
     super(props, state);
@@ -44,9 +42,9 @@ export class NurseHome extends React.Component<NurseHomeProps, NurseHomeState> {
     this.load(false);
   }
 
-  startVirtualInterview(submissionId: string) {
-    Actions[ScreenType.NURSES.INTERVIEW]({submissionId});
-  }
+  // startVirtualInterview(submissionId: string) {
+  //   Actions[ScreenType.NURSES.INTERVIEW]({submissionId});
+  // }
 
   _renderLoading() {
     return (
