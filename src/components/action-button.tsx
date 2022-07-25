@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, Platform, Button} from 'react-native';
+import {Button} from 'react-native-elements';
+import {StyleSheet, Platform} from 'react-native';
 import theme from '../theme';
 import variables from '../theme';
 import {AppFonts, AppColors} from '../theme';
@@ -20,6 +21,10 @@ interface buttonProps {
   loadingProps: any;
   loadingColor: string;
   loading: any;
+  buttonColor: any;
+  borderColor: any;
+  customStyle: any;
+  customTitleStyle: any;
 }
 // const textStyleDisabled = props.textStyleDisabled|| variables.gray
 export const ActionButton: React.FC<buttonProps> = ({
@@ -33,11 +38,14 @@ export const ActionButton: React.FC<buttonProps> = ({
   danger,
   loading,
   loadingProps,
+  borderColor,
   loadingColor,
   style,
   textStyleDisabled = 'textStyleDisabled' || variables.gray,
   textStyle = 'textStyle' || variables.gray,
   smallSecondaryNotRounded,
+  customStyle,
+  customTitleStyle,
 }) => {
   return (
     <Button
@@ -48,30 +56,23 @@ export const ActionButton: React.FC<buttonProps> = ({
         size: 'small',
         color: loadingColor,
       }}
-      titleStyle={[
-        styles.primaryButtonText,
-        disabled ? textStyleDisabled : textStyle,
+      titleStyle={[styles.primaryButtonText, {...customTitleStyle}]}
+      buttonStyle={[
+        styles.btnStyle,
+        {borderColor: borderColor},
+        {...customStyle},
       ]}
       title={title}
-      style={StyleSheet.flatten([
-        styles.primaryButton,
-        !!danger && styles.dangerButton,
-        style,
-      ])}
+      // style={[styles.primaryButton, !!danger && styles.dangerButton, style]}
     />
   );
 };
 
 const styles = StyleSheet.create({
-  primaryButton: {
-    backgroundColor: theme.brandPrimary,
-    alignSelf: 'center',
-    width: 190,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 46,
-    borderColor: variables.blue,
-    borderWidth: 1,
+  btnStyle: {
+    backgroundColor: AppColors.blue,
+    height: 45,
+    borderRadius: 28,
   },
 
   dangerButton: {
@@ -80,11 +81,10 @@ const styles = StyleSheet.create({
   },
 
   primaryButtonText: {
-    ...AppFonts.buttonText,
     color: theme.white,
     width: '100%',
+    fontSize: 18,
     textAlign: 'center',
-    position: 'relative',
     top: Platform.OS === 'android' ? -1 : 0,
   },
 

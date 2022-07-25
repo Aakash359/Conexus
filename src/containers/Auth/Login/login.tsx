@@ -243,7 +243,7 @@ const LoginScreen: React.FC<LoginState> = ({
     ) {
       try {
         setLoading(true);
-        // setError(false);
+        setError(false);
         const {data} = await loginWithPass({
           username: email,
           password: password,
@@ -259,14 +259,13 @@ const LoginScreen: React.FC<LoginState> = ({
           setLoading(false);
           setError(data.message);
         }
-      } catch (e) {
-        console.log('Data====>', e);
+      } catch (error) {
+        console.log('error====>', error);
         setLoading(false);
       }
     } else {
-      alert('password');
-      // onEmailBlur();
-      // onPasswordBlur();
+      onEmailBlur();
+      onPasswordBlur();
     }
 
     // const {deviceStore, userStore} = this.props;
@@ -293,19 +292,19 @@ const LoginScreen: React.FC<LoginState> = ({
   };
 
   const onEmailBlur = () => {
-    // if (
-    //   email &&
-    //   email.length &&
-    //   (email.match(emailRegex) || email.length == 10)
-    // ) {
-    //   setEmailError(false);
-    // } else {
-    //   setEmailError(true);
-    // }
+    if (
+      email &&
+      email.length &&
+      (email.match(emailRegex) || email.length == 10)
+    ) {
+      setEmailError(false);
+    } else {
+      setEmailError(true);
+    }
   };
 
   const onPasswordBlur = () => {
-    if (password && password.length && password.length > 4) {
+    if (password && password.length && password.length > 3) {
       setPasswordError(false);
     } else {
       setPasswordError(true);
@@ -336,20 +335,21 @@ const LoginScreen: React.FC<LoginState> = ({
                 placeholder="Email Id"
                 onTextChange={setEmail}
                 value={email}
-                showError={emailError}
+                // showError={emailError}
                 returnKeyType="next"
-                onBlur={onEmailBlur}
-                errorMessage={'Invalid email'}
+                // onBlur={onEmailBlur}
+                // errorMessage={'Invalid email'}
               />
+              {error ? <Text style={style.errorTxt}>{error}</Text> : null}
             </View>
             <View style={style.field}>
               <Field
                 placeholder="Password"
                 secureTextEntry={true}
                 value={password}
-                errorMessage={'Invalid Password'}
-                showError={passwordError}
-                onBlur={onPasswordBlur}
+                // errorMessage={'Invalid Password'}
+                // showError={passwordError}
+                // onBlur={onPasswordBlur}
                 onTextChange={setPassword}
                 returnKeyType="done"
               />
@@ -363,9 +363,9 @@ const LoginScreen: React.FC<LoginState> = ({
           </View>
           <ActionButton
             textColor={variables.blue}
-            title="Sign-In"
-            // onPress={on}
-            // style={style.changePhotoButton}
+            loading={loading}
+            title="SIGN IN"
+            onPress={signInFn}
           />
           {/* <TouchableOpacity onPress={signInFn}>
             <View style={style.btnContainer}>
@@ -390,6 +390,11 @@ const style = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  errorTxt: {
+    fontSize: 12,
+    color: AppColors.red,
+    // fontFamily: AppFonts.h3,
   },
   field: {
     marginTop: 10,

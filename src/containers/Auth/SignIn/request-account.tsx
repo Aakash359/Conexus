@@ -19,6 +19,7 @@ import {logger} from 'react-native-logs';
 import {ConexusIcon} from '../components/conexus-icon';
 import {AppColors, AppFonts} from '../../../theme';
 import NavigationService from '../../../navigation/NavigationService';
+import {ActionButton} from '../../../components/action-button';
 
 const SafeAreaView = require('react-native').SafeAreaView;
 const eMailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
@@ -40,6 +41,7 @@ const log = logger.createLogger();
 const RequestAccount: React.FC<RequestAccountProps> = props => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [emailError, setEmailError] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [company, setCompany] = useState('');
@@ -48,7 +50,6 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [howHeard, setHowHeard] = useState('');
   const [userType, setUserType] = useState(props.route.params.userType || '-1');
-  console.log('Props===>', props.route.params.userType);
 
   useEffect(() => {
     setDefaultState();
@@ -56,6 +57,18 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
 
   const setDefaultState = () => {
     setUserType(props.userType || '-1');
+  };
+
+  const onEmailBlur = () => {
+    if (
+      eMail &&
+      eMail.length &&
+      (eMail.match(eMailRegex) || eMail.length == 10)
+    ) {
+      setEmailError(false);
+    } else {
+      setEmailError(true);
+    }
   };
 
   // constructor(props: RequestAccountProps, context?: any) {
@@ -127,7 +140,7 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
       };
       try {
         setLoading(true);
-        // setError(false);
+        setError(false);
         const {data} = await signUp(payload);
         console.log('Data====>', data);
         NavigationService.goBack();
@@ -144,8 +157,7 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
         setLoading(false);
       }
     } else {
-      Alert.alert('error');
-      // onEmailBlur();
+      onEmailBlur();
       // onPasswordBlur();
     }
   };
@@ -175,6 +187,7 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
                   onTextChange={setFirstName}
                   value={firstName}
                 />
+                {error ? <Text style={style.errorTxt}>{error}</Text> : null}
               </View>
               <View style={style.field}>
                 <Field
@@ -183,6 +196,7 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
                   onTextChange={setLastName}
                   value={lastName}
                 />
+                {error ? <Text style={style.errorTxt}>{error}</Text> : null}
               </View>
               {props.route.params.userType == '1' && (
                 <View style={style.field}>
@@ -192,6 +206,7 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
                     onTextChange={setCompany}
                     value={company}
                   />
+                  {error ? <Text style={style.errorTxt}>{error}</Text> : null}
                 </View>
               )}
               {props.route.params.userType == '1' && (
@@ -202,6 +217,7 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
                     onTextChange={setTitle}
                     value={title}
                   />
+                  {error ? <Text style={style.errorTxt}>{error}</Text> : null}
                 </View>
               )}
               <View style={style.field}>
@@ -212,15 +228,18 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
                   value={eMail}
                   returnKeyType={'none'}
                 />
+                {error ? <Text style={style.errorTxt}>{error}</Text> : null}
               </View>
               <View style={style.field}>
                 <Field
                   placeholder="Phone Number"
                   autoCapitalize="none"
                   keyboardType="phone-pad"
+                  maxLength={12}
                   onTextChange={setPhoneNumber}
                   value={phoneNumber}
                 />
+                {error ? <Text style={style.errorTxt}>{error}</Text> : null}
               </View>
               <View style={style.field}>
                 <Field
@@ -229,21 +248,38 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
                   onTextChange={setHowHeard}
                   value={howHeard}
                 />
+                {error ? <Text style={style.errorTxt}>{error}</Text> : null}
               </View>
             </View>
-            <TouchableOpacity
-              // disabled={
-              //   !!!this.state.firstName ||
-              //   !!!this.state.lastName ||
-              //   !!!this.state.eMail ||
-              //   !!!this.state.phoneNumber ||
-              //   !!!this.state.howHeard
-              // }
-              onPress={submitAccount}>
-              <View style={style.btn}>
-                <Text style={style.submit}>SUBMIT</Text>
-              </View>
-            </TouchableOpacity>
+            <ActionButton
+              textColor={variables.blue}
+              title="SUBMIT"
+              loading={loading}
+              disabled={
+                firstName &&
+                lastName &&
+                company &&
+                title &&
+                eMail &&
+                phoneNumber &&
+                howHeard
+                  ? loading
+                  : 'false'
+              }
+              onPress={submitAccount}
+              customTitleStyle={{color: AppColors.white, fontSize: 18}}
+              customStyle={
+                firstName &&
+                lastName &&
+                company &&
+                title &&
+                eMail &&
+                phoneNumber &&
+                howHeard
+                  ? style.submitEnable
+                  : style.submitDisable
+              }
+            />
           </View>
         </KeyboardAvoidingView>
       </ScrollView>
@@ -255,6 +291,11 @@ const style = StyleSheet.create({
   hidden: {
     display: 'none',
   },
+  errorTxt: {
+    fontSize: 12,
+    color: AppColors.red,
+    // fontFamily: AppFonts.h3,
+  },
   rootContainer: {
     flex: 1,
     display: 'flex',
@@ -264,11 +305,15 @@ const style = StyleSheet.create({
     marginTop: 5,
     paddingVertical: 2,
   },
-  submit: {
-    justifyContent: 'center',
-    fontSize: AppFonts.bodyTextLargeSize,
+  submitEnable: {
     alignSelf: 'center',
-    color: AppColors.white,
+    width: windowDimensions.width * 0.5,
+    backgroundColor: AppColors.blue,
+  },
+  submitDisable: {
+    alignSelf: 'center',
+    width: windowDimensions.width * 0.5,
+    backgroundColor: AppColors.gray,
   },
   picker: {
     backgroundColor: AppColors.white,

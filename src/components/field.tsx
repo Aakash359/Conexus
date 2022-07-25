@@ -125,7 +125,7 @@
 
 // export default Field
 
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, VoidFunctionComponent} from 'react';
 import {windowDimensions} from '../common';
 import {AppColors} from '../theme';
 import {
@@ -150,6 +150,11 @@ interface TextFieldProps {
   errorMessage: string;
   handleFocus: () => void;
   onBlur: () => void;
+  autoFocus: any;
+  hideLabel: any;
+  handleBlur: () => void;
+  maxLength: number;
+  customStyle: any;
 }
 
 export const Field: React.FC<TextFieldProps> = ({
@@ -158,11 +163,16 @@ export const Field: React.FC<TextFieldProps> = ({
   onTextChange,
   value,
   onFocus,
+  maxLength,
   autoCapitalize,
   returnKeyType = 'next',
   keyboardType = 'default',
   showError,
   errorMessage,
+  autoFocus,
+  hideLabel,
+  onBlur,
+  customStyle,
 }) => {
   const [isPassword, setIsPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
@@ -174,43 +184,45 @@ export const Field: React.FC<TextFieldProps> = ({
     }
   };
 
-  // const handleBlur = (props: any) => {
-  //   if (props.hideLabel) {
-  //     setIsFocused(true);
-  //   } else {
-  //     if (!props.value) {
-  //       setIsFocused(false);
-  //     } else {
-  //       setIsFocused(true);
-  //     }
-  //   }
-  //   if (props.onBlur) {
-  //     props.onBlur();
-  //   }
-  // };
-  // useEffect(() => {
-  //   setIsPassword(isSecure);
-  //   handleBlur();
-  //   if (props.autoFocus) {
-  //     handleFocus();
-  //   }
-  // }, []);
+  const handleBlur = (props: any) => {
+    if (hideLabel) {
+      setIsFocused(true);
+    } else {
+      if (!value) {
+        setIsFocused(false);
+      } else {
+        setIsFocused(true);
+      }
+    }
+    if (onBlur) {
+      onBlur();
+    }
+  };
+
+  useEffect(() => {
+    setIsPassword(isSecure);
+    handleBlur();
+    if (autoFocus) {
+      handleFocus();
+    }
+  }, []);
 
   return (
     <View style={styles.container}>
       <TextInput
         placeholder={placeholder}
         value={value}
+        maxLength={maxLength}
         onFocus={handleFocus}
         keyboardType={keyboardType}
         placeholderTextColor={AppColors.gray}
         autoCapitalize={autoCapitalize}
         secureTextEntry={isPassword}
-        // onBlur={() => handleBlur(true)}
+        onBlur={() => handleBlur(true)}
         errorMessage={showError ? errorMessage : null}
         returnKeyType={returnKeyType}
         onChangeText={text => onTextChange(text)}
-        style={styles.textField}
+        style={[styles.textField, {...customStyle}]}
       />
     </View>
   );

@@ -74,8 +74,6 @@ const AuthStack = () => {
         screenOptions={{headerShown: false}}
         initialRouteName="Auth">
         <Stack.Screen name="Auth" component={AuthNavigator} />
-        {/* <Stack.Screen name="Forgot Password" component={ForgotPassword} /> */}
-        {/* <Stack.Screen name="Onboarding" component={OnboardingScreen} /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { defaultBaseUrl } from '../redux/constants'
 
 export interface IUser {
   userId?: number
@@ -25,12 +26,9 @@ export interface IRegisterUser {
 }
 
 
-// import {BASE_URL} from '../redux/constants/index';
 
-const DevUrl = 'https://app.centrafi.net/conexustest/api';
+export const loginWithPass = (data: { username: string; password: string; App: boolean; }) => axios.post(`${defaultBaseUrl}/user/login-with-credentials`);
 
-export const loginWithPass = (data: { username: string; password: string; App: boolean; }) => axios.post(`${DevUrl}/user/login-with-credentials`);
+export const signUp = (data: IRegisterUser) => axios.post(`${defaultBaseUrl}/user/newRegister`, data);
 
-export const signUp = (data: IRegisterUser) => axios.post(`${DevUrl}/user/newRegister`, data);
-
-export const forgotPassword = (data:{username:string}) => axios.post(`${DevUrl}/user/PasswordRequest`, data);
+export const forgotPassword = (data:{username:string}) => axios.post(`${defaultBaseUrl}/user/PasswordRequest`, data);
