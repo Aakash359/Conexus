@@ -7,6 +7,7 @@ import {
   Text,
   View,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import variables from '../../../theme';
 import {Field} from '../../../components/field';
@@ -20,7 +21,6 @@ import NavigationService from '../../../navigation/NavigationService';
 import {showApiErrorAlert} from '../../../common';
 import {ActionButton} from '../../../components/action-button';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {Alert} from 'react-native';
 import {TouchableHighlight} from 'react-native-gesture-handler';
 
 interface ForgotPasswordProps {
@@ -64,30 +64,25 @@ const ForgotPassword = () => {
           username: email,
         });
         console.log('Data====>', data);
-        NavigationService.navigate('ReviewCandidateHomeScreen');
-        if (data.success) {
-          setLoading(false);
-          Toast.show({
-            type: 'success',
-            text2: data.message,
-            visibilityTime: 2000,
-            autoHide: true,
-          });
-          // onLogin(data, `email`);
-        } else {
-          setLoading(false);
-          setError(data.message);
-        }
-      } catch (error) {
-        showApiErrorAlert({
-          defaultTitle: 'Password Recovery Error',
-          defaultDescription:
-            'An unexpected error occurred while recovering your password. Please try again.',
-          loggerName: 'UserStore',
-          loggerTitle: 'recoverPassword',
-          error: error,
-        });
+        Alert.alert(data.description);
         setLoading(false);
+        NavigationService.navigate('LoginScreen');
+        Toast.show({
+          // type: 'success',
+          text2: data.description,
+          visibilityTime: 2000,
+          autoHide: true,
+        });
+      } catch (error) {
+        setLoading(false);
+        console.log('Error', error);
+        Alert.alert(error?.response?.data?.error?.description);
+        Toast.show({
+          type: 'error',
+          text2: error?.response?.data?.error?.description,
+          visibilityTime: 2000,
+          autoHide: true,
+        });
       }
     } else {
       onEmailBlur();

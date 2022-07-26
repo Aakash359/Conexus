@@ -1,7 +1,5 @@
 import React from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import ExploreIcon from '.././theme/icons/ExploreIcon';
 import ReviewCandidateHomeScreen from '../containers/ReviewCandidateHome';
 import PositionsScreen from '../containers/Positions';
 // import FavoriteScreen from '../screens/FavoriteScreen';
@@ -12,7 +10,6 @@ import {ConexusIcon} from '../components/conexus-icon';
 import {TouchableOpacity} from 'react-native';
 
 const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator();
 
 const TabNavigator = () => {
   return (

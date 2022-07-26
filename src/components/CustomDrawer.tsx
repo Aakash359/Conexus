@@ -2,7 +2,7 @@ import React from 'react';
 import {
   View,
   Text,
-  ImageBackground,
+  Alert,
   Image,
   TouchableOpacity,
   StyleSheet,
@@ -14,10 +14,17 @@ import {
 import {ConexusIcon, Avatar} from '../components/conexus-icon';
 import {AppFonts, AppColors} from '.././theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import NavigationService from '../navigation/NavigationService';
 
 export const AVATAR_ICON_SIZE = 45;
 
 const CustomDrawer = props => {
+  const openProfile = () => {
+    // Alert.alert('hi');
+    console.log('Navigation===>', NavigationService);
+
+    NavigationService.navigate('Profile');
+  };
   return (
     <View style={{flex: 1}}>
       <DrawerContentScrollView
@@ -64,7 +71,7 @@ const CustomDrawer = props => {
           </View>
         </TouchableOpacity>
         <View style={[styles.footerContainer, {padding: 10}]} />
-        <TouchableOpacity onPress={() => {}}>
+        <TouchableOpacity onPress={openProfile}>
           <View
             style={{
               flexDirection: 'row',

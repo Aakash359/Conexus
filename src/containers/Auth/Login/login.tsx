@@ -3,29 +3,26 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Text,
-  ImageBackground,
+  Alert,
   View,
   Platform,
   TouchableOpacity,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import NavigationService from '../../../navigation/NavigationService';
 import {loginWithPass} from '../../../services/auth';
 import {ActionButton} from '../../../components/action-button';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message';
 // import {Switch} from 'native-base';
-// import {observer, inject} from 'mobx-react';
-// import {logger} from 'react-native-logs';
-// import {Actions} from 'react-native-router-flux';
 // import {Images} from '../components';
 // import {ConexusIcon} from '../components/conexus-icon';
 // import {setConexusApiEnvironment, getConexusApiEnvironment} from '../services';
-// import {UserStore} from '../stores/userStore';
-// import {ScreenType, StoreType} from '../common/constants';
 import variables from '../../../theme';
 import {Field} from '../../../components/field';
 import {windowDimensions} from '../../../common';
 import {AppFonts, AppColors} from '../../../theme';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {getConexusApiEnvironment} from '../../../redux/constants/index';
 
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 const SafeAreaView = require('react-native').SafeAreaView;
@@ -151,75 +148,6 @@ interface LoginState {
 //       </View>
 //     );
 //   }
-//   renderLogin() {
-//     const {userStore} = this.props;
-
-//     return (
-//       <SafeAreaView style={[{backgroundColor: 'white'}]}>
-//         <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={-190}>
-//           <View style={style.content}>
-//             <View style={style.form}>
-//               <ConexusIcon
-//                 name="cn-logo"
-//                 size={100}
-//                 color={AppColors.blue}
-//                 style={style.logo}
-//               />
-//               <Text style={style.title}>Sign-In</Text>
-//               <View style={style.field}>
-//                 <Field
-//                   placeholder="Email Address"
-//                   autoCapitalize="none"
-//                   autoCorrect={false}
-//                   returnKeyType="next"
-//                   inverse
-//                   value={this.state.username}
-//                   onChange={this.handleChange.bind(this, 'username')}
-//                 />
-//               </View>
-//               <View style={style.field}>
-//                 <Field
-//                   placeholder="Password"
-//                   secureTextEntry
-//                   autoCapitalize="none"
-//                   returnKeyType="go"
-//                   value={this.state.password}
-//                   onSubmitEditing={this.loginFn}
-//                   onChange={this.handleChange.bind(this, 'password')}
-//                   last
-//                   inverse
-//                 />
-//               </View>
-//               <TouchableOpacity onPress={this.forgotPasswordFn}>
-//                 <Text style={style.forgotPass}>Forgot password?</Text>
-//               </TouchableOpacity>
-//               {this.props.deviceStore.isDebugEnabled
-//                 ? this.renderEnvironentToggle()
-//                 : null}
-//             </View>
-//             <TouchableOpacity onPress={this.loginFn}>
-//               <View style={style.btnContainer}>
-//                 <Text style={style.signIn}>SIGN IN</Text>
-//               </View>
-//             </TouchableOpacity>
-
-//             <TouchableOpacity onPress={this.requestAccount}>
-//               <Text style={style.newUser}>
-//                 New to Conexus? Request an account now!
-//               </Text>
-//             </TouchableOpacity>
-//           </View>
-//         </KeyboardAvoidingView>
-//       </SafeAreaView>
-//     );
-//   }
-
-//   render() {
-//     return this.state.displayMode === 'splash'
-//       ? this.renderSplash()
-//       : this.renderLogin();
-//   }
-// }
 
 const LoginScreen: React.FC<LoginState> = ({
   username = '',
@@ -233,6 +161,12 @@ const LoginScreen: React.FC<LoginState> = ({
   const [passwordError, setPasswordError] = useState(false);
   const [error, setError] = useState('');
 
+  const onLogin = async data => {
+    await AsyncStorage.setItem('userToken', data?.authToken);
+    await AsyncStorage.setItem('userId', JSON.stringify(data?.userId));
+    // props.route.params.setIsLoggedIn(true);
+  };
+
   const signInFn = async () => {
     if (
       email &&
@@ -243,25 +177,27 @@ const LoginScreen: React.FC<LoginState> = ({
     ) {
       try {
         setLoading(true);
-        setError(false);
         const {data} = await loginWithPass({
           username: email,
           password: password,
           App: true,
         });
         console.log('Data====>', data);
-        NavigationService.navigate('ReviewCandidateHomeScreen');
-        if (data.success) {
-          setLoading(false);
-
-          // onLogin(data, `email`);
-        } else {
-          setLoading(false);
-          setError(data.message);
-        }
-      } catch (error) {
-        console.log('error====>', error);
         setLoading(false);
+        onLogin(data, `email`);
+      } catch (error) {
+        setLoading(false);
+        console.log('Error', error);
+        Alert.alert(
+          error?.response?.statusText,
+          error?.response?.data?.Message,
+        );
+        Toast.show({
+          type: 'error',
+          text2: error?.response?.data?.Message,
+          visibilityTime: 2000,
+          autoHide: true,
+        });
       }
     } else {
       onEmailBlur();

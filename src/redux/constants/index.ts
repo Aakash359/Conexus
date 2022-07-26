@@ -12,6 +12,7 @@ export declare type ApiEnvironment = 'dev' | 'prod'
 
 const defaultEnvironment =  'dev' /// TEMPORARILY DISABLED 'prod'
 export const defaultBaseUrl = devUrl  /// TEMPORARILY DISABLED 'prod'
+
 let currentEnvironment: ApiEnvironment = defaultEnvironment
 log.info(`Setting API BaseURL to ${currentEnvironment}`)
 

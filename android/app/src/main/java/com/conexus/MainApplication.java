@@ -10,6 +10,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.config.ReactFeatureFlags;
 import com.facebook.soloader.SoLoader;
 import com.conexus.newarchitecture.MainApplicationReactNativeHost;
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import android.os.Bundle;
@@ -25,10 +26,15 @@ public class MainApplication extends Application implements ReactApplication {
           return BuildConfig.DEBUG;
         }
 
+       
+
         @Override
         protected List<ReactPackage> getPackages() {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
+          new SplashScreenReactPackage(); // SplashScreen Snippets
+           
+          
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
           new VectorIconsPackage();

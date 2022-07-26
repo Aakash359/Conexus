@@ -25,9 +25,7 @@ export interface IRegisterUser {
   isFacility: boolean
 }
 
-
-
-export const loginWithPass = (data: { username: string; password: string; App: boolean; }) => axios.post(`${defaultBaseUrl}/user/login-with-credentials`);
+export const loginWithPass = (data: { username: string; password: string; App: boolean; }) => axios.post(`https://app.centrafi.net/conexus/api/user/login-with-credentials`,data);
 
 export const signUp = (data: IRegisterUser) => axios.post(`${defaultBaseUrl}/user/newRegister`, data);
 

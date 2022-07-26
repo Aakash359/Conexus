@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
 import LoginScreen from '../containers/Auth/Login/login';
@@ -14,20 +14,8 @@ const Stack = createNativeStackNavigator();
 const OtherStack = createNativeStackNavigator();
 
 const AuthNavigator = () => {
-  // const isLoggedIn = useSelector(
-  //   (state: IState) => state.loginReducer.isLoggedIn,
-  // );
   return (
-    <OtherStack.Navigator
-      screenOptions={{headerShown: true}}
-      // initialRouteName={isLoggedIn ? 'AppStack' : 'AuthStack'}
-    >
-      {/* <Stack.Screen
-        name="SplashScreen"
-        component={SplashScreen}
-        options={{headerShown: false}}
-      /> */}
-
+    <OtherStack.Navigator screenOptions={{headerShown: true}}>
       <Stack.Screen
         name="Login"
         component={LoginScreen}
@@ -62,7 +50,6 @@ const AuthNavigator = () => {
           },
         }}
       />
-      <Stack.Screen name="AppStack" component={AppStack} />
     </OtherStack.Navigator>
   );
 };
@@ -72,8 +59,13 @@ const AuthStack = () => {
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator
         screenOptions={{headerShown: false}}
-        initialRouteName="Auth">
-        <Stack.Screen name="Auth" component={AuthNavigator} />
+        initialRouteName="Splash">
+        {/* <Stack.Screen
+          name="Splash"
+          component={SplashScreen}
+          options={{headerShown: false}}
+        /> */}
+        <Stack.Screen name="AuthNavigator" component={AuthNavigator} />
       </Stack.Navigator>
     </NavigationContainer>
   );

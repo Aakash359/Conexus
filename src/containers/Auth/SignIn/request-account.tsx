@@ -9,6 +9,7 @@ import {
   Alert,
   TouchableOpacity,
 } from 'react-native';
+import Toast from 'react-native-toast-message';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {signUp} from '../../../services/auth';
 import variables from '../../../theme';
@@ -35,8 +36,6 @@ interface RequestAccountProps {
   howHeard?: string;
   userType: string;
 }
-
-const log = logger.createLogger();
 
 const RequestAccount: React.FC<RequestAccountProps> = props => {
   const [loading, setLoading] = useState(false);
@@ -70,48 +69,6 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
       setEmailError(true);
     }
   };
-
-  // constructor(props: RequestAccountProps, context?: any) {
-  //   super(props, context);
-  //   this.state = {
-  //     firstName: '',
-  //     lastName: '',
-  //     company: '',
-  //     title: '',
-  //     eMail: '',
-  //     phoneNumber: '',
-  //     howHeard: '',
-  //     userType: props.userType || '-1',
-  //   };
-  // }
-  // setDefaultState() {
-  //   this.setState({
-  //     firstName: '',
-  //     lastName: '',
-  //     company: '',
-  //     title: '',
-  //     eMail: '',
-  //     phoneNumber: '',
-  //     howHeard: '',
-  //     userType: this.props.userType || '-1',
-  //   });
-  // }
-
-  // handleChange(name, value: any) {
-  //   const v = value.nativeEvent as any;
-  //   var stateObject = function () {
-  //     var returnObj = {};
-  //     returnObj[name] = value;
-  //     return returnObj;
-  //   };
-  //   this.setState(stateObject);
-  // }
-
-  // componentWillMount() {
-  //   this.setDefaultState();
-  //   const {userStore} = this.props;
-  // }
-
   const submitAccount = async () => {
     if (
       firstName &&
@@ -140,25 +97,45 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
       };
       try {
         setLoading(true);
-        setError(false);
         const {data} = await signUp(payload);
-        console.log('Data====>', data);
-        NavigationService.goBack();
-        if (data.success) {
-          // console.log('Yes yanah tak Aa raha hai');
-          // setLoading(false);
+        if (data.Success) {
+          setLoading(false);
+          NavigationService.goBack();
+          Alert.alert(
+            'Registered Successfully',
+            'Thank you for your request. A Conexus Account Manager will be in touch with you shortly',
+          );
+          Toast.show({
+            type: 'success',
+            text2: data.description,
+            visibilityTime: 2000,
+            autoHide: true,
+          });
           // onLogin(data, `email`);
         } else {
           setLoading(false);
-          setError(data.message);
+          console.log('Error', data);
+          Alert.alert('Error', data.description);
+          Toast.show({
+            type: 'error',
+            text2: data.description,
+            visibilityTime: 2000,
+            autoHide: true,
+          });
         }
       } catch (e) {
-        console.log('Data====>', e);
         setLoading(false);
+        console.log('Error', error);
+        // Alert.alert(error?.response?.data?.error?.description);
+        Toast.show({
+          type: 'error',
+          text2: 'Something went wrong!',
+          visibilityTime: 2000,
+          autoHide: true,
+        });
       }
     } else {
       onEmailBlur();
-      // onPasswordBlur();
     }
   };
 
