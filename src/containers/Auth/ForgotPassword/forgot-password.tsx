@@ -27,13 +27,10 @@ interface ForgotPasswordProps {
   username?: string;
   onPress: Function;
 }
-interface ForgotPasswordState {
-  username: string;
-  onPress: () => void;
-}
+
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
-const ForgotPassword = () => {
+const ForgotPassword: React.FC<ForgotPasswordProps> = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -50,12 +47,6 @@ const ForgotPassword = () => {
       setEmailError(true);
     }
   };
-  // handleChange(name: any, value: any) {
-  //   this.setState({
-  //     username: value.nativeEvent.text,
-  //   });
-  // }
-
   const recoverPasswordFn = async () => {
     if (email && email.length) {
       try {
@@ -86,8 +77,6 @@ const ForgotPassword = () => {
       }
     } else {
       onEmailBlur();
-      // onEmailBlur();
-      // onPasswordBlur();
     }
   };
   const goBack = () => {

@@ -1,6 +1,7 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import ReviewCandidateHomeScreen from '../containers/ReviewCandidateHome';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import PositionsScreen from '../containers/Positions';
 // import FavoriteScreen from '../screens/FavoriteScreen';
 // import GameDetailsScreen from '../screens/GameDetailsScreen';
@@ -8,6 +9,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import {AppFonts, AppColors} from '.././theme';
 import {ConexusIcon} from '../components/conexus-icon';
 import {TouchableOpacity} from 'react-native';
+import ExploreScreen from '../containers/Explore';
 
 const Tab = createBottomTabNavigator();
 

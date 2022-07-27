@@ -17,6 +17,8 @@ import {
 import {UserStore} from '../../stores';
 import {AppFonts, AppColors} from '../../theme';
 
+const SafeAreaView = require('react-native').SafeAreaView;
+
 interface AgentMessageModalProps extends ViewProperties {
   userStore: UserStore;
 }
@@ -113,20 +115,20 @@ export class AgentMessageModal extends Component<
     const {sending} = this.state;
 
     return (
-      <Container>
+      <SafeAreaView>
         {/* <ModalHeader title="New Message" right={() =>
                     <ConexusIconButton iconName="cn-x" iconSize={15} onPress={Actions.pop}></ConexusIconButton>
                 } /> */}
         <KeyboardAvoidingView style={style.innerContainer}>
-          {this._renderAccountManager()}
-          {this._renderForm()}
+          {/* {this._renderAccountManager()}
+          {this._renderForm()} */}
         </KeyboardAvoidingView>
-        <ScreenFooterButton
+        {/* <ScreenFooterButton
           disabled={sending}
           title="Send"
           onPress={this._sendMessage.bind(this)}
-        />
-      </Container>
+        /> */}
+      </SafeAreaView>
     );
   }
 }

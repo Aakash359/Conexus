@@ -11,6 +11,7 @@ import {
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
+import Icon from 'react-native-vector-icons/Ionicons';
 import {ConexusIcon, Avatar} from '../components/conexus-icon';
 import {AppFonts, AppColors} from '.././theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -20,28 +21,38 @@ export const AVATAR_ICON_SIZE = 45;
 
 const CustomDrawer = props => {
   const openProfile = () => {
-    // Alert.alert('hi');
-    console.log('Navigation===>', NavigationService);
-
     NavigationService.navigate('Profile');
+  };
+
+  const openFeedback = () => {
+    NavigationService.navigate('AppFeedbackModal');
+  };
+  const openChouaeLea = () => {
+    NavigationService.navigate('AgentMessageModal');
   };
   return (
     <View style={{flex: 1}}>
       <DrawerContentScrollView
         {...props}
         contentContainerStyle={{marginTop: 50}}>
-        <ConexusIcon
+        {/* <ConexusIcon
           name="cn-logo"
           size={50}
           color={AppColors.blue}
           style={{marginRight: 20}}
+        /> */}
+        <Icon
+          name="leaf"
+          size={50}
+          color={AppColors.blue}
+          style={styles.logo}
         />
         <View style={styles.headerContainer}>
           <DrawerItemList {...props} />
         </View>
       </DrawerContentScrollView>
       <View style={styles.footerContainer}>
-        <TouchableOpacity onPress={() => {}} style={{paddingVertical: 15}}>
+        <TouchableOpacity onPress={openChouaeLea} style={{paddingVertical: 15}}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Ionicons name="share-social-outline" size={22} />
             <View style={styles.chaoWrapper}>
@@ -64,7 +75,7 @@ const CustomDrawer = props => {
           </View>
         </TouchableOpacity>
         <View style={[styles.footerContainer]} />
-        <TouchableOpacity onPress={() => {}} style={{paddingVertical: 15}}>
+        <TouchableOpacity onPress={openFeedback} style={{paddingVertical: 15}}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Ionicons name="exit-outline" size={22} />
             <Text style={styles.text}>Send Feedback</Text>
@@ -116,7 +127,7 @@ const styles = StyleSheet.create({
     backgroundColor: AppColors.baseGray,
   },
   text: {
-    fontSize: 15,
+    fontSize: 18,
     fontFamily: 'Roboto-Medium',
     marginLeft: 35,
     fontWeight: 'bold',
@@ -126,6 +137,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginTop: 8,
     fontWeight: 'bold',
+  },
+  logo: {
+    alignSelf: 'center',
   },
 });
 

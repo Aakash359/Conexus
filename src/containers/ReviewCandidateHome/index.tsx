@@ -6,6 +6,7 @@ import {RouteProp} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import TopNavigation from '../../components/TopBackNavigation';
 import TopDrawerNavigation from '../../components/TopDrawerNavigation';
+import NavigationService from '../../navigation/NavigationService';
 
 type ReviewCandidateProp = RouteProp<
   {
@@ -20,48 +21,16 @@ type ReviewCandidateProps = {
   route: ReviewCandidateProp;
 };
 const ReviewCandidateHomeScreen = ({route}: ReviewCandidateProps) => {
+  const opneDrawer = () => {
+    NavigationService.navigate('ExploreScreen');
+  };
   return (
     <View style={styles.container}>
       {/* <TopDrawerNavigation /> */}
       <Text style={styles.screenTitle}>Restaurants</Text>
       <View>
         <Text style={styles.sectionTitle}>Restaurants Near You</Text>
-        <RestaurantCard
-          name="Sushi restaurant"
-          onPress={() => {
-            // navigation.push('Restaurant', {name: 'Sushi restaurant'});
-            // navigation.navigate('RestaurantsStack', {
-            //   screen: 'Restaurant',
-            //   params: {name: 'Hello from explore'},
-            // });
-          }}
-        />
-        <RestaurantCard
-          name="Burger restaurant"
-          onPress={() => {
-            navigation.push('Restaurant', {name: 'Burger restaurant'});
-          }}
-        />
-        <RestaurantCard
-          name="Fine dining restaurant"
-          onPress={() => {
-            navigation.push('Restaurant', {name: 'Fine dining restaurant'});
-          }}
-        />
-
-        <Text style={styles.sectionTitle}>Most Popular Restaurants</Text>
-        <RestaurantCard
-          name="Sushi restaurant"
-          onPress={() => {
-            navigation.push('Restaurant', {name: 'Sushi restaurant'});
-          }}
-        />
-        <RestaurantCard
-          name="Burger restaurant"
-          onPress={() => {
-            navigation.push('Restaurant', {name: 'Burger restaurant'});
-          }}
-        />
+        <RestaurantCard name="Sushi restaurant" onPress={opneDrawer} />
       </View>
       <Menu />
     </View>

@@ -19,17 +19,7 @@ const AppRouter = () => {
     SplashScreen.hide();
   }, []);
 
-  return (
-    <>
-      {token ? (
-        <NavigationContainer>
-          <AppStack />
-        </NavigationContainer>
-      ) : (
-        <AuthStack />
-      )}
-    </>
-  );
+  return <>{token ? <AppStack /> : <AuthStack />}</>;
 };
 
 export default AppRouter;

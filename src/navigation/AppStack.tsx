@@ -6,18 +6,82 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import PositionsScreen from '../containers/Positions';
 import FacilityMessageCenterContainer from '../containers/MessageCenter/facility-message-center-container';
-// import MessagesScreen from '../screens/MessagesScreen';
-// import MomentsScreen from '../screens/MomentsScreen';
-// import SettingsScreen from '../screens/SettingsScreen';
-
+import {navigationRef} from './NavigationService';
 import TabNavigator from './TabNavigator';
 import {TouchableOpacity} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
+import ExploreScreen from '../containers/Explore';
+import Profile from '../containers/profile-view';
+import AppFeedbackModal from '../containers/facility/appFeedbackModal';
+import {AgentMessageModal} from '../containers/facility/agentMessageModal';
+import EditProfile from '../containers/profile-edit';
 
 const Drawer = createDrawerNavigator();
-// const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator();
 
 const AppStack = () => {
+  return (
+    <NavigationContainer ref={navigationRef}>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Review Candidates"
+          component={DrawerStack}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="AgentMessageModal"
+          component={AgentMessageModal}
+          options={{
+            title: 'New Message',
+            headerTitleStyle: {
+              color: AppColors.mediumGray,
+              fontWeight: 'bold',
+              fontSize: 22,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="AppFeedbackModal"
+          component={AppFeedbackModal}
+          options={{
+            title: 'App Feedback',
+            headerTitleStyle: {
+              color: AppColors.mediumGray,
+              fontWeight: 'bold',
+              fontSize: 22,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={Profile}
+          options={{
+            title: 'Your Profile',
+            headerTitleStyle: {
+              color: AppColors.mediumGray,
+              fontWeight: 'bold',
+              fontSize: 22,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="EditProfile"
+          component={EditProfile}
+          options={{
+            title: 'Edit Your Profile',
+            headerTitleStyle: {
+              color: AppColors.mediumGray,
+              fontWeight: 'bold',
+              fontSize: 22,
+            },
+          }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
+const DrawerStack = () => {
   return (
     <Drawer.Navigator
       drawerContent={props => <CustomDrawer {...props} />}

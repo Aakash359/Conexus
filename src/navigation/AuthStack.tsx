@@ -2,12 +2,10 @@ import React, {useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
 import LoginScreen from '../containers/Auth/Login/login';
-import SplashScreen from '../containers/Auth/Splash/index';
 import ForgotPassword from '../containers/Auth/ForgotPassword/forgot-password';
 import SelectAccount from '../containers/Auth/SignIn/select-account';
 import RequestAccount from '../containers/Auth/SignIn/request-account';
 import {navigationRef} from './NavigationService';
-import AppStack from './AppStack';
 import {AppColors} from '../theme';
 
 const Stack = createNativeStackNavigator();
@@ -57,14 +55,7 @@ const AuthNavigator = () => {
 const AuthStack = () => {
   return (
     <NavigationContainer ref={navigationRef}>
-      <Stack.Navigator
-        screenOptions={{headerShown: false}}
-        initialRouteName="Splash">
-        {/* <Stack.Screen
-          name="Splash"
-          component={SplashScreen}
-          options={{headerShown: false}}
-        /> */}
+      <Stack.Navigator screenOptions={{headerShown: false}}>
         <Stack.Screen name="AuthNavigator" component={AuthNavigator} />
       </Stack.Navigator>
     </NavigationContainer>

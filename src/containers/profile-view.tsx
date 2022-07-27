@@ -1,12 +1,10 @@
 import React from 'react';
-import {Text, StyleSheet, View} from 'react-native';
+import {Text, StyleSheet, TouchableOpacity, View} from 'react-native';
 
 import {Avatar, ActionButton, ScreenFooterButton} from '../components';
 import {windowDimensions} from '../common';
 import Styles from '../theme/styles';
-import {UserStore} from '../stores';
-import {ScreenType} from '../common/constants';
-// import { Actions } from 'react-native-router-flux';
+import NavigationService from '../navigation/NavigationService';
 
 interface ProfileState {
   avatar: any;
@@ -35,15 +33,21 @@ const Profile: React.FC<ProfileState> = ({avatar}) => {
   //   photoUrl: '',
   // };
 
+  const openEditProfile = () => {
+    alert('HI');
+    NavigationService.navigate('EditProfile');
+  };
+
   return (
     <View>
+      <TouchableOpacity onPress={openEditProfile}>
+        <Text>hi</Text>
+      </TouchableOpacity>
+
       <View style={style.avatarContainer}>
         {/* <Avatar source={photoUrl} size={90} /> */}
       </View>
       <View style={style.detailsContainer}>
-        <Text style={[Styles.cnxProfileViewTitleText, style.titleText]}>
-          {/* {firstName} {lastName} */}
-        </Text>
         {/* {this.renderTitle()} */}
         {/* <ActionButton smallSecondary title="Edit" 
                     // onPress={Actions[ScreenType.PROFILE_EDIT]
