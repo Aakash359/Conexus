@@ -14,7 +14,7 @@ interface buttonProps {
   smallSecondary?: boolean;
   smallSecondaryNotRounded?: boolean;
   style?: any;
-  textColor?: string;
+  textColor?: any;
   disabled?: boolean;
   textStyle?: any;
   textStyleDisabled?: any;
@@ -50,6 +50,7 @@ export const ActionButton: React.FC<buttonProps> = ({
   return (
     <Button
       onPress={onPress}
+      textColor={textColor}
       loading={loading}
       disabled={disabled || loading}
       loadingProps={{

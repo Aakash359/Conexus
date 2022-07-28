@@ -1,31 +1,39 @@
-import React from 'react';
-import {Text, StyleSheet, TouchableOpacity, View} from 'react-native';
-
-import {Avatar, ActionButton, ScreenFooterButton} from '../components';
+import React, {useState, useEffect} from 'react';
+import {Text, StyleSheet, TouchableOpacity, View, Alert} from 'react-native';
+import {Avatar} from '../components/avatar';
 import {windowDimensions} from '../common';
 import Styles from '../theme/styles';
 import NavigationService from '../navigation/NavigationService';
+import ScreenFooterButton from '../components/screen-footer-button';
+import variable, {AppColors} from '../theme';
+import {ActionButton} from '../components/action-button';
+import {loginWithPass} from '../services/auth';
+import {useSelector} from '../redux/reducers/index';
 
 interface ProfileState {
   avatar: any;
 }
 
 const Profile: React.FC<ProfileState> = ({avatar}) => {
-  // renderTitle() {
-  //   if (this.props.userStore.user) {
-  //     let {title} = this.props.userStore.user;
+  const [loading, setLoading] = useState(false);
 
-  //     if (title) {
-  //       return (
-  //         <Text style={[Styles.cnxProfileViewSubtitleText, style.subTitleText]}>
-  //           {title}
-  //         </Text>
-  //       );
-  //     }
-  //   }
+  const userInfo = useSelector(state => state.userReducer);
 
-  //   return <View />;
-  // }
+  console.log('Usergsxb==>', userInfo?.user?.title);
+
+  const renderTitle = () => {
+    const userInfo = useSelector(state => state.userReducer);
+    if (userInfo) {
+      if (userInfo?.user?.title) {
+        return (
+          <Text style={[Styles.cnxProfileViewSubtitleText, style.subTitleText]}>
+            {userInfo?.user?.title}
+          </Text>
+        );
+      }
+    }
+    return <View />;
+  };
 
   // let {firstName, lastName, photoUrl} = this.props.userStore.user || {
   //   firstName: '',
@@ -34,37 +42,73 @@ const Profile: React.FC<ProfileState> = ({avatar}) => {
   // };
 
   const openEditProfile = () => {
-    alert('HI');
     NavigationService.navigate('EditProfile');
   };
 
   return (
-    <View>
-      <TouchableOpacity onPress={openEditProfile}>
+    <View style={style.container}>
+      {/* <TouchableOpacity onPress={openEditProfile}>
         <Text>hi</Text>
-      </TouchableOpacity>
-
+      </TouchableOpacity> */}
       <View style={style.avatarContainer}>
-        {/* <Avatar source={photoUrl} size={90} /> */}
+        <Avatar size={90} />
       </View>
       <View style={style.detailsContainer}>
-        {/* {this.renderTitle()} */}
-        {/* <ActionButton smallSecondary title="Edit" 
-                    // onPress={Actions[ScreenType.PROFILE_EDIT]
-                    // } 
-                    style={style.editButton} /> */}
+        <Text style={[Styles.cnxProfileViewTitleText, style.titleText]}>
+          {userInfo?.user?.firstName} {userInfo?.user?.lastName}
+        </Text>
+        {renderTitle()}
       </View>
-      {/* <ScreenFooterButton
-        title="Logout"
-        // onPress={this.props.userStore.logout}
-      /> */}
+      <View style={style.editFooter}>
+        <ActionButton
+          loading={loading}
+          title="EDIT"
+          customStyle={style.editEnable}
+          customTitleStyle={{color: AppColors.blue, fontSize: 15}}
+        />
+      </View>
+
+      <View style={style.footer}>
+        <ActionButton
+          textColor={variable.blue}
+          loading={loading}
+          title="LOGOUT"
+          customStyle={style.btnEnable}
+          // onPress={signInFn}
+        />
+      </View>
     </View>
   );
 };
 
 const style = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  editFooter: {
+    flex: 1,
+    // marginTop: 10,
+  },
   logoutBtn: {
     width: windowDimensions.width * 0.75,
+  },
+  editEnable: {
+    alignSelf: 'center',
+    backgroundColor: AppColors.white,
+    height: 40,
+    width: windowDimensions.width * 0.4,
+    borderColor: AppColors.gray,
+    borderWidth: 0.5,
+  },
+  btnEnable: {
+    alignSelf: 'center',
+    width: windowDimensions.width * 0.5,
+  },
+  footer: {
+    right: 10,
+    left: 10,
+    position: 'absolute',
+    bottom: 20,
   },
 
   editButton: {

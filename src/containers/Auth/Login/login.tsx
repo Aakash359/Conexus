@@ -23,6 +23,8 @@ import {windowDimensions} from '../../../common';
 import {AppFonts, AppColors} from '../../../theme';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {getConexusApiEnvironment} from '../../../redux/constants/index';
+import {useDispatch} from 'react-redux';
+import {loginRequest} from '../../../redux/actions/userAction';
 
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 const SafeAreaView = require('react-native').SafeAreaView;
@@ -160,6 +162,7 @@ const LoginScreen: React.FC<LoginState> = ({
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [error, setError] = useState('');
+  const dispatch = useDispatch();
 
   const onLogin = async data => {
     await AsyncStorage.setItem('userToken', data?.authToken);
@@ -176,15 +179,23 @@ const LoginScreen: React.FC<LoginState> = ({
       password.length
     ) {
       try {
-        setLoading(true);
-        const {data} = await loginWithPass({
+        const data = {
           username: email,
           password: password,
           App: true,
-        });
+        };
+        setLoading(true);
+        dispatch(loginRequest(data));
+
+        // const {data} = await loginWithPass({
+        //   username: email,
+        //   password: password,
+        //   App: true,
+        // });
+
         console.log('Data====>', data);
         setLoading(false);
-        onLogin(data, `email`);
+        // onLogin(data, `email`);
       } catch (error) {
         setLoading(false);
         console.log('Error', error);

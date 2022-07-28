@@ -1,15 +1,13 @@
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, Alert} from 'react-native';
 import React from 'react';
-import TopNavigation from '../../components/TopBackNavigation';
-import TopDrawerNavigation from '../../components/TopDrawerNavigation';
 
 const PositionsScreen = () => {
+  const openProfileModal = () => {
+    Alert.alert('hji');
+  };
   return (
     <View style={styles.container}>
-      <TopDrawerNavigation />
-      <Text style={styles.screenTitle}>Profile Screen</Text>
-      <Text>Name: John Doe</Text>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={openProfileModal}>
         <Text>Edit Profile</Text>
       </TouchableOpacity>
     </View>

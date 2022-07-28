@@ -15,6 +15,7 @@ import Profile from '../containers/profile-view';
 import AppFeedbackModal from '../containers/facility/appFeedbackModal';
 import {AgentMessageModal} from '../containers/facility/agentMessageModal';
 import EditProfile from '../containers/profile-edit';
+import CatalogContainer from '../containers/facility/question-catalog/catalog-container';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -76,6 +77,18 @@ const AppStack = () => {
             },
           }}
         />
+        {/* <Stack.Screen
+          name="EditProfile"
+          component={EditProfile}
+          options={{
+            title: 'Interview Question',
+            headerTitleStyle: {
+              color: AppColors.mediumGray,
+              fontWeight: 'bold',
+              fontSize: 22,
+            },
+          }}
+        /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -97,10 +110,11 @@ const DrawerStack = () => {
         },
       }}>
       <Drawer.Screen name="Review Candidates" component={TabNavigator} />
-      <Drawer.Screen name="Interview Questions" component={PositionsScreen} />
+      <Drawer.Screen name="CatalogContainer" component={CatalogContainer} />
       <Drawer.Screen
         name="Message Center"
         component={FacilityMessageCenterContainer}
+        // options={{drawerLabel: 'Hi'}}
       />
     </Drawer.Navigator>
   );

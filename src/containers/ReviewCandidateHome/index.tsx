@@ -3,9 +3,6 @@ import {View, Text, StyleSheet} from 'react-native';
 import RestaurantCard from '../../components/RestaurantCard';
 import Menu from '../../components/Menu';
 import {RouteProp} from '@react-navigation/native';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import TopNavigation from '../../components/TopBackNavigation';
-import TopDrawerNavigation from '../../components/TopDrawerNavigation';
 import NavigationService from '../../navigation/NavigationService';
 
 type ReviewCandidateProp = RouteProp<
@@ -32,7 +29,6 @@ const ReviewCandidateHomeScreen = ({route}: ReviewCandidateProps) => {
         <Text style={styles.sectionTitle}>Restaurants Near You</Text>
         <RestaurantCard name="Sushi restaurant" onPress={opneDrawer} />
       </View>
-      <Menu />
     </View>
   );
 };

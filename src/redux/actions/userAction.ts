@@ -22,14 +22,13 @@ export interface ErrorAction {
 export type UserAction = LoginAction | ErrorAction;
 
 // we need to dispatch action
-export const onLogin = (email: string, password: string) => {
+export const loginRequest = (data: { username: string; password: string; App: boolean }) => {
+
   return async (dispatch: Dispatch<UserAction>) => {
     try {
-      const response = await axios.post<UserModel>(`https://netflix-example.herokuapp.com/user/mock-login`, {
-        email,
-        password,
-      });
-
+      const response = await axios.post<UserModel>(`https://app.centrafi.net/conexus/api/user/login-with-credentials`,data);
+      console.log("Response====>",response);
+      
       if (!response) {
         dispatch({
           type: 'ON_ERROR',
