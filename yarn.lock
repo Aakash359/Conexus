@@ -863,6 +863,16 @@
   dependencies:
     tslib "^2.1.0"
 
+"@georstat/react-native-image-cache@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@georstat/react-native-image-cache/-/react-native-image-cache-2.2.0.tgz#57f9c2f2a72215920e4450e30b01ff75b8ff8904"
+  integrity sha512-1SXwv4Ruml9hydgv9qFVI8Lt131+S3x4q4TPMf7rD+A1471REk5MHui2t61Xw1I0fY/JVPbjXmar9JSVz5OSIw==
+  dependencies:
+    crypto-js "^4.1.1"
+    lodash "^4.17.21"
+    react-native-file-access "^2.4.2"
+    react-native-reanimated "^2.8.0"
+
 "@hapi/hoek@^9.0.0":
   version "9.3.0"
   resolved "https://registry.yarnpkg.com/@hapi/hoek/-/hoek-9.3.0.tgz#8368869dcb735be2e7f5cb7647de78e167a251fb"
@@ -3989,6 +3999,11 @@ crypto-js@3.1.9-1:
   version "3.1.9-1"
   resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-3.1.9-1.tgz#fda19e761fc077e01ffbfdc6e9fdfc59e8806cd8"
   integrity sha512-W93aKztssqf29OvUlqfikzGyYbD1rpkXvGP9IQ1JchLY3bxaLXZSWYbwrtib2vk8DobrDzX7PIXcDWHp0B6Ymw==
+
+crypto-js@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-4.1.1.tgz#9e485bcf03521041bd85844786b83fb7619736cf"
+  integrity sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==
 
 css-select@^4.2.1:
   version "4.3.0"
@@ -7870,6 +7885,11 @@ react-native-fetch-blob@0.10.8:
     base-64 "0.1.0"
     glob "7.0.6"
 
+react-native-file-access@^2.4.2:
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/react-native-file-access/-/react-native-file-access-2.4.4.tgz#4ed95d81b04c5d7dbba5a9ae0c0deff0c8950a8a"
+  integrity sha512-P4lHb2244qGXaUPAoOsWnc9Py+igiQEpwsK5qQj3lilyiumbl/kCS5b4AbJtfObXwNn5u/drl2JEVVX4+zRQ3w==
+
 react-native-fit-image@^1.5.5:
   version "1.5.5"
   resolved "https://registry.yarnpkg.com/react-native-fit-image/-/react-native-fit-image-1.5.5.tgz#c660d1ad74b9dcaa1cba27a0d9c23837e000226c"
@@ -7964,7 +7984,7 @@ react-native-ratings@8.0.4:
   dependencies:
     lodash "^4.17.15"
 
-react-native-reanimated@^2.9.1:
+react-native-reanimated@^2.8.0, react-native-reanimated@^2.9.1:
   version "2.9.1"
   resolved "https://registry.yarnpkg.com/react-native-reanimated/-/react-native-reanimated-2.9.1.tgz#d9a932e312c13c05b4f919e43ebbf76d996e0bc1"
   integrity sha512-309SIhDBwY4F1n6e5Mr5D1uPZm2ESIcmZsGXHUu8hpKX4oIOlZj2MilTk+kHhi05LjChoJkcpfkstotCJmPRPg==

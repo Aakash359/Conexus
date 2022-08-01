@@ -1,5 +1,7 @@
+import Images from './Images'
+
 export * from './action-button'
-export * from './Images'
+export { Images }
 export * from './field'
 export * from './circle'
 export * from './avatar'

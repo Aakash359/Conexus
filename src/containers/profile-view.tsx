@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Text, StyleSheet, TouchableOpacity, View, Alert} from 'react-native';
+import {Text, StyleSheet, Image, View, Alert} from 'react-native';
 import {Avatar} from '../components/avatar';
 import {windowDimensions} from '../common';
 import Styles from '../theme/styles';
@@ -20,6 +20,8 @@ const Profile: React.FC<ProfileState> = () => {
   const userInfo = useSelector(state => state.userReducer);
   const renderTitle = () => {
     const userInfo = useSelector(state => state.userReducer);
+    console.log('UserInfo====>', userInfo);
+
     if (userInfo) {
       if (userInfo?.user?.title) {
         return (
@@ -51,20 +53,29 @@ const Profile: React.FC<ProfileState> = () => {
 
   return (
     <View style={style.container}>
-      <View style={style.avatarContainer}>{/* <Avatar size={90} /> */}</View>
+      <View style={style.avatarContainer}>
+        <View style={style.profileCircle}>
+          <Image
+            style={style.image}
+            source={{
+              uri: userInfo?.user?.photoUrl,
+            }}
+          />
+        </View>
+      </View>
       <View style={style.detailsContainer}>
         <Text style={[Styles.cnxProfileViewTitleText, style.titleText]}>
           {userInfo?.user?.firstName} {userInfo?.user?.lastName}
         </Text>
         {renderTitle()}
-      </View>
-      <View style={style.editFooter}>
-        <ActionButton
-          title="EDIT"
-          customStyle={style.editEnable}
-          customTitleStyle={{color: AppColors.blue, fontSize: 15}}
-          onPress={() => openEditProfile(userInfo)}
-        />
+        <View style={style.editView}>
+          <ActionButton
+            title="EDIT"
+            customStyle={style.editEnable}
+            customTitleStyle={{color: AppColors.blue, fontSize: 15}}
+            onPress={() => openEditProfile(userInfo)}
+          />
+        </View>
       </View>
 
       <View style={style.footer}>
@@ -84,8 +95,26 @@ const style = StyleSheet.create({
   container: {
     flex: 1,
   },
-  editFooter: {
-    flex: 1,
+  editView: {
+    marginTop: 30,
+  },
+  profileCircle: {
+    height: 100,
+    flexDirection: 'row',
+    alignSelf: 'center',
+    width: 100,
+    borderColor: AppColors.blue,
+    borderRadius: 100 / 2,
+  },
+  image: {
+    position: 'absolute',
+    alignSelf: 'center',
+    marginTop: 0,
+    borderWidth: 2,
+    borderColor: AppColors.blue,
+    width: 100,
+    height: 100,
+    borderRadius: 100 / 2,
   },
   editEnable: {
     alignSelf: 'center',

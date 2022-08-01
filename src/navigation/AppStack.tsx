@@ -13,9 +13,10 @@ import {NavigationContainer} from '@react-navigation/native';
 import ExploreScreen from '../containers/Explore';
 import Profile from '../containers/profile-view';
 import AppFeedbackModal from '../containers/facility/appFeedbackModal';
-import {AgentMessageModal} from '../containers/facility/agentMessageModal';
+import AgentMessageModal from '../containers/facility/agentMessageModal';
 import EditProfile from '../containers/profile-edit';
 import CatalogContainer from '../containers/facility/question-catalog/catalog-container';
+import {windowDimensions} from '../common/window-dimensions';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -101,6 +102,9 @@ const DrawerStack = () => {
       screenOptions={{
         headerShown: true,
         drawerActiveBackgroundColor: AppColors.blue,
+        drawerStyle: {
+          width: windowDimensions.width * 0.8,
+        },
         drawerActiveTintColor: '#fff',
         drawerInactiveTintColor: AppColors.blue,
         drawerLabelStyle: {

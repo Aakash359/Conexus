@@ -54,7 +54,6 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = () => {
         const {data} = await forgotPassword({
           username: email,
         });
-        console.log('Data====>', data);
         Alert.alert(data.description);
         setLoading(false);
         NavigationService.navigate('LoginScreen');

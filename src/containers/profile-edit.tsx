@@ -8,6 +8,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Modal,
+  Image,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
@@ -46,6 +47,7 @@ const EditProfile = (props: EditProfileProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [firstNameError, setFirstNameError] = useState(false);
+  const [imageUrl, setImageUrl] = useState(userInfo?.user?.photoUrl || '');
   const [firstName, setFirstName] = useState(userInfo.user?.firstName || '');
   const [lastName, setLastName] = useState(userInfo?.user?.lastName || '');
   const [lastNameError, setLastNameError] = useState(false);
@@ -207,7 +209,6 @@ const EditProfile = (props: EditProfileProps) => {
   // };
 
   const saveProfile = async () => {
-    Alert.alert('hi');
     if (
       firstName &&
       firstName.length &&
@@ -223,9 +224,11 @@ const EditProfile = (props: EditProfileProps) => {
         lastName: lastName,
         title: title,
         phoneNumber: phoneNumber,
+        token: `Bearer ${await AsyncStorage.getItem('userToken')}`,
       };
       try {
         setLoading(true);
+        let token = `Bearer ${await AsyncStorage.getItem('userToken')}`;
         const {data} = await updateProfile(payload);
         console.log('Updated Profile===>', data);
 
@@ -290,10 +293,14 @@ const EditProfile = (props: EditProfileProps) => {
         <KeyboardAvoidingView behavior="position" style={style.rootContainer}>
           <View style={style.detailsContainer}>
             <View style={style.avatarContainer}>
-              {/* <Avatar
-                // source={this.props.userStore.user.photoUrl}
-                size={90}
-              /> */}
+              <View style={style.profileCircle}>
+                <Image
+                  style={style.image}
+                  source={{
+                    uri: imageUrl,
+                  }}
+                />
+              </View>
 
               <TouchableOpacity onPress={() => setCameraModal(true)}>
                 <Text style={style.changePhotoButton}>
@@ -437,6 +444,24 @@ const style = StyleSheet.create({
     height: '100%',
     width: '100%',
     justifyContent: 'flex-end',
+  },
+  profileCircle: {
+    height: 100,
+    flexDirection: 'row',
+    alignSelf: 'center',
+    width: 100,
+    borderColor: AppColors.blue,
+    borderRadius: 100 / 2,
+  },
+  image: {
+    position: 'absolute',
+    alignSelf: 'center',
+    marginTop: 0,
+    borderWidth: 2,
+    borderColor: AppColors.blue,
+    width: 100,
+    height: 100,
+    borderRadius: 100 / 2,
   },
   buttonContainer: {
     flexDirection: 'row',

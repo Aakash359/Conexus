@@ -1,21 +1,12 @@
-import React, {Component} from 'react';
-import {Text, Container, Textarea} from 'native-base';
-import {
-  ViewProperties,
-  StyleSheet,
-  View,
-  KeyboardAvoidingView,
-  Alert,
-} from 'react-native';
-import {Actions} from 'react-native-router-flux';
-import {
-  ModalHeader,
-  ConexusIconButton,
-  Avatar,
-  ScreenFooterButton,
-} from '../../components';
-import {UserStore} from '../../stores';
-import {AppFonts, AppColors} from '../../theme';
+import React, {useState} from 'react';
+import {StyleSheet, View, Alert, Image, Text, TextInput} from 'react-native';
+import {ActionButton} from '../../components/action-button';
+import {useSelector} from '../../redux/reducers/index';
+import {AppColors, AppFonts} from '../../theme';
+import {windowDimensions} from '../../common/window-dimensions';
+import Toast from 'react-native-toast-message';
+import {sendMessageService} from '../../services/auth';
+import {Avatar} from '../../components/avatar';
 
 const SafeAreaView = require('react-native').SafeAreaView;
 
@@ -28,146 +19,194 @@ interface AgentMessageModalState {
   sending: boolean;
 }
 
-export class AgentMessageModal extends Component<
-  AgentMessageModalProps,
-  AgentMessageModalState
-> {
-  constructor(props, state) {
-    super(props, state);
+const AgentMessageModal = () => {
+  const userInfo = useSelector(state => state.userReducer);
+  const [loading, setLoading] = useState(false);
+  const [messageText, setMessageText] = useState('');
+  const [messageTextError, setMessageTextError] = useState(false);
+  console.log('Okk====>', userInfo?.user?.userFacilities?.[0]?.facilityId);
 
-    this.state = {
-      messageText: '',
-      sending: false,
-    };
-  }
+  const messageTextBlur = () => {
+    if (messageText && messageText.length) {
+      setMessageTextError(false);
+    } else {
+      setMessageTextError(true);
+    }
+  };
 
-  componentWillMount() {}
-
-  _renderAccountManager() {
-    const {userStore} = this.props;
-    const manager = userStore.selectedFacility.manager;
+  const renderAccountManager = () => {
+    // const {userStore} = this.props;
+    // const manager = userStore.selectedFacility.manager;
 
     return (
       <View style={managerStyle.container}>
-        <Avatar
-          source={manager.acctManagerPhotoUrl}
-          size={38}
-          style={managerStyle.avatar}
-        />
         <View style={managerStyle.textContainer}>
-          <Text style={managerStyle.title}>{manager.acctManagerName}</Text>
+          <Image
+            style={managerStyle.image}
+            source={require('../../components/Images/bg.png')}
+          />
+          <Text style={managerStyle.title}>
+            {userInfo?.user?.userFacilities?.[0]?.manager?.acctManagerName}
+          </Text>
         </View>
       </View>
     );
-  }
+  };
 
-  _sendMessage() {
-    const {userStore} = this.props;
-    const {messageText} = this.state;
-
-    if (!!!messageText.trim()) {
-      return Promise.resolve(
-        Alert.alert('Invalid Message', 'Please type a message to send.'),
-      );
-    }
-
-    return userStore.selectedFacility.sendMessage(messageText).then(
-      () => {
-        this.setState({sending: false});
-        Alert.alert('Success', 'Your message has been sent.');
-        // Actions.pop()
-      },
-      error => {
-        this.setState({sending: false});
+  const onSendFeedback = async () => {
+    if (messageText && messageText.length) {
+      try {
+        const {data} = await sendMessageService({
+          note: messageText,
+          facilityId: userInfo?.user?.userFacilities?.[0]?.facilityId,
+        });
+        setLoading(true);
+        console.log('Data====>', data);
+      } catch (error) {
+        setLoading(false);
+        console.log('Error', error);
         Alert.alert(
-          'Error',
-          'An error occurred while sending your message. Please try again.',
+          error?.response?.statusText,
+          error?.response?.data?.Message,
         );
-        console.error(error);
-      },
-    );
-  }
+        Toast.show({
+          type: 'error',
+          text2: error?.response?.data?.Message,
+          visibilityTime: 2000,
+          autoHide: true,
+        });
+      }
+    } else {
+      messageTextBlur();
+    }
+  };
 
-  _renderForm() {
-    const {messageText} = this.state;
+  // _sendMessage() {
+  //   const {userStore} = this.props;
+  //   const {messageText} = this.state;
 
+  //   if (!!!messageText.trim()) {
+  //     return Promise.resolve(
+  //       Alert.alert('Invalid Message', 'Please type a message to send.'),
+  //     );
+  //   }
+
+  //   return userStore.selectedFacility.sendMessage(messageText).then(
+  //     () => {
+  //       this.setState({sending: false});
+  //       Alert.alert('Success', 'Your message has been sent.');
+  //       // Actions.pop()
+  //     },
+  //     error => {
+  //       this.setState({sending: false});
+  //       Alert.alert(
+  //         'Error',
+  //         'An error occurred while sending your message. Please try again.',
+  //       );
+  //       console.error(error);
+  //     },
+  //   );
+  // }
+
+  const renderForm = () => {
     return (
       <View>
-        <Textarea
+        <TextInput
           style={style.messageInput}
           maxLength={1000}
           rowSpan={12}
-          placeholder="Type your mesage"
+          placeholder="Type your mesaage"
+          placeholderTextColor={AppColors.mediumGray}
           autoFocus={false}
           value={messageText}
+          showError={messageTextError}
           returnKeyType="done"
+          errorMessage={'Invalid Message please type a message to send.'}
           blurOnSubmit={true}
           multiline={false}
-          onChangeText={messageText => {
-            this.setState({messageText});
-          }}
+          onBlur={messageTextBlur}
+          onChangeText={(text: any) => setMessageText(text)}
         />
       </View>
     );
-  }
+  };
 
-  render() {
-    const {sending} = this.state;
-
-    return (
-      <SafeAreaView>
-        {/* <ModalHeader title="New Message" right={() =>
-                    <ConexusIconButton iconName="cn-x" iconSize={15} onPress={Actions.pop}></ConexusIconButton>
-                } /> */}
-        <KeyboardAvoidingView style={style.innerContainer}>
-          {/* {this._renderAccountManager()}
-          {this._renderForm()} */}
-        </KeyboardAvoidingView>
-        {/* <ScreenFooterButton
-          disabled={sending}
-          title="Send"
-          onPress={this._sendMessage.bind(this)}
-        /> */}
-      </SafeAreaView>
-    );
-  }
-}
+  return (
+    <View style={style.container}>
+      {renderAccountManager()}
+      {renderForm()}
+      <View style={style.footer}>
+        <ActionButton
+          loading={loading}
+          title="SEND"
+          customStyle={style.btnEnable}
+          onPress={onSendFeedback}
+        />
+      </View>
+    </View>
+  );
+};
 
 const managerStyle = StyleSheet.create({
   container: {
     flexDirection: 'row',
+    marginTop: 15,
   },
   avatar: {
     paddingRight: 8,
   },
+  image: {
+    position: 'absolute',
+    marginLeft: 5,
+    width: 50,
+    height: 50,
+    borderRadius: 50 / 2,
+  },
   textContainer: {
-    flex: 1,
-    flexDirection: 'column',
-    paddingLeft: 8,
-    paddingTop: 10,
+    // flex: 1,
+    marginBottom: -20,
+    flexDirection: 'row',
+    marginLeft: 20,
   },
   title: {
-    ...AppFonts.bodyTextLargeTouchable,
+    fontSize: 18,
+    color: AppColors.blue,
+    marginLeft: 70,
+    marginTop: 15,
+    alignSelf: 'center',
   },
 });
 
 const style = StyleSheet.create({
-  innerContainer: {
+  container: {
     flex: 1,
-    padding: 20,
   },
-  formLabel: {
-    ...AppFonts.bodyTextMedium,
-    color: AppColors.darkBlue,
-    fontWeight: '600',
-    paddingRight: 16,
+  btnEnable: {
+    alignSelf: 'center',
+    width: windowDimensions.width * 0.5,
   },
+  footer: {
+    right: 10,
+    left: 10,
+    position: 'absolute',
+    bottom: 20,
+  },
+
   messageInput: {
+    textAlignVertical: 'top',
     backgroundColor: AppColors.white,
-    borderRadius: 6,
-    borderColor: AppColors.lightBlue,
+    marginTop: 40,
+    height: 380,
+    fontSize: 16,
+    color: AppColors.black,
+    paddingHorizontal: 10,
     borderWidth: 1,
-    padding: 6,
-    marginTop: 18,
+    borderColor: AppColors.gray,
+    width: '90%',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    borderRadius: 5,
   },
 });
+
+export default AgentMessageModal;

@@ -12,9 +12,10 @@ import {
   ImageURISource,
   ActivityIndicator,
   Alert,
+  Text,
 } from 'react-native';
 import {Thumbnail} from 'native-base';
-import {CachedImage} from 'react-native-cached-image';
+import {CachedImage} from '@georstat/react-native-image-cache';
 import {Images} from './';
 import {logger} from 'react-native-logs';
 import {BubbleLabel} from './bubble-label';
@@ -35,7 +36,7 @@ interface AvatarProps {
   onClick?: (event?: any) => void;
 }
 
-const Avatar = (props: AvatarProps) => {
+export const Avatar = (props: AvatarProps) => {
   const defaultProps = {
     // size: 20,
     // id: 0,
@@ -51,89 +52,84 @@ const Avatar = (props: AvatarProps) => {
     // onClick: '',
   };
 
-  // get titleHeight() {
-  //   const {titleHeight} = this.props;
-  //   return titleHeight || 26;
-  // }
+  const titleHeight = () => {
+    const {titleHeight} = props;
+    return titleHeight || 26;
+  };
 
-  // get titleBottomOffset() {
-  //   return this.titleHeight * 0.6;
-  // }
+  const titleBottomOffset = () => {
+    return titleHeight() * 0.6;
+  };
 
-  // private _renderLabel() {
-  //   const {title, titleStyle, titleTextStyle, size} = this.props;
-
-  //   let _style = StyleSheet.flatten([
-  //     titleStyle || {},
-  //     {
-  //       position: 'absolute',
-  //       top: size - this.titleBottomOffset,
-  //       left: size < 70 ? 0 : '12%',
-  //       right: size < 70 ? 0 : '12%',
-  //     },
-  //   ]);
-  //   let _title = !!title ? title : '';
-  //   return (
-  //     <BubbleLabel
-  //       containerStyle={_style as StyleProp<ViewStyle>}
-  //       title={_title}
-  //       height={this.titleHeight}
-  //       textStyle={titleTextStyle}
-  //     />
-  //   );
-  // }
+  const renderLabel = () => {
+    Alert.alert('hi');
+    // const {title, titleStyle, titleTextStyle, size} = props;
+    // let _style = StyleSheet.flatten([
+    //   titleStyle || {},
+    //   {
+    //     position: 'absolute',
+    //     top: size - 23,
+    //     left: size < 70 ? 0 : '12%',
+    //     right: size < 70 ? 0 : '12%',
+    //   },
+    // ]);
+    // let _title = !!title ? title : '';
+    // return (
+    //   <BubbleLabel
+    //     containerStyle={_style as StyleProp<ViewStyle>}
+    //     title={_title}
+    //     // height={titleHeight()}
+    //     textStyle={titleTextStyle}
+    //   />
+    // );
+  };
 
   const renderImage = () => {
-    const {size, style, source, borderWidth, borderColor, facility} = props;
+    const {size, style, source, borderColor, facility, title} = props;
     console.log('Size===>', size);
 
-    let imgSource: ImageURISource = facility
-      ? Images.defaultlFacilityAvatar
-      : Images.defaultAvatar;
+    // let imgSource: ImageURISource = facility
+    //   ? Images.defaultFacilityAvatar
+    //   : Images.defaultAvatar;
 
     if (source && source !== '') {
-      imgSource = {uri: source};
+      // imgSource = {uri: source};
     }
     const circleStyle = {
       position: 'absolute',
-      width: size,
-      height: size,
-      borderRadius: size / 2,
+      width: 30,
+      height: 30,
+      borderRadius: 30 / 2,
     } as ViewStyle;
 
-    if (borderWidth == null) {
-      borderWidth = 2;
-    }
+    // if (borderWidth == null) {
+    //   borderWidth = 2;
+    // }
 
-    if (borderColor == null) {
-      borderColor = AppColors.blue; // '#FDAD40'
-    }
+    // if (borderColor == null) {
+    //   borderColor = AppColors.blue; // '#FDAD40'
+    // }
 
     // const viewHeight = size + (title == null ? 0 : titleBottomOffset);
 
     return (
       <View>
-        {/* <CachedImage loadingIndicator={() => <ActivityIndicator color={AppColors.blue} />} source={imgSource} style={circleStyle} /> */}
-        {/* <Thumbnail
-          circular
-          style={circleStyle as StyleProp<ImageStyle>}
-          source={imgSource}
-        />
-        <View style={[circleStyle, {borderWidth, borderColor}]}></View>
-        {!!title && this._renderLabel()} */}
+        <View style={[circleStyle]} />
       </View>
     );
   };
 
   if (props.onClick) {
     return (
-      <TouchableHighlight onPress={props.onClick}>
-        {() => renderImage()}
-      </TouchableHighlight>
+      // <TouchableHighlight>
+      //   <Text>ji</Text>
+      //   {/* {renderImage()} */}
+      // </TouchableHighlight>
+      <View style={{backgroundColor: 'red'}}>
+        <Text>hi</Text>
+      </View>
     );
   }
 
   return renderImage();
 };
-
-export default Avatar;

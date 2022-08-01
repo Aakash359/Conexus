@@ -8,9 +8,7 @@ import {
   Platform,
   TouchableOpacity,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import NavigationService from '../../../navigation/NavigationService';
-import {loginWithPass} from '../../../services/auth';
 import {ActionButton} from '../../../components/action-button';
 import Toast from 'react-native-toast-message';
 // import {Switch} from 'native-base';

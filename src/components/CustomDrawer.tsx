@@ -15,11 +15,14 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {ConexusIcon, Avatar} from '../components/conexus-icon';
 import {AppFonts, AppColors} from '.././theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Icons from 'react-native-vector-icons/Feather';
 import NavigationService from '../navigation/NavigationService';
+import {useSelector} from '../redux/reducers/index';
 
 export const AVATAR_ICON_SIZE = 45;
 
 const CustomDrawer = props => {
+  const userInfo = useSelector(state => state.userReducer);
   const openProfile = () => {
     NavigationService.navigate('Profile');
   };
@@ -54,47 +57,72 @@ const CustomDrawer = props => {
       <View style={styles.footerContainer}>
         <TouchableOpacity onPress={openChouaeLea} style={{paddingVertical: 15}}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Ionicons name="share-social-outline" size={22} />
+            <Image
+              style={styles.image}
+              source={require('../components/Images/bg.png')}
+            />
             <View style={styles.chaoWrapper}>
               <Text
                 style={[
                   styles.text,
                   {
                     fontSize: 8,
+                    marginRight: 20,
                     color: AppColors.mediumGray,
                     fontFamily: 'Roboto-Medium',
                   },
                 ]}>
                 Your Account Manager is
               </Text>
-              <Text style={[styles.text, {color: AppColors.darkGrey}]}>
-                Choua Lee
+              <Text style={[styles.text, {color: AppColors.mediumGray}]}>
+                {userInfo?.user?.userFacilities?.[0]?.manager?.acctManagerName}
               </Text>
             </View>
-            <Ionicons name="exit-outline" size={22} />
+            <Icons
+              style={{marginTop: 15, color: AppColors.blue, marginLeft: 80}}
+              name="message-square"
+              size={22}
+            />
           </View>
         </TouchableOpacity>
         <View style={[styles.footerContainer]} />
-        <TouchableOpacity onPress={openFeedback} style={{paddingVertical: 15}}>
+        <TouchableOpacity onPress={openFeedback} style={{paddingVertical: 20}}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Ionicons name="exit-outline" size={22} />
-            <Text style={styles.text}>Send Feedback</Text>
+            <View style={styles.circle}>
+              <Icons
+                style={{
+                  marginTop: 15,
+                  fontSize: 35,
+                  color: AppColors.white,
+                  bottom: 5,
+                }}
+                name="message-square"
+                size={22}
+              />
+            </View>
+            <Text style={[styles.text]}>Send Feedback</Text>
           </View>
         </TouchableOpacity>
         <View style={[styles.footerContainer, {padding: 10}]} />
-        <TouchableOpacity onPress={openProfile}>
+        <TouchableOpacity onPress={openProfile} style={{paddingVertical: 35}}>
           <View
             style={{
               flexDirection: 'row',
+              backgroundColor: 'yellow',
             }}>
-            <Ionicons
-              name="exit-outline"
-              size={22}
-              style={{paddingVertical: 15}}
+            <Text style={styles.account}>Account Preference</Text>
+            <Image
+              style={[styles.image, {marginTop: -40}]}
+              source={{
+                uri: userInfo?.user?.photoUrl,
+              }}
             />
-            <Text style={[styles.text, {marginTop: 0}]}>
-              Account Preference
-            </Text>
+            <Icons
+              style={{marginTop: -30, color: AppColors.blue, marginLeft: 25}}
+              name="settings"
+              size={22}
+            />
+
             {/* <Avatar
               // source={selectedFacility.manager.acctManagerPhotoUrl}
               size={AVATAR_ICON_SIZE}
@@ -115,6 +143,31 @@ const styles = StyleSheet.create({
   chaoWrapper: {
     flexDirection: 'column',
   },
+  circle: {
+    position: 'absolute',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginLeft: 5,
+    width: 50,
+    height: 50,
+    borderRadius: 50 / 2,
+    backgroundColor: AppColors.blue,
+  },
+  account: {
+    fontSize: 18,
+    marginTop: -30,
+    fontFamily: 'Roboto-Medium',
+    marginLeft: 70,
+    fontWeight: 'bold',
+    color: AppColors.blue,
+  },
+  image: {
+    position: 'absolute',
+    marginLeft: 5,
+    width: 50,
+    height: 50,
+    borderRadius: 50 / 2,
+  },
   headerContainer: {
     flex: 1,
     backgroundColor: AppColors.white,
@@ -122,6 +175,7 @@ const styles = StyleSheet.create({
   },
   footerContainer: {
     padding: 2,
+    paddingHorizontal: 10,
     borderTopWidth: 1,
     borderTopColor: '#ccc',
     backgroundColor: AppColors.baseGray,
@@ -129,7 +183,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 18,
     fontFamily: 'Roboto-Medium',
-    marginLeft: 35,
+    marginLeft: 70,
     fontWeight: 'bold',
     color: AppColors.blue,
   },
