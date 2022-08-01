@@ -1,25 +1,24 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import RestaurantCard from '../../components/RestaurantCard';
-import Menu from '../../components/Menu';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {RouteProp} from '@react-navigation/native';
 import NavigationService from '../../navigation/NavigationService';
+import {useSelector} from '../../redux/index';
 
-type ReviewCandidateProp = RouteProp<
-  {
-    ReviewCandidateHomeScreen: {
-      ReviewCandidateHomeScreen: string;
-    };
-  },
-  'ReviewCandidateHomeScreen'
->;
+const ReviewCandidateHomeScreen = () => {
+  const userInfo = useSelector(state => state.userReducer);
 
-type ReviewCandidateProps = {
-  route: ReviewCandidateProp;
-};
-const ReviewCandidateHomeScreen = ({route}: ReviewCandidateProps) => {
-  const opneDrawer = () => {
-    NavigationService.navigate('ExploreScreen');
+  useEffect(() => {
+    saveToken();
+    getToken();
+  });
+  const saveToken = async () => {
+    await AsyncStorage.setItem('userToken', userInfo?.user?.authToken);
+  };
+
+  const getToken = async () => {
+    let token = await AsyncStorage.getItem('userToken');
+    console.log('Mil gya token', token);
   };
   return (
     <View style={styles.container}>
@@ -27,7 +26,6 @@ const ReviewCandidateHomeScreen = ({route}: ReviewCandidateProps) => {
       <Text style={styles.screenTitle}>Restaurants</Text>
       <View>
         <Text style={styles.sectionTitle}>Restaurants Near You</Text>
-        <RestaurantCard name="Sushi restaurant" onPress={opneDrawer} />
       </View>
     </View>
   );

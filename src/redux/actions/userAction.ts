@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Dispatch } from 'react';
-import { BASE_URL } from '../../utils';
+import { defaultBaseUrl } from '../../redux/constants'
+import { Alert } from 'react-native';
 
 export interface UserModel {
   firstName: string;
@@ -26,7 +27,7 @@ export const loginRequest = (data: { username: string; password: string; App: bo
 
   return async (dispatch: Dispatch<UserAction>) => {
     try {
-      const response = await axios.post<UserModel>(`https://app.centrafi.net/conexus/api/user/login-with-credentials`,data);
+      const response = await axios.post<UserModel>(`${defaultBaseUrl}/user/login-with-credentials`,data);
       console.log("Response====>",response);
       
       if (!response) {
@@ -45,6 +46,8 @@ export const loginRequest = (data: { username: string; password: string; App: bo
         type: 'ON_ERROR',
         payload: error,
       });
+      // console.log("Error===>",error?.response?.data?.description)
+      Alert.alert("Error",error?.response?.data?.description )
     }
   };
 };

@@ -32,6 +32,7 @@
     "axios": "^0.27.2",
     "babel-preset-react-native": "^4.0.1",
     "deprecated-react-native-prop-types": "^2.3.0",
+    "immutable": "^4.1.0",
     "jetifire": "^1.2.6",
     "lodash": "^4.17.21",
     "moment": "^2.29.3",
@@ -73,6 +74,7 @@
     "react-redux": "^8.0.2",
     "redux": "^4.2.0",
     "redux-logger": "^3.0.6",
+    "redux-persist": "^6.0.0",
     "redux-thunk": "^2.4.1",
     "rn-viewpager": "^1.2.9"
   },

@@ -8,6 +8,7 @@ import Fonts from './fonts';
 import {calcLineHeight} from './fonts';
 import Sizes from './sizes';
 import Colors from './colors';
+import Scale from './sizes';
 
 const deviceHeight = Dimensions.get('window').height;
 const deviceWidth = Dimensions.get('window').width;

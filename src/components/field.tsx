@@ -2,6 +2,7 @@
 // import React, {Component} from 'react';
 // import {windowDimensions} from '../common';
 // import {AppColors} from '../theme';
+import {Alert} from 'react-native';
 // // import {Item, Input, View} from 'native-base';
 // import {
 //   TextStyle,
@@ -125,13 +126,14 @@
 
 // export default Field
 
-import React, {useState, useEffect, VoidFunctionComponent} from 'react';
+import React, {useState, useEffect} from 'react';
 import {windowDimensions} from '../common';
 import {AppColors} from '../theme';
 import {
   View,
   TextInput,
   StyleSheet,
+  Text,
   TouchableOpacity,
   Image,
 } from 'react-native';
@@ -147,35 +149,38 @@ interface TextFieldProps {
   autoCapitalize: any;
   keyboardType: any;
   showError: boolean;
-  errorMessage: string;
-  handleFocus: () => void;
-  onBlur: () => void;
-  autoFocus: any;
+  errorMessage: b;
+  handleFocus: Function;
+  onBlur: Function;
+  autoFocus: boolean;
   hideLabel: any;
   handleBlur: () => void;
   maxLength: number;
   customStyle: any;
+  secureTextEntry: boolean;
 }
 
-export const Field: React.FC<TextFieldProps> = ({
-  placeholder,
-  isSecure = false,
-  onTextChange,
-  value,
-  onFocus,
-  maxLength,
-  autoCapitalize,
-  returnKeyType = 'next',
-  keyboardType = 'default',
-  showError,
-  errorMessage,
-  autoFocus,
-  hideLabel,
-  onBlur,
-  customStyle,
-}) => {
+export const Field = (props: TextFieldProps) => {
   const [isPassword, setIsPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const {
+    placeholder,
+    isSecure,
+    onTextChange,
+    value,
+    secureTextEntry,
+    onFocus,
+    maxLength,
+    autoCapitalize,
+    returnKeyType,
+    keyboardType,
+    showError,
+    errorMessage,
+    autoFocus,
+    hideLabel,
+    onBlur,
+    customStyle,
+  } = props;
 
   const handleFocus = (props: any) => {
     setIsFocused(true);
@@ -184,7 +189,7 @@ export const Field: React.FC<TextFieldProps> = ({
     }
   };
 
-  const handleBlur = (props: any) => {
+  const handleBlur = (runOnBlur: boolean | undefined) => {
     if (hideLabel) {
       setIsFocused(true);
     } else {
@@ -194,12 +199,13 @@ export const Field: React.FC<TextFieldProps> = ({
         setIsFocused(true);
       }
     }
-    if (onBlur) {
-      onBlur();
+    if (props.onBlur && runOnBlur) {
+      props.onBlur();
     }
   };
 
   useEffect(() => {
+    const {autoFocus} = props;
     setIsPassword(isSecure);
     handleBlur();
     if (autoFocus) {
@@ -217,7 +223,7 @@ export const Field: React.FC<TextFieldProps> = ({
         keyboardType={keyboardType}
         placeholderTextColor={AppColors.gray}
         autoCapitalize={autoCapitalize}
-        secureTextEntry={isPassword}
+        secureTextEntry={secureTextEntry}
         onBlur={() => handleBlur(true)}
         errorMessage={showError ? errorMessage : null}
         returnKeyType={returnKeyType}
@@ -241,9 +247,10 @@ const styles = StyleSheet.create({
   },
   textField: {
     flex: 1,
-    fontWeight: '500',
+    fontWeight: '700',
     height: 50,
     fontSize: 18,
-    color: AppColors.black,
+    paddingLeft: 10,
+    color: AppColors.mediumGray,
   },
 });

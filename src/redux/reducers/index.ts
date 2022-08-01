@@ -5,7 +5,6 @@ import {
     TypedUseSelectorHook,
 } from 'react-redux'
 
-
 export const rootReducer = combineReducers({
 userReducer: UserReducer,
 });

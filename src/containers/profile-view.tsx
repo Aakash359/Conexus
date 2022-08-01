@@ -1,26 +1,23 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {Text, StyleSheet, TouchableOpacity, View, Alert} from 'react-native';
 import {Avatar} from '../components/avatar';
 import {windowDimensions} from '../common';
 import Styles from '../theme/styles';
 import NavigationService from '../navigation/NavigationService';
-import ScreenFooterButton from '../components/screen-footer-button';
 import variable, {AppColors} from '../theme';
 import {ActionButton} from '../components/action-button';
-import {loginWithPass} from '../services/auth';
 import {useSelector} from '../redux/reducers/index';
+import {useDispatch} from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {UserModel} from '../redux/actions/userAction';
 
 interface ProfileState {
   avatar: any;
 }
 
-const Profile: React.FC<ProfileState> = ({avatar}) => {
+const Profile: React.FC<ProfileState> = () => {
   const [loading, setLoading] = useState(false);
-
   const userInfo = useSelector(state => state.userReducer);
-
-  console.log('Usergsxb==>', userInfo?.user?.title);
-
   const renderTitle = () => {
     const userInfo = useSelector(state => state.userReducer);
     if (userInfo) {
@@ -35,24 +32,26 @@ const Profile: React.FC<ProfileState> = ({avatar}) => {
     return <View />;
   };
 
-  // let {firstName, lastName, photoUrl} = this.props.userStore.user || {
-  //   firstName: '',
-  //   lastName: '',
-  //   photoUrl: '',
-  // };
+  const onPressLogout = async () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      AsyncStorage.clear();
+      NavigationService.navigate('LoginScreen');
+      return {
+        status: 'success',
+        message: 'You are logged out',
+      };
+    }, 1500);
+  };
 
-  const openEditProfile = () => {
-    NavigationService.navigate('EditProfile');
+  const openEditProfile = (userInfo: {error: any; user: UserModel}) => {
+    NavigationService.navigate('EditProfile', userInfo);
   };
 
   return (
     <View style={style.container}>
-      {/* <TouchableOpacity onPress={openEditProfile}>
-        <Text>hi</Text>
-      </TouchableOpacity> */}
-      <View style={style.avatarContainer}>
-        <Avatar size={90} />
-      </View>
+      <View style={style.avatarContainer}>{/* <Avatar size={90} /> */}</View>
       <View style={style.detailsContainer}>
         <Text style={[Styles.cnxProfileViewTitleText, style.titleText]}>
           {userInfo?.user?.firstName} {userInfo?.user?.lastName}
@@ -61,10 +60,10 @@ const Profile: React.FC<ProfileState> = ({avatar}) => {
       </View>
       <View style={style.editFooter}>
         <ActionButton
-          loading={loading}
           title="EDIT"
           customStyle={style.editEnable}
           customTitleStyle={{color: AppColors.blue, fontSize: 15}}
+          onPress={() => openEditProfile(userInfo)}
         />
       </View>
 
@@ -74,7 +73,7 @@ const Profile: React.FC<ProfileState> = ({avatar}) => {
           loading={loading}
           title="LOGOUT"
           customStyle={style.btnEnable}
-          // onPress={signInFn}
+          onPress={onPressLogout}
         />
       </View>
     </View>
@@ -87,10 +86,6 @@ const style = StyleSheet.create({
   },
   editFooter: {
     flex: 1,
-    // marginTop: 10,
-  },
-  logoutBtn: {
-    width: windowDimensions.width * 0.75,
   },
   editEnable: {
     alignSelf: 'center',
@@ -110,11 +105,6 @@ const style = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
   },
-
-  editButton: {
-    marginTop: 36,
-  },
-
   avatarContainer: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -126,17 +116,9 @@ const style = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
   },
-  footerContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-
-    paddingBottom: 36,
-  },
-
   titleText: {
     marginBottom: 3,
   },
-
   subTitleText: {},
 });
 

@@ -160,21 +160,16 @@ const LoginScreen: React.FC<LoginState> = ({
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [emailError, setEmailError] = useState(false);
+  const [emailErrorMSg, setEmailErrorMsg] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [error, setError] = useState('');
   const dispatch = useDispatch();
-
-  const onLogin = async data => {
-    await AsyncStorage.setItem('userToken', data?.authToken);
-    await AsyncStorage.setItem('userId', JSON.stringify(data?.userId));
-    // props.route.params.setIsLoggedIn(true);
-  };
 
   const signInFn = async () => {
     if (
       email &&
       email.length &&
-      email.match(emailRegex) &&
+      // email.match(emailRegex) && // temporary commented
       password &&
       password.length
     ) {
@@ -185,17 +180,11 @@ const LoginScreen: React.FC<LoginState> = ({
           App: true,
         };
         setLoading(true);
-        dispatch(loginRequest(data));
-
-        // const {data} = await loginWithPass({
-        //   username: email,
-        //   password: password,
-        //   App: true,
-        // });
-
+        setTimeout(() => {
+          setLoading(false);
+          dispatch(loginRequest(data));
+        }, 1000);
         console.log('Data====>', data);
-        setLoading(false);
-        // onLogin(data, `email`);
       } catch (error) {
         setLoading(false);
         console.log('Error', error);
@@ -239,12 +228,14 @@ const LoginScreen: React.FC<LoginState> = ({
   };
 
   const onEmailBlur = () => {
+    Alert.alert('Wrong Email');
     if (
       email &&
       email.length &&
       (email.match(emailRegex) || email.length == 10)
     ) {
       setEmailError(false);
+      console.log('EmailError1===>', emailError);
     } else {
       setEmailError(true);
     }
@@ -279,24 +270,23 @@ const LoginScreen: React.FC<LoginState> = ({
             <Text style={style.title}>Sign-In</Text>
             <View style={style.field}>
               <Field
-                placeholder="Email Id"
+                placeholder="Email Address"
                 onTextChange={setEmail}
                 value={email}
-                // showError={emailError}
+                showError={emailError}
                 returnKeyType="next"
-                // onBlur={onEmailBlur}
-                // errorMessage={'Invalid email'}
+                onBlur={() => onEmailBlur}
+                errorMessage={'Invalid Email'}
               />
-              {error ? <Text style={style.errorTxt}>{error}</Text> : null}
             </View>
             <View style={style.field}>
               <Field
                 placeholder="Password"
                 secureTextEntry={true}
                 value={password}
-                // errorMessage={'Invalid Password'}
-                // showError={passwordError}
-                // onBlur={onPasswordBlur}
+                errorMessage={'Invalid Password'}
+                showError={passwordError}
+                onBlur={onPasswordBlur}
                 onTextChange={setPassword}
                 returnKeyType="done"
               />

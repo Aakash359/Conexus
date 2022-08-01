@@ -22,39 +22,34 @@ import {AppColors} from '../theme';
 
 interface AvatarProps {
   size: number;
-  id?: number;
-  source?: string;
-  style?: ImageStyle | Array<ImageStyle>;
-  facility?: boolean;
-  title?: string;
-  titleStyle?: StyleProp<ViewStyle>;
-  titleTextStyle?: StyleProp<TextStyle>;
-  titleHeight?: number;
-  borderWidth?: number;
-  borderColor?: string;
-  onClick?: (event?) => void;
+  id: number;
+  source: string;
+  style: ImageStyle | Array<ImageStyle>;
+  facility: boolean;
+  title: string;
+  titleStyle: StyleProp<ViewStyle>;
+  titleTextStyle: StyleProp<TextStyle>;
+  titleHeight: number;
+  borderWidth: number;
+  borderColor: string;
+  onClick?: (event?: any) => void;
 }
 
-const defaultProps = {
-  size: 20,
-  id: 0,
-};
-
-export const Avatar: React.FC<AvatarProps> = ({
-  size,
-  id,
-  source,
-  style,
-  facility,
-  title,
-  titleStyle,
-  titleTextStyle,
-  titleHeight,
-  borderWidth,
-  borderColor,
-  onClick,
-}) => {
-  Avatar.defaultProps = defaultProps;
+const Avatar = (props: AvatarProps) => {
+  const defaultProps = {
+    // size: 20,
+    // id: 0,
+    // source: 75,
+    // style: '',
+    // facility: false,
+    // title: '',
+    // titleStyle: '',
+    // titleTextStyle: '',
+    // titleHeight: '',
+    // borderWidth: '',
+    // borderColor: '',
+    // onClick: '',
+  };
 
   // get titleHeight() {
   //   const {titleHeight} = this.props;
@@ -89,43 +84,35 @@ export const Avatar: React.FC<AvatarProps> = ({
   // }
 
   const renderImage = () => {
-    // let {
-    //   size,
-    //   id,
-    //   style,
-    //   source,
-    //   onClick,
-    //   title,
-    //   borderWidth,
-    //   borderColor,
-    //   facility,
-    // } = this.props;
-    // let imgSource: ImageURISource = facility
-    //   ? Images.defaultlFacilityAvatar
-    //   : Images.defaultAvatar;
+    const {size, style, source, borderWidth, borderColor, facility} = props;
+    console.log('Size===>', size);
 
-    // if (source && source !== '') {
-    //   imgSource = {uri: source};
-    // }
-    // const circleStyle = {
-    //   position: 'absolute',
-    //   width: size,
-    //   height: size,
-    //   borderRadius: size / 2,
-    // } as ViewStyle;
+    let imgSource: ImageURISource = facility
+      ? Images.defaultlFacilityAvatar
+      : Images.defaultAvatar;
 
-    // if (borderWidth == null) {
-    //   borderWidth = 2;
-    // }
+    if (source && source !== '') {
+      imgSource = {uri: source};
+    }
+    const circleStyle = {
+      position: 'absolute',
+      width: size,
+      height: size,
+      borderRadius: size / 2,
+    } as ViewStyle;
 
-    // if (borderColor == null) {
-    //   borderColor = AppColors.blue; // '#FDAD40'
-    // }
+    if (borderWidth == null) {
+      borderWidth = 2;
+    }
 
-    // const viewHeight = size + (title == null ? 0 : this.titleBottomOffset);
+    if (borderColor == null) {
+      borderColor = AppColors.blue; // '#FDAD40'
+    }
+
+    // const viewHeight = size + (title == null ? 0 : titleBottomOffset);
 
     return (
-      <View style={[style, {width: size}]}>
+      <View>
         {/* <CachedImage loadingIndicator={() => <ActivityIndicator color={AppColors.blue} />} source={imgSource} style={circleStyle} /> */}
         {/* <Thumbnail
           circular
@@ -138,11 +125,15 @@ export const Avatar: React.FC<AvatarProps> = ({
     );
   };
 
-  if (onClick) {
+  if (props.onClick) {
     return (
-      <TouchableHighlight onPress={onClick}>{renderImage()}</TouchableHighlight>
+      <TouchableHighlight onPress={props.onClick}>
+        {() => renderImage()}
+      </TouchableHighlight>
     );
   }
 
   return renderImage();
 };
+
+export default Avatar;

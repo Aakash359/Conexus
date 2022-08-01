@@ -7,38 +7,11 @@ import {AppFonts, AppColors} from '../theme';
 
 interface buttonProps {
   title: string;
-  onPress: Function;
-  primary?: boolean;
-  danger?: boolean;
-  secondary?: boolean;
-  smallSecondary?: boolean;
-  smallSecondaryNotRounded?: boolean;
-  style?: any;
-  textColor?: any;
-  disabled?: boolean;
-  textStyle?: any;
-  textStyleDisabled?: any;
-  loadingProps: any;
-  loadingColor: string;
-  loading: any;
-  buttonColor: any;
-  borderColor: any;
-  customStyle: any;
-  customTitleStyle: any;
 }
+
 // const textStyleDisabled = props.textStyleDisabled|| variables.gray
 export const ActionButton = (props: buttonProps) => {
-  const {
-    onPress,
-    title,
-    loadingColor,
-    customStyle,
-    textColor,
-    borderColor,
-    loading,
-    disabled,
-    customTitleStyle,
-  } = props;
+  const {title} = props;
   return (
     <Button
       onPress={onPress}
