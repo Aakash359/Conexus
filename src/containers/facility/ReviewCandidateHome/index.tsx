@@ -3,7 +3,7 @@ import {View, Text, StyleSheet} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NavigationService from '../../../navigation/NavigationService';
 import {useSelector} from '../../../redux/index';
-
+//d ckd
 const ReviewCandidateHomeScreen = () => {
   const userInfo = useSelector(state => state.userReducer);
 
