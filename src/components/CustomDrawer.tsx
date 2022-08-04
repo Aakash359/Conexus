@@ -14,7 +14,6 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import {ConexusIcon, Avatar} from '../components/conexus-icon';
 import {AppFonts, AppColors} from '.././theme';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icons from 'react-native-vector-icons/Feather';
 import NavigationService from '../navigation/NavigationService';
 import {useSelector} from '../redux/reducers/index';
@@ -28,10 +27,10 @@ const CustomDrawer = props => {
   };
 
   const openFeedback = () => {
-    NavigationService.navigate('AppFeedbackModal');
+    NavigationService.navigate('AppFeedback');
   };
   const openChouaeLea = () => {
-    NavigationService.navigate('AgentMessageModal');
+    NavigationService.navigate('AgentMessage');
   };
   return (
     <View style={{flex: 1}}>
@@ -122,12 +121,6 @@ const CustomDrawer = props => {
               name="settings"
               size={22}
             />
-
-            {/* <Avatar
-              // source={selectedFacility.manager.acctManagerPhotoUrl}
-              size={AVATAR_ICON_SIZE}
-              style={styles.avatar}
-            /> */}
           </View>
         </TouchableOpacity>
       </View>

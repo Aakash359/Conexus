@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  StyleSheet,
-  ViewProperties,
-  FlatList,
-  ActivityIndicator,
-} from 'react-native';
-import {Container} from 'native-base';
+import {StyleSheet, View, FlatList, ActivityIndicator} from 'react-native';
 import {
   FacilityListHeaderItem,
   IconTitleBlock,
@@ -19,7 +13,7 @@ import {logger} from 'react-native-logs';
 // import {Actions} from 'react-native-router-flux';
 import {ScreenType, StoreType} from '../common';
 
-interface FacilitySelectionContainerProps extends ViewProperties {
+interface FacilitySelectionContainerProps {
   showLoading?: boolean;
   showNoData: boolean;
   noDataText: string;
@@ -38,74 +32,70 @@ interface FacilitySelectionContainerProps extends ViewProperties {
 interface FacilitySelectionContainerState {}
 const log = logger.createLogger();
 // @inject(StoreType.USER)
-export class FacilitySelectionContainer extends React.Component<
-  FacilitySelectionContainerProps,
-  FacilitySelectionContainerState
-> {
-  constructor(props, state) {
-    super(props, state);
-    this.state = {};
-  }
+const FacilitySelectionContainer = (props: FacilitySelectionContainerProps) => {
+  // const { showNoData } = props
 
-  get showNoData(): boolean {
-    return this.props.showNoData;
-  }
+  const showNoData = (boolean: any) => {
+    return showNoData;
+  };
 
-  get noDataText(): string {
-    return this.props.noDataText || '';
-  }
+  const noDataText = (string: any) => {
+    return noDataText || '';
+  };
 
-  get noDataIconName(): string {
-    return this.props.noDataIconName || 'cn-info';
-  }
+  const noDataIconName = () => {
+    return noDataIconName || 'cn-info';
+  };
 
-  get facilityHeaderCaption(): string {
-    return this.props.facilityHeaderCaption || '';
-  }
+  const facilityHeaderCaption = () => {
+    return facilityHeaderCaption || '';
+  };
 
-  get refreshing(): boolean {
-    return this.props.refreshing;
-  }
+  const refreshing = () => {
+    return refreshing;
+  };
 
-  get onFacilityChosen(): (selectedFacilityId: string) => any {
-    const {onFacilityChosen} = this.props;
+  const onFacilityChosen = (selectedFacilityId: string) => {
+    const {onFacilityChosen} = props;
 
     if (onFacilityChosen && onFacilityChosen.call) {
       return onFacilityChosen;
     }
 
-    return function (selectedFacilityId: string) {};
-  }
+    return (selectedFacilityId: string) => {};
+  };
 
-  get onRefresh(): (selectedFacilityId: string) => any {
-    const {onRefresh} = this.props;
+  const onRefresh = (selectedFacilityId: string) => {
+    const {onRefresh} = props;
 
     if (onRefresh && onRefresh.call) {
       return onRefresh;
     }
 
     return function (selectedFacilityId: string) {};
-  }
+  };
 
-  get selectedFacilityId(): string {
-    return this.props.userStore.selectedFacilityId;
-  }
+  // const selectedFacilityId= ()=>{
+  //   return this.props.userStore.selectedFacilityId;
+  // }
 
-  get showLoading(): boolean {
-    return !!this.props.showLoading;
-  }
-  get showNewQuestionButton(): boolean {
-    return !!this.props.showNewQuestionButton;
-  }
-  get showFacilitySelector(): boolean {
-    if (this.props.expectOverrideFacilities) {
-      return this.props.overrideFacilities.length > 0;
+  const showLoading = () => {
+    return !!showLoading;
+  };
+  const showNewQuestionButton = () => {
+    return !!showNewQuestionButton;
+  };
+  const showFacilitySelector = () => {
+    const {expectOverrideFacilities} = props;
+    if (expectOverrideFacilities) {
+      const {overrideFacilities} = props;
+      return overrideFacilities.length > 0;
     }
 
-    return this.props.userStore.user.userFacilities.length > 1;
-  }
+    // return this.props.userStore.user.userFacilities.length > 1;
+  };
 
-  renderEmpty() {
+  const renderEmpty = () => {
     log.info('Show button', this.showNewQuestionButton);
     log.info('Props', this.props);
     return (
@@ -129,9 +119,10 @@ export class FacilitySelectionContainer extends React.Component<
         }}
       />
     );
-  }
-  showNewQuestion() {
-    const {needId} = this.props;
+  };
+
+  const showNewQuestion = () => {
+    const {needId} = props;
     log.info(`NeedID: ${needId}`);
     // Actions[ScreenType.FACILITIES.CATALOG_QUESTION]({
     //   questionId: '0',
@@ -141,36 +132,33 @@ export class FacilitySelectionContainer extends React.Component<
     //     this.forceUpdate();
     //   },
     // });
-  }
-  render() {
-    log.info(this.showNoData);
-    log.info(this.props);
-    return (
-      <Container style={style.container}>
-        {this.showFacilitySelector && (
-          <FacilityListHeaderItem
-            key={'facility-selection-header'}
-            caption={this.facilityHeaderCaption}
-            overrideFacilities={this.props.overrideFacilities}
-            facilityChosen={this.onFacilityChosen.bind(
-              this,
-              this.selectedFacilityId,
-            )}
-          />
-        )}
-        {this.showLoading && (
-          <ActivityIndicator color={AppColors.blue} style={{flex: 1}} />
-        )}
-        {!this.showLoading &&
+  };
+
+  return (
+    <View style={style.container}>
+      {/* {props.showFacilitySelector && (
+        <FacilityListHeaderItem
+          key={'facility-selection-header'}
+          caption={this.facilityHeaderCaption}
+          overrideFacilities={this.props.overrideFacilities}
+          facilityChosen={this.onFacilityChosen.bind(
+            this,
+            this.selectedFacilityId,
+          )}
+        />
+      )}
+      {this.showLoading && (
+        <ActivityIndicator color={AppColors.blue} style={{flex: 1}} />
+      )} */}
+      {/* {!this.showLoading &&
           this.showNewQuestionButton &&
           this.showNoData &&
           this.props.children}
         {!this.showLoading && this.showNoData && this.renderEmpty()}
-        {!this.showLoading && !this.showNoData && this.props.children}
-      </Container>
-    );
-  }
-}
+        {!this.showLoading && !this.showNoData && this.props.children} */}
+    </View>
+  );
+};
 
 const style = StyleSheet.create({
   containerCenter: {
@@ -185,3 +173,5 @@ const style = StyleSheet.create({
     paddingTop: 60,
   },
 });
+
+export default FacilitySelectionContainer;

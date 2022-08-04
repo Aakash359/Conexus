@@ -1,9 +1,8 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {RouteProp} from '@react-navigation/native';
-import NavigationService from '../../navigation/NavigationService';
-import {useSelector} from '../../redux/index';
+import NavigationService from '../../../navigation/NavigationService';
+import {useSelector} from '../../../redux/index';
 
 const ReviewCandidateHomeScreen = () => {
   const userInfo = useSelector(state => state.userReducer);
@@ -13,11 +12,11 @@ const ReviewCandidateHomeScreen = () => {
     getToken();
   });
   const saveToken = async () => {
-    await AsyncStorage.setItem('userToken', userInfo?.user?.authToken);
+    await AsyncStorage.setItem('authToken', userInfo?.user?.authToken);
   };
 
   const getToken = async () => {
-    let token = await AsyncStorage.getItem('userToken');
+    let token = await AsyncStorage.getItem('authToken');
     console.log('Mil gya token', token);
   };
   return (

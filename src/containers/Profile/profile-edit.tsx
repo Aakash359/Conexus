@@ -9,24 +9,25 @@ import {
   KeyboardAvoidingView,
   Modal,
   Image,
+  Keyboard,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import ImagePicker from 'react-native-image-crop-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {uploadPhoto, updateProfile} from '../services/auth';
-import variables, {AppColors} from '../theme';
+import {uploadPhoto, updateProfile} from '../../services/auth';
+import variables, {AppColors} from '../../theme';
 import {OrderedMap} from 'immutable';
-import {showApiErrorAlert, creatInputChangeHandler} from '../common';
-import {UserStore} from '../stores';
-import {windowDimensions} from '../common';
-import {useSelector} from '../redux/reducers/index';
+import {showApiErrorAlert, creatInputChangeHandler} from '../../common';
+import {UserStore} from '../../stores';
+import {windowDimensions} from '../../common';
+import {useSelector} from '../../redux/reducers/index';
 import {logger} from 'react-native-logs';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {ActionButton} from '../components/action-button';
-import {Field} from '../components/field';
-import {Avatar} from '../components/avatar';
-import NavigationService from '../navigation/NavigationService';
+import {ActionButton} from '../../components/action-button';
+import {Field} from '../../components/field';
+import {Avatar} from '../../components/avatar';
+import NavigationService from '../../navigation/NavigationService';
 
 interface EditProfileProps {
   firstName: string;
@@ -45,51 +46,15 @@ export const EDIT_PROFILE_COMPONENT_NAME = 'EditProfileComponent';
 const EditProfile = (props: EditProfileProps) => {
   const userInfo = props.route.params;
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [firstNameError, setFirstNameError] = useState(false);
-  const [imageUrl, setImageUrl] = useState(userInfo?.user?.photoUrl || '');
-  const [firstName, setFirstName] = useState(userInfo.user?.firstName || '');
-  const [lastName, setLastName] = useState(userInfo?.user?.lastName || '');
-  const [lastNameError, setLastNameError] = useState(false);
-  const [title, setTitle] = useState(userInfo?.user?.title || '');
-  const [titleError, setTitleError] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState(
-    userInfo?.user?.phoneNumber || '',
-  );
-  const [phoneError, setPhoneError] = useState(false);
+  const [errors, setErrors] = useState('');
   const [cameraModal, setCameraModal] = useState(false);
-
-  console.log('userInfo===>', userInfo);
-
-  const onFirstNameBlur = () => {
-    if (firstName && firstName.length) {
-      setFirstNameError(false);
-    } else {
-      setFirstNameError(true);
-    }
-  };
-  const onLastNameBlur = () => {
-    if (lastName && lastName.length) {
-      setLastNameError(false);
-    } else {
-      setLastNameError(true);
-    }
-  };
-  const onTitleBlur = () => {
-    if (title && title.length) {
-      setTitleError(false);
-    } else {
-      setTitleError(true);
-    }
-  };
-
-  const onPhoneBlur = () => {
-    if (phoneNumber && phoneNumber.length == 10) {
-      setPhoneError(false);
-    } else {
-      setPhoneError(true);
-    }
-  };
+  const [inputs, setInputs] = useState({
+    imageUrl: userInfo?.user?.photoUrl || '',
+    firstName: userInfo.user?.firstName || '',
+    lastName: userInfo?.user?.lastName || '',
+    title: userInfo?.user?.title || '',
+    phoneNumber: userInfo?.user?.phoneNumber || '',
+  });
 
   const openGallery = async () => {
     ImagePicker.openPicker({
@@ -116,6 +81,7 @@ const EditProfile = (props: EditProfileProps) => {
         console.log('PhotoMil Gyi', data);
 
         let imageUrl = `data:${image.mime};base64,${image.data}`;
+        setImageUrl(imageUrl);
         console.log('received base64 image', data, imageUrl);
         setCameraModal(false);
       })
@@ -159,6 +125,7 @@ const EditProfile = (props: EditProfileProps) => {
         };
         const data = await uploadPhoto(payload);
         let imageUrl = `data:${image.mime};base64,${image.data}`;
+        setImageUrl(imageUrl);
         console.log('received base64 image', data, imageUrl);
         setCameraModal(false);
       })
@@ -172,119 +139,62 @@ const EditProfile = (props: EditProfileProps) => {
           loggerTitle: EDIT_PROFILE_COMPONENT_NAME,
           loggerName: 'selectImage',
         });
-
-        // SetCameraModal(false);
       });
   };
 
-  // selectImage = (useCamera: boolean) => {
-  // logger.group(EDIT_PROFILE_COMPONENT_NAME, 'selectImage', (log: (...any) => {}) => {
-  // log.info('Picking image');
+  const handleOnchange = (text: any, input: any) => {
+    setInputs((prevState: any) => ({...prevState, [input]: text}));
+  };
+  const handleError = (error: any, input: any) => {
+    setErrors((prevState: any) => ({...prevState, [input]: error}));
+  };
 
-  // ImagePicker[useCamera ? 'openCamera' : 'openPicker']({
-  //     width: 300,
-  //     height: 400,
-  //     cropping: true,
-  //     includeBase64: true
-  // }).then((image: any) => {
-  //     log.info('Image picked. Saving...')
-  //     userService.savePhoto(image.data, image.mime)
-  //         .then(result => {
-  //             log.info('Image save complete, setting user store image');
-  //             // Instead of loading the server photo we just sent, we simply construct a data url
-  //             const photoUrl = `data:${image.mime};base64,${image.data}`
-  //             this.props.userStore.setUserImage(photoUrl)
-  //         })
-  //         .catch(error => {
-  //             showApiErrorAlert({
-  //                 defaultTitle: 'Show Profile Error',
-  //                 defaultDescription: 'An unexpected error occurred while saving your profile photo. Please try again.',
-  //                 error: error,
-  //                 loggerTitle: EDIT_PROFILE_COMPONENT_NAME,
-  //                 loggerName: 'selectImage'
-  //             });
-  //         });
-  // })
-  // });
-  // };
+  const validate = () => {
+    Keyboard.dismiss();
+    let isValid = true;
+    if (!inputs.firstName) {
+      handleError('Please enter first name', 'firstName');
+      isValid = false;
+    }
+    if (!inputs.lastName) {
+      handleError('Please enter first last', 'lastName');
+      isValid = false;
+    }
+    if (!inputs.title) {
+      handleError('Please enter title', 'title');
+      isValid = false;
+    }
+    if (!inputs.phoneNumber) {
+      handleError('Please enter phone number', 'phoneNumber');
+      isValid = false;
+    }
+    if (isValid) {
+      saveProfile();
+    }
+  };
 
   const saveProfile = async () => {
-    if (
-      firstName &&
-      firstName.length &&
-      lastName &&
-      lastName.length &&
-      title &&
-      title.length &&
-      phoneNumber &&
-      phoneNumber.length
-    ) {
-      const payload = {
-        firstName: firstName,
-        lastName: lastName,
-        title: title,
-        phoneNumber: phoneNumber,
-        token: `Bearer ${await AsyncStorage.getItem('userToken')}`,
-      };
-      try {
-        setLoading(true);
-        let token = `Bearer ${await AsyncStorage.getItem('userToken')}`;
-        const {data} = await updateProfile(payload);
-        console.log('Updated Profile===>', data);
-
-        NavigationService.goBack();
-        Alert.alert(
-          'Registered Successfully',
-          'Thank you for your request. A Conexus Account Manager will be in touch with you shortly',
-        );
-        Toast.show({
-          type: 'success',
-          text2: data.description,
-          visibilityTime: 2000,
-          autoHide: true,
-        });
-      } catch (error) {
-        setLoading(false);
-        console.log('Error', error);
-        Alert.alert(
-          error?.response?.statusText,
-          error?.response?.data?.Message,
-        );
-        Toast.show({
-          type: 'error',
-          text2: error?.response?.data?.Message,
-          visibilityTime: 2000,
-          autoHide: true,
-        });
-      }
-    } else {
-      onFirstNameBlur();
-      onLastNameBlur();
-      onTitleBlur();
-      onPhoneBlur();
+    const payload = {
+      imageUrl: inputs.imageUrl,
+      firstName: inputs.firstName,
+      lastName: inputs.lastName,
+      title: inputs.title,
+      phoneNumber: inputs.phoneNumber,
+    };
+    console.log('Updated Profile===>', payload);
+    try {
+      setLoading(true);
+      const {data} = await updateProfile(payload);
+      NavigationService.goBack();
+      Alert.alert(
+        'Profile updated Successfully!',
+        'Profile updated Successfully!',
+      );
+    } catch (error) {
+      setLoading(false);
+      console.log('Error', error);
+      Alert.alert(error?.response?.statusText, error?.response?.data?.Message);
     }
-
-    // const {deviceStore, userStore} = this.props;
-    // if (userStore.isAuthenticating) {
-    //   log.info('LoginContainer', 'Already logging in...aborting');
-    //   return;
-    // }
-    // userStore
-    //   .login({username: this.state.username, password: this.state.password})
-    //   .then(nextViewName => {
-    //     // deviceStore.checkPermissions();
-    //     return AsyncStorage.setItem(
-    //       LOGIN_LAST_USER_STORAGE_KEY,
-    //       this.state.username,
-    //     ).then(() => {
-    //       log.info('LoginContainer', 'NextViewName: ' + nextViewName);
-    //       if (nextViewName) {
-    //         Actions[nextViewName]();
-    //       } else {
-    //         this.setDefaultState('login');
-    //       }
-    //     });
-    //   });
   };
 
   return (
@@ -297,7 +207,7 @@ const EditProfile = (props: EditProfileProps) => {
                 <Image
                   style={style.image}
                   source={{
-                    uri: imageUrl,
+                    uri: inputs.imageUrl,
                   }}
                 />
               </View>
@@ -314,47 +224,48 @@ const EditProfile = (props: EditProfileProps) => {
               placeholder="First Name"
               autoCapitalize="none"
               returnKeyType="done"
-              value={firstName}
-              onBlur={() => onFirstNameBlur()}
+              value={inputs.firstName}
+              onTextChange={(text: any) => handleOnchange(text, 'firstName')}
+              onFocus={() => handleError(null, 'firstName')}
+              error={errors.firstName}
               customStyle={{
                 backgroundColor: AppColors.white,
                 marginHorizontal: -10,
                 marginRight: 1,
                 borderRadius: 5,
               }}
-              onTextChange={(text: string) => setFirstName(text)}
             />
             <View style={style.top} />
             <Field
               placeholder="Last Name"
               autoCapitalize="none"
               returnKeyType="done"
-              value={lastName}
-              onBlur={() => onLastNameBlur()}
+              value={inputs.lastName}
+              onTextChange={(text: any) => handleOnchange(text, 'lastName')}
+              onFocus={() => handleError(null, 'lastName')}
+              error={errors.lastName}
               customStyle={{
                 backgroundColor: AppColors.white,
                 marginHorizontal: -10,
                 marginRight: 1,
                 borderRadius: 5,
               }}
-              onTextChange={(text: string) => setLastName(text)}
             />
             <View style={style.top} />
             <Field
               placeholder="Title"
               autoCapitalize="none"
               returnKeyType="done"
-              value={title}
-              showError={titleError}
-              errorMessage={'Please enter the title'}
+              value={inputs.title}
+              onTextChange={(text: any) => handleOnchange(text, 'title')}
+              onFocus={() => handleError(null, 'title')}
+              error={errors.title}
               customStyle={{
                 backgroundColor: AppColors.white,
                 marginHorizontal: -10,
                 marginRight: 1,
                 borderRadius: 5,
               }}
-              onTextChange={(text: string) => setTitle(text)}
-              onBlur={() => onTitleBlur()}
             />
             <View style={style.top} />
             <Field
@@ -362,25 +273,24 @@ const EditProfile = (props: EditProfileProps) => {
               autoCapitalize="none"
               keyboardType={'number-pad'}
               returnKeyType="done"
-              onBlur={() => onPhoneBlur()}
-              value={phoneNumber}
-              showError={phoneError}
-              errorMessage={'Invalid Phone Number'}
+              value={inputs.phoneNumber}
+              onTextChange={(text: any) => handleOnchange(text, 'phoneNumber')}
+              onFocus={() => handleError(null, 'phoneNumber')}
+              error={errors.phoneNumber}
               customStyle={{
                 backgroundColor: AppColors.white,
                 marginHorizontal: -10,
                 marginRight: 1,
                 borderRadius: 5,
               }}
-              onTextChange={(text: string) => setPhoneNumber(text)}
             />
             <View style={style.footer}>
               <ActionButton
-                primary
+                loading={loading}
                 title="Save"
                 customStyle={style.btnEnable}
                 style={{marginTop: 40}}
-                onPress={saveProfile}
+                onPress={validate}
               />
             </View>
           </View>

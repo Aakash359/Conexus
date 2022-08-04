@@ -4,18 +4,16 @@ import CustomDrawer from '../components/CustomDrawer';
 import {AppFonts, AppColors} from '.././theme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import PositionsScreen from '../containers/Positions';
 import FacilityMessageCenterContainer from '../containers/MessageCenter/facility-message-center-container';
 import {navigationRef} from './NavigationService';
 import TabNavigator from './TabNavigator';
-import {TouchableOpacity} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
-import ExploreScreen from '../containers/Explore';
-import Profile from '../containers/profile-view';
-import AppFeedbackModal from '../containers/facility/appFeedbackModal';
-import AgentMessageModal from '../containers/facility/agentMessageModal';
-import EditProfile from '../containers/profile-edit';
-import CatalogContainer from '../containers/facility/question-catalog/catalog-container';
+import Profile from '../containers/Profile/profile-view';
+import AppFeedback from '../containers/SendFeedback/appFeedback';
+import AgentMessage from '../containers/AgentMessage/agentMessage';
+import EditProfile from '../containers/Profile/profile-edit';
+import AddQuestion from '../containers/InterviewQuestions/AddQuestion';
+import InterviewQuestions from '../containers/InterviewQuestions/index';
 import {windowDimensions} from '../common/window-dimensions';
 
 const Drawer = createDrawerNavigator();
@@ -31,8 +29,8 @@ const AppStack = () => {
           options={{headerShown: false}}
         />
         <Stack.Screen
-          name="AgentMessageModal"
-          component={AgentMessageModal}
+          name="AgentMessage"
+          component={AgentMessage}
           options={{
             title: 'New Message',
             headerTitleStyle: {
@@ -43,8 +41,8 @@ const AppStack = () => {
           }}
         />
         <Stack.Screen
-          name="AppFeedbackModal"
-          component={AppFeedbackModal}
+          name="AppFeedback"
+          component={AppFeedback}
           options={{
             title: 'App Feedback',
             headerTitleStyle: {
@@ -78,18 +76,18 @@ const AppStack = () => {
             },
           }}
         />
-        {/* <Stack.Screen
-          name="EditProfile"
-          component={EditProfile}
+        <Stack.Screen
+          name="AddQuestion"
+          component={AddQuestion}
           options={{
-            title: 'Interview Question',
+            title: 'Add a Question',
             headerTitleStyle: {
-              color: AppColors.mediumGray,
+              color: AppColors.black,
               fontWeight: 'bold',
               fontSize: 22,
             },
           }}
-        /> */}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -114,11 +112,13 @@ const DrawerStack = () => {
         },
       }}>
       <Drawer.Screen name="Review Candidates" component={TabNavigator} />
-      <Drawer.Screen name="CatalogContainer" component={CatalogContainer} />
+      <Drawer.Screen
+        name="Interview Questions"
+        component={InterviewQuestions}
+      />
       <Drawer.Screen
         name="Message Center"
         component={FacilityMessageCenterContainer}
-        // options={{drawerLabel: 'Hi'}}
       />
     </Drawer.Navigator>
   );

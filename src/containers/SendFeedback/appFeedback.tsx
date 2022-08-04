@@ -1,65 +1,51 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, Alert, TextInput} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Alert,
+  ToastAndroid,
+  TextInput,
+  Keyboard,
+} from 'react-native';
 import {ActionButton} from '../../components/action-button';
 import {useSelector} from '../../redux/reducers/index';
 import {AppColors} from '../../theme';
 import {windowDimensions} from '../../common/window-dimensions';
 import Toast from 'react-native-toast-message';
-import {sendFeedbackService} from '../../services/auth';
+import {appFeedbackService} from '../../services/sendFeedbackService';
+import NavigationService from '../../navigation/NavigationService';
 
 interface AppFeedbackModalState {
   messageText: string;
 }
 
-const AppFeedbackModal = (props: AppFeedbackModalState) => {
+const SendFeedback = (props: AppFeedbackModalState) => {
   const userInfo = useSelector(state => state.userReducer);
   const [loading, setLoading] = useState(false);
   const [messageText, setMessageText] = useState('');
-  const [messageTextError, setMessageTextError] = useState(false);
   console.log('Okk====>', userInfo?.user?.userFacilities?.[0]?.facilityId);
-
-  // const onSendFeedback = async () => {
-  //   Alert.alert('hi');
-
-  // if (!!!messageText.trim()) {
-  //   return Promise.resolve(
-  //     Alert.alert('Invalid Message', 'Please type a message to send.'),
-  //   );
-  // }
-  // return userStore.selectedFacility.sendFeedback(messageText).then(
-  //   () => {
-  //     this.setState({sending: false});
-  //     Alert.alert('Success', 'Your message has been sent.');
-  //     // Actions.pop()
-  //   },
-  //   error => {
-  //     this.setState({sending: false});
-  //     Alert.alert(
-  //       'Error',
-  //       'An error occurred while sending your message. Please try again.',
-  //     );
-  //     console.error(error);
-  //   },
-  // );
-  // };
-
-  const messageTextBlur = () => {
-    if (messageText && messageText.length) {
-      setMessageTextError(false);
-    } else {
-      setMessageTextError(true);
-    }
-  };
 
   const onSendFeedback = async () => {
     if (messageText && messageText.length) {
       try {
-        const {data} = await sendFeedbackService({
+        setLoading(true);
+        const {data} = await appFeedbackService({
           note: messageText,
           facilityId: userInfo?.user?.userFacilities?.[0]?.facilityId,
         });
-        setLoading(true);
-        console.log('Data====>', data);
+        if (data?.Success) {
+          setLoading(false);
+          Keyboard.dismiss();
+          setMessageText('');
+          NavigationService.navigate('ReviewCandidateHomeScreen');
+          ToastAndroid.show(
+            'Feedback submitted successfully!',
+            ToastAndroid.SHORT,
+          );
+        } else {
+          setLoading(false);
+          ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
+        }
       } catch (error) {
         setLoading(false);
         console.log('Error', error);
@@ -67,15 +53,12 @@ const AppFeedbackModal = (props: AppFeedbackModalState) => {
           error?.response?.statusText,
           error?.response?.data?.Message,
         );
-        Toast.show({
-          type: 'error',
-          text2: error?.response?.data?.Message,
-          visibilityTime: 2000,
-          autoHide: true,
-        });
       }
     } else {
-      messageTextBlur();
+      Alert.alert(
+        'Invalid message',
+        'Invalid message please type a message to send.',
+      );
     }
   };
 
@@ -90,12 +73,8 @@ const AppFeedbackModal = (props: AppFeedbackModalState) => {
           placeholderTextColor={AppColors.mediumGray}
           autoFocus={false}
           value={messageText}
-          showError={messageTextError}
           returnKeyType="done"
-          errorMessage={'Invalid Message please type a message to send.'}
-          blurOnSubmit={true}
           multiline={false}
-          onBlur={messageTextBlur}
           onChangeText={(text: any) => setMessageText(text)}
         />
       </View>
@@ -141,7 +120,7 @@ const style = StyleSheet.create({
     color: AppColors.black,
     paddingHorizontal: 10,
     borderWidth: 1,
-    borderColor: AppColors.gray,
+    borderColor: AppColors.lightBlue,
     width: '90%',
     justifyContent: 'center',
     alignSelf: 'center',
@@ -149,4 +128,4 @@ const style = StyleSheet.create({
   },
 });
 
-export default AppFeedbackModal;
+export default SendFeedback;

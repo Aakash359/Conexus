@@ -8,6 +8,7 @@ import {
   View,
   TouchableOpacity,
   Alert,
+  Keyboard,
 } from 'react-native';
 import variables from '../../../theme';
 import {Field} from '../../../components/field';
@@ -15,13 +16,10 @@ import {windowDimensions} from '../../../common';
 import Toast from 'react-native-toast-message';
 import Styles from '../../../theme/styles';
 import {forgotPassword} from '../../../services/auth';
-import {ConexusIcon} from '../../../components/conexus-icon';
 import {AppColors, AppFonts} from '../../../theme';
 import NavigationService from '../../../navigation/NavigationService';
-import {showApiErrorAlert} from '../../../common';
 import {ActionButton} from '../../../components/action-button';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {TouchableHighlight} from 'react-native-gesture-handler';
 
 interface ForgotPasswordProps {
   username?: string;
@@ -30,52 +28,61 @@ interface ForgotPasswordProps {
 
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
-const ForgotPassword: React.FC<ForgotPasswordProps> = () => {
-  const [email, setEmail] = useState('');
+const ForgotPassword = () => {
+  const [inputs, setInputs] = useState({
+    email: '',
+  });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [emailError, setEmailError] = useState(false);
+  const [errors, setErrors] = useState('');
 
-  const onEmailBlur = () => {
-    if (
-      email &&
-      email.length &&
-      (email.match(emailRegex) || email.length == 10)
-    ) {
-      setEmailError(false);
-    } else {
-      setEmailError(true);
+  const handleOnchange = (text: any, input: any) => {
+    setInputs((prevState: any) => ({...prevState, [input]: text}));
+  };
+  const handleError = (error: any, input: any) => {
+    setErrors((prevState: any) => ({...prevState, [input]: error}));
+  };
+
+  const validate = () => {
+    Keyboard.dismiss();
+    let isValid = true;
+    if (!inputs.email) {
+      handleError('Please enter email', 'email');
+      isValid = false;
+    }
+    // else if (!inputs.email.match(emailRegex)) {
+    //   handleError('Please enter a valid email', 'email');
+    //   isValid = false;
+    // }// code commented for temporary purpose uncomment this after getting valid email
+    if (isValid) {
+      recoverPasswordFn();
     }
   };
+
   const recoverPasswordFn = async () => {
-    if (email && email.length) {
-      try {
-        setLoading(true);
-        const {data} = await forgotPassword({
-          username: email,
-        });
-        Alert.alert(data.description);
-        setLoading(false);
-        NavigationService.navigate('LoginScreen');
-        Toast.show({
-          // type: 'success',
-          text2: data.description,
-          visibilityTime: 2000,
-          autoHide: true,
-        });
-      } catch (error) {
-        setLoading(false);
-        console.log('Error', error);
-        Alert.alert(error?.response?.data?.error?.description);
-        Toast.show({
-          type: 'error',
-          text2: error?.response?.data?.error?.description,
-          visibilityTime: 2000,
-          autoHide: true,
-        });
-      }
-    } else {
-      onEmailBlur();
+    try {
+      setLoading(true);
+      const {data} = await forgotPassword({
+        username: inputs.email,
+      });
+      Alert.alert(data.description);
+      setLoading(false);
+      NavigationService.navigate('LoginScreen');
+      Toast.show({
+        // type: 'success',
+        text2: data.description,
+        visibilityTime: 2000,
+        autoHide: true,
+      });
+    } catch (error) {
+      setLoading(false);
+      console.log('Error', error);
+      Alert.alert(error?.response?.data?.error?.description);
+      Toast.show({
+        type: 'error',
+        text2: error?.response?.data?.error?.description,
+        visibilityTime: 2000,
+        autoHide: true,
+      });
     }
   };
   const goBack = () => {
@@ -97,12 +104,6 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = () => {
               style={style.backArrow}
             />
           </TouchableOpacity>
-          {/* <ConexusIcon
-            name="cn-logo"
-            size={100}
-            color={AppColors.blue}
-            style={style.logo}
-          /> */}
           <Icon
             name="leaf"
             size={100}
@@ -115,9 +116,9 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = () => {
           <View style={style.form}>
             <Field
               placeholder="Email Address"
-              onTextChange={setEmail}
-              value={email}
-              showError={emailError}
+              onTextChange={(text: any) => handleOnchange(text, 'email')}
+              onFocus={() => handleError(null, 'email')}
+              error={errors.email}
               returnKeyType="go"
               customStyle={{
                 backgroundColor: AppColors.white,
@@ -126,16 +127,15 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = () => {
                 borderRadius: 5,
               }}
             />
-            {error ? <Text style={style.errorTxt}>{error}</Text> : null}
           </View>
 
           <ActionButton
             textColor={variables.blue}
             title="RECOVER NOW"
             loading={loading}
-            disabled={email ? loading : 'false'}
-            onPress={recoverPasswordFn}
-            customStyle={email ? style.btnEnable : style.btnDisable}
+            disabled={inputs.email ? loading : 'false'}
+            onPress={validate}
+            customStyle={inputs.email ? style.btnEnable : style.btnDisable}
           />
           {/* <TouchableOpacity
             // disabled={

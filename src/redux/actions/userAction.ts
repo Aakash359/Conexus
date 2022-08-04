@@ -15,12 +15,18 @@ export interface LoginAction {
   payload: UserModel;
 }
 
+export interface LogoutAction {
+  readonly type: 'ON_LOGOUT';
+  payload: any;
+}
+
 export interface ErrorAction {
   readonly type: 'ON_ERROR';
   payload: any;
 }
 
-export type UserAction = LoginAction | ErrorAction;
+export type UserAction = LoginAction | ErrorAction|LogoutAction;
+// export type logoutAction = logoutAction | ErrorAction;
 
 // we need to dispatch action
 export const loginRequest = (data: { username: string; password: string; App: boolean }) => {
@@ -28,9 +34,7 @@ export const loginRequest = (data: { username: string; password: string; App: bo
   return async (dispatch: Dispatch<UserAction>) => {
     try {
       const response = await axios.post<UserModel>(`${defaultBaseUrl}/user/login-with-credentials`,data);
-      console.log("Response====>",response);
-      
-      if (!response) {
+     if (!response) {
         dispatch({
           type: 'ON_ERROR',
           payload: 'Login issue with API',
@@ -49,5 +53,17 @@ export const loginRequest = (data: { username: string; password: string; App: bo
       // console.log("Error===>",error?.response?.data?.description)
       Alert.alert("Error",error?.response?.data?.description )
     }
+  };
+};
+
+
+export const logoutRequest = (data: { authToken: string; }) => {
+
+  return async (dispatch: Dispatch<UserAction>) => {
+      dispatch({
+        type: 'ON_LOGOUT',
+        payload: data,
+      });
+    
   };
 };

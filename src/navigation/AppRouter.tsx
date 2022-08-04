@@ -6,7 +6,7 @@ import SplashScreen from 'react-native-splash-screen';
 
 const AppRouter = () => {
   const userInfo = useSelector(state => state.userReducer);
-  console.log('User====>', userInfo?.user?.authToken);
+  console.log('AuthToken', userInfo?.user?.authToken);
   useEffect(() => {
     SplashScreen.hide();
   }, []);

@@ -4,6 +4,7 @@ import { logger } from 'react-native-logs'
 import _ from 'lodash'
 import { userStoreInstance } from '../../stores/userStore'
 const log = logger.createLogger()
+
 export const QuestionModel = types.model("QuestionModel", {
     id: types.optional(types.string, '0'),
     needId: types.optional(types.string, ''),

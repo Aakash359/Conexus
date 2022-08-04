@@ -8,20 +8,22 @@ import {
   RefreshControl,
 } from 'react-native';
 // import { Actions } from 'react-native-router-flux'
-import {AppFonts, AppColors, AppSizes} from '../../../theme';
-import {ScreenType, showYesNoAlert} from '../../../common';
+import {AppFonts, AppColors, AppSizes} from '../../theme';
+import {ScreenType, showYesNoAlert} from '../../common';
 import {
   QuestionSectionModel,
   FacilityQuestionsStore,
   FacilityModel,
-} from '../../../stores/facility/';
-import {UserStore} from '../../../stores/';
+} from '../../stores/facility/';
+import {UserStore} from '../../stores/';
 import {
   FacilitySelectionContainer,
   FacilitySelectionItem,
-} from '../../../components';
-import {ScreenFooterButton} from '../../../components';
+} from '../../components';
+import {ScreenFooterButton} from '../../components';
 import {logger} from 'react-native-logs';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import NavigationService from '../../navigation/NavigationService';
 
 const log = logger.createLogger();
 
@@ -37,7 +39,7 @@ export interface CatalogContainerState {
   refreshing: boolean;
 }
 
-const CatalogContainer: React.FC<CatalogContainerProps> = ({}) => {
+const InterviewQuestions: React.FC<CatalogContainerProps> = ({}) => {
   // get selectedFacilityId() {
   //   return this.props.userStore.selectedFacilityId;
   // }
@@ -187,8 +189,14 @@ const CatalogContainer: React.FC<CatalogContainerProps> = ({}) => {
   // }
 
   // log.info(`Logging FCS: ${this.props.needId}`);
+  const openAddQuestion = () => {
+    NavigationService.navigate('AddQuestion');
+  };
   return (
-    <Text>hi</Text>
+    <TouchableOpacity onPress={openAddQuestion}>
+      <Text>hi</Text>
+    </TouchableOpacity>
+
     // <FacilitySelectionContainer
     //   // showNoData={this.showNoData}
     //   // showLoading={this.showLoading}
@@ -252,4 +260,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CatalogContainer;
+export default InterviewQuestions;

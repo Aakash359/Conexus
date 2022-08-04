@@ -26,6 +26,9 @@ export interface IRegisterUser {
 }
 
 
+
+
+
 export const signUp = (data: IRegisterUser) => axios.post(`${defaultBaseUrl}/user/newRegister`, data);
 
 export const uploadPhoto = async (data: { base64Image: any; fileExt: string}) => 
@@ -38,8 +41,6 @@ axios.post(`${defaultBaseUrl}/user/current/base64Photo`, data, {
   },
 );
 
-
-
 // export const updateProfile = (token: any) => 
 // axios.get(`${defaultBaseUrl}/user/current`, {
 //    headers: {
@@ -48,16 +49,12 @@ axios.post(`${defaultBaseUrl}/user/current/base64Photo`, data, {
 //   },
 // );
 
-export const updateProfile = (token: any) =>
-  axios.get(`${defaultBaseUrl}/user/current`, {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: token,
-    },
-  });
+export const updateProfile = (data: { imageUrl: any; firstName: any; lastName: any; title: any; phoneNumber: any; }) =>
+  axios.post(`${defaultBaseUrl}/user/current`,data );
 
 export const forgotPassword = (data:{username:string}) => axios.post(`${defaultBaseUrl}/user/PasswordRequest`, data);
 
-export const sendFeedbackService = (data: { note: string; facilityId: any; }) => axios.post(`${defaultBaseUrl}facility/insertAppFeedback`,data);
+
+
 
 

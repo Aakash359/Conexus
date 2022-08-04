@@ -1,23 +1,26 @@
 import React, {useState} from 'react';
-import {Text, StyleSheet, Image, View, Alert} from 'react-native';
-import {Avatar} from '../components/avatar';
-import {windowDimensions} from '../common';
-import Styles from '../theme/styles';
-import NavigationService from '../navigation/NavigationService';
-import variable, {AppColors} from '../theme';
-import {ActionButton} from '../components/action-button';
-import {useSelector} from '../redux/reducers/index';
+import {Text, StyleSheet, Image, View, Alert, ToastAndroid} from 'react-native';
 import {useDispatch} from 'react-redux';
+import {windowDimensions} from '../../common';
+import Styles from '../../theme/styles';
+import NavigationService from '../../navigation/NavigationService';
+import variable, {AppColors} from '../../theme';
+import {ActionButton} from '../../components/action-button';
+import {useSelector} from '../../redux/reducers/index';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {UserModel} from '../redux/actions/userAction';
+import {logoutRequest} from '../../redux/actions/userAction';
+import {UserModel} from '../../redux/actions/userAction';
 
 interface ProfileState {
   avatar: any;
+  authToken: string;
 }
 
 const Profile: React.FC<ProfileState> = () => {
   const [loading, setLoading] = useState(false);
   const userInfo = useSelector(state => state.userReducer);
+  const dispatch = useDispatch();
+
   const renderTitle = () => {
     const userInfo = useSelector(state => state.userReducer);
     console.log('UserInfo====>', userInfo);
@@ -36,14 +39,14 @@ const Profile: React.FC<ProfileState> = () => {
 
   const onPressLogout = async () => {
     setLoading(true);
+    await AsyncStorage.removeItem('authToken');
+    const payload = {
+      authToken: '',
+    };
     setTimeout(() => {
       setLoading(false);
-      AsyncStorage.clear();
-      NavigationService.navigate('LoginScreen');
-      return {
-        status: 'success',
-        message: 'You are logged out',
-      };
+      dispatch(logoutRequest(payload));
+      ToastAndroid.show('Logged out successfully!', ToastAndroid.SHORT);
     }, 1500);
   };
 

@@ -1,12 +1,22 @@
 import React, {useState} from 'react';
-import {StyleSheet, View, Alert, Image, Text, TextInput} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Alert,
+  Image,
+  Text,
+  TextInput,
+  ToastAndroid,
+  Keyboard,
+} from 'react-native';
 import {ActionButton} from '../../components/action-button';
 import {useSelector} from '../../redux/reducers/index';
 import {AppColors, AppFonts} from '../../theme';
 import {windowDimensions} from '../../common/window-dimensions';
 import Toast from 'react-native-toast-message';
-import {sendMessageService} from '../../services/auth';
 import {Avatar} from '../../components/avatar';
+import {sendMessageService} from '../../services/agentMessageService';
+import NavigationService from '../../navigation/NavigationService';
 
 const SafeAreaView = require('react-native').SafeAreaView;
 
@@ -19,12 +29,11 @@ interface AgentMessageModalState {
   sending: boolean;
 }
 
-const AgentMessageModal = () => {
+const AgentMessage = () => {
   const userInfo = useSelector(state => state.userReducer);
   const [loading, setLoading] = useState(false);
   const [messageText, setMessageText] = useState('');
   const [messageTextError, setMessageTextError] = useState(false);
-  console.log('Okk====>', userInfo?.user?.userFacilities?.[0]?.facilityId);
 
   const messageTextBlur = () => {
     if (messageText && messageText.length) {
@@ -35,9 +44,6 @@ const AgentMessageModal = () => {
   };
 
   const renderAccountManager = () => {
-    // const {userStore} = this.props;
-    // const manager = userStore.selectedFacility.manager;
-
     return (
       <View style={managerStyle.container}>
         <View style={managerStyle.textContainer}>
@@ -53,15 +59,24 @@ const AgentMessageModal = () => {
     );
   };
 
-  const onSendFeedback = async () => {
+  const onSendMessage = async () => {
     if (messageText && messageText.length) {
       try {
+        setLoading(true);
         const {data} = await sendMessageService({
           note: messageText,
           facilityId: userInfo?.user?.userFacilities?.[0]?.facilityId,
         });
-        setLoading(true);
-        console.log('Data====>', data);
+        if (data?.Success) {
+          Keyboard.dismiss();
+          setLoading(false);
+          setMessageText('');
+          NavigationService.navigate('ReviewCandidateHomeScreen');
+          ToastAndroid.show('Message sent successfully!', ToastAndroid.SHORT);
+        } else {
+          setLoading(false);
+          ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
+        }
       } catch (error) {
         setLoading(false);
         console.log('Error', error);
@@ -69,15 +84,12 @@ const AgentMessageModal = () => {
           error?.response?.statusText,
           error?.response?.data?.Message,
         );
-        Toast.show({
-          type: 'error',
-          text2: error?.response?.data?.Message,
-          visibilityTime: 2000,
-          autoHide: true,
-        });
       }
     } else {
-      messageTextBlur();
+      Alert.alert(
+        'Invalid message',
+        'Invalid message please type a message to send.',
+      );
     }
   };
 
@@ -115,16 +127,11 @@ const AgentMessageModal = () => {
           style={style.messageInput}
           maxLength={1000}
           rowSpan={12}
-          placeholder="Type your mesaage"
+          placeholder="Type your message"
           placeholderTextColor={AppColors.mediumGray}
-          autoFocus={false}
           value={messageText}
-          showError={messageTextError}
           returnKeyType="done"
-          errorMessage={'Invalid Message please type a message to send.'}
-          blurOnSubmit={true}
           multiline={false}
-          onBlur={messageTextBlur}
           onChangeText={(text: any) => setMessageText(text)}
         />
       </View>
@@ -140,7 +147,7 @@ const AgentMessageModal = () => {
           loading={loading}
           title="SEND"
           customStyle={style.btnEnable}
-          onPress={onSendFeedback}
+          onPress={onSendMessage}
         />
       </View>
     </View>
@@ -201,7 +208,7 @@ const style = StyleSheet.create({
     color: AppColors.black,
     paddingHorizontal: 10,
     borderWidth: 1,
-    borderColor: AppColors.gray,
+    borderColor: AppColors.lightBlue,
     width: '90%',
     justifyContent: 'center',
     alignSelf: 'center',
@@ -209,4 +216,4 @@ const style = StyleSheet.create({
   },
 });
 
-export default AgentMessageModal;
+export default AgentMessage;
