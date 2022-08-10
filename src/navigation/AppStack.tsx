@@ -14,7 +14,8 @@ import EditProfile from '../containers/Profile/profile-edit';
 import AddQuestion from '../containers/InterviewQuestions/AddQuestion';
 import InterviewQuestions from '../containers/InterviewQuestions/index';
 import {windowDimensions} from '../common/window-dimensions';
-import HcpDetailView from '../containers/Facility/HcpDetail/HcpDetailView';
+import HcpDetailView from '../containers/Facility/HcpDetail/hcpDetailView';
+import ImageGallery from '../containers/Facility/HcpDetail/imageGallery';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -91,6 +92,18 @@ const AppStack = () => {
         <Stack.Screen
           name="HcpDetailView"
           component={HcpDetailView}
+          options={{
+            headerShown: false,
+            headerTitleStyle: {
+              color: AppColors.black,
+              fontWeight: 'bold',
+              fontSize: 22,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="ImageGallery"
+          component={ImageGallery}
           options={{
             headerShown: false,
             headerTitleStyle: {

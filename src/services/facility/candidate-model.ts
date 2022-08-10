@@ -7,23 +7,26 @@ import { ResumePagesModel } from './resume-pages-model'
 import { CandidateResponseSectionModel } from './candidate-response-model'
 
 import { Alert } from 'react-native'
-import { rest } from '../../services'
+import { rest } from '../../redux/constants/index'
 import { logger } from 'react-native-logs'
 const log = logger.createLogger()
+
 
 export const loadCandidateBySubmissionId = (submissionId: string, handleOnError = true) => {
 
     let url = `/hcp/details/${submissionId}`;
-    log.info('calling ' + url);
+    console.log('====================================');
+    console.log("Aakash====>",url);
+    console.log('====================================');
 
     return rest.get(url)
         .then((response) => {
-            log.info('response', response.data);
+            // log.info('response', response.data);
             const result = CandidateModel.create(response.data);
-            return result.resumePages.attachAuthToken()
-                .then(() => {
-                    return result;
-                })
+            // return result.resumePages.attachAuthToken()
+            //     .then(() => {
+            //         return result;
+            //     })
         })
 }
 

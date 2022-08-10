@@ -36,6 +36,7 @@ interface NotInterestedModalProps {
   visible: boolean;
   onClose: any;
   data: any;
+  onPhoneCall: any;
 }
 
 export const ContactOptionModal = (props: NotInterestedModalProps) => {
@@ -43,6 +44,7 @@ export const ContactOptionModal = (props: NotInterestedModalProps) => {
     visible,
     title,
     onClose,
+    onPress,
     data,
     customStyle,
     textColor,
@@ -81,7 +83,7 @@ export const ContactOptionModal = (props: NotInterestedModalProps) => {
                 iconName="cn-phone"
                 iconSize={32}
                 title="Phone Call"
-                // onPress={this._call.bind(this)}
+                onPress={onPress}
               />
             </View>
             <View style={styles.iconContainerRight}>

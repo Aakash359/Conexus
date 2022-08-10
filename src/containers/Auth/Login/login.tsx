@@ -84,7 +84,7 @@ const LoginScreen = () => {
         setTimeout(() => {
           setLoading(false);
           dispatch(loginRequest(data));
-        }, 2000);
+        }, 1000);
         console.log('Data====>', data);
       } catch (error) {
         setLoading(false);

@@ -68,22 +68,11 @@ const ForgotPassword = () => {
       Alert.alert(data.description);
       setLoading(false);
       NavigationService.navigate('LoginScreen');
-      Toast.show({
-        // type: 'success',
-        text2: data.description,
-        visibilityTime: 2000,
-        autoHide: true,
-      });
     } catch (error) {
       setLoading(false);
       console.log('Error', error);
       Alert.alert(error?.response?.data?.error?.description);
-      Toast.show({
-        type: 'error',
-        text2: error?.response?.data?.error?.description,
-        visibilityTime: 2000,
-        autoHide: true,
-      });
+     
     }
   };
   const goBack = () => {

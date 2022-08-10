@@ -1778,6 +1778,13 @@
     prompts "^2.4.0"
     semver "^6.3.0"
 
+"@react-native-community/datetimepicker@^6.3.1":
+  version "6.3.1"
+  resolved "https://registry.yarnpkg.com/@react-native-community/datetimepicker/-/datetimepicker-6.3.1.tgz#217fc1fa1f989038f88efd6394ec34aa79b60c9d"
+  integrity sha512-WdSc34CwKTK7ied9En9yxs6WHN5bBdw2hGgWr4rqJcfC7qAOQCV+JA7iFxN7Ob1wxE/7gsTX2hZG8tmd62PH1g==
+  dependencies:
+    invariant "^2.2.4"
+
 "@react-native-community/eslint-config@^3.0.3":
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/@react-native-community/eslint-config/-/eslint-config-3.0.3.tgz#a55233c82ae8d07ce84da868184e73ee6649963a"
@@ -7844,11 +7851,6 @@ react-native-codegen@^0.69.1:
     flow-parser "^0.121.0"
     jscodeshift "^0.13.1"
     nullthrows "^1.1.1"
-
-react-native-datepicker-dialog@^0.0.9:
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/react-native-datepicker-dialog/-/react-native-datepicker-dialog-0.0.9.tgz#6e1f890a9b40937cea9e0c762fd542afb9fc3f37"
-  integrity sha512-sR/4ufnK5+7zwCX5e1ViMJFfOa/aP+vZu8GCy5lu8gE+Pr4Acorl1TndLgNjGBTy7AXRQIZzptDvqHHeESAjMg==
 
 react-native-device-info@^9.0.2:
   version "9.0.2"

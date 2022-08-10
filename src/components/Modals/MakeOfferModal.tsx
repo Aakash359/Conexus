@@ -13,59 +13,81 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {useSelector} from '../../redux/reducers/index';
 import {ActionButton} from '../action-button';
 import {Avatar} from '../avatar';
-import NavigationService from '../../navigation/NavigationService';
+import moment from 'moment';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
-interface NotInterestedModalProps {
-  title: string;
-  onPress: Function;
-  primary?: boolean;
-  danger?: boolean;
-  secondary?: boolean;
-  smallSecondary?: boolean;
-  smallSecondaryNotRounded?: boolean;
-  style?: any;
-  textColor?: any;
-  disabled?: boolean;
-  textStyle?: any;
-  textStyleDisabled?: any;
-  loadingProps: any;
-  loadingColor: string;
-  loading: any;
-  buttonColor: any;
-  borderColor: any;
+interface MakeOfferLightboxProps {
+  photoUrl: string;
+  photoLabel: string;
+  candidateTitle: string;
+  candidateDescription: string;
+  startDateProp: string;
   customStyle: any;
-  customTitleStyle: any;
-  visible: boolean;
-  onClose: any;
-  data: any;
-  cancel: any;
+  onSubmit: ({startDate: string}) => any;
 }
 
-export const MakeOfferModal = (props: NotInterestedModalProps) => {
+export const MakeOfferModal = (props: MakeOfferLightboxProps) => {
   const {
-    visible,
-    title,
+    photoUrl,
     onClose,
-    data,
+    photoLabel,
+    candidateTitle,
     cancel,
+    visible,
     customStyle,
-    textColor,
-    borderColor,
-    disabled,
+    startDateProp,
+    title,
+    onSubmit,
     customTitleStyle,
+    candidateDescription,
   } = props;
 
-  const [loading, setLoading] = useState(false);
-  const [offerModalVisible, setOfferModalVisible] = useState(false);
-  const userInfo = useSelector(state => state.userReducer);
+  const dateFormat = 'MM/DD/YYYY';
+
+  const [startDate, setStartDate] = useState(
+    moment(startDateProp).isValid()
+      ? moment(startDateProp).format(dateFormat)
+      : moment().format(dateFormat),
+  );
+  const [date1, setDate1] = useState(new Date());
+  const [date2, setDate2] = useState(new Date());
+  const [mode1, setMode1] = useState('date');
+  const [mode2, setMode2] = useState('date');
+  const [show1, setShow1] = useState(false);
+  const [show2, setShow2] = useState(false);
 
   useEffect(() => {}, []);
+
+  const showMode1 = currentMode => {
+    setShow1(true);
+    console.log('Shiwe====>', setShow1(true));
+
+    setMode1(currentMode);
+  };
+
+  const onChange1 = (event: any, selectedDate: Date) => {
+    let currentDate1 = selectedDate || date1;
+    console.log('Datre====>');
+
+    setShow1(Platform.OS === 'ios');
+    setDate1(currentDate1);
+    let tempDate = new Date(currentDate1);
+    let fDate =
+      tempDate.getDate() +
+      '/' +
+      (tempDate.getMonth() + 1) +
+      '/' +
+      tempDate.getFullYear();
+  };
+
+  const onStartDatePicked = () => {
+    showMode1('date');
+  };
 
   return (
     <Modal
       visible={visible}
       onDismiss={onClose}
-      overlayPointerEvents={'auto'}
       animationType="fade"
       onRequestClose={onClose}
       transparent={true}>
@@ -73,30 +95,35 @@ export const MakeOfferModal = (props: NotInterestedModalProps) => {
         <View style={styles.cardItemStyle}>
           <View style={styles.wrapperView}>
             <Text style={styles.titleText}>{title}</Text>
-            <Icon
-              style={{color: AppColors.mediumGray, marginLeft: 15}}
-              name="ios-close-circle-sharp"
-              size={22}
-              onPress={onClose}
-            />
-            <View style={styles.topBackground}></View>
+            <View style={styles.topBackground}>
+              <Icon
+                style={{
+                  color: AppColors.mediumGray,
+                  alignSelf: 'flex-end',
+                  right: 10,
+                  top: 16,
+                }}
+                name="ios-close-circle-sharp"
+                size={22}
+                onPress={onClose}
+              />
+            </View>
           </View>
           <View style={styles.containerStart}>
             <Avatar
               style={{width: 108, marginBottom: 8}}
               size={108}
-              // source={photoUrl || ''}
-              // title={photoLabel || ''}
+              source={photoUrl || ''}
+              title={photoLabel || ''}
             />
-
             <Text style={AppFonts.bodyTextXtraLarge}>
-              {/* {candidateTitle || ''} */}
+              {candidateTitle || ''}
             </Text>
-            {/* {!!candidateDescription && (
-                <Text style={AppFonts.bodyTextXtraSmall}>
-                  {candidateDescription}
-                </Text>
-              )} */}
+            {!!candidateDescription && (
+              <Text style={AppFonts.bodyTextXtraSmall}>
+                {candidateDescription}
+              </Text>
+            )}
             <Text
               style={{
                 ...AppFonts.bodyTextNormal,
@@ -119,7 +146,7 @@ export const MakeOfferModal = (props: NotInterestedModalProps) => {
               }}
               customStyle={styles.date}
               title={'statDate'}
-              // onPress={this.onStartDatePressed.bind(this)}
+              onPress={onStartDatePicked}
             />
           </View>
           <View style={styles.containerEnd}>
@@ -135,6 +162,16 @@ export const MakeOfferModal = (props: NotInterestedModalProps) => {
                 // this.submitOffer();
               }}
             />
+            {show1 && (
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={date1}
+                mode={mode1}
+                is24Hour={true}
+                onChange={onChange1}
+                placeholder=" "
+              />
+            )}
             <ActionButton
               customTitleStyle={{
                 fontSize: 14,
@@ -172,8 +209,8 @@ const styles = StyleSheet.create({
   topBackground: {
     position: 'absolute',
     top: -18,
-    left: -18,
-    right: -18,
+    left: -38,
+    right: -38,
     height: 128,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(52,170,224, .24)',
@@ -231,7 +268,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: AppColors.mediumGray,
     width: '80%',
-    left: 20,
+    left: 5,
     textAlign: 'center',
   },
 });

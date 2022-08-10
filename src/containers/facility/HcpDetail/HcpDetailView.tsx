@@ -24,6 +24,7 @@ import {
   // CandidateModel,
   loadCandidateBySubmissionId,
   CandidateResponseModel,
+  CandidateModel,
 } from '../../../services/facility/index';
 import {facilitySubmissionsService} from '../../../services/facility/facilitySubmissionsService';
 import {TabDetails, ScreenFooterButton} from '../../../components';
@@ -38,6 +39,7 @@ import {NotInterestedModal} from '../../../components/Modals/NotInterestedModal'
 import {MakeOfferModal} from '../../../components/Modals/MakeOfferModal';
 import {ContactOptionModal} from '../../../components/Modals/ContactOptionModal';
 import ConexusContentList from '../../../components/conexus-content-list';
+import {PhoneCallModal} from '../../../components/Modals/phoneCallModal';
 
 interface HcpDetailProps {
   submissionId: string;
@@ -65,6 +67,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const [candidate, setCandidate] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [offerModalVisible, setOfferModalVisible] = useState(false);
+  const [phoneCallModalVisible, setPhoneCallModalVisible] = useState(false);
   const [contactOptionModalVisible, setContactOptionModalVisible] =
     useState(false);
   const [loadingSummary, setLoadingSummary] = useState(false);
@@ -122,23 +125,24 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   //   );
   // };
 
-  // _loadCandidate() {
-  //   this.setState({refreshing: true, loadingSummary: true});
-
-  //   loadCandidateBySubmissionId(this.props.submissionId).then(
-  //     (candidate: typeof CandidateModel.Type) => {
-  //       this.setState({refreshing: false, candidate, loadingSummary: false});
-  //       this._preloadResumePages();
-  //     },
-  //     () => {
-  //       this.setState({
-  //         refreshing: false,
-  //         candidate: null,
-  //         loadingSummary: false,
-  //       });
-  //     },
-  //   );
-  // }
+  const loadCandidate = () => {
+    setRefreshing(true);
+    setLoadingSummary(true);
+    const {submissionId} = props;
+    // loadCandidateBySubmissionId(submissionId).then(
+    //   (candidate: typeof CandidateModel.Type) => {
+    //     setRefreshing(true);
+    //     setCandidate('');
+    //     setLoadingSummary(false);
+    //     // this._preloadResumePages();
+    //   },
+    //   () => {
+    //     setRefreshing(true);
+    //     setCandidate(null);
+    //     setLoadingSummary(false);
+    //   },
+    // );
+  };
 
   // _preloadResumePages() {
   //   const {candidate} = this.state;
@@ -168,21 +172,21 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   //   return Promise.resolve();
   // }
 
-  // useEffect(() => {
-  //   log.info('VIEWED HCP');
-  //   // this.state.candidate.setViewed(candidate.submissionId);
-  //   if (!candidate) {
-  //     loadCandidate();
-  //   } else if (
-  //     !candidate.resumePages.pageCount ||
-  //     !candidate.submissionSummary ||
-  //     !candidate.submissionSummary.length
-  //   ) {
-  //     setCandidate(candidate);
-  //     setLoadingSummary(true);
-  //     refreshCandidate();
-  //   }
-  // }, []);
+  useEffect(() => {
+    // this.state.candidate.setViewed(candidate.submissionId);
+    if (!candidate) {
+      loadCandidate();
+    }
+    // else if (
+    //   // !candidate.resumePages.pageCount ||
+    //   // !candidate.submissionSummary ||
+    //   // !candidate.submissionSummary.length
+    // ) {
+    //   setCandidate(candidate);
+    //   setLoadingSummary(true);
+    //   refreshCandidate();
+    // }
+  }, []);
 
   // componentWillUnmount() {
   //   if (this.props.onClose && this.props.onClose.call) {
@@ -365,7 +369,13 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     }
   };
 
-  const openImageGallery = () => {};
+  const openImageGallery = () => {
+    NavigationService.navigate('ImageGallery', {
+      // images: candidate.resumePages.images,
+      // title: candidate.display.title,
+      // initialRenderCount: preloadResumeCount,
+    });
+  };
 
   const renderActionHeader = () => {
     return (
@@ -373,7 +383,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
         <View style={StyleSheet.flatten([headerStyle.actionRowView])}>
           <ActionButton
             // disabled={candidate.resumePages.pageCount === 0}
-            onPress={openImageGallery()}
+            onPress={() => openImageGallery()}
             title="VIEW PROFILE"
             customTitleStyle={{
               fontSize: 10,
@@ -383,6 +393,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
             customStyle={headerStyle.viewProfileButton}
           />
         </View>
+
         <View style={headerStyle.actionRowView}>
           <ConexusIconButton
             onPress={() => setModalVisible(true)}
@@ -406,7 +417,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
         />
         {offerModalVisible && (
           <MakeOfferModal
-            title={'Make Offer?'}
+            title={'Make Offer'}
             onRequestClose={() => setOfferModalVisible(false)}
             onDismiss={() => setOfferModalVisible(false)}
             onPress={undefined}
@@ -426,6 +437,11 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
         )}
       </View>
     );
+  };
+
+  const showPhoneCallModal = () => {
+    setContactOptionModalVisible(false);
+    setPhoneCallModalVisible(true);
   };
 
   const renderCandidate = () => {
@@ -488,7 +504,6 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
               fontSize: 12,
               fontFamily: AppFonts.family.fontFamily,
             }}
-            // onPress={onSendFeedback}
           />
         </View>
         {contactOptionModalVisible && (
@@ -496,8 +511,16 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
             title={'Contact Options'}
             onRequestClose={() => setContactOptionModalVisible(false)}
             onDismiss={() => setContactOptionModalVisible(false)}
-            onPress={undefined}
+            onPress={() => showPhoneCallModal()}
             onClose={() => setContactOptionModalVisible(false)}
+          />
+        )}
+        {phoneCallModalVisible && (
+          <PhoneCallModal
+            onRequestClose={() => setPhoneCallModalVisible(false)}
+            onDismiss={() => setPhoneCallModalVisible(false)}
+            onPress={undefined}
+            onClose={() => setPhoneCallModalVisible(false)}
           />
         )}
       </View>
@@ -535,7 +558,7 @@ const styles = StyleSheet.create({
   closeButton: {
     position: 'absolute',
     right: 12,
-    top: 44,
+    top: 12,
   },
   addPerson: {
     right: 32,
