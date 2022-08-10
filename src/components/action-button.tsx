@@ -4,6 +4,7 @@ import {StyleSheet, Platform} from 'react-native';
 import theme from '../theme';
 import variables from '../theme';
 import {AppFonts, AppColors} from '../theme';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 interface buttonProps {
   title: string;
@@ -41,6 +42,7 @@ export const ActionButton = (props: buttonProps) => {
   } = props;
   return (
     <Button
+      activeOpacity={0.2}
       onPress={onPress}
       textColor={textColor}
       loading={loading}

@@ -1,8 +1,7 @@
 import React from 'react';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import CustomDrawer from '../components/CustomDrawer';
-import {AppFonts, AppColors} from '.././theme';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import {AppColors} from '.././theme';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import FacilityMessageCenterContainer from '../containers/MessageCenter/facility-message-center-container';
 import {navigationRef} from './NavigationService';
@@ -15,6 +14,7 @@ import EditProfile from '../containers/Profile/profile-edit';
 import AddQuestion from '../containers/InterviewQuestions/AddQuestion';
 import InterviewQuestions from '../containers/InterviewQuestions/index';
 import {windowDimensions} from '../common/window-dimensions';
+import HcpDetailView from '../containers/Facility/HcpDetail/HcpDetailView';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -24,7 +24,7 @@ const AppStack = () => {
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator>
         <Stack.Screen
-          name="Review Candidates"
+          name="DrawerStack"
           component={DrawerStack}
           options={{headerShown: false}}
         />
@@ -81,6 +81,18 @@ const AppStack = () => {
           component={AddQuestion}
           options={{
             title: 'Add a Question',
+            headerTitleStyle: {
+              color: AppColors.black,
+              fontWeight: 'bold',
+              fontSize: 22,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="HcpDetailView"
+          component={HcpDetailView}
+          options={{
+            headerShown: false,
             headerTitleStyle: {
               color: AppColors.black,
               fontWeight: 'bold',

@@ -139,7 +139,7 @@ const AgentMessage = () => {
   };
 
   return (
-    <View style={style.container}>
+    <SafeAreaView style={style.container}>
       {renderAccountManager()}
       {renderForm()}
       <View style={style.footer}>
@@ -150,7 +150,7 @@ const AgentMessage = () => {
           onPress={onSendMessage}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

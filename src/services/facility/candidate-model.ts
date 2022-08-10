@@ -10,6 +10,7 @@ import { Alert } from 'react-native'
 import { rest } from '../../services'
 import { logger } from 'react-native-logs'
 const log = logger.createLogger()
+
 export const loadCandidateBySubmissionId = (submissionId: string, handleOnError = true) => {
 
     let url = `/hcp/details/${submissionId}`;

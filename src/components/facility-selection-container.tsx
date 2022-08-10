@@ -1,12 +1,12 @@
 import React from 'react';
 import {StyleSheet, View, FlatList, ActivityIndicator} from 'react-native';
 import {
-  FacilityListHeaderItem,
   IconTitleBlock,
   FacilitySelectionItem,
   ScreenFooterButton,
 } from '../components';
-// import {inject} from 'mobx-react';
+
+import {FacilityListHeaderItem} from '../components/facility-list-header-item';
 import {AppColors} from '../theme';
 import {UserStore, FacilityModel} from '../stores';
 import {logger} from 'react-native-logs';
@@ -31,33 +31,42 @@ interface FacilitySelectionContainerProps {
 
 interface FacilitySelectionContainerState {}
 const log = logger.createLogger();
-// @inject(StoreType.USER)
-const FacilitySelectionContainer = (props: FacilitySelectionContainerProps) => {
-  // const { showNoData } = props
 
-  const showNoData = (boolean: any) => {
+const FacilitySelectionContainer = (props: FacilitySelectionContainerProps) => {
+  const {
+    showNoData,
+    noDataText,
+    noDataIconName,
+    facilityHeaderCaption,
+    refreshing,
+    showLoading,
+    onFacilityChosen,
+    showNewQuestionButton,
+    overrideFacilities,
+  } = props;
+
+  const showNoDataItems = (boolean: any) => {
     return showNoData;
   };
 
-  const noDataText = (string: any) => {
+  const noDataTextItem = (string: any) => {
     return noDataText || '';
   };
 
-  const noDataIconName = () => {
+  const noDataIconNames = () => {
     return noDataIconName || 'cn-info';
   };
 
-  const facilityHeaderCaption = () => {
+  const facilityHeaderCaptions = () => {
     return facilityHeaderCaption || '';
   };
 
-  const refreshing = () => {
+  const refreshings = () => {
     return refreshing;
   };
 
-  const onFacilityChosen = (selectedFacilityId: string) => {
+  const onFacilityChosens = (selectedFacilityId: string) => {
     const {onFacilityChosen} = props;
-
     if (onFacilityChosen && onFacilityChosen.call) {
       return onFacilityChosen;
     }
@@ -75,14 +84,14 @@ const FacilitySelectionContainer = (props: FacilitySelectionContainerProps) => {
     return function (selectedFacilityId: string) {};
   };
 
-  // const selectedFacilityId= ()=>{
-  //   return this.props.userStore.selectedFacilityId;
-  // }
+  const selectedFacilityId = () => {
+    // return this.props.userStore.selectedFacilityId;
+  };
 
-  const showLoading = () => {
+  const showLoadings = () => {
     return !!showLoading;
   };
-  const showNewQuestionButton = () => {
+  const showNewQuestionButtons = () => {
     return !!showNewQuestionButton;
   };
   const showFacilitySelector = () => {
@@ -104,17 +113,14 @@ const FacilitySelectionContainer = (props: FacilitySelectionContainerProps) => {
         refreshControl={<ActivityIndicator color={AppColors.blue} />}
         data={[{id: '1'}]}
         refreshing={this.refreshing}
-        onRefresh={() => this.onRefresh(this.selectedFacilityId)}
+        onRefresh={() => this.onRefresh(selectedFacilityId)}
         renderItem={({item, index}) => {
           return (
-            //<Container style={style.containerNoQuestions}>
             <IconTitleBlock
               key={item.id}
               iconName={this.noDataIconName}
               text={this.noDataText}
             />
-            //    {this.showNewQuestionButton && <ScreenFooterButton style={style.containerNoQuestions} title="Add Question" onPress={this.showNewQuestion.bind(this)} />}
-            //</Container>
           );
         }}
       />
@@ -136,20 +142,17 @@ const FacilitySelectionContainer = (props: FacilitySelectionContainerProps) => {
 
   return (
     <View style={style.container}>
-      {/* {props.showFacilitySelector && (
+      {/* {showFacilitySelector && (
         <FacilityListHeaderItem
           key={'facility-selection-header'}
-          caption={this.facilityHeaderCaption}
-          overrideFacilities={this.props.overrideFacilities}
-          facilityChosen={this.onFacilityChosen.bind(
-            this,
-            this.selectedFacilityId,
-          )}
+          caption={facilityHeaderCaption}
+          overrideFacilities={overrideFacilities}
+          facilityChosen={onFacilityChosens(selectedFacilityId)}
         />
-      )}
-      {this.showLoading && (
-        <ActivityIndicator color={AppColors.blue} style={{flex: 1}} />
       )} */}
+      {showLoading && (
+        <ActivityIndicator color={AppColors.blue} style={{flex: 1}} />
+      )}
       {/* {!this.showLoading &&
           this.showNewQuestionButton &&
           this.showNoData &&

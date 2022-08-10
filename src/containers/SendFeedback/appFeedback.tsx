@@ -18,6 +18,7 @@ import NavigationService from '../../navigation/NavigationService';
 interface AppFeedbackModalState {
   messageText: string;
 }
+const SafeAreaView = require('react-native').SafeAreaView;
 
 const SendFeedback = (props: AppFeedbackModalState) => {
   const userInfo = useSelector(state => state.userReducer);
@@ -82,7 +83,7 @@ const SendFeedback = (props: AppFeedbackModalState) => {
   };
 
   return (
-    <View style={style.container}>
+    <SafeAreaView style={style.container}>
       {renderForm()}
       <View style={style.footer}>
         <ActionButton
@@ -92,7 +93,7 @@ const SendFeedback = (props: AppFeedbackModalState) => {
           onPress={onSendFeedback}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

@@ -16,10 +16,10 @@ import {
 } from 'react-native';
 import {Thumbnail} from 'native-base';
 import {CachedImage} from '@georstat/react-native-image-cache';
-import {Images} from './';
 import {logger} from 'react-native-logs';
 import {BubbleLabel} from './bubble-label';
 import {AppColors} from '../theme';
+import Images from './Images/index';
 
 interface AvatarProps {
   size: number;
@@ -62,7 +62,6 @@ export const Avatar = (props: AvatarProps) => {
   };
 
   const renderLabel = () => {
-    Alert.alert('hi');
     // const {title, titleStyle, titleTextStyle, size} = props;
     // let _style = StyleSheet.flatten([
     //   titleStyle || {},
@@ -85,35 +84,37 @@ export const Avatar = (props: AvatarProps) => {
   };
 
   const renderImage = () => {
-    const {size, style, source, borderColor, facility, title} = props;
-    console.log('Size===>', size);
+    const {source, size, style, title, facility, borderWidth, borderColor} =
+      props;
 
-    // let imgSource: ImageURISource = facility
-    //   ? Images.defaultFacilityAvatar
-    //   : Images.defaultAvatar;
+    let imgSource: ImageURISource = facility
+      ? Images.defaultFacilityAvatar
+      : Images.defaultAvatar;
 
     if (source && source !== '') {
-      // imgSource = {uri: source};
+      imgSource = {uri: source};
     }
     const circleStyle = {
       position: 'absolute',
-      width: 30,
-      height: 30,
-      borderRadius: 30 / 2,
+      width: size,
+      height: size,
+      borderRadius: size / 2,
+      borderWidth: 2,
+      borderColor: AppColors.blue,
     } as ViewStyle;
 
-    // if (borderWidth == null) {
-    //   borderWidth = 2;
-    // }
+    if (borderWidth == null) {
+      // borderWidth = 2;
+    }
 
-    // if (borderColor == null) {
-    //   borderColor = AppColors.blue; // '#FDAD40'
-    // }
+    if (borderColor == null) {
+      // let borderColor = AppColors.blue; // '#FDAD40'
+    }
 
-    // const viewHeight = size + (title == null ? 0 : titleBottomOffset);
+    const viewHeight = size + (title == null ? 0 : titleBottomOffset());
 
     return (
-      <View>
+      <View style={[style, {width: size, height: viewHeight}]}>
         <View style={[circleStyle]} />
       </View>
     );
@@ -121,13 +122,10 @@ export const Avatar = (props: AvatarProps) => {
 
   if (props.onClick) {
     return (
-      // <TouchableHighlight>
-      //   <Text>ji</Text>
-      //   {/* {renderImage()} */}
-      // </TouchableHighlight>
-      <View style={{backgroundColor: 'red'}}>
-        <Text>hi</Text>
-      </View>
+      <TouchableHighlight> {renderImage()} </TouchableHighlight>
+      // <View style={{backgroundColor: 'red'}}>
+      //   <Text>hi</Text>
+      // </View>
     );
   }
 

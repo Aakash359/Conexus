@@ -18,57 +18,25 @@ import {
 } from '../stores/content-list-model';
 
 interface ConexusIconListProps extends ViewProperties {
-  style?: StyleProp<ViewStyle>;
+  styles?: StyleProp<ViewStyle>;
   data: typeof ContentListModel.Type[];
 }
 const log = logger.createLogger();
+const blockPadding = 28;
 
-export class ConexusContentList extends Component<ConexusIconListProps> {
-  componentWillMount() {}
+const ConexusContentList = (props: ConexusIconListProps) => {
+  const {styles, data} = props;
 
-  render() {
-    return (
-      <View style={this.props.style}>
-        {this.props.data.map((item, index) =>
-          this.renderContentBlock(item, index),
-        )}
-      </View>
-    );
-  }
-
-  renderContentBlock(item: typeof ContentListModel.Type, index: number) {
-    return (
-      <View
-        key={`content-block-${index}`}
-        style={StyleSheet.flatten([
-          style.contentBlock,
-          (index + 1) % 2 === 0 ? style.contentBlockEven : {},
-        ])}>
-        <Text style={style.contentBlockTitle}>{item.title}</Text>
-        {item.list && this.renderContentBlockList(item.list)}
-      </View>
-    );
-  }
-
-  renderContentBlockList(list: typeof ContentListItemModel.Type[]) {
-    log.info('block list', list);
-    return list.map((item, index) => (
-      <View
-        key={`content-block-list-item-${index}`}
-        style={style.contentBlockListItem}>
-        {!!item.icon && this.renderIcon(item.icon, item.iconColor)}
-        {!!item.image && this.renderImage(item.image)}
-        {!!item.text && this.renderText(item.text)}
-      </View>
-    ));
-  }
-
-  renderImage(uri) {
+  const renderImage = uri => {
     var source = {uri};
     return <FitImage source={source} style={style.contentBlockListItemImage} />;
-  }
+  };
 
-  renderIcon(name: string, iColor: string) {
+  const renderText = (text: string) => {
+    return <Text style={style.contentBlockListItemText}>{text}</Text>;
+  };
+
+  const renderIcon = (name: string, iColor: string) => {
     return (
       <ConexusIcon
         name={name}
@@ -77,14 +45,45 @@ export class ConexusContentList extends Component<ConexusIconListProps> {
         style={style.contentBlockListItemIcon}
       />
     );
-  }
+  };
 
-  renderText(text: string) {
-    return <Text style={style.contentBlockListItemText}>{text}</Text>;
-  }
-}
+  const renderContentBlockList = (list: typeof ContentListItemModel.Type[]) => {
+    log.info('block list', list);
+    return list.map((item, index) => (
+      <View
+        key={`content-block-list-item-${index}`}
+        style={style.contentBlockListItem}>
+        {!!item.icon && renderIcon(item.icon, item.iconColor)}
+        {!!item.image && renderImage(item.image)}
+        {!!item.text && renderText(item.text)}
+      </View>
+    ));
+  };
 
-const blockPadding = 28;
+  const renderContentBlock = (
+    item: typeof ContentListModel.Type,
+    index: number,
+  ) => {
+    return (
+      <View
+        key={`content-block-${index}`}
+        style={StyleSheet.flatten([
+          style.contentBlock,
+          (index + 1) % 2 === 0 ? style.contentBlockEven : {},
+        ])}>
+        <Text style={style.contentBlockTitle}>{item.title}</Text>
+        {item.list && renderContentBlockList(item.list)}
+      </View>
+    );
+  };
+
+  return (
+    <View style={props.styles}>
+      {data.map((item, index) => renderContentBlock(item, index))}
+    </View>
+  );
+};
+
 const style = StyleSheet.create({
   rootView: {
     flex: 1,
@@ -123,3 +122,5 @@ const style = StyleSheet.create({
     flex: 1,
   },
 });
+
+export default ConexusContentList;

@@ -1,16 +1,17 @@
 import React, {Component} from 'react';
-import {Text} from 'native-base';
 import {
-  ViewProperties,
   TextStyle,
   StyleSheet,
+  Text,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import {ConexusIcon} from '../components/conexus-icon';
+import Icon from 'react-native-vector-icons/Ionicons';
 import variables from '../theme';
 import {AppFonts} from '../theme';
 
-interface ConexusIconButtonProps extends ViewProperties {
+interface ConexusIconButtonProps {
   title?: string;
   iconName: string;
   iconSize: number;
@@ -21,45 +22,46 @@ interface ConexusIconButtonProps extends ViewProperties {
   textStyle?: TextStyle;
 }
 
-export class ConexusIconButton extends Component<ConexusIconButtonProps> {
-  componentWillMount() {}
+export const ConexusIconButton = (props: ConexusIconButtonProps) => {
+  const {disabled, textStyle, onPress, title, style, iconName, iconSize} =
+    props;
 
-  get color(): string {
-    return this.props.disabled
-      ? variables.gray
-      : this.props.color || variables.blue;
-  }
+  const color = () => {
+    return disabled ? variables.gray : color || variables.blue;
+  };
 
-  render() {
-    const {title, onPress, disabled, iconName, textStyle} = this.props;
-    const style = this.props.style || {};
-    const iconSize = this.props.iconSize || 24;
-
-    return (
-      <TouchableOpacity
-        onPress={onPress}
-        disabled={disabled}
-        style={[defaultStyle.button, style]}>
-        <ConexusIcon
-          name={iconName}
-          size={iconSize}
-          color={this.color}
-          style={title ? {marginBottom: 6} : {}}
-        />
-        {title && (
-          <Text
-            style={StyleSheet.flatten([
-              defaultStyle.text,
-              {color: this.color},
-              textStyle,
-            ])}>
-            {title}
-          </Text>
-        )}
-      </TouchableOpacity>
-    );
-  }
-}
+  const IconSize = iconSize || 24;
+  const Style = style || {};
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      disabled={disabled}
+      style={[defaultStyle.button, Style]}>
+      {/* <Icon
+        style={title ? {marginBottom: 6} : {}}
+        name={iconName}
+        size={IconSize}
+        color={color()}
+      /> */}
+      <ConexusIcon
+        name={iconName}
+        size={IconSize}
+        // color={color()}
+        style={title ? {marginBottom: 6} : {}}
+      />
+      {title && (
+        <Text
+          style={StyleSheet.flatten([
+            defaultStyle.text,
+            {color: color()},
+            textStyle,
+          ])}>
+          {title}
+        </Text>
+      )}
+    </TouchableOpacity>
+  );
+};
 
 const defaultStyle = StyleSheet.create({
   button: {

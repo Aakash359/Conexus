@@ -25,10 +25,6 @@ export interface IRegisterUser {
   isFacility: boolean
 }
 
-
-
-
-
 export const signUp = (data: IRegisterUser) => axios.post(`${defaultBaseUrl}/user/newRegister`, data);
 
 export const uploadPhoto = async (data: { base64Image: any; fileExt: string}) => 

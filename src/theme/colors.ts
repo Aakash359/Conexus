@@ -2,6 +2,7 @@
 export const colors = {
   white: '#FFFFFF',
   black: '#000000',
+  transparent: 'rgba(0,0,0,0)',
   gray: '#BBBBBE',
   darkGrey: '#1b1b1b',
   baseGray: '#F1F3F8',

@@ -1,14 +1,14 @@
-import React, {Component} from 'react';
-import {Text} from 'native-base';
+import React, {useEffect, useState} from 'react';
 import {
-  ViewProperties,
   StyleSheet,
   TouchableOpacity,
   View,
   Platform,
+  Text,
+  Alert,
 } from 'react-native';
 import {AppFonts, AppColors} from '../theme';
-import {BubbleLabel} from '../components';
+import BubbleLabel from './bubble-label';
 
 export type TabDetails = {
   id: string;
@@ -18,7 +18,7 @@ export type TabDetails = {
   badgeTextColor?: string;
 };
 
-interface TabBarProps extends ViewProperties {
+interface TabBarProps {
   tabs: TabDetails[];
   selectedTabId?: string;
   onTabSelection: (selectedTab: TabDetails) => any;
@@ -28,54 +28,100 @@ interface TabBarState {
   selectedTab: TabDetails;
 }
 
-export class TabBar extends Component<TabBarProps, TabBarState> {
-  constructor(props, state) {
-    super(props, state);
+export const TabBar = (props: TabBarProps) => {
+  const {tabs, style, selectedTabId, onTabSelection} = props;
 
-    this.state = {
-      selectedTab:
-        this.props.tabs.find(i => i.id === this.props.selectedTabId) ||
-        this.props.tabs[0],
-    };
-  }
+  const [selectedTab, setSelectedTab] = useState(
+    tabs.find(i => i.id === selectedTabId) || tabs[0],
+  );
 
-  componentWillMount() {}
+  //       this.props.tabs[0],)
 
-  componentWillReceiveProps(newProps: TabBarProps) {
-    this.setState({
-      selectedTab:
-        newProps.tabs.find(i => i.id === newProps.selectedTabId) ||
-        newProps.tabs[0],
-    });
-  }
+  // constructor(props, state) {
+  //   super(props, state);
 
-  _selectTab(tab: TabDetails) {
-    this.setState({selectedTab: tab});
-    this.props.onTabSelection(tab);
-  }
+  //   this.state = {
+  //     selectedTab:
+  //       this.props.tabs.find(i => i.id === this.props.selectedTabId) ||
+  //       this.props.tabs[0],
+  //   };
+  // }
 
-  renderButton(tab: TabDetails) {
-    const {selectedTab} = this.state;
-    const selected = selectedTab === tab;
+  // useEffect(()=>{
+  //   const {tabs} = props;
+  //   setSelectedTab(selectTab: tabs.find((i: { id: any; }) => i.id === selectedTabId) ||tabs[0])
+  // },[])
 
+  // componentWillReceiveProps(newProps: TabBarProps) {
+  //   this.setState({
+  //     selectedTab:
+  //       newProps.tabs.find(i => i.id === newProps.selectedTabId) ||
+  //       newProps.tabs[0],
+  //   });
+  // }
+
+  const selectTab = (tab: TabDetails) => {
+    setSelectedTab(tab);
+    // props.onTabSelection(tab);
+  };
+
+  // const renderButton = (tab: TabDetails) => {
+  //   const Selected = selectedTab === tab;
+
+  //   return (
+  //     <TouchableOpacity
+  //       key={tab.id}
+  //       style={Selected ? styles.buttonSelected : styles.button}
+  //       onPress={selectTab(tab)}
+  // >
+  //       <View style={{flex: 1, alignItems: 'center', flexDirection: 'row'}}>
+  //         <Text
+  //           style={Selected ? styles.buttonSelectedText : styles.buttonText}>
+  //           {tab.title}
+  //         </Text>
+  //         {!!tab.badge && (
+  //           <BubbleLabel
+  //             height={16}
+  //             title={tab.badge}
+  //             style={StyleSheet.flatten([
+  //               styles.badge,
+  //               {
+  //                 width: tab.badge.length === 1 ? 16 : 24,
+  //                 backgroundColor: tab.badgeColor || AppColors.green,
+  //               },
+  //             ])}
+  //             textStyle={StyleSheet.flatten([
+  //               styles.badgeText,
+  //               {color: tab.badgeTextColor || AppColors.white},
+  //             ])}
+  //           />
+  //         )}
+  //       </View>
+  //     </TouchableOpacity>
+  //   );
+  // };
+
+  const tabElements = tabs.map(tab => {
+    const Selected = selectedTab === tab;
     return (
-      <TouchableOpacity
-        key={tab.id}
-        style={selected ? styles.buttonSelected : styles.button}
-        onPress={this._selectTab.bind(this, tab)}>
-        <View style={{flex: 1, alignItems: 'center', flexDirection: 'row'}}>
-          <Text
-            style={selected ? styles.buttonSelectedText : styles.buttonText}>
-            {tab.title}
-          </Text>
-          {!!tab.badge && (
+      <>
+        <TouchableOpacity
+          key={tab.id}
+          style={Selected ? styles.buttonSelected : styles.button}
+          onPress={tab => selectTab(tab)}>
+          <View style={{flex: 1, alignItems: 'center', flexDirection: 'row'}}>
+            <Text
+              style={Selected ? styles.buttonSelectedText : styles.buttonText}>
+              {tab.title}
+            </Text>
+            {/* {!!tab.badge && ( */}
             <BubbleLabel
               height={16}
               title={tab.badge}
               style={StyleSheet.flatten([
                 styles.badge,
                 {
-                  width: tab.badge.length === 1 ? 16 : 24,
+                  width: 24,
                   backgroundColor: tab.badgeColor || AppColors.green,
                 },
               ])}
@@ -84,26 +130,19 @@ export class TabBar extends Component<TabBarProps, TabBarState> {
                 {color: tab.badgeTextColor || AppColors.white},
               ])}
             />
-          )}
-        </View>
-      </TouchableOpacity>
+            {/* )} */}
+          </View>
+        </TouchableOpacity>
+      </>
     );
-  }
+  });
 
-  render() {
-    const {tabs, style} = this.props;
-
-    const tabElements = tabs.map(tab => {
-      return this.renderButton(tab);
-    });
-
-    return (
-      <View style={StyleSheet.flatten([styles.container, style])}>
-        {tabElements}
-      </View>
-    );
-  }
-}
+  return (
+    <View style={StyleSheet.flatten([styles.container, style])}>
+      {tabElements}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {

@@ -5,7 +5,7 @@ import {
   TextStyle,
   StyleProp,
   ViewStyle,
-  FlexStyle,
+  View,
 } from 'react-native';
 import {AppColors} from '../theme';
 
@@ -17,21 +17,17 @@ interface BubbleLabelProps {
 }
 
 const BubbleLabel = (props: BubbleLabelProps) => {
-  // render() {
-  //   const {title, height} = this.props;
-  //   const defaultHeight = 26;
-  //   const _containerStyle = StyleSheet.flatten([
-  //     style.container,
-  //     this.props.containerStyle || {},
-  //     {
-  //       height: height || defaultHeight,
-  //       borderRadius: (height || defaultHeight) / 2,
-  //     },
-  //   ]);
-  //   const _textStyle = StyleSheet.flatten([
-  //     style.text,
-  //     this.props.textStyle || {},
-  //   ]);
+  const {title, height, containerStyle, textStyle} = props;
+  const defaultHeight = 26;
+  const _containerStyle = StyleSheet.flatten([
+    style.container,
+    containerStyle || {},
+    {
+      height: height || defaultHeight,
+      borderRadius: (height || defaultHeight) / 2,
+    },
+  ]);
+  const _textStyle = StyleSheet.flatten([style.text, textStyle || {}]);
 
   return (
     <View style={_containerStyle}>

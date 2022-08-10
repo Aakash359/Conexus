@@ -353,7 +353,7 @@ export default {
   // Card
   cardDefaultBg: '#fff',
 
-  // Color
+  transparent: 'rgba(0,0,0,0)',
   brandPrimary: Colors.blue,
   brandInfo: '#50D2C2',
   brandSecondary: '#D667CE',
@@ -370,8 +370,6 @@ export default {
   lightBlue: Colors.lightBlue,
   red: Colors.red,
   green: Colors.green,
-
-  // Font
   fontFamily: 'Avenir-Book',
   fontSizeBase: 15,
 

@@ -1,9 +1,9 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import ReviewCandidateHomeScreen from '../containers/Facility/ReviewCandidateHome/index';
 import PositionsScreen from '../containers/Positions';
 import Icon from 'react-native-vector-icons/Feather';
 import {AppColors} from '.././theme';
+import ReviewCandidateContainer from '../containers/Facility/ReviewCandidateHome/reviewCandidateContainer';
 
 const Tab = createBottomTabNavigator();
 
@@ -20,7 +20,7 @@ const TabNavigator = () => {
       }}>
       <Tab.Screen
         name="Review"
-        component={ReviewCandidateHomeScreen}
+        component={ReviewCandidateContainer}
         options={{
           tabBarIcon: ({color, size}) => (
             <Icon color={AppColors.blue} size={26} name="user-plus" />

@@ -25,6 +25,7 @@ interface ForgotPasswordProps {
   username?: string;
   onPress: Function;
 }
+const SafeAreaView = require('react-native').SafeAreaView;
 
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
@@ -90,54 +91,58 @@ const ForgotPassword = () => {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={style.rootContainer}
-      keyboardShouldPersistTaps="always">
-      <KeyboardAvoidingView behavior="position" style={style.rootContainer}>
-        <View
-          style={StyleSheet.flatten([Styles.cnxWhiteHeader, {paddingTop: 20}])}>
-          <TouchableOpacity onPress={goBack}>
+    <SafeAreaView>
+      <ScrollView
+        contentContainerStyle={style.rootContainer}
+        keyboardShouldPersistTaps="always">
+        <KeyboardAvoidingView behavior="position" style={style.rootContainer}>
+          <View
+            style={StyleSheet.flatten([
+              Styles.cnxWhiteHeader,
+              {paddingTop: 20},
+            ])}>
+            <TouchableOpacity onPress={goBack}>
+              <Icon
+                name="arrow-back"
+                size={28}
+                color={AppColors.blue}
+                style={style.backArrow}
+              />
+            </TouchableOpacity>
             <Icon
-              name="arrow-back"
-              size={28}
+              name="leaf"
+              size={100}
               color={AppColors.blue}
-              style={style.backArrow}
+              style={style.logo}
             />
-          </TouchableOpacity>
-          <Icon
-            name="leaf"
-            size={100}
-            color={AppColors.blue}
-            style={style.logo}
-          />
-          <Text style={style.title}>Sign In</Text>
-        </View>
-        <View style={style.content}>
-          <View style={style.form}>
-            <Field
-              placeholder="Email Address"
-              onTextChange={(text: any) => handleOnchange(text, 'email')}
-              onFocus={() => handleError(null, 'email')}
-              error={errors.email}
-              returnKeyType="go"
-              customStyle={{
-                backgroundColor: AppColors.white,
-                marginHorizontal: -10,
-                marginRight: 1,
-                borderRadius: 5,
-              }}
-            />
+            <Text style={style.title}>Sign In</Text>
           </View>
+          <View style={style.content}>
+            <View style={style.form}>
+              <Field
+                placeholder="Email Address"
+                onTextChange={(text: any) => handleOnchange(text, 'email')}
+                onFocus={() => handleError(null, 'email')}
+                error={errors.email}
+                returnKeyType="go"
+                customStyle={{
+                  backgroundColor: AppColors.white,
+                  marginHorizontal: -10,
+                  marginRight: 1,
+                  borderRadius: 5,
+                }}
+              />
+            </View>
 
-          <ActionButton
-            textColor={variables.blue}
-            title="RECOVER NOW"
-            loading={loading}
-            disabled={inputs.email ? loading : 'false'}
-            onPress={validate}
-            customStyle={inputs.email ? style.btnEnable : style.btnDisable}
-          />
-          {/* <TouchableOpacity
+            <ActionButton
+              textColor={variables.blue}
+              title="RECOVER NOW"
+              loading={loading}
+              disabled={inputs.email ? loading : 'false'}
+              onPress={validate}
+              customStyle={inputs.email ? style.btnEnable : style.btnDisable}
+            />
+            {/* <TouchableOpacity
             // disabled={
             //   !!!this.state.username ||
             //   this.props.userStore.isRecoveringPassword
@@ -147,9 +152,10 @@ const ForgotPassword = () => {
               <Text style={style.signIn}>RECOVER NOW</Text>
             </View>
           </TouchableOpacity> */}
-        </View>
-      </KeyboardAvoidingView>
-    </ScrollView>
+          </View>
+        </KeyboardAvoidingView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

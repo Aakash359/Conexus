@@ -16,6 +16,8 @@ interface ProfileState {
   authToken: string;
 }
 
+const SafeAreaView = require('react-native').SafeAreaView;
+
 const Profile: React.FC<ProfileState> = () => {
   const [loading, setLoading] = useState(false);
   const userInfo = useSelector(state => state.userReducer);
@@ -55,7 +57,7 @@ const Profile: React.FC<ProfileState> = () => {
   };
 
   return (
-    <View style={style.container}>
+    <SafeAreaView style={style.container}>
       <View style={style.avatarContainer}>
         <View style={style.profileCircle}>
           <Image
@@ -90,7 +92,7 @@ const Profile: React.FC<ProfileState> = () => {
           onPress={onPressLogout}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
