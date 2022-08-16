@@ -8,14 +8,13 @@ import {
   TouchableOpacity,
   Platform,
   ViewStyle,
-  Image,
+  Text,
+  Button,
 } from 'react-native';
-import {Text} from 'native-base';
 import {AppColors, AppFonts, AppSizes} from '../theme/index';
 import {logger} from 'react-native-logs';
 // import Video from 'react-native-video'
 import {ActionButton, IconTitleBlock, ScreenFooterButton} from '../components';
-import {Button} from 'native-base';
 import _ from 'lodash';
 import InCallManager from 'react-native-incall-manager';
 import SystemSetting from 'react-native-system-setting';

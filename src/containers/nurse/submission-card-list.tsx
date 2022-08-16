@@ -1,6 +1,5 @@
 import React from 'react';
 import {StyleSheet, View, ViewProperties, Platform} from 'react-native';
-import {Text} from 'native-base';
 
 import {AppSizes, AppColors} from '../../theme';
 import {NurseSubmissionModel} from '../../stores';

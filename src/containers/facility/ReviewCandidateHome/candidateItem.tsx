@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Alert, TouchableOpacity, Text, View} from 'react-native';
+import {StyleSheet, TouchableOpacity, Text, View, Alert} from 'react-native';
 import {Avatar} from '../../../components/avatar';
-
 import variables, {AppColors} from '../../../theme';
 import {ScreenType} from '../../../common/constants';
 import {CandidateModel} from '../../../stores/facility';
@@ -9,15 +8,16 @@ import {AppFonts} from '../../../theme';
 import {logger} from 'react-native-logs';
 import {BubbleLabel} from '../../../components/bubble-label';
 import {PositionModel} from '../../../stores/index';
+import NavigationService from '../../../navigation/NavigationService';
 const log = logger.createLogger();
 
 export interface CandidateItemProps {
-  // candidate: typeof CandidateModel.Type,
+  candidate: any;
   candidatesCount: number;
   index: number;
   showAll: boolean;
   showAllHighlight: boolean;
-  // positions: typeof PositionModel.Type,
+  positions: any;
   updateViewed: (s: string) => any;
   onMorePress: () => any;
 }
@@ -35,6 +35,7 @@ const CandidateItem = (props: CandidateItemProps) => {
     candidatesCount,
     showAllHighlight,
   } = props;
+
   const [subViewed, setSubViewed] = useState(false);
 
   useEffect(() => {
@@ -42,58 +43,64 @@ const CandidateItem = (props: CandidateItemProps) => {
   });
 
   const renderItem = () => {
-    log.info('Render Candidates');
     return (
-      <ListItem
-        key={candidate.userId}
-        avatar
-        style={StyleSheet.flatten([
-          styles.listItem,
-          !!!candidate.viewedSubmission ? styles.unviewed : {},
-        ])}
-        // onPress={() => Actions[ScreenType.FACILITIES.HCP_DETAIL]({
-        //     submissionId: candidate.submissionId,
-        //     candidate,
-        //     onClose: () => {
-        //         this.props.updateViewed(candidate.submissionId)
-        //     }
-        // })}
-      >
-        <Left style={styles.itemSection}>
-          <Avatar size={48} source={candidate.photoUrl} />
-        </Left>
-        <Body style={StyleSheet.flatten([styles.itemSection, styles.body])}>
-          <Text style={AppFonts.listItemTitleTouchable}>
-            {candidate.display.title}
-          </Text>
-          {!!candidate.display.description && (
-            <Text style={StyleSheet.flatten(AppFonts.listItemDescription)}>
-              {candidate.display.description}
-            </Text>
-          )}
-        </Body>
-        {!!candidate.photoLabel && (
-          <Right style={styles.itemSection}>
-            <BubbleLabel
-              height={18}
-              textStyle={{fontSize: 12}}
-              style={{width: 48, borderWidth: 0, backgroundColor: '#36D8A3'}}
-              title={candidate.photoLabel}
+      <TouchableOpacity
+        onPress={() => NavigationService.navigate('HcpDetailView')}>
+        <View
+          key={candidate.userId}
+          style={StyleSheet.flatten([
+            styles.listItem,
+            !!!candidate.viewedSubmission ? styles.unviewed : {},
+          ])}
+
+          // onPress={() => Actions[ScreenType.FACILITIES.HCP_DETAIL]({
+          //     submissionId: candidate.submissionId,
+          //     candidate,
+          //     onClose: () => {
+          //         this.props.updateViewed(candidate.submissionId)
+          //     }
+          // })}
+        >
+          <View style={styles.itemSection}>
+            <Avatar
+              size={48}
+              source={candidate.photoUrl}
+              style={{alignSelf: 'center', top: 3}}
             />
-          </Right>
-        )}
-      </ListItem>
+            <Text style={(AppFonts.listItemTitleTouchable, styles.title)}>
+              {candidate.display.title}
+            </Text>
+          </View>
+          <View style={StyleSheet.flatten([styles.itemSection, styles.body])}>
+            {!!candidate.display.description && (
+              <Text style={StyleSheet.flatten(AppFonts.listItemDescription)}>
+                {candidate.display.description}
+              </Text>
+            )}
+          </View>
+          {!!candidate.photoLabel && (
+            <View style={styles.itemSection}>
+              <BubbleLabel
+                height={18}
+                textStyle={{fontSize: 12}}
+                style={{width: 48, borderWidth: 0, backgroundColor: '#36D8A3'}}
+                title={candidate.photoLabel}
+              />
+            </View>
+          )}
+        </View>
+      </TouchableOpacity>
     );
   };
 
   const renderShowMore = () => {
     return (
-      <ListItem
+      <View
         key="show-more"
-        avatar
         style={StyleSheet.flatten([styles.listItem])}
-        onPress={this.props.onMorePress}>
-        <Body
+        // onPress={this.props.onMorePress}
+      >
+        <View
           style={StyleSheet.flatten([
             styles.itemSection,
             styles.body,
@@ -106,13 +113,14 @@ const CandidateItem = (props: CandidateItemProps) => {
             ])}>
             Show All {candidatesCount} Candidates
           </Text>
-        </Body>
-      </ListItem>
+        </View>
+      </View>
     );
   };
 
   if (!showAll && index === 3) {
-    return renderShowMore();
+    return;
+    renderShowMore();
   } else if (!showAll && index > 3) {
     return null;
   }
@@ -130,6 +138,13 @@ const styles = StyleSheet.create({
     borderTopColor: AppColors.gray,
     borderRightColor: AppColors.gray,
   },
+  title: {
+    textAlignVertical: 'center',
+    top: 3,
+    fontSize: 18,
+    color: AppColors.blue,
+    marginLeft: 18,
+  },
   buttonHighlight: {
     backgroundColor: AppColors.blue,
     color: AppColors.white,
@@ -137,12 +152,15 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   unviewed: {
-    borderLeftColor: AppColors.blue,
+    borderLeftColor: AppColors.white,
     borderLeftWidth: 5,
     paddingLeft: 11,
   },
   itemSection: {
     borderWidth: 0,
+    paddingVertical: 5,
+    paddingBottom: 4,
+    flexDirection: 'row',
     borderBottomWidth: 0,
   },
   body: {

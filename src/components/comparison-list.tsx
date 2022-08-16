@@ -1,10 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   View,
   Text,
   TouchableHighlight,
   Platform,
+  Alert,
 } from 'react-native';
 import FitImage from 'react-native-fit-image';
 import {ComparisonDataModel} from '../stores/comparison-data-model';
@@ -13,6 +14,8 @@ import {ScreenType} from '../common/constants';
 import {AppFonts, AppColors} from '../theme';
 import {ConexusContentList} from '../components';
 import {ConexusIcon} from '../components/conexus-icon';
+import NavigationService from '../navigation/NavigationService';
+import {ReviewCandidateContentModal} from './Modals/ReviewCandidateContentModal';
 
 export interface ComparisonListProps {
   index: number;
@@ -22,6 +25,7 @@ export interface ComparisonListProps {
 }
 
 export const ComparisonList = (props: ComparisonListProps) => {
+  const [modalVisible, setModalVisible] = useState(false);
   const {index, count, data, cellWidth} = props;
 
   const renderContentListCellInLightbox = (cell: any) => {
@@ -35,15 +39,23 @@ export const ComparisonList = (props: ComparisonListProps) => {
 
   const handleCellClick = (cell: typeof ComparisonDataModel.Type) => {
     const hasLink = !!cell.details;
+    setModalVisible(true);
+    if (hasLink) {
+      Alert.alert('Hi');
 
-    // if (hasLink) {
-    //     log.info(cell);
-    //     Actions[ScreenType.CONTENT_LIGHTBOX]({ title: cell.headerTitle, renderContent: this._renderContentListCellInLightbox.bind(this, cell) });
-    // }
+      // Actions[ScreenType.CONTENT_LIGHTBOX]
+      // ({
+      //   title: cell.headerTitle,
+      //   renderContent: renderContentListCellInLightbox.bind(this, cell),
+      // });
+    }
 
-    // if (!!cell.imageUrl) {
-    //     Actions[ScreenType.CONTENT_LIGHTBOX]({ title: cell.headerTitle, renderContent: this._renderCellImageInLightbox.bind(this, cell) });
-    // }
+    if (!!cell.imageUrl) {
+      Actions[ScreenType.CONTENT_LIGHTBOX]({
+        title: cell.headerTitle,
+        renderContent: this._renderCellImageInLightbox.bind(this, cell),
+      });
+    }
   };
 
   const wrapCell = (cell: any, elements: () => any) => {
@@ -90,6 +102,14 @@ export const ComparisonList = (props: ComparisonListProps) => {
             )}
           </View>
         ))}
+        {modalVisible && (
+          <ReviewCandidateContentModal
+            title={'Requested Time Off'}
+            onRequestClose={() => setModalVisible(false)}
+            onDismiss={() => setModalVisible(false)}
+            onClose={() => setModalVisible(false)}
+          />
+        )}
       </View>
     );
   };
@@ -148,8 +168,6 @@ export const ComparisonList = (props: ComparisonListProps) => {
   };
 
   const renderHeader = (cell: any) => {
-    // const {cellWidth, index} = this.props;
-
     return (
       <View style={[styles.headerRow, {width: cellWidth}]}>
         <Text
@@ -196,11 +214,9 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderTopWidth: 1,
     borderBottomWidth: 1,
-
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-
     marginTop: headerHeight,
   },
 

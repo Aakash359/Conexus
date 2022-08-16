@@ -1,5 +1,5 @@
 import React, {ReactElement} from 'react';
-import {Icon, Button} from 'native-base';
+// import {Icon, Button} from 'native-base';
 import {Text, StyleSheet, View, TouchableOpacity} from 'react-native';
 // import { Publisher, Subscriber } from 'react-native-opentok'
 

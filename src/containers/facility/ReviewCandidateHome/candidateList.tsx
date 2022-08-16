@@ -1,20 +1,18 @@
 import React, {useEffect, useState} from 'react';
 import {View, FlatList, ActivityIndicator, Text, Alert} from 'react-native';
 // import {FacilityModel} from '../../../stores';
-import {PositionListItem} from './position-list-item';
+import {CandidateListItem} from './candidateListItem';
 import {AppColors} from '../../../theme';
 
-export interface PositionListProps {
+export interface CandidateListProps {
   submissions: any;
   refreshing: boolean;
   selectedFacilityId: string;
   onRefresh?: () => {};
 }
 
-export const PositionList = (props: PositionListProps) => {
+export const CandidateList = (props: CandidateListProps) => {
   const {submissions, onRefresh, selectedFacilityId, refreshing} = props;
-
-  console.log('Submission', submissions, selectedFacilityId);
 
   // const getFacilitySelectionItem = (
   //   facilityId: string,
@@ -64,7 +62,7 @@ export const PositionList = (props: PositionListProps) => {
       // refreshControl={<ActivityIndicator color={AppColors.blue} />}
       refreshing={refreshing}
       renderItem={({item, index}) => (
-        <PositionListItem
+        <CandidateListItem
           key={`${item.needId}-${index}`}
           position={item}
           first={index === 0}

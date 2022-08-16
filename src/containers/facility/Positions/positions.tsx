@@ -1,7 +1,7 @@
-import React from 'react';
-import {Text, ListItem, Body, Button} from 'native-base';
+import React, {useEffect, useState} from 'react';
 import {
-  ViewProperties,
+  Text,
+  Button,
   StyleSheet,
   View,
   FlatList,
@@ -16,33 +16,32 @@ import {
   NeedDetailModel,
   UserStore,
 } from '../../../stores';
-// import { Actions } from 'react-native-router-flux'
-import {logger} from 'react-native-logs';
-
 import {ScreenType} from '../../../common/constants';
 import {AppColors, AppFonts} from '../../../theme';
-import {ViewHeader, FacilitySelectionContainer} from '../../../components';
+import {ViewHeader} from '../../../components/view-header';
+import FacilitySelectionContainer from '../../../components/facility-selection-container';
+import {facilityNeedService} from '../../../services/facility/facilityNeedService';
 
-export interface NeedsContainerProps extends ViewProperties {
+export interface PositionsProps {
   facilityNeedsStore: typeof FacilityNeedsStore.Type;
   userStore: UserStore;
 }
 
-export interface NeedsContainerState {
+export interface PositionState {
   refreshing: boolean;
   expandedNeedId: string;
 }
 
 let needsStorePromise: Promise<any>;
-const log = logger.createLogger();
 
-export class NeedsContainer extends React.Component<
-  NeedsContainerProps,
-  NeedsContainerState
-> {
-  mounted: boolean = false;
+const Positions = (props: PositionsProps, state: PositionState) => {
+  const mounted: boolean = false;
 
-  get selectedFacility(): typeof FacilityNeedsModel.Type {
+  const [expandedNeedId, setExpandedNeedId] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [needs, setNeeds] = useState([]);
+
+  const selectedFacility = (): any => {
     const {facilityNeedsStore, userStore} = this.props;
 
     if (facilityNeedsStore.loading) {
@@ -51,14 +50,14 @@ export class NeedsContainer extends React.Component<
 
     if (userStore.selectedFacilityId) {
       return facilityNeedsStore.facilities.find(
-        i => i.facilityId === userStore.selectedFacilityId,
+        (i: {facilityId: any}) => i.facilityId === userStore.selectedFacilityId,
       );
     }
 
     return null;
-  }
+  };
 
-  get showNoData(): boolean {
+  const showNoData = (): boolean => {
     const {facilityNeedsStore} = this.props;
     if (this.state.refreshing || facilityNeedsStore.loading) {
       return false;
@@ -69,45 +68,34 @@ export class NeedsContainer extends React.Component<
       facilityNeedsStore.loading ||
       this.selectedFacility.needs.length === 0
     );
-  }
+  };
 
-  get showLoading(): boolean {
+  const showLoading = (): boolean => {
     const {facilityNeedsStore} = this.props;
     if (this.state.refreshing) {
       return false;
     }
     return facilityNeedsStore.loading;
-  }
+  };
 
-  constructor(props, state) {
-    super(props, state);
+  useEffect(() => {
+    let mounted = true;
+    // if (props.userInfo?.user?.userFacilities) {
 
-    this.state = {
-      refreshing: false,
-      expandedNeedId: '',
-    };
+    // }
+    load(false);
+  }, []);
 
-    log.info('NeedContainer', 'constructor');
-  }
-
-  componentDidMount() {
-    this.mounted = true;
-
-    if (this.props.userStore.isFacilityUser) {
-      this.load(false);
-    }
-  }
-
-  showNeedQuestions(need: typeof NeedDetailModel.Type) {
+  const showNeedQuestions = (need: typeof NeedDetailModel.Type) => {
     // Actions[ScreenType.FACILITIES.CATALOG_SECTION]({
     //     //questionSectionId: section.sectionId,
     //     needId: need.needId,
     //     sectionTitleOverride: need.display.title,
     //     onSave: this.load.bind(this)
     // })
-  }
+  };
 
-  toggleExpandedNeedId(needId: string = '') {
+  const toggleExpandedNeedId = (needId: string = '') => {
     let {expandedNeedId} = this.state;
 
     if (expandedNeedId === needId) {
@@ -117,55 +105,35 @@ export class NeedsContainer extends React.Component<
     }
 
     this.setState({expandedNeedId});
-  }
+  };
 
-  load(refreshing: boolean = false) {
-    const {facilityNeedsStore} = this.props;
-
-    this.setState({refreshing});
+  const load = async (refreshing: boolean = false) => {
+    // setRefreshing(refreshing);
 
     if (!needsStorePromise) {
-      log.info('NeedContainer', 'Loading needs', refreshing);
-      needsStorePromise = facilityNeedsStore.load();
-    } else {
-      log.info('NeedContainer', 'Joining existing need store load', refreshing);
+      try {
+        const {data} = await facilityNeedService();
+        console.log('Needs====>', data);
+        setNeeds(data?.[0]?.needs);
+      } catch (error) {
+        console.log('Error', error);
+        if (mounted) {
+          setRefreshing(false);
+        } else {
+          console.log(
+            'NeedContainer',
+            'Not mounted so doing nothing after data loaded.',
+          );
+          Alert.alert(
+            'Error',
+            'We are having trouble loading needs. Please try again.',
+          );
+        }
+      }
     }
+  };
 
-    needsStorePromise
-      .then(() => {
-        if (this.mounted) {
-          log.info('NeedContainer', 'Needs loaded');
-
-          this.setState({refreshing: false}, () => {
-            needsStorePromise = undefined;
-          });
-        } else {
-          log.info(
-            'NeedContainer',
-            'Not mounted so doing nothing after data loaded.',
-          );
-        }
-      })
-      .catch(error => {
-        if (this.mounted) {
-          this.setState({refreshing: false}, () => {
-            needsStorePromise = undefined;
-          });
-        } else {
-          log.info(
-            'NeedContainer',
-            'Not mounted so doing nothing after data loaded.',
-          );
-        }
-        log.info('NeedsContainer', 'ERROR', error);
-        Alert.alert(
-          'Error',
-          'We are having trouble loading needs. Please try again.',
-        );
-      });
-  }
-
-  renderNeedBodyMetric(title: string, description: string) {
+  const renderNeedBodyMetric = (title: string, description: string) => {
     return (
       <View
         key={`need-metric-${title}-${description}`}
@@ -180,22 +148,22 @@ export class NeedsContainer extends React.Component<
         <Text style={{...AppFonts.bodyTextXtraLarge}}>{description}</Text>
       </View>
     );
-  }
+  };
 
-  renderNeedBody(need: typeof NeedDetailModel.Type) {
-    return need.stats.map(stat =>
-      this.renderNeedBodyMetric(stat.title, stat.description),
+  const renderNeedBody = (need: typeof NeedDetailModel.Type) => {
+    return need.stats.map((stat: {title: string; description: string}) =>
+      renderNeedBodyMetric(stat.title, stat.description),
     );
-  }
+  };
 
-  renderCardButton(options: {
+  const renderCardButton = (options: {
     id: string;
     title: string;
     onPress: () => any;
     isLastCard: boolean;
     firstButton: boolean;
     lastButton: boolean;
-  }) {
+  }) => {
     const paddingBottom = options.isLastCard ? 18 : 0;
     const buttonStyle =
       styles[
@@ -212,14 +180,10 @@ export class NeedsContainer extends React.Component<
         </Button>
       </View>
     );
-  }
+  };
 
-  renderNeed(
-    need: typeof NeedDetailModel.Type,
-    index: number,
-    needs: typeof NeedDetailModel.Type[],
-  ) {
-    const {expandedNeedId} = this.state;
+  const renderNeed = (need: any, index: number, needs: any) => {
+    console.log('Aa raha hai====>', need);
 
     const titleParts = [];
     !!need.specialty && titleParts.push(need.specialty);
@@ -234,18 +198,18 @@ export class NeedsContainer extends React.Component<
     let paddingBottom = 0;
     let result = [];
 
-    if (!expanded) {
-      paddingBottom = index === needs.length - 1 ? 18 : 0;
-    }
+    // if (!expanded) {
+    //   paddingBottom = index === needs.length - 1 ? 18 : 0;
+    // }
 
     const cardButtons = [];
     if (expanded) {
       cardButtons.push(
-        this.renderCardButton({
+        renderCardButton({
           id: need.needId,
           title: 'Edit Virtual Interview',
           onPress: () => {
-            this.showNeedQuestions(need);
+            showNeedQuestions(need);
           },
           isLastCard: index === needs.length - 1,
           firstButton: true,
@@ -262,92 +226,92 @@ export class NeedsContainer extends React.Component<
       <View
         key={`need-${need.needId}`}
         style={{flex: 1, margin: 8, paddingBottom}}>
-        <ListItem
-          onPress={this.toggleExpandedNeedId.bind(this, need.needId)}
+        <View
+          // onPress={toggleExpandedNeedId(need.needId)}
           style={cardStyle}>
-          <Body style={StyleSheet.flatten([styles.itemSection, styles.body])}>
+          <View style={StyleSheet.flatten([styles.itemSection, styles.body])}>
             <View style={{flex: 1, alignSelf: 'stretch'}}>
-              <Text
+              hi
+              {/* <Text
                 style={{...AppFonts.listItemTitleTouchable, paddingLeft: 0}}>
                 {need.display.title}
-              </Text>
+              </Text> */}
               <Text
                 style={{
                   ...AppFonts.listItemDescription,
                   paddingLeft: 0,
                   paddingBottom: 8,
                 }}>
-                {need.display.description}
+                hi
+                {/* {need.display.description} */}
               </Text>
               <View style={[styles.listItemBodyDetail]}>
-                {this.renderNeedBody(need)}
+                {/* {renderNeedBody(need)} */}
               </View>
             </View>
-          </Body>
-        </ListItem>
-        {cardButtons}
+          </View>
+        </View>
+        {/* {cardButtons} */}
       </View>,
     );
 
     return result;
-  }
+  };
 
-  renderNeedSection({item, index}) {
-    const needSummary = item as typeof NeedSummaryModel.Type;
-    const result = needSummary.needDetails.map(this.renderNeed.bind(this));
+  const renderNeedSection = (item: undefined, index: undefined) => {
+    const needSummary = needs;
 
-    if (result.length) {
-      result.unshift(
-        <ViewHeader
-          key={`section-item-${index}`}
-          title={needSummary.Status}
-          style={{
-            paddingTop: 12,
-            paddingBottom: 6,
-            backgroundColor: AppColors.baseGray,
-            borderBottomWidth: 0,
-          }}
-        />,
-      );
-    }
+    const result = needSummary.map(item => renderNeed(item.needDetails));
+
+    // if (result.length) {
+    //   result.unshift(
+    //     <ViewHeader
+    //       key={`section-item-${index}`}
+    //       title={needSummary.Status}
+    //       style={{
+    //         paddingTop: 12,
+    //         paddingBottom: 6,
+    //         backgroundColor: AppColors.baseGray,
+    //         borderBottomWidth: 0,
+    //       }}
+    //     />,
+    //   );
+    // }
 
     return result;
-  }
+  };
 
-  render() {
-    const {refreshing} = this.state;
-    const {facilityNeedsStore, userStore} = this.props;
-    const facility = facilityNeedsStore
-      .getSnapshot()
-      .facilities.find(i => i.facilityId === userStore.selectedFacilityId);
-    const needs = facility ? facility.needs : [] || [];
+  // const {facilityNeedsStore, userStore} = this.props;
+  // const facility = facilityNeedsStore
+  //   .getSnapshot()
+  //   .facilities.find(i => i.facilityId === userStore.selectedFacilityId);
+  // const needs = facility ? facility.needs : [] || [];
 
-    return (
-      <FacilitySelectionContainer
-        showNoData={this.showNoData}
-        showLoading={this.showLoading}
-        noDataText="No Needs Available"
-        facilityHeaderCaption="Showing needs for"
-        refreshing={this.state.refreshing}
-        onRefresh={this.load.bind(this, true)}
-        onFacilityChosen={(facilityId: string) => this.forceUpdate()}>
-        <FlatList
-          style={{flex: 1}}
-          refreshControl={
-            <RefreshControl
-              tintColor={AppColors.blue}
-              colors={[AppColors.blue]}
-              refreshing={refreshing}
-              onRefresh={this.load.bind(this, true)}
-            />
-          }
-          renderItem={this.renderNeedSection.bind(this)}
-          data={needs}
-        />
-      </FacilitySelectionContainer>
-    );
-  }
-}
+  return (
+    <FacilitySelectionContainer
+      // showNoData={showNoData}
+      // showLoading={showLoading}
+      noDataText="No Needs Available"
+      facilityHeaderCaption="Showing needs for"
+      // refreshing={refreshing}
+      // onRefresh={this.load.bind(this, true)}
+      onFacilityChosen={(facilityId: string) => forceUpdate()}>
+      <FlatList
+        style={{flex: 1}}
+        refreshControl={
+          <RefreshControl
+            tintColor={AppColors.blue}
+            colors={[AppColors.blue]}
+            refreshing={refreshing}
+            // onRefresh={load(false)}
+          />
+        }
+        renderItem={renderNeedSection()}
+        data={needs}
+      />
+    </FacilitySelectionContainer>
+  );
+};
 
 const getCardShadows = () => {
   return Platform.OS === 'android'
@@ -438,3 +402,5 @@ const styles = StyleSheet.create({
     color: AppColors.blue,
   },
 });
+
+export default Positions;

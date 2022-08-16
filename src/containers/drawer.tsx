@@ -1,13 +1,6 @@
 import React from 'react';
 // import {inject, observer} from 'mobx-react';
-import {Button} from 'native-base';
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ViewProperties,
-} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View, Button} from 'react-native';
 // import {Actions} from 'react-native-router-flux';
 // import codePush from 'react-native-code-push'
 import _ from 'lodash';

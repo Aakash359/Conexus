@@ -1,10 +1,10 @@
 import React from 'react';
-import {Text, Content, Icon} from 'native-base';
+// import {Text, Content, Icon} from 'native-base';
 import {
   ActivityIndicator,
   StyleSheet,
   View,
-  ViewProperties,
+  Text,
   Clipboard,
   TouchableOpacity,
 } from 'react-native';

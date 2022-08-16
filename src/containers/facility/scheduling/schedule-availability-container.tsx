@@ -1,5 +1,4 @@
 import React from 'react';
-import {Container, Text, Textarea, Switch, Left, Right} from 'native-base';
 import {
   Platform,
   ViewProperties,

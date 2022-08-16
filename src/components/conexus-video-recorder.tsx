@@ -2,12 +2,11 @@ import React from 'react';
 import {
   StyleSheet,
   View,
-  ViewProperties,
+  Text,
   FlexAlignType,
   ActivityIndicator,
   ViewStyle,
 } from 'react-native';
-import {Text} from 'native-base';
 import {ScreenFooterButton} from '../components';
 import {logger} from 'react-native-logs';
 import {AppFonts, AppColors, AppSizes} from '../theme';

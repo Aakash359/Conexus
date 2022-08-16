@@ -78,20 +78,20 @@ export const CandidateHeaderItem = (
   );
 };
 
-interface PositionComparisonListProps {
+interface CandidateComparisonListProps {
   position: typeof PositionModel.Type;
   updateViewed: (s: string) => any;
 }
 
-interface PositionComparisonListState {
+interface CandidateComparisonListState {
   minHeight?: number;
   showAll?: boolean;
   comparing?: boolean;
 }
 
-export const PositionComparisonList = (
-  props: PositionComparisonListProps,
-  state: PositionComparisonListState,
+export const CandidateComparisonList = (
+  props: CandidateComparisonListProps,
+  state: CandidateComparisonListState,
 ) => {
   const {updateViewed} = props;
   const [showAll, setShowAll] = useState(false);

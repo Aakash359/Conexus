@@ -1,8 +1,7 @@
 
 
 import React from 'react'
-import { StyleSheet, View, ViewProperties, FlexAlignType, ActivityIndicator, StatusBar } from 'react-native'
-import { Text } from 'native-base'
+import { StyleSheet, View, Text, FlexAlignType, ActivityIndicator, StatusBar } from 'react-native'
 import { ScreenFooterButton, ConexusVideoPlayer, QuestionPlaybackHeader } from '../../../components'
 import { ConexusLightbox } from '../../../lightboxes'
 // import { observer, inject } from 'mobx-react'

@@ -59,7 +59,7 @@ export const ViewHeader = (props: ViewHeaderProps) => {
             customStyle={styles.compareBtn}
             customTitleStyle={styles.compareText}
             title={actionText}
-            // onPress={onActionPress}
+            onPress={onActionPress}
           />
         </View>
       )}

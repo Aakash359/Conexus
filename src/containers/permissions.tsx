@@ -1,6 +1,5 @@
 import React from 'react';
-import {Button} from 'native-base';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, Button, View} from 'react-native';
 import Permissions from 'react-native-permissions';
 import {windowDimensions} from '../common';
 import {DeviceStore} from '../stores';

@@ -167,6 +167,7 @@ export const componentStyles = {
     },
 
     listItemTitleTouchable: {
+        
         // Placeholder - contents filled in later
     },
 

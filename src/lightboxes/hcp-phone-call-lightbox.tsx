@@ -6,8 +6,8 @@ import {
   TextInput,
   ActivityIndicator,
   Keyboard,
+  Text,
 } from 'react-native';
-import {Text} from 'native-base';
 import {ActionButton, Avatar} from '../components';
 import {UserStore, ConversationStore} from '../stores';
 import {AppFonts, AppColors} from '../theme';

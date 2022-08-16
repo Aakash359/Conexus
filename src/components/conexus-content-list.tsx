@@ -1,12 +1,5 @@
 import React, {Component} from 'react';
-import {Text} from 'native-base';
-import {
-  StyleSheet,
-  View,
-  ViewProperties,
-  StyleProp,
-  ViewStyle,
-} from 'react-native';
+import {StyleSheet, View, Text, StyleProp, ViewStyle} from 'react-native';
 import {ConexusIcon} from '../components/conexus-icon';
 import variables from '../theme';
 import FitImage from 'react-native-fit-image';

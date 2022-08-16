@@ -1,6 +1,6 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import PositionsScreen from '../containers/Positions';
+import Positions from '../containers/Facility/Positions/positions';
 import Icon from 'react-native-vector-icons/Feather';
 import {AppColors} from '.././theme';
 import ReviewCandidateContainer from '../containers/Facility/ReviewCandidateHome/reviewCandidateContainer';
@@ -29,7 +29,7 @@ const TabNavigator = () => {
       />
       <Tab.Screen
         name="Positions"
-        component={PositionsScreen}
+        component={Positions}
         options={{
           tabBarIcon: ({color, size}) => (
             <Icon color={AppColors.blue} size={26} name="user-plus" />

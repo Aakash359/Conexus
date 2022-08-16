@@ -7,7 +7,7 @@ import {useSelector} from '../../../redux/reducers/index';
 // import {FacilityModel} from '../../stores/facility/facility-model';
 import FacilitySelectionContainer from '../../../components/facility-selection-container';
 import NavigationService from '../../../navigation/NavigationService';
-import {PositionList} from './position-list';
+import {CandidateList} from './candidateList';
 import {facilitySubmissionsService} from '../../../services/facility/facilitySubmissionsService';
 
 interface ReviewContainerProps {
@@ -29,7 +29,7 @@ const ReviewCandidateContainer = (
   const userInfo = useSelector(state => state.userReducer);
   const [facilityId, setFacilityId] = useState('');
   const [refreshing, setRefreshing] = useState('');
-  const [data, setData] = useState('');
+  const [data, setData] = useState([]);
 
   const saveToken = async () => {
     await AsyncStorage.setItem('authToken', userInfo?.user?.authToken);
@@ -175,17 +175,13 @@ const ReviewCandidateContainer = (
 
   const renderPositionList = (data: string) => {
     return (
-      <PositionList
+      <CandidateList
         submissions={data}
         selectedFacilityId={facilityId}
         refreshing={refreshing}
         // onRefresh={load(true)}
       />
     );
-  };
-
-  const openHcpDetailView = () => {
-    NavigationService.navigate('HcpDetailView');
   };
 
   // const {facilitySubmissionsStore} = this.props;

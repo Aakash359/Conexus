@@ -8,7 +8,7 @@ import {
   InteractionManager,
   LayoutAnimation,
 } from 'react-native';
-import {H3, H1, Header, Icon} from 'native-base';
+// import {H3, H1, Header, Icon} from 'native-base';
 import {
   ActionButton,
   Avatar,

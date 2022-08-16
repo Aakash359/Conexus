@@ -1,6 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, ViewProperties} from 'react-native';
-import {Text} from 'native-base';
+import {StyleSheet, View, Text} from 'react-native';
 import {Avatar} from './';
 import {AppFonts, AppColors, AppSizes} from '../theme';
 import {ConexusLightbox} from '../lightboxes/base-lightbox';

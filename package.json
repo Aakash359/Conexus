@@ -38,7 +38,6 @@
     "jetifire": "^1.2.6",
     "lodash": "^4.17.21",
     "moment": "^2.29.3",
-    "native-base": "^3.4.7",
     "patch-package": "^6.4.7",
     "postinstall-postinstall": "^2.1.0",
     "react": "^18.2.0",

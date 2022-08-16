@@ -1,5 +1,5 @@
 import React from 'react';
-import {Icon, Root} from 'native-base';
+// import {Icon, Root} from 'native-base';
 import {StyleSheet, DeviceEventEmitter, TouchableOpacity} from 'react-native';
 // import {
 //   Drawer,

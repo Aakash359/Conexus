@@ -2,30 +2,30 @@ import React, {useEffect, useState} from 'react';
 import {Alert, View, StyleSheet, Text} from 'react-native';
 import {PositionModel, CandidateModel} from '../../../stores';
 import {ViewHeader} from '../../../components/view-header';
-import {CandidateItem} from './candidate-item';
-import {PositionComparisonList} from './position-comparison-list';
 
-interface PositionListItemProps {
+import {CandidateComparisonList} from './candidateComparisonList';
+import CandidateItem from './candidateItem';
+
+interface CandidateListItemItemProps {
   position: any;
   first?: boolean;
 }
 
-interface PositionListItemState {
+interface CandidateListItemItemState {
   showAll: boolean;
   comparing: boolean;
   position: any;
 }
 
-export const PositionListItem = (
-  props: PositionListItemProps,
-  state: PositionListItemState,
+export const CandidateListItem = (
+  props: CandidateListItemItemProps,
+  state: CandidateListItemItemState,
 ) => {
   const posit = Object.assign({}, props.position);
 
   const [showAll, setShowAll] = useState(false);
   const [comparing, setComparing] = useState(false);
   const [position, setPosition] = useState(posit);
-  console.log('Position====>', position);
 
   useEffect(() => {
     if (position) {
@@ -50,9 +50,11 @@ export const PositionListItem = (
     // }))
   };
   const renderStandardList = () => {
-    // let showAllHighlight = position.candidates.find((cand, ind: number) => {
-    //   return ind > 2 && !cand.viewedSubmission;
-    // });
+    let showAllHighlight = position.candidates.find(
+      (candidate: {viewedSubmission: any}, ind: number) => {
+        return ind > 2 && !candidate.viewedSubmission;
+      },
+    );
 
     return position.candidates.map(
       (candidate: {submissionId: any}, index: number) => (
@@ -62,18 +64,18 @@ export const PositionListItem = (
           candidate={candidate}
           candidatesCount={position.candidates.length}
           index={index}
-          // showAllHighlight={!!showAllHighlight}
+          showAllHighlight={!!showAllHighlight}
           showAll={showAll}
           // onMorePress={showAlls()}
-          // updateViewed={(s: string) => this.setViewedSubmission(s)}
+          updateViewed={(s: string) => setViewedSubmission(s)}
         />
       ),
     );
   };
 
-  const renderComparingList = () => {
+  const renderCandidateComparingList = () => {
     return (
-      <PositionComparisonList
+      <CandidateComparisonList
         position={position}
         updateViewed={(s: string) => setViewedSubmission(s)}
       />
@@ -98,7 +100,7 @@ export const PositionListItem = (
           onActionPress={() => setComparing(!comparing)}
         />
       )}
-      {!comparing ? renderComparingList() : null}
+      {comparing ? renderCandidateComparingList() : renderStandardList()}
     </View>
   );
 };

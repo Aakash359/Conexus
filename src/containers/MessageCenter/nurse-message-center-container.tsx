@@ -1,6 +1,6 @@
 import React from 'react';
 import {Alert, StyleSheet, FlatList, ActivityIndicator} from 'react-native';
-import {Container, Text, ListItem, Left, Right, Body} from 'native-base';
+// import {Container, Text, ListItem, Left, Right, Body} from 'native-base';
 let moment = require('moment');
 import {Avatar, Circle} from '../../components';
 

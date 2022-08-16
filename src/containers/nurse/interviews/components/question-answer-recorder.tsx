@@ -2,11 +2,10 @@ import React from 'react';
 import {
   StyleSheet,
   View,
-  ViewProperties,
+  Text,
   ActivityIndicator,
   Platform,
 } from 'react-native';
-import {Text} from 'native-base';
 import {
   ScreenFooterButton,
   ConexusVideoPlayer,

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Icon, H1, H3} from 'native-base';
+// import {Icon, H1, H3} from 'native-base';
 import {StyleSheet, View, TouchableOpacity, Platform} from 'react-native';
 import Sound from 'react-native-sound';
 import {Avatar, Circle} from '../components';
