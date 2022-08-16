@@ -1,87 +1,104 @@
+import React, {useEffect, useState} from 'react';
+import {Alert, View, StyleSheet, Text} from 'react-native';
+import {PositionModel, CandidateModel} from '../../../stores';
+import {ViewHeader} from '../../../components/view-header';
+import {CandidateItem} from './candidate-item';
+import {PositionComparisonList} from './position-comparison-list';
 
-import React from 'react'
-import { ViewProperties, View, StyleSheet } from 'react-native'
-import { PositionModel, CandidateModel } from '../../../stores'
-import { ViewHeader } from '../../../components';
-import { CandidateItem } from './candidate-item';
-import { PositionComparisonList } from './position-comparison-list';
-import { logger } from 'react-native-logs'
-
-const log = logger.createLogger()
-
-export interface PositionListItemProps extends ViewProperties {
-    position: typeof PositionModel.Type,
-    first?: boolean
+interface PositionListItemProps {
+  position: any;
+  first?: boolean;
 }
 
-export interface PositionListItemState {
-    showAll: boolean,
-    comparing: boolean,
-    position: typeof PositionModel.Type
+interface PositionListItemState {
+  showAll: boolean;
+  comparing: boolean;
+  position: any;
 }
 
-export class PositionListItem extends React.Component<PositionListItemProps, PositionListItemState>  {
+export const PositionListItem = (
+  props: PositionListItemProps,
+  state: PositionListItemState,
+) => {
+  const posit = Object.assign({}, props.position);
 
-    constructor(props: PositionListItemProps, state: PositionListItemState) {
-        super(props, state);
-        const posit = Object.assign({}, this.props.position)
-        this.state = state || { showAll: false, comparing: false, position: posit }
-    }
+  const [showAll, setShowAll] = useState(false);
+  const [comparing, setComparing] = useState(false);
+  const [position, setPosition] = useState(posit);
+  console.log('Position====>', position);
 
-    componentWillMount() {
-        if (!this.state.position)
-            this.setState({ position: this.props.position })
+  useEffect(() => {
+    if (position) {
+      setPosition(position);
     }
+  });
 
-    showAll() {
-        this.setState({ showAll: true })
-    }
-    setViewedSubmission(subId: string) {
-        this.setState(currentState => ({
-            ...currentState,
-            position: {
-                ...currentState.position,
-                candidates: currentState.position.candidates.map((c) => ({
-                    ...c,
-                    viewedSubmission: (c.submissionId === subId ? true : c.viewedSubmission)
-                }))
-            }
-        }))
-    }
-    private _renderStandardList() {
-        let { position } = this.state;
-        const showAll = this.state.showAll;
-        let showAllHighlight = position.candidates.find((cand, ind: number) => {
-            return ind > 2 && !cand.viewedSubmission
-        })
-        log.info(showAllHighlight)
-        return (position.candidates
-            .map((candidate, index: number) => <CandidateItem positions={position} key={`${candidate.submissionId}-${index}`} candidate={candidate} candidatesCount={position.candidates.length} index={index} showAllHighlight={!!showAllHighlight} showAll={showAll}
-                onMorePress={this.showAll.bind(this)}
-                updateViewed={(s: string) => this.setViewedSubmission(s)} />))
-    }
+  const showAlls = () => {
+    setShowAll(true);
+  };
 
-    private _renderComparingList() {
-        const { position } = this.state;
-        return (<PositionComparisonList position={position} updateViewed={(s: string) => this.setViewedSubmission(s)} />)
-    }
+  const setViewedSubmission = (subId: string) => {
+    // this.setState(currentState => ({
+    //     ...currentState,
+    //     position: {
+    //         ...currentState.position,
+    //         candidates: currentState.position.candidates.map((c) => ({
+    //             ...c,
+    //             viewedSubmission: (c.submissionId === subId ? true : c.viewedSubmission)
+    //         }))
+    //     }
+    // }))
+  };
+  const renderStandardList = () => {
+    // let showAllHighlight = position.candidates.find((cand, ind: number) => {
+    //   return ind > 2 && !cand.viewedSubmission;
+    // });
 
-    render() {
-        log.info("State", this.props)
-        const position = this.state.position;
-        const { first } = this.props;
-        const comparing = this.state.comparing;
-        const defaultStyle = StyleSheet.create({
-            comparing: {
-                fontSize: 12
-            }
-        })
+    return position.candidates.map(
+      (candidate: {submissionId: any}, index: number) => (
+        <CandidateItem
+          positions={position}
+          key={`${candidate.submissionId}-${index}`}
+          candidate={candidate}
+          candidatesCount={position.candidates.length}
+          index={index}
+          // showAllHighlight={!!showAllHighlight}
+          showAll={showAll}
+          // onMorePress={showAlls()}
+          // updateViewed={(s: string) => this.setViewedSubmission(s)}
+        />
+      ),
+    );
+  };
 
-        return (
-            <View key={position.needId.toString()}>
-                {position.candidates.length > 0 && <ViewHeader title={position.display.title} description={position.display.description} first={first} actionTextStyle={!comparing ? defaultStyle.comparing : {}} actionText={comparing ? "List" : "Compare"} onActionPress={() => this.setState({ comparing: !comparing })} />}
-                {comparing ? this._renderComparingList() : this._renderStandardList()}
-            </View>
-        )
-    }
-}
+  const renderComparingList = () => {
+    return (
+      <PositionComparisonList
+        position={position}
+        updateViewed={(s: string) => setViewedSubmission(s)}
+      />
+    );
+  };
+
+  const defaultStyle = StyleSheet.create({
+    comparing: {
+      fontSize: 12,
+    },
+  });
+
+  return (
+    <View key={position.needId.toString()}>
+      {position.candidates.length > 0 && (
+        <ViewHeader
+          title={position.display.title}
+          description={position.display.description}
+          first={props.first}
+          actionTextStyle={!comparing ? defaultStyle.comparing : {}}
+          actionText={comparing ? 'LIST' : 'COMPARE'}
+          onActionPress={() => setComparing(!comparing)}
+        />
+      )}
+      {!comparing ? renderComparingList() : null}
+    </View>
+  );
+};

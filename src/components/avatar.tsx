@@ -14,10 +14,6 @@ import {
   Alert,
   Text,
 } from 'react-native';
-import {Thumbnail} from 'native-base';
-import {CachedImage} from '@georstat/react-native-image-cache';
-import {logger} from 'react-native-logs';
-import {BubbleLabel} from './bubble-label';
 import {AppColors} from '../theme';
 import Images from './Images/index';
 

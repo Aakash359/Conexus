@@ -3,10 +3,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {StyleSheet, Alert, TouchableOpacity, Text, View} from 'react-native';
 import {UserStore} from '../../../stores/userStore';
 // import {FacilitySubmissionsStore} from '../../../stores/facility/facility-submissions-store';
-import {PositionList} from './position-list';
+import {useSelector} from '../../../redux/reducers/index';
 // import {FacilityModel} from '../../stores/facility/facility-model';
 import FacilitySelectionContainer from '../../../components/facility-selection-container';
 import NavigationService from '../../../navigation/NavigationService';
+import {PositionList} from './position-list';
+import {facilitySubmissionsService} from '../../../services/facility/facilitySubmissionsService';
 
 interface ReviewContainerProps {
   // facilitySubmissionsStore: typeof FacilitySubmissionsStore.Type;
@@ -23,28 +25,49 @@ const ReviewCandidateContainer = (
   props: ReviewContainerProps,
   state: ReviewContainerState,
 ) => {
-  // mounted: boolean = false;
-
+  const mounted: boolean = false;
+  const userInfo = useSelector(state => state.userReducer);
+  const [facilityId, setFacilityId] = useState('');
   const [refreshing, setRefreshing] = useState('');
+  const [data, setData] = useState('');
 
-  // const selectedFacility =(): typeof FacilityModel.Type => {
-  //   const {facilitySubmissionsStore, userStore} = this.props;
+  const saveToken = async () => {
+    await AsyncStorage.setItem('authToken', userInfo?.user?.authToken);
+  };
 
-  //   if (facilitySubmissionsStore.loading) {
-  //     return null;
-  //   }
+  const getToken = async () => {
+    let token = await AsyncStorage.getItem('authToken');
+    console.log('Mil gya token', token);
+  };
 
-  //   if (userStore.selectedFacilityId) {
-  //     return facilitySubmissionsStore.submissions.find(
-  //       facility => facility.facilityId === userStore.selectedFacilityId,
-  //     );
-  //   }
+  useEffect(() => {
+    let mounted = true;
+    // if (props.userInfo?.user?.userFacilities) {
 
-  //   return null;
-  // }
+    // }
+    load(false);
+    saveToken();
+    getToken();
+  }, []);
+
+  const selectedFacility = () => {
+    // const {facilitySubmissionsStore, userStore} = this.props;
+
+    // if (facilitySubmissionsStore.loading) {
+    //   return null;
+    // }
+
+    if (data) {
+      return data.find(
+        facility => facility.facilityId === userStore.selectedFacilityId,
+      );
+    }
+
+    return null;
+  };
 
   // const showNoData =(): boolean => {
-  //   const {facilitySubmissionsStore} = this.props;
+  //   const {facilitySubmissionsStore} = props;
   //   if (refreshing || facilitySubmissionsStore.loading) {
   //     return false;
   //   }
@@ -63,6 +86,48 @@ const ReviewCandidateContainer = (
   //   return facilitySubmissionsStore.loading;
   // }
 
+  const load = async (refreshing: boolean = false) => {
+    if (!submissionsStorePromise) {
+      try {
+        const {data} = await facilitySubmissionsService();
+        setData(data);
+        setFacilityId(data?.[0]?.facilityId);
+        for (let facility of data) {
+          for (let position of facility.positions) {
+            const compTypes = position.comps;
+            for (var candidate of position.candidates) {
+              for (var dataItem of candidate.compData || []) {
+                const compType = compTypes.find(
+                  (i: any) => i.Id === dataItem.Id,
+                );
+                if (compType) {
+                  (dataItem.type = compType.type),
+                    (dataItem.headerTitle = compType.title);
+                  console.log(
+                    'type & headers',
+                    dataItem.type,
+                    dataItem.headerTitle,
+                  );
+                }
+              }
+            }
+          }
+        }
+
+        // Alert.alert(data.description);
+      } catch (error) {
+        console.log('Error', error);
+        // Alert.alert(error?.response?.data?.error?.description);
+      }
+    } else {
+      console.log(
+        'ReviewContainer',
+        'Joining existing submission store load',
+        refreshing,
+      );
+    }
+  };
+
   // componentDidMount() {
   //   console.log('Yehi Problem hai====>', FacilitySubmissionsStore);
 
@@ -72,21 +137,6 @@ const ReviewCandidateContainer = (
   //     this.load(false);
   //   }
   // }
-
-  // const load=(refreshing: boolean = false) =>{
-  //   const {facilitySubmissionsStore} = this.props;
-  //   setRefreshing(refreshing)
-
-  //   if (!submissionsStorePromise) {
-  //     log.info('ReviewContainer', 'Loading Submissions', refreshing);
-  //     submissionsStorePromise = facilitySubmissionsStore.load();
-  //   } else {
-  //     log.info(
-  //       'ReviewContainer',
-  //       'Joining existing submission store load',
-  //       refreshing,
-  //     );
-  //   }
 
   //   submissionsStorePromise.then(
   //     () => {
@@ -123,70 +173,42 @@ const ReviewCandidateContainer = (
   //   );
   // }
 
-  // const renderPositionList =()=> {
-  //     const {facilitySubmissionsStore} = this.props;
-  //     const {refreshing} = this.state;
-
-  //     return (
-  //       <PositionList
-  //         style={{flex: 1}}
-  //         submissions={facilitySubmissionsStore.getSnapshot().submissions}
-  //         selectedFacilityId={
-  //           this.selectedFacility ? this.selectedFacility.facilityId : ''
-  //         }
-  //         refreshing={refreshing}
-  //         onRefresh={this.load.bind(this, true)}
-  //       />
-  //     );
-  //   }
+  const renderPositionList = (data: string) => {
+    return (
+      <PositionList
+        submissions={data}
+        selectedFacilityId={facilityId}
+        refreshing={refreshing}
+        // onRefresh={load(true)}
+      />
+    );
+  };
 
   const openHcpDetailView = () => {
     NavigationService.navigate('HcpDetailView');
   };
 
-  getToken = async () => {
-    let token = await AsyncStorage.getItem('authToken');
-    console.log('Mil gya token', token);
-  };
-
   // const {facilitySubmissionsStore} = this.props;
 
   return (
-    <View>
-      <FacilitySelectionContainer
-        // showNoData={showNoData}
-        // showLoading={showLoading}
-        noDataText="No Positions Available"
-        facilityHeaderCaption="Showing positions for"
-        refreshing={refreshing}
-        // onRefresh={load(true)}
-        // onFacilityChosen={(facilityId: string) => this.forceUpdate()}
-      >
-        {/* {!!facilitySubmissionsStore.submissions && renderPositionList()} */}
-      </FacilitySelectionContainer>
-      <TouchableOpacity onPress={openHcpDetailView}>
-        <Text style={styles.screenTitle}>Restaurants</Text>
-      </TouchableOpacity>
-    </View>
+    // <FacilitySelectionContainer
+    //   // showNoData={showNoData}
+    //   // showLoading={showLoading}
+    //   noDataText="No Positions Available"
+    //   facilityHeaderCaption="Showing positions for"
+    //   refreshing={refreshing}
+    //   // onRefresh={load(true)}
+    //   // onFacilityChosen={(facilityId: string) => this.forceUpdate()}
+    // >
+
+    // </FacilitySelectionContainer>
+    <>{data && renderPositionList(data)}</>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
-    marginTop: 24,
-  },
-  restaurantCard: {
-    backgroundColor: '#efefef',
-  },
-  sectionTitle: {
-    fontSize: 16,
-    marginTop: 16,
-  },
-  screenTitle: {
-    fontSize: 24,
-    marginTop: 8,
-    fontWeight: 'bold',
+    flex: 1,
   },
 });
 

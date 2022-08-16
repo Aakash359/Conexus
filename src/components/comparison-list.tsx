@@ -1,13 +1,19 @@
 import React from 'react';
-import {Text} from 'native-base';
-import {StyleSheet, View, TouchableHighlight, Platform} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableHighlight,
+  Platform,
+} from 'react-native';
 import FitImage from 'react-native-fit-image';
 import {ComparisonDataModel} from '../stores/comparison-data-model';
 // import { Actions } from 'react-native-router-flux'
 import {ScreenType} from '../common/constants';
 import {AppFonts, AppColors} from '../theme';
-import {ConexusContentList, ConexusIcon} from '../components';
-import {logger} from 'react-native-logs';
+import {ConexusContentList} from '../components';
+import {ConexusIcon} from '../components/conexus-icon';
+
 export interface ComparisonListProps {
   index: number;
   count: number;
@@ -15,33 +21,19 @@ export interface ComparisonListProps {
   data: Array<typeof ComparisonDataModel.Type>;
 }
 
-export interface ComparisonListState {}
-const log = logger.createLogger();
-export class ComparisonList extends React.Component<
-  ComparisonListProps,
-  ComparisonListState
-> {
-  constructor(props: ComparisonListProps, state: ComparisonListState) {
-    super(props, state);
-    this.state = state || {};
-  }
+export const ComparisonList = (props: ComparisonListProps) => {
+  const {index, count, data, cellWidth} = props;
 
-  componentWillMount() {}
-
-  private _renderContentListCellInLightbox(
-    cell: typeof ComparisonDataModel.Type,
-  ) {
-    log.info('Render list contents');
-    log.info(cell.details);
+  const renderContentListCellInLightbox = (cell: any) => {
     return <ConexusContentList style={{flex: 1}} data={cell.details} />;
-  }
+  };
 
-  private _renderCellImageInLightbox(cell: typeof ComparisonDataModel.Type) {
+  const renderCellImageInLightbox = (cell: typeof ComparisonDataModel.Type) => {
     const source = {uri: cell.imageUrl};
     return <FitImage resizeMode="contain" source={source} />;
-  }
+  };
 
-  private _handleCellClick(cell: typeof ComparisonDataModel.Type) {
+  const handleCellClick = (cell: typeof ComparisonDataModel.Type) => {
     const hasLink = !!cell.details;
 
     // if (hasLink) {
@@ -52,25 +44,24 @@ export class ComparisonList extends React.Component<
     // if (!!cell.imageUrl) {
     //     Actions[ScreenType.CONTENT_LIGHTBOX]({ title: cell.headerTitle, renderContent: this._renderCellImageInLightbox.bind(this, cell) });
     // }
-  }
+  };
 
-  private wrapCell(cell: typeof ComparisonDataModel.Type, elements: () => any) {
+  const wrapCell = (cell: any, elements: () => any) => {
     const hasLink = !!cell.details || !!cell.imageUrl;
     if (hasLink) {
       return (
         <TouchableHighlight
           underlayColor="rgba(255,255,255,.87)"
-          onPress={this._handleCellClick.bind(this, cell)}>
+          onPress={handleCellClick.bind(cell)}>
           {elements()}
         </TouchableHighlight>
       );
     }
 
     return <View>{elements()}</View>;
-  }
+  };
 
-  private _renderTextCell(cell: typeof ComparisonDataModel.Type) {
-    const {index, count} = this.props;
+  const renderTextCell = (cell: any) => {
     const lastCell = index + 1 === count;
     const descriptionStyle = StyleSheet.flatten([
       styles.textCellDescription,
@@ -83,8 +74,8 @@ export class ComparisonList extends React.Component<
 
     return (
       <View key={index}>
-        {this._renderHeader(cell)}
-        {this.wrapCell(cell, () => (
+        {renderHeader(cell)}
+        {wrapCell(cell, () => (
           <View
             style={StyleSheet.flatten([
               styles.cell,
@@ -101,16 +92,15 @@ export class ComparisonList extends React.Component<
         ))}
       </View>
     );
-  }
+  };
 
-  private _renderIconCell(cell: typeof ComparisonDataModel.Type) {
-    const {index, count} = this.props;
+  const renderIconCell = (cell: any) => {
     const lastCell = index + 1 === count;
 
     return (
       <View key={index}>
-        {this._renderHeader(cell)}
-        {this.wrapCell(cell, () => (
+        {renderHeader(cell)}
+        {wrapCell(cell, () => (
           <View
             style={StyleSheet.flatten([
               styles.cell,
@@ -128,17 +118,16 @@ export class ComparisonList extends React.Component<
         ))}
       </View>
     );
-  }
-  private _renderImageCell(cell: typeof ComparisonDataModel.Type) {
-    const {cellWidth, index, count} = this.props;
+  };
 
+  const renderImageCell = (cell: any) => {
     const source = {uri: cell.imageUrl};
     const lastCell = index + 1 === count;
 
     return (
       <View key={index}>
-        {this._renderHeader(cell)}
-        {this.wrapCell(cell, () => (
+        {renderHeader(cell)}
+        {wrapCell(cell, () => (
           <View
             style={StyleSheet.flatten([
               styles.cell,
@@ -156,10 +145,10 @@ export class ComparisonList extends React.Component<
         ))}
       </View>
     );
-  }
+  };
 
-  private _renderHeader(cell: typeof ComparisonDataModel.Type) {
-    const {cellWidth, index} = this.props;
+  const renderHeader = (cell: any) => {
+    // const {cellWidth, index} = this.props;
 
     return (
       <View style={[styles.headerRow, {width: cellWidth}]}>
@@ -171,24 +160,20 @@ export class ComparisonList extends React.Component<
         </Text>
       </View>
     );
-  }
+  };
 
-  render() {
-    const {data} = this.props;
+  const cells = data.map((cell, index) => {
+    return (
+      <View key={index.toString()}>
+        {cell.type === 'text' && renderTextCell(cell)}
+        {cell.type === 'icon' && renderIconCell(cell)}
+        {cell.type === 'image' && renderImageCell(cell)}
+      </View>
+    );
+  });
 
-    var cells = data.map((cell, index) => {
-      return (
-        <View key={index.toString()}>
-          {cell.type === 'text' && this._renderTextCell(cell)}
-          {cell.type === 'icon' && this._renderIconCell(cell)}
-          {cell.type === 'image' && this._renderImageCell(cell)}
-        </View>
-      );
-    });
-
-    return <View style={styles.container}>{cells}</View>;
-  }
-}
+  return <View style={styles.container}>{cells}</View>;
+};
 
 const headerHeight = 26;
 

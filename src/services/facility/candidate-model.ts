@@ -15,9 +15,6 @@ const log = logger.createLogger()
 export const loadCandidateBySubmissionId = (submissionId: string, handleOnError = true) => {
 
     let url = `/hcp/details/${submissionId}`;
-    console.log('====================================');
-    console.log("Aakash====>",url);
-    console.log('====================================');
 
     return rest.get(url)
         .then((response) => {

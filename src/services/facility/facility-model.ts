@@ -11,20 +11,21 @@ export const FacilityModel = types.model('Submission', {
     positions: types.optional(types.array(PositionModel), []),
     questionSections: types.optional(types.array(QuestionSectionModel), [])
 })
-    .actions(self => {
-        return {
-            findQuestion: (id: string) => {
-                let result: typeof QuestionModel.Type
 
-                self.questionSections.find(section => {
-                    result = section.findQuestion(id);
-                    return !!result
-                })
+    // .actions(self => {
+    //     return {
+    //         findQuestion: (id: string) => {
+    //             let result: typeof QuestionModel.Type
 
-                return result
-            },
-            getSnapshot() {
-                return getSnapshot(self)
-            }
-        }
-    })
+    //             self.questionSections.find(section => {
+    //                 result = section.findQuestion(id);
+    //                 return !!result
+    //             })
+
+    //             return result
+    //         },
+    //         getSnapshot() {
+    //             return getSnapshot(self)
+    //         }
+    //     }
+    // })

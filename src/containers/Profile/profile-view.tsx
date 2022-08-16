@@ -25,8 +25,6 @@ const Profile: React.FC<ProfileState> = () => {
 
   const renderTitle = () => {
     const userInfo = useSelector(state => state.userReducer);
-    console.log('UserInfo====>', userInfo);
-
     if (userInfo) {
       if (userInfo?.user?.title) {
         return (
