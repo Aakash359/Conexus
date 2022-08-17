@@ -169,7 +169,14 @@ export const CandidateComparisonList = (
       <View key={`candidate-${candidate.submissionId}-${index}`}>
         <TouchableHighlight
           onPress={
-            () => NavigationService.navigate('HcpDetailView')
+            () =>
+              NavigationService.navigate('HcpDetailView', {
+                submissionId: candidate.submissionId,
+                candidate,
+                onClose: () => {
+                  props.updateViewed(candidate.submissionId);
+                },
+              })
 
             //   Actions[ScreenType.FACILITIES.HCP_DETAIL]({
             //     submissionId: candidate.submissionId,

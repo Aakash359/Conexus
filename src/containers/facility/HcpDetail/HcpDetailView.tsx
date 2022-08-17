@@ -51,7 +51,7 @@ interface HcpDetailProps {
 interface HcpDetailState {
   refreshing: boolean;
   loadingSummary: boolean;
-  // candidate?: typeof CandidateModel.Type;
+  candidate?: any;
   selectedTab?: TabDetails;
 }
 
@@ -64,7 +64,9 @@ const tabs = [
 // const preloadResumeCount = 3;
 
 const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
-  const [candidate, setCandidate] = useState('');
+  const [candidate, setCandidate] = useState(
+    props?.route?.params?.candidate || {},
+  );
   const [modalVisible, setModalVisible] = useState(false);
   const [offerModalVisible, setOfferModalVisible] = useState(false);
   const [phoneCallModalVisible, setPhoneCallModalVisible] = useState(false);
@@ -74,7 +76,8 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const [refreshing, setRefreshing] = useState('');
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
   const [loading, setLoading] = useState(false);
-
+  const submissionId = props?.route?.params?.submissionId;
+  console.log('props====>', props);
   // get responses(): typeof CandidateResponseModel.Type[] {
   //   const {candidate} = this.state;
 
@@ -109,8 +112,8 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   //   setRefreshing(refreshing);
   //   setLoadingSummary(loadingSummary);
 
-  //   loadCandidateBySubmissionId(this.props.submissionId).then(
-  //     (candidate: typeof CandidateModel.Type) => {
+  //   loadCandidateBySubmissionId(submissionId).then(
+  //     (candidate: ) => {
   //       this.setState({refreshing: false, candidate, loadingSummary: false});
   //       this._preloadResumePages();
   //     },
@@ -178,14 +181,15 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
       loadCandidate();
     }
     // else if (
-    //   // !candidate.resumePages.pageCount ||
-    //   // !candidate.submissionSummary ||
-    //   // !candidate.submissionSummary.length
-    // ) {
-    //   setCandidate(candidate);
-    //   setLoadingSummary(true);
-    //   refreshCandidate();
-    // }
+    //   !candidate.resumePages.pageCount ||
+    //   !candidate.submissionSummary ||
+    //   !candidate.submissionSummary.length
+    // )
+    {
+      setCandidate(candidate);
+      setLoadingSummary(true);
+      // refreshCandidate();
+    }
   }, []);
 
   // componentWillUnmount() {
@@ -372,7 +376,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const openImageGallery = () => {
     NavigationService.navigate('ImageGallery', {
       // images: candidate.resumePages.images,
-      // title: candidate.display.title,
+      title: candidate.display.title,
       // initialRenderCount: preloadResumeCount,
     });
   };
@@ -448,12 +452,12 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     return (
       <View style={{flex: 1}}>
         <ScrollView
-          // refreshControl={
-          //   <RefreshControl
-          //     Refreshing={refreshing}
-          //     onRefresh={refreshCandidate.bind(true)}
-          //   />
-          // }
+          refreshControl={
+            <RefreshControl
+              Refreshing={refreshing}
+              // onRefresh={refreshCandidate(true)}
+            />
+          }
           style={styles.rootView}
           contentContainerStyle={styles.rootViewContent}>
           <View style={styles.headerViews}>
@@ -464,48 +468,40 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
               onPress={() => NavigationService.goBack()}
             />
             <Avatar
-              style={{width: 108, marginBottom: 8}}
+              style={{width: 108, marginBottom: 14}}
               size={108}
-              // source={candidate.photoUrl}
+              source={candidate.photoUrl}
               // title={candidate.photoLabel}
             />
             <Text style={AppFonts.bodyTextXtraLarge}>
-              hi
-              {/* {candidate.display.title} */}
+              {candidate.display.title}
             </Text>
 
             {renderActionHeader()}
           </View>
-          {/* {!loadingSummary && selectedTab === tabs[0] && (
+          {!loadingSummary && selectedTab === tabs[0] && (
             <ConexusContentList
               style={styles.contentList}
               data={candidate.submissionSummary}></ConexusContentList>
-          )} */}
-          {
-            !loadingSummary && selectedTab === tabs[1]
-            // &&
-            // renderQuestions()
-          }
-          {/* {loadingSummary && this._renderLoading(100)} */}
+          )}
+          {!loadingSummary && selectedTab === tabs[1] && renderQuestions()}
+          {loadingSummary && renderLoading(100)}
         </ScrollView>
-        {/* {!!candidate && candidate.conversationAllowed && (
-          <ScreenFooterButton
-            title="Contact"
-            onPress={this.showContactCandidateLightbox.bind(this)}
-          />
-        )} */}
-        <View style={styles.footer}>
-          <ActionButton
-            loading={loading}
-            title="CONTACT"
-            onPress={() => setContactOptionModalVisible(true)}
-            customStyle={styles.contact}
-            customTitleStyle={{
-              fontSize: 12,
-              fontFamily: AppFonts.family.fontFamily,
-            }}
-          />
-        </View>
+        {!!candidate && candidate.conversationAllowed && (
+          <View style={styles.footer}>
+            <ActionButton
+              loading={loading}
+              title="CONTACT"
+              onPress={() => setContactOptionModalVisible(true)}
+              customStyle={styles.contact}
+              customTitleStyle={{
+                fontSize: 12,
+                fontFamily: AppFonts.family.fontFamily,
+              }}
+            />
+          </View>
+        )}
+
         {contactOptionModalVisible && (
           <ContactOptionModal
             title={'Contact Options'}
@@ -544,6 +540,7 @@ const styles = StyleSheet.create({
     width: windowDimensions.width,
     backgroundColor: variables.baseGray,
   },
+
   footer: {
     right: 10,
     left: 10,
@@ -595,6 +592,7 @@ const headerStyle = StyleSheet.create({
     width: windowDimensions.width * 0.3,
     borderColor: AppColors.gray,
     borderWidth: 0.5,
+    marginTop: 20,
   },
 
   rootView: {

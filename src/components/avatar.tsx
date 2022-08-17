@@ -117,12 +117,7 @@ export const Avatar = (props: AvatarProps) => {
   };
 
   if (props.onClick) {
-    return (
-      <TouchableHighlight> {renderImage()} </TouchableHighlight>
-      // <View style={{backgroundColor: 'red'}}>
-      //   <Text>hi</Text>
-      // </View>
-    );
+    return <TouchableHighlight> {renderImage()} </TouchableHighlight>;
   }
 
   return renderImage();

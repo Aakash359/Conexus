@@ -45,22 +45,21 @@ const CandidateItem = (props: CandidateItemProps) => {
   const renderItem = () => {
     return (
       <TouchableOpacity
-        onPress={() => NavigationService.navigate('HcpDetailView')}>
+        onPress={() =>
+          NavigationService.navigate('HcpDetailView', {
+            submissionId: candidate.submissionId,
+            candidate,
+            onClose: () => {
+              props.updateViewed(candidate.submissionId);
+            },
+          })
+        }>
         <View
           key={candidate.userId}
           style={StyleSheet.flatten([
             styles.listItem,
             !!!candidate.viewedSubmission ? styles.unviewed : {},
-          ])}
-
-          // onPress={() => Actions[ScreenType.FACILITIES.HCP_DETAIL]({
-          //     submissionId: candidate.submissionId,
-          //     candidate,
-          //     onClose: () => {
-          //         this.props.updateViewed(candidate.submissionId)
-          //     }
-          // })}
-        >
+          ])}>
           <View style={styles.itemSection}>
             <Avatar
               size={48}

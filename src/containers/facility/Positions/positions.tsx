@@ -8,6 +8,7 @@ import {
   Alert,
   Platform,
   RefreshControl,
+  TouchableOpacity,
 } from 'react-native';
 import {
   FacilityNeedsStore,
@@ -21,6 +22,9 @@ import {AppColors, AppFonts} from '../../../theme';
 import {ViewHeader} from '../../../components/view-header';
 import FacilitySelectionContainer from '../../../components/facility-selection-container';
 import {facilityNeedService} from '../../../services/facility/facilityNeedService';
+import {ActionButton} from '../../../components/action-button';
+import {windowDimensions} from '../../../common/window-dimensions';
+import NavigationService from '../../../navigation/NavigationService';
 
 export interface PositionsProps {
   facilityNeedsStore: typeof FacilityNeedsStore.Type;
@@ -37,7 +41,7 @@ let needsStorePromise: Promise<any>;
 const Positions = (props: PositionsProps, state: PositionState) => {
   const mounted: boolean = false;
 
-  const [expandedNeedId, setExpandedNeedId] = useState(false);
+  const [expandedNeedId, setExpandedNeedId] = useState('');
   const [refreshing, setRefreshing] = useState(false);
   const [needs, setNeeds] = useState([]);
 
@@ -80,13 +84,11 @@ const Positions = (props: PositionsProps, state: PositionState) => {
 
   useEffect(() => {
     let mounted = true;
-    // if (props.userInfo?.user?.userFacilities) {
-
-    // }
     load(false);
   }, []);
 
   const showNeedQuestions = (need: typeof NeedDetailModel.Type) => {
+    NavigationService.navigate('InterviewQuestions');
     // Actions[ScreenType.FACILITIES.CATALOG_SECTION]({
     //     //questionSectionId: section.sectionId,
     //     needId: need.needId,
@@ -96,15 +98,11 @@ const Positions = (props: PositionsProps, state: PositionState) => {
   };
 
   const toggleExpandedNeedId = (needId: string = '') => {
-    let {expandedNeedId} = this.state;
-
     if (expandedNeedId === needId) {
-      expandedNeedId = '';
+      setExpandedNeedId('');
     } else {
-      expandedNeedId = needId;
+      setExpandedNeedId(needId);
     }
-
-    this.setState({expandedNeedId});
   };
 
   const load = async (refreshing: boolean = false) => {
@@ -113,7 +111,6 @@ const Positions = (props: PositionsProps, state: PositionState) => {
     if (!needsStorePromise) {
       try {
         const {data} = await facilityNeedService();
-        console.log('Needs====>', data);
         setNeeds(data?.[0]?.needs);
       } catch (error) {
         console.log('Error', error);
@@ -150,7 +147,7 @@ const Positions = (props: PositionsProps, state: PositionState) => {
     );
   };
 
-  const renderNeedBody = (need: typeof NeedDetailModel.Type) => {
+  const renderNeedBody = (need: any) => {
     return need.stats.map((stat: {title: string; description: string}) =>
       renderNeedBodyMetric(stat.title, stat.description),
     );
@@ -175,111 +172,173 @@ const Positions = (props: PositionsProps, state: PositionState) => {
       <View
         key={`need-${options.id}-details`}
         style={[{flex: 1, marginBottom: 6, paddingBottom}]}>
-        <Button style={buttonStyle} onPress={options.onPress}>
-          <Text style={styles.cardButtonText}>{options.title}</Text>
-        </Button>
+        <ActionButton
+          customStyle={styles.editVirtualBtn}
+          customTitleStyle={styles.editVirtualBtnTxt}
+          title={'EDIT VIRTUAL INTERVIEW'}
+          onPress={options.onPress}
+        />
       </View>
     );
   };
 
-  const renderNeed = (need: any, index: number, needs: any) => {
-    console.log('Aa raha hai====>', need);
+  //   renderNeed(need: typeof NeedDetailModel.Type, index: number, needs: typeof NeedDetailModel.Type[]) {
+  //     const { expandedNeedId } = this.state;
 
-    const titleParts = [];
-    !!need.specialty && titleParts.push(need.specialty);
-    !!need.discipline && titleParts.push(need.discipline);
-    titleParts.push(need.needId);
+  //     const titleParts = []
+  //     !!need.specialty && titleParts.push(need.specialty)
+  //     !!need.discipline && titleParts.push(need.discipline)
+  //     titleParts.push(need.needId)
 
-    const descriptionParts = [];
-    !!need.shift && descriptionParts.push(need.shift);
+  //     const descriptionParts = []
+  //     !!need.shift && descriptionParts.push(need.shift)
 
-    const expanded = expandedNeedId === need.needId;
+  //     const expanded = expandedNeedId === need.needId
 
-    let paddingBottom = 0;
-    let result = [];
+  //     let paddingBottom = 0;
+  //     let result = []
 
-    // if (!expanded) {
-    //   paddingBottom = index === needs.length - 1 ? 18 : 0;
-    // }
+  //     if (!expanded) {
+  //         paddingBottom = (index === needs.length - 1 ? 18 : 0)
+  //     }
 
-    const cardButtons = [];
-    if (expanded) {
-      cardButtons.push(
-        renderCardButton({
-          id: need.needId,
-          title: 'Edit Virtual Interview',
-          onPress: () => {
-            showNeedQuestions(need);
-          },
-          isLastCard: index === needs.length - 1,
-          firstButton: true,
-          lastButton: true,
-        }),
-      );
-    }
+  //     const cardButtons = [];
+  //     if (expanded) {
+  //         cardButtons.push(this.renderCardButton({
+  //             id: need.needId,
+  //             title: 'Edit Virtual Interview',
+  //             onPress: () => { this.showNeedQuestions(need) },
+  //             isLastCard: index === needs.length - 1,
+  //             firstButton: true,
+  //             lastButton: true
+  //         }))
+  //     }
 
-    const cardStyle = expanded
-      ? [styles.listItemExpanded, {...getCardShadows()}]
-      : [styles.listItem, {...getCardShadows()}];
+  //     const cardStyle = expanded ? [styles.listItemExpanded, { ...getCardShadows() }] : [styles.listItem, { ...getCardShadows() }]
 
-    result.push(
-      <View
-        key={`need-${need.needId}`}
-        style={{flex: 1, margin: 8, paddingBottom}}>
-        <View
-          // onPress={toggleExpandedNeedId(need.needId)}
-          style={cardStyle}>
-          <View style={StyleSheet.flatten([styles.itemSection, styles.body])}>
-            <View style={{flex: 1, alignSelf: 'stretch'}}>
-              hi
-              {/* <Text
-                style={{...AppFonts.listItemTitleTouchable, paddingLeft: 0}}>
-                {need.display.title}
-              </Text> */}
-              <Text
-                style={{
-                  ...AppFonts.listItemDescription,
-                  paddingLeft: 0,
-                  paddingBottom: 8,
-                }}>
-                hi
-                {/* {need.display.description} */}
-              </Text>
-              <View style={[styles.listItemBodyDetail]}>
-                {/* {renderNeedBody(need)} */}
-              </View>
-            </View>
-          </View>
-        </View>
-        {/* {cardButtons} */}
-      </View>,
-    );
+  //     result.push(
+  //         <View key={`need-${need.needId}`} style={{ flex: 1, margin: 8, paddingBottom }}>
+  //             <TouchableOpacity onPress={this.toggleExpandedNeedId.bind(this, need.needId)} style={cardStyle}>
+  //                 <Body style={StyleSheet.flatten([styles.itemSection, styles.body])}>
+  //                     <View style={{ flex: 1, alignSelf: 'stretch' }}>
+  //                         <Text style={{ ...AppFonts.listItemTitleTouchable, paddingLeft: 0 }}>{need.display.title}</Text>
+  //                         <Text style={{ ...AppFonts.listItemDescription, paddingLeft: 0, paddingBottom: 8 }}>{need.display.description}</Text>
+  //                         <View style={[styles.listItemBodyDetail]}>
+  //                             {this.renderNeedBody(need)}
+  //                         </View>
+  //                     </View>
+  //                 </Body>
+  //             </TouchableOpacity>
+  //             {cardButtons}
+  //         </View>
+  //     )
 
-    return result;
-  };
+  //     return result
+  // }
 
   const renderNeedSection = (item: undefined, index: undefined) => {
     const needSummary = needs;
+    const needSummaryData = needSummary.flatMap(item => item.needDetails);
+    const result = needSummaryData.map(item => {
+      const expanded = expandedNeedId === item.needId;
+      let paddingBottom = 0;
+      if (!expanded) {
+        paddingBottom = index === needs.length - 1 ? 18 : 0;
+      }
+      const cardStyle = expanded
+        ? [styles.listItemExpanded, {...getCardShadows()}]
+        : [styles.listItem, {...getCardShadows()}];
 
-    const result = needSummary.map(item => renderNeed(item.needDetails));
+      const cardButtons = [];
+      if (expanded) {
+        cardButtons.push(
+          renderCardButton({
+            id: item.needId,
+            title: 'Edit Virtual Interview',
+            onPress: () => {
+              showNeedQuestions(item);
+            },
+            isLastCard: index === needs.length - 1,
+            firstButton: true,
+            lastButton: true,
+          }),
+        );
+      }
 
-    // if (result.length) {
-    //   result.unshift(
-    //     <ViewHeader
-    //       key={`section-item-${index}`}
-    //       title={needSummary.Status}
-    //       style={{
-    //         paddingTop: 12,
-    //         paddingBottom: 6,
-    //         backgroundColor: AppColors.baseGray,
-    //         borderBottomWidth: 0,
-    //       }}
-    //     />,
-    //   );
-    // }
-
+      return (
+        <>
+          <View
+            key={`need-${item.needId}`}
+            style={{flex: 1, margin: 8, paddingBottom}}>
+            <TouchableOpacity
+              onPress={() => toggleExpandedNeedId(item.needId)}
+              style={cardStyle}>
+              <View
+                style={StyleSheet.flatten([styles.itemSection, styles.body])}>
+                <View style={{flex: 1, alignSelf: 'stretch'}}>
+                  <Text
+                    style={{
+                      ...AppFonts.listItemTitleTouchable,
+                      paddingLeft: 0,
+                    }}>
+                    {item.display.title}
+                  </Text>
+                  <Text
+                    style={{
+                      ...AppFonts.listItemDescription,
+                      paddingLeft: 0,
+                      paddingBottom: 8,
+                    }}>
+                    {item.display.description}
+                  </Text>
+                  <View style={[styles.listItemBodyDetail]}>
+                    {renderNeedBody(item)}
+                  </View>
+                </View>
+              </View>
+            </TouchableOpacity>
+            {cardButtons}
+          </View>
+        </>
+      );
+    });
     return result;
   };
+
+  //   return (
+  //     <>
+  //       <View
+  //         // key={`need-${item.needId}`}
+  //         style={{flex: 1, margin: 8}}>
+  //         <Text>hi</Text>
+  //         {/* <TouchableOpacity
+  //           // onPress={toggleExpandedNeedId(item.needId)}
+  //           style={cardStyle}>
+  //           <View style={StyleSheet.flatten([styles.itemSection, styles.body])}>
+  //             <View style={{flex: 1, alignSelf: 'stretch'}}>
+  //               <Text
+  //                 style={{...AppFonts.listItemTitleTouchable, paddingLeft: 0}}>
+  //                 {item.display.title}
+  //               </Text>
+  //               <Text
+  //                 style={{
+  //                   ...AppFonts.listItemDescription,
+  //                   paddingLeft: 0,
+  //                   paddingBottom: 8,
+  //                 }}>
+  //                 {item.display.description}
+  //               </Text>
+  //               <View style={[styles.listItemBodyDetail]}>
+  //                 {renderNeedBody(item)}
+  //               </View>
+  //             </View>
+  //           </View>
+  //         </TouchableOpacity>
+  //         {cardButtons}  */}
+  //       </View>
+  //     </>
+  //   );
+  // };
 
   // const {facilityNeedsStore, userStore} = this.props;
   // const facility = facilityNeedsStore
@@ -288,16 +347,18 @@ const Positions = (props: PositionsProps, state: PositionState) => {
   // const needs = facility ? facility.needs : [] || [];
 
   return (
-    <FacilitySelectionContainer
-      // showNoData={showNoData}
-      // showLoading={showLoading}
-      noDataText="No Needs Available"
-      facilityHeaderCaption="Showing needs for"
-      // refreshing={refreshing}
-      // onRefresh={this.load.bind(this, true)}
-      onFacilityChosen={(facilityId: string) => forceUpdate()}>
+    // <FacilitySelectionContainer
+    //   // showNoData={showNoData}
+    //   // showLoading={showLoading}
+    //   noDataText="No Needs Available"
+    //   facilityHeaderCaption="Showing needs for"
+    //   // refreshing={refreshing}
+    //   // onRefresh={this.load.bind(this, true)}
+    //   onFacilityChosen={(facilityId: string) => forceUpdate()}>
+
+    // </FacilitySelectionContainer>
+    <View style={{flex: 1}}>
       <FlatList
-        style={{flex: 1}}
         refreshControl={
           <RefreshControl
             tintColor={AppColors.blue}
@@ -306,10 +367,10 @@ const Positions = (props: PositionsProps, state: PositionState) => {
             // onRefresh={load(false)}
           />
         }
-        renderItem={renderNeedSection()}
+        renderItem={item => renderNeedSection()}
         data={needs}
       />
-    </FacilitySelectionContainer>
+    </View>
   );
 };
 
@@ -352,6 +413,22 @@ const cardButtonDefaults = {
 const styles = StyleSheet.create({
   listItem: {
     ...(cardDefaults as any),
+  },
+  editVirtualBtn: {
+    justifyContent: 'center',
+    alignSelf: 'center',
+    backgroundColor: AppColors.white,
+    height: 45,
+    borderRadius: 0,
+    borderColor: AppColors.gray,
+    borderWidth: 0.5,
+  },
+  editVirtualBtnTxt: {
+    justifyContent: 'center',
+    alignSelf: 'center',
+    fontSize: 20,
+    ...AppFonts.listItemTitleTouchable,
+    color: AppColors.blue,
   },
   listItemExpanded: {
     ...(cardDefaults as any),

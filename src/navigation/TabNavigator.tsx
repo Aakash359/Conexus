@@ -2,8 +2,12 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Positions from '../containers/Facility/Positions/positions';
 import Icon from 'react-native-vector-icons/Feather';
-import {AppColors} from '.././theme';
+import {DrawerActions} from '@react-navigation/native';
+import Icons from 'react-native-vector-icons/Ionicons';
+import {AppColors, AppFonts} from '.././theme';
 import ReviewCandidateContainer from '../containers/Facility/ReviewCandidateHome/reviewCandidateContainer';
+import {Alert} from 'react-native';
+import NavigationService from './NavigationService';
 
 const Tab = createBottomTabNavigator();
 
@@ -11,7 +15,7 @@ const TabNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={{
-        headerShown: false,
+        headerShown: true,
         tabBarShowLabel: true,
         tabBarStyle: {backgroundColor: AppColors.white},
         tabBarLabelStyle: {fontWeight: 'bold', fontSize: 10},
@@ -22,8 +26,24 @@ const TabNavigator = () => {
         name="Review"
         component={ReviewCandidateContainer}
         options={{
-          tabBarIcon: ({color, size}) => (
-            <Icon color={AppColors.blue} size={26} name="user-plus" />
+          tabBarIcon: ({color, focused, size}) => (
+            <Icons
+              color={focused ? AppColors.blue : AppColors.mediumGray}
+              size={26}
+              name="ios-create-outline"
+            />
+          ),
+          title: 'Review Candidate',
+          headerLeft: () => (
+            <Icon
+              color={AppColors.black}
+              style={{marginLeft: 10}}
+              size={26}
+              name="menu"
+              onPress={() =>
+                NavigationService.dispatch(DrawerActions.openDrawer())
+              }
+            />
           ),
         }}
       />
@@ -31,8 +51,24 @@ const TabNavigator = () => {
         name="Positions"
         component={Positions}
         options={{
-          tabBarIcon: ({color, size}) => (
-            <Icon color={AppColors.blue} size={26} name="user-plus" />
+          tabBarIcon: ({color, size, focused}) => (
+            <Icon
+              color={focused ? AppColors.blue : AppColors.mediumGray}
+              size={26}
+              name="user-plus"
+            />
+          ),
+          title: 'Positions',
+          headerLeft: () => (
+            <Icon
+              color={AppColors.black}
+              style={{marginLeft: 10}}
+              size={26}
+              name="menu"
+              onPress={() =>
+                NavigationService.dispatch(DrawerActions.openDrawer())
+              }
+            />
           ),
         }}
       />

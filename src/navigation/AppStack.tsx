@@ -136,7 +136,13 @@ const DrawerStack = () => {
           fontSize: 18,
         },
       }}>
-      <Drawer.Screen name="Review Candidates" component={TabNavigator} />
+      <Drawer.Screen
+        name="Review Candidates"
+        component={TabNavigator}
+        options={{
+          headerShown: false,
+        }}
+      />
       <Drawer.Screen
         name="Interview Questions"
         component={InterviewQuestions}

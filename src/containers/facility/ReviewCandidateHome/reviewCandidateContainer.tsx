@@ -9,6 +9,7 @@ import FacilitySelectionContainer from '../../../components/facility-selection-c
 import NavigationService from '../../../navigation/NavigationService';
 import {CandidateList} from './candidateList';
 import {facilitySubmissionsService} from '../../../services/facility/facilitySubmissionsService';
+import {AppColors} from '../../../theme';
 
 interface ReviewContainerProps {
   // facilitySubmissionsStore: typeof FacilitySubmissionsStore.Type;
@@ -42,9 +43,6 @@ const ReviewCandidateContainer = (
 
   useEffect(() => {
     let mounted = true;
-    // if (props.userInfo?.user?.userFacilities) {
-
-    // }
     load(false);
     saveToken();
     getToken();
@@ -201,11 +199,5 @@ const ReviewCandidateContainer = (
     <>{data && renderPositionList(data)}</>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
 export default ReviewCandidateContainer;
