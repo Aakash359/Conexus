@@ -17,7 +17,7 @@ import {ActionButton} from '../action-button';
 import {Avatar} from '../avatar';
 import {phoneFormatter} from '../../common/phone-formatter';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { initiatePhoneCallService } from '../../services/facility/phoneCallService';
+import {initiatePhoneCallService} from '../../services/Facility/phoneCallService';
 
 interface HcpPhoneCallProps {
   submissionId: string;
@@ -71,12 +71,11 @@ export const PhoneCallModal = (
     try {
       setLoading(true);
       const {data} = await initiatePhoneCallService(
-       submissionId, 
-       callbackNumber
+        submissionId,
+        callbackNumber,
       );
       Alert.alert(data.description);
       setLoading(false);
-     
     } catch (error) {
       setLoading(false);
       console.log('Error', error);

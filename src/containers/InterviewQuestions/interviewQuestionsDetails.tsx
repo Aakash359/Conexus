@@ -368,72 +368,72 @@ const InterviewQuestionDetail = (
   //     this.setState({saving: false});
   //   }
 
-  const renderSortableList = () => {
-    const rowMap: RowMap = {};
-    rowOrder = [];
+  // const renderSortableList = () => {
+  //   const rowMap: RowMap = {};
+  //   rowOrder = [];
 
-    // const questions = showableQuestions;
+  //   // const questions = showableQuestions;
 
-    // this.showableQuestions.forEach((question, index) => {
-    //   if (!question.deleted) {
-    //     // This
-    //     rowMap[index] = question;
-    //     this.rowOrder.push(index.toString());
-    //   }
-    // });
+  //   // this.showableQuestions.forEach((question, index) => {
+  //   //   if (!question.deleted) {
+  //   //     // This
+  //   //     rowMap[index] = question;
+  //   //     this.rowOrder.push(index.toString());
+  //   //   }
+  //   // });
 
-    return (
-      <SortableList
-        style={{flex: 1}}
-        sortingEnabled={editing}
-        // refreshControl={
-        //   <RefreshControl
-        //     tintColor={AppColors.blue}
-        //     colors={[AppColors.blue]}
-        //     refreshing={refreshing}
-        //     onRefresh={this.refreshSection.bind(this, false)}
-        //   />
-        // }
-        onChangeOrder={this.onChangeOrder.bind(this, rowMap)}
-        onReleaseRow={this.onReleaseRow.bind(this, rowMap)}
-        data={rowMap}
-        renderRow={({data, active, index}) => {
-          var paddingBottom =
-            index + 1 === questions.length
-              ? AppSizes.conexusFooterButtonHeight + 20
-              : 0;
-          var question: typeof QuestionModel.Type = data;
+  //   return (
+  //     <SortableList
+  //       style={{flex: 1}}
+  //       sortingEnabled={editing}
+  //       // refreshControl={
+  //       //   <RefreshControl
+  //       //     tintColor={AppColors.blue}
+  //       //     colors={[AppColors.blue]}
+  //       //     refreshing={refreshing}
+  //       //     onRefresh={this.refreshSection.bind(this, false)}
+  //       //   />
+  //       // }
+  //       onChangeOrder={this.onChangeOrder.bind(this, rowMap)}
+  //       onReleaseRow={this.onReleaseRow.bind(this, rowMap)}
+  //       data={rowMap}
+  //       renderRow={({data, active, index}) => {
+  //         var paddingBottom =
+  //           index + 1 === questions.length
+  //             ? AppSizes.conexusFooterButtonHeight + 20
+  //             : 0;
+  //         var question: typeof QuestionModel.Type = data;
 
-          return (
-            // <SortableQuestionRow
-            //   marginBottom={paddingBottom}
-            //   allowDeleteQuestion={true}
-            //   text={data.text}
-            //   videoUrl={data.tokBoxArchiveUrl}
-            //   onDeleteQuestion={this.deleteQuestion.bind(
-            //     this,
-            //     question.id,
-            //     question.needId,
-            //   )}
-            //   onOpenQuestion={this.openQuestion.bind(
-            //     this,
-            //     question.id,
-            //     question.needId,
-            //     question.unitId,
-            //   )}
-            //   onPlayQuestion={this.playQuestion.bind(
-            //     this,
-            //     question.id,
-            //     question.needId,
-            //   )}
-            //   dragActive={active}
-            //   editing={editing}
-            // />
-          );
-        }}
-      />
-    );
-  };
+  //         return (
+  //           // <SortableQuestionRow
+  //           //   marginBottom={paddingBottom}
+  //           //   allowDeleteQuestion={true}
+  //           //   text={data.text}
+  //           //   videoUrl={data.tokBoxArchiveUrl}
+  //           //   onDeleteQuestion={this.deleteQuestion.bind(
+  //           //     this,
+  //           //     question.id,
+  //           //     question.needId,
+  //           //   )}
+  //           //   onOpenQuestion={this.openQuestion.bind(
+  //           //     this,
+  //           //     question.id,
+  //           //     question.needId,
+  //           //     question.unitId,
+  //           //   )}
+  //           //   onPlayQuestion={this.playQuestion.bind(
+  //           //     this,
+  //           //     question.id,
+  //           //     question.needId,
+  //           //   )}
+  //           //   dragActive={active}
+  //           //   editing={editing}
+  //           // />
+  //         );
+  //       }}
+  //     />
+  //   );
+  // };
 
   const renderEmptyList = () => {
     return (
@@ -502,7 +502,7 @@ const InterviewQuestionDetail = (
       {!!questionSectionId && renderUnitHeader()}
       {!!sections && renderTabs()}
       {renderEmptyList()}
-      {renderSortableList()}
+      {/* {renderSortableList()} */}
       {!editing && (
         <View style={styles.footer}>
           <ActionButton

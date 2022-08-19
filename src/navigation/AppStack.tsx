@@ -11,13 +11,13 @@ import Profile from '../containers/Profile/profile-view';
 import AppFeedback from '../containers/SendFeedback/appFeedback';
 import AgentMessage from '../containers/AgentMessage/agentMessage';
 import EditProfile from '../containers/Profile/profile-edit';
-import AddQuestion from '../containers/InterviewQuestions/addQuestion';
 import InterviewQuestions from '../containers/InterviewQuestions/interviewQuestions';
 import {windowDimensions} from '../common/window-dimensions';
-import HcpDetailView from '../containers/Facility/HcpDetail/hcpDetailView';
-import ImageGallery from '../containers/Facility/HcpDetail/imageGallery';
 import Icons from 'react-native-vector-icons/Ionicons';
 import InterviewQuestionDetail from '../containers/InterviewQuestions/interviewQuestionsDetails';
+import AddQuestion from '../containers/InterviewQuestions/AddQuestion';
+import HcpDetailView from '../containers/facility/HcpDetail/HcpDetailView';
+import ImageGallery from '../containers/facility/HcpDetail/imageGallery';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();

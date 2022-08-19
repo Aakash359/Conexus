@@ -26,7 +26,7 @@ import {
   CandidateResponseModel,
   CandidateModel,
 } from '../../../services/facility/index';
-import {facilitySubmissionsService} from '../../../services/facility/facilitySubmissionsService';
+import {facilitySubmissionsService} from '../../../services/Facility/facilitySubmissionsService';
 import {TabDetails, ScreenFooterButton} from '../../../components';
 import {ConexusIconButton} from '../../../components/conexus-icon-button';
 import {ActionButton} from '../../../components/action-button';

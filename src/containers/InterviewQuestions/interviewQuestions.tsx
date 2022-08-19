@@ -23,7 +23,7 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import NavigationService from '../../navigation/NavigationService';
 import AddQuestion from './AddQuestion';
 import FacilitySelectionContainer from '../../components/facility-selection-container';
-import {facilityQuestionsService} from '../../services/InterviewQuestionsService/facilityQuestionsService';
+import {facilityQuestionsService} from '../../services/InterviewQuestions/facilityQuestionsService';
 
 export interface InterviewQuestionsProps {
   needId?: string;

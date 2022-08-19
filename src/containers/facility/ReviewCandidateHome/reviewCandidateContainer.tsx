@@ -7,9 +7,10 @@ import {useSelector} from '../../../redux/reducers/index';
 // import {FacilityModel} from '../../stores/facility/facility-model';
 import FacilitySelectionContainer from '../../../components/facility-selection-container';
 import NavigationService from '../../../navigation/NavigationService';
-import {CandidateList} from './candidateList';
-import {facilitySubmissionsService} from '../../../services/facility/facilitySubmissionsService';
+
+import {facilitySubmissionsService} from '../../../services/Facility/facilitySubmissionsService';
 import {AppColors} from '../../../theme';
+import {CandidateList} from './candidateList';
 
 interface ReviewContainerProps {
   // facilitySubmissionsStore: typeof FacilitySubmissionsStore.Type;

@@ -1,13 +1,13 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Positions from '../containers/Facility/Positions/positions';
 import Icon from 'react-native-vector-icons/Feather';
 import {DrawerActions} from '@react-navigation/native';
 import Icons from 'react-native-vector-icons/Ionicons';
 import {AppColors, AppFonts} from '.././theme';
-import ReviewCandidateContainer from '../containers/Facility/ReviewCandidateHome/reviewCandidateContainer';
 import {Alert} from 'react-native';
 import NavigationService from './NavigationService';
+import Positions from '../containers/facility/Positions/positions';
+import ReviewCandidateContainer from '../containers/facility/ReviewCandidateHome/reviewCandidateContainer';
 
 const Tab = createBottomTabNavigator();
 

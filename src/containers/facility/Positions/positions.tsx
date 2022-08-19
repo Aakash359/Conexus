@@ -21,7 +21,7 @@ import {ScreenType} from '../../../common/constants';
 import {AppColors, AppFonts} from '../../../theme';
 import {ViewHeader} from '../../../components/view-header';
 import FacilitySelectionContainer from '../../../components/facility-selection-container';
-import {facilityNeedService} from '../../../services/facility/facilityNeedService';
+import {facilityNeedService} from '../../../services/Facility/facilityNeedService';
 import {ActionButton} from '../../../components/action-button';
 import {windowDimensions} from '../../../common/window-dimensions';
 import NavigationService from '../../../navigation/NavigationService';

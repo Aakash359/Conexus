@@ -9,7 +9,6 @@ import {logger} from 'react-native-logs';
 import {BubbleLabel} from '../../../components/bubble-label';
 import {PositionModel} from '../../../stores/index';
 import NavigationService from '../../../navigation/NavigationService';
-const log = logger.createLogger();
 
 export interface CandidateItemProps {
   candidate: any;
