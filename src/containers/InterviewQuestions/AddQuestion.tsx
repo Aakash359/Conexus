@@ -5,11 +5,7 @@ import {
   ActivityIndicator,
   StyleSheet,
   View,
-  KeyboardAvoidingView,
   TouchableOpacity,
-  Alert,
-  ScrollView,
-  Keyboard,
   Text,
   TextInput,
 } from 'react-native';
@@ -56,9 +52,9 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
     }
   };
 
-  // _question: typeof QuestionModel.Type;
+  // const question: typeof QuestionModel.Type;
 
-  // get onSave() {
+  // const onSave() {
   //   return this.props.onSave || function () {};
   // }
 

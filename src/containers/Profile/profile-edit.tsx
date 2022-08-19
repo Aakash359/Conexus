@@ -15,7 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import ImagePicker from 'react-native-image-crop-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {uploadPhoto, updateProfile} from '../../services/auth';
+import {uploadPhoto, updateProfile} from '../../services/authService';
 import variables, {AppColors} from '../../theme';
 import {OrderedMap} from 'immutable';
 import {showApiErrorAlert, creatInputChangeHandler} from '../../common';

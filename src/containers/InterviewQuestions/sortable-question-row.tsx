@@ -1,7 +1,6 @@
 import React from 'react';
-import {Text} from 'native-base';
 import {
-  ViewProperties,
+  Text,
   StyleSheet,
   View,
   Platform,
@@ -13,7 +12,7 @@ import {
 import {AppFonts, AppColors} from '../../../theme';
 import {Circle, ConexusIcon} from '../../../components';
 
-export interface SortableQuestionProps extends ViewProperties {
+export interface SortableQuestionProps {
   editing: boolean;
   videoUrl: string;
   text: string;
@@ -25,12 +24,10 @@ export interface SortableQuestionProps extends ViewProperties {
   marginBottom?: number;
 }
 
-export class SortableQuestionRow extends React.Component<
-  SortableQuestionProps,
-  any
-> {
-  _style: ViewStyle;
-  _activeAnimationValue: any;
+const SortableQuestionRow = (props:SortableQuestionProps)=>{
+  
+  const _style: ViewStyle;
+  const _activeAnimationValue: any;
 
   constructor(props, state) {
     super(props, state);

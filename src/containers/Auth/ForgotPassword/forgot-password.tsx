@@ -15,7 +15,7 @@ import {Field} from '../../../components/field';
 import {windowDimensions} from '../../../common';
 import Toast from 'react-native-toast-message';
 import Styles from '../../../theme/styles';
-import {forgotPassword} from '../../../services/auth';
+import {forgotPassword} from '../../../services/authService';
 import {AppColors, AppFonts} from '../../../theme';
 import NavigationService from '../../../navigation/NavigationService';
 import {ActionButton} from '../../../components/action-button';
@@ -72,7 +72,6 @@ const ForgotPassword = () => {
       setLoading(false);
       console.log('Error', error);
       Alert.alert(error?.response?.data?.error?.description);
-     
     }
   };
   const goBack = () => {

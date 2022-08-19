@@ -34,6 +34,15 @@ const TabNavigator = () => {
             />
           ),
           title: 'Review Candidate',
+          headerRight: () => (
+            <Icons
+              color={AppColors.blue}
+              style={{marginRight: 20}}
+              size={26}
+              name="chatbubble-outline"
+              onPress={() => NavigationService.navigate('MessageCenter')}
+            />
+          ),
           headerLeft: () => (
             <Icon
               color={AppColors.black}
@@ -65,6 +74,17 @@ const TabNavigator = () => {
               style={{marginLeft: 10}}
               size={26}
               name="menu"
+              onPress={() =>
+                NavigationService.dispatch(DrawerActions.openDrawer())
+              }
+            />
+          ),
+          headerRight: () => (
+            <Icons
+              color={AppColors.blue}
+              style={{marginRight: 20}}
+              size={26}
+              name="chatbubble-outline"
               onPress={() =>
                 NavigationService.dispatch(DrawerActions.openDrawer())
               }

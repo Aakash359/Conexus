@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import Toast from 'react-native-toast-message';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {signUp} from '../../../services/auth';
+import {signUp} from '../../../services/authService';
 import variables from '../../../theme';
 import {Field} from '../../../components/field';
 import {windowDimensions} from '../../../common';
