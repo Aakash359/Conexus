@@ -49,21 +49,21 @@ const ReviewCandidateContainer = (
     getToken();
   }, []);
 
-  const selectedFacility = () => {
-    // const {facilitySubmissionsStore, userStore} = this.props;
+  // const selectedFacility = () => {
+  //   // const {facilitySubmissionsStore, userStore} = this.props;
 
-    // if (facilitySubmissionsStore.loading) {
-    //   return null;
-    // }
+  //   // if (facilitySubmissionsStore.loading) {
+  //   //   return null;
+  //   // }
 
-    if (data) {
-      return data.find(
-        facility => facility.facilityId === userStore.selectedFacilityId,
-      );
-    }
+  //   if (data) {
+  //     return data.find(
+  //       facility => facility.facilityId === userStore.selectedFacilityId,
+  //     );
+  //   }
 
-    return null;
-  };
+  //   return null;
+  // };
 
   // const showNoData =(): boolean => {
   //   const {facilitySubmissionsStore} = props;

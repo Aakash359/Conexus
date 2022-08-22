@@ -16,8 +16,8 @@ import {windowDimensions} from '../common/window-dimensions';
 import Icons from 'react-native-vector-icons/Ionicons';
 import InterviewQuestionDetail from '../containers/InterviewQuestions/interviewQuestionsDetails';
 import AddQuestion from '../containers/InterviewQuestions/AddQuestion';
-import HcpDetailView from '../containers/facility/HcpDetail/HcpDetailView';
-import ImageGallery from '../containers/facility/HcpDetail/imageGallery';
+import HcpDetailView from '../containers/Facility/HcpDetail/HcpDetailView';
+import ImageGallery from '../containers/Facility/HcpDetail/imageGallery';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();

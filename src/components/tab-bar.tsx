@@ -35,22 +35,11 @@ export const TabBar = (props: TabBarProps) => {
     tabs.find(i => i.id === selectedTabId) || tabs[0],
   );
 
-  //       this.props.tabs[0],)
-
-  // constructor(props, state) {
-  //   super(props, state);
-
-  //   this.state = {
-  //     selectedTab:
-  //       this.props.tabs.find(i => i.id === this.props.selectedTabId) ||
-  //       this.props.tabs[0],
-  //   };
-  // }
-
-  // useEffect(()=>{
-  //   const {tabs} = props;
-  //   setSelectedTab(selectTab: tabs.find((i: { id: any; }) => i.id === selectedTabId) ||tabs[0])
-  // },[])
+  useEffect((newProps: TabBarProps) => {
+    setSelectedTab(
+      tabs.find((i: {id: any}) => i.id === selectedTabId) || tabs[0],
+    );
+  }, []);
 
   // componentWillReceiveProps(newProps: TabBarProps) {
   //   this.setState({
@@ -62,7 +51,7 @@ export const TabBar = (props: TabBarProps) => {
 
   const selectTab = (tab: TabDetails) => {
     setSelectedTab(tab);
-    // props.onTabSelection(tab);
+    props.onTabSelection(tab);
   };
 
   // const renderButton = (tab: TabDetails) => {
@@ -103,6 +92,7 @@ export const TabBar = (props: TabBarProps) => {
 
   const tabElements = tabs.map(tab => {
     const Selected = selectedTab === tab;
+
     return (
       <>
         <TouchableOpacity
@@ -114,23 +104,23 @@ export const TabBar = (props: TabBarProps) => {
               style={Selected ? styles.buttonSelectedText : styles.buttonText}>
               {tab.title}
             </Text>
-            {/* {!!tab.badge && ( */}
-            <BubbleLabel
-              height={16}
-              title={tab.badge}
-              style={StyleSheet.flatten([
-                styles.badge,
-                {
-                  width: 24,
-                  backgroundColor: tab.badgeColor || AppColors.green,
-                },
-              ])}
-              textStyle={StyleSheet.flatten([
-                styles.badgeText,
-                {color: tab.badgeTextColor || AppColors.white},
-              ])}
-            />
-            {/* )} */}
+            {!!tab.badge && (
+              <BubbleLabel
+                height={16}
+                title={tab.badge}
+                style={StyleSheet.flatten([
+                  styles.badge,
+                  {
+                    width: 24,
+                    backgroundColor: tab.badgeColor || AppColors.green,
+                  },
+                ])}
+                textStyle={StyleSheet.flatten([
+                  styles.badgeText,
+                  {color: tab.badgeTextColor || AppColors.white},
+                ])}
+              />
+            )}
           </View>
         </TouchableOpacity>
       </>

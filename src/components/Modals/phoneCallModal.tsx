@@ -15,9 +15,6 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {useSelector} from '../../redux/reducers/index';
 import {ActionButton} from '../action-button';
 import {Avatar} from '../avatar';
-import {phoneFormatter} from '../../common/phone-formatter';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import {initiatePhoneCallService} from '../../services/Facility/phoneCallService';
 
 interface HcpPhoneCallProps {
   submissionId: string;
@@ -30,6 +27,10 @@ interface HcpPhoneCallProps {
   visible: any;
   customStyle: any;
   customTitleStyle: any;
+  onPress: any;
+  value: any;
+  disabled: any;
+  onChangeText: any;
   onSubmit: ({startDate: string}) => any;
   // conversationStore: typeof ConversationStore.Type;
 }
@@ -43,53 +44,21 @@ export const PhoneCallModal = (
   props: HcpPhoneCallProps,
   state: HcpPhoneCallState,
 ) => {
-  const userInfo = useSelector(state => state.userReducer);
-
-  const [callbackNumber, setCallBackNumber] = useState(
-    userInfo?.user?.phoneNumber,
-  );
-  const [calling, setCalling] = useState(false);
   const [loading, setLoading] = useState(false);
   const {
     photoUrl,
-    conversationStore,
+    onPress,
     description,
     onClose,
     photoLabel,
     visible,
+    value,
+    onChangeText,
+    disabled,
     customStyle,
     title,
     customTitleStyle,
   } = props;
-
-  const validPhone = phoneFormatter.isValid10DigitPhoneNumber(callbackNumber);
-
-  const call = async () => {
-    const {submissionId} = props;
-    setCalling(true);
-    Keyboard.dismiss();
-    try {
-      setLoading(true);
-      const {data} = await initiatePhoneCallService(
-        submissionId,
-        callbackNumber,
-      );
-      Alert.alert(data.description);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      console.log('Error', error);
-      Alert.alert(error?.response?.data?.error?.description);
-    }
-
-    setTimeout(() => {});
-  };
-
-  const onCallbackChangeText = (callbackNumber: string) => {
-    setCallBackNumber({
-      callbackNumber: phoneFormatter.stripFormatting(callbackNumber),
-    });
-  };
 
   return (
     <Modal
@@ -143,8 +112,8 @@ export const PhoneCallModal = (
             <TextInput
               underlineColorAndroid={'transparent'}
               keyboardType="numeric"
-              value={phoneFormatter.format10Digit(callbackNumber)}
-              onChangeText={onCallbackChangeText}
+              value={value}
+              onChangeText={onChangeText}
               placeholder="XXX-XXX-XXXX"
               maxLength={12}
               style={styles.phoneInput}
@@ -159,10 +128,10 @@ export const PhoneCallModal = (
                 fontFamily: AppFonts.family.fontFamily,
               }}
               loading={loading}
-              // disabled={!validPhone}
+              disabled={disabled}
               customStyle={styles.makeOfrBtn}
               title="CALL"
-              onPress={() => call()}
+              onPress={onPress}
             />
           </View>
         </View>

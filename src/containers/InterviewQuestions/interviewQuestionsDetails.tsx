@@ -65,7 +65,6 @@ const InterviewQuestionDetail = (
     needId ? 'other' : 'default',
   );
 
-  console.log('props====>', questionSectionId);
   //   const onSave=()=> {
   //     return onSave || function () {};
   //   }

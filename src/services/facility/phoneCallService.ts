@@ -3,4 +3,9 @@ import axios from 'axios';
 import { defaultBaseUrl } from '../../redux/constants'
 
 
-export const initiatePhoneCallService = async(data: string) => axios.get(`${defaultBaseUrl}/facility/facilitySubmissions`,{});
+export const initiatePhoneCallService = async(data: { conversationId?: string; submissionId: any; callbackNumber?: any; messageTypeId?: string; }) => axios.post(`${defaultBaseUrl}/conference/messageSend`,data,{
+    headers: {
+      Authorization: `Bearer ${ await AsyncStorage.getItem('authToken')}`,
+    },
+});
+

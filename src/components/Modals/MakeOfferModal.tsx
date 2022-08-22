@@ -17,22 +17,24 @@ import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 interface MakeOfferLightboxProps {
-  photoUrl: string;
+  source: string;
   photoLabel: string;
   candidateTitle: string;
   candidateDescription: string;
   startDateProp: string;
   customStyle: any;
+  onPress: any;
   onSubmit: ({startDate: string}) => any;
 }
 
 export const MakeOfferModal = (props: MakeOfferLightboxProps) => {
   const {
-    photoUrl,
+    source,
     onClose,
     photoLabel,
     candidateTitle,
     cancel,
+    onPress,
     visible,
     customStyle,
     startDateProp,
@@ -113,7 +115,7 @@ export const MakeOfferModal = (props: MakeOfferLightboxProps) => {
             <Avatar
               style={{width: 108, marginBottom: 8}}
               size={108}
-              source={photoUrl || ''}
+              source={source}
               title={photoLabel || ''}
             />
             <Text style={AppFonts.bodyTextXtraLarge}>
@@ -158,9 +160,7 @@ export const MakeOfferModal = (props: MakeOfferLightboxProps) => {
               }}
               customStyle={styles.makeOfrBtn}
               title="MAKE OFFER"
-              onPress={() => {
-                // this.submitOffer();
-              }}
+              onPress={onPress}
             />
             {show1 && (
               <DateTimePicker

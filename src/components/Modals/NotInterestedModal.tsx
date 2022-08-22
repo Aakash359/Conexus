@@ -46,7 +46,7 @@ export const NotInterestedModal = (props: NotInterestedModalProps) => {
     title,
     onClose,
     loading,
-    onAction,
+    onPress,
     data,
     customStyle,
     textColor,
@@ -96,7 +96,7 @@ export const NotInterestedModal = (props: NotInterestedModalProps) => {
                 fontFamily: AppFonts.family.fontFamily,
               }}
               // disabled={inputs.email ? loading : 'false'}
-              onPress={props.onAction}
+              onPress={onPress}
               customStyle={styles.notInterested}
             />
             <ActionButton

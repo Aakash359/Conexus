@@ -6,8 +6,8 @@ import Icons from 'react-native-vector-icons/Ionicons';
 import {AppColors, AppFonts} from '.././theme';
 import {Alert} from 'react-native';
 import NavigationService from './NavigationService';
-import Positions from '../containers/facility/Positions/positions';
-import ReviewCandidateContainer from '../containers/facility/ReviewCandidateHome/reviewCandidateContainer';
+import Positions from '../containers/Facility/Positions/positions';
+import ReviewCandidateContainer from '../containers/Facility/ReviewCandidateHome/reviewCandidateContainer';
 
 const Tab = createBottomTabNavigator();
 

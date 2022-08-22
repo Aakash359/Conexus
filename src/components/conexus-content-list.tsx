@@ -4,17 +4,15 @@ import {ConexusIcon} from '../components/conexus-icon';
 import variables from '../theme';
 import FitImage from 'react-native-fit-image';
 import {AppFonts} from '../theme';
-import {logger} from 'react-native-logs';
 import {
   ContentListModel,
   ContentListItemModel,
 } from '../stores/content-list-model';
 
-interface ConexusIconListProps extends ViewProperties {
+interface ConexusIconListProps {
   styles?: StyleProp<ViewStyle>;
-  data: typeof ContentListModel.Type[];
+  data: any;
 }
-const log = logger.createLogger();
 const blockPadding = 28;
 
 const ConexusContentList = (props: ConexusIconListProps) => {
@@ -41,7 +39,6 @@ const ConexusContentList = (props: ConexusIconListProps) => {
   };
 
   const renderContentBlockList = (list: typeof ContentListItemModel.Type[]) => {
-    log.info('block list', list);
     return list.map((item, index) => (
       <View
         key={`content-block-list-item-${index}`}

@@ -46,7 +46,7 @@ export const CandidateHeaderItem = (
       }>
       <View
         onLayout={event => {
-          this.setState({height: event.nativeEvent.layout.height});
+          setHeight(event.nativeEvent.layout.height);
           sizeChanged(event.nativeEvent.layout.height);
         }}
         style={StyleSheet.flatten([
@@ -71,7 +71,7 @@ export const CandidateHeaderItem = (
             zIndex: 2,
             fontSize: 8,
           }}>
-          {this.state.height}
+          {height}
         </Text>
       </View>
     </TouchableHighlight>

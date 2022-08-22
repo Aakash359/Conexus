@@ -7,25 +7,17 @@ import {
   RefreshControl,
   ActivityIndicator,
   FlatList,
+  Keyboard,
   Alert,
+  Image,
 } from 'react-native';
-// import {Text, View, Icon} from 'native-base';
-import {ScreenType} from '../../../common/constants';
-import {logger} from 'react-native-logs';
-import {FacilitySubmissionsStore} from '../../../stores/facility';
-import {AnswerRatingItem} from '../../../lightboxes';
+import {phoneFormatter} from '../../../common/phone-formatter';
+import {initiatePhoneCallService} from '../../../services/Facility/phoneCallService';
 import {windowDimensions} from '../../../common';
 import variables from '../../../theme';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Styles from '../../../theme/styles';
 import {AppFonts, AppSizes, AppColors} from '../../../theme';
-
-import {
-  // CandidateModel,
-  loadCandidateBySubmissionId,
-  CandidateResponseModel,
-  CandidateModel,
-} from '../../../services/facility/index';
 import {facilitySubmissionsService} from '../../../services/Facility/facilitySubmissionsService';
 import {TabDetails, ScreenFooterButton} from '../../../components';
 import {ConexusIconButton} from '../../../components/conexus-icon-button';
@@ -34,17 +26,19 @@ import {Avatar} from '../../../components/avatar';
 import {TabBar} from '../../../components/tab-bar';
 import {CandidateResponseRow} from './candidate-response-row';
 // import {ImageCacheManager} from 'react-native-cached-image';
+import {useSelector} from '../../../redux/reducers/index';
 import NavigationService from '../../../navigation/NavigationService';
 import {NotInterestedModal} from '../../../components/Modals/NotInterestedModal';
 import {MakeOfferModal} from '../../../components/Modals/MakeOfferModal';
 import {ContactOptionModal} from '../../../components/Modals/ContactOptionModal';
 import ConexusContentList from '../../../components/conexus-content-list';
 import {PhoneCallModal} from '../../../components/Modals/phoneCallModal';
+import {candidateSubmissionsService} from '../../../services/candidateSubmissioService';
+import {notInterestedService} from '../../../services/notInterestedService';
 
 interface HcpDetailProps {
   submissionId: string;
-  // candidate?: typeof CandidateModel.Type;
-  // facilitySubmissionsStore: typeof FacilitySubmissionsStore.Type;
+  candidate?: any;
   onClose?: () => any;
 }
 
@@ -61,12 +55,13 @@ const tabs = [
 ];
 
 // const imageCacheManager = ImageCacheManager();
-// const preloadResumeCount = 3;
+const preloadResumeCount = 3;
 
 const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const [candidate, setCandidate] = useState(
     props?.route?.params?.candidate || {},
   );
+  const [stateCandidate, setStateCandidate] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [offerModalVisible, setOfferModalVisible] = useState(false);
   const [phoneCallModalVisible, setPhoneCallModalVisible] = useState(false);
@@ -76,8 +71,13 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const [refreshing, setRefreshing] = useState('');
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
   const [loading, setLoading] = useState(false);
+  const userInfo = useSelector(state => state.userReducer);
+  const [callbackNumber, setCallBackNumber] = useState(
+    userInfo?.user?.phoneNumber,
+  );
+  const [calling, setCalling] = useState(false);
   const submissionId = props?.route?.params?.submissionId;
-  console.log('props====>', props);
+
   // get responses(): typeof CandidateResponseModel.Type[] {
   //   const {candidate} = this.state;
 
@@ -96,16 +96,6 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   //   });
 
   //   return result;
-  // }
-
-  // constructor(props, state) {
-  //   super(props, state);
-  //   this.state = {
-  //     refreshing: false,
-  //     loadingSummary: false,
-  //     candidate: CandidateModel.create(this.props.candidate),
-  //     selectedTab: tabs[0],
-  //   };
   // }
 
   // const refreshCandidate = (refreshing: boolean = false) => {
@@ -128,68 +118,67 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   //   );
   // };
 
-  const loadCandidate = () => {
-    setRefreshing(true);
-    setLoadingSummary(true);
-    const {submissionId} = props;
-    // loadCandidateBySubmissionId(submissionId).then(
-    //   (candidate: typeof CandidateModel.Type) => {
-    //     setRefreshing(true);
-    //     setCandidate('');
-    //     setLoadingSummary(false);
-    //     // this._preloadResumePages();
-    //   },
-    //   () => {
-    //     setRefreshing(true);
-    //     setCandidate(null);
-    //     setLoadingSummary(false);
-    //   },
-    // );
+  const preloadResumePages = () => {
+    let i = 0;
+    console.log('candidate====>', candidate);
+
+    const promises = [];
+
+    // if (propsCandidate) {
+    //   while (
+    //     i < preloadResumeCount &&
+    //     i < propsCandidate.resumePages.pageCount
+    //   ) {
+    //     promises.push(
+    //       new Promise((resolve, reject) => {
+    //         console.log(
+    //           'Pre-loading candidate resume image: ' +
+    //             propsCandidate.resumePages.images[i],
+    //         );
+    //         return imageCacheManager
+    //           .downloadAndCacheUrl(propsCandidate.resumePages.images[i])
+    //           .then(resolve, reject);
+    //       }),
+    //     );
+    //     i += 1;
+    //   }
+
+    //   return Promise.all(promises);
+    // }
+
+    return Promise.resolve();
   };
 
-  // _preloadResumePages() {
-  //   const {candidate} = this.state;
-  //   let i = 0;
-
-  //   const promises = [];
-
-  //   if (candidate) {
-  //     while (i < preloadResumeCount && i < candidate.resumePages.pageCount) {
-  //       promises.push(
-  //         new Promise((resolve, reject) => {
-  //           log.info(
-  //             'Pre-loading candidate resume image: ' +
-  //               candidate.resumePages.images[i],
-  //           );
-  //           return imageCacheManager
-  //             .downloadAndCacheUrl(candidate.resumePages.images[i])
-  //             .then(resolve, reject);
-  //         }),
-  //       );
-  //       i += 1;
-  //     }
-
-  //     return Promise.all(promises);
-  //   }
-
-  //   return Promise.resolve();
-  // }
+  const loadCandidate = async () => {
+    setRefreshing(true);
+    setLoadingSummary(true);
+    try {
+      const {data} = await candidateSubmissionsService(submissionId);
+      setCandidate(data);
+      preloadResumePages();
+      setRefreshing(false);
+      setLoadingSummary(false);
+    } catch (error) {
+      console.log(error);
+      setRefreshing(false);
+    }
+  };
 
   useEffect(() => {
     // this.state.candidate.setViewed(candidate.submissionId);
-    if (!candidate) {
-      loadCandidate();
-    }
+    loadCandidate();
+    // if (!candidate) {
+
+    // }
     // else if (
     //   !candidate.resumePages.pageCount ||
     //   !candidate.submissionSummary ||
     //   !candidate.submissionSummary.length
-    // )
-    {
-      setCandidate(candidate);
-      setLoadingSummary(true);
-      // refreshCandidate();
-    }
+    // ) {
+    //   setCandidate(candidate);
+    //   setRefreshing(true);
+    //   //  refreshCandidate();
+    // }
   }, []);
 
   // componentWillUnmount() {
@@ -321,30 +310,31 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
 
   const renderQuestions = () => {
     const responses = [];
+    // console.log('CaNDUAUBUSX====>', candidate.);
 
-    // candidate.sections.forEach(section => {
+    // candidate.sections.forEach((section: {questions: any[]}) => {
     //   section.questions.forEach(response => {
     //     responses.push(response);
     //   });
     // });
 
-    // if (!responses.length) {
-    //   return (
-    //     <View
-    //       style={{
-    //         flex: 1,
-    //         alignItems: 'center',
-    //         justifyContent: 'flex-start',
-    //         paddingTop: 40,
-    //         paddingBottom: 80,
-    //       }}>
-    //       <Icon name="information-circle" style={Styles.cnxNoDataIcon} />
-    //       <Text style={Styles.cnxNoDataMessageText}>
-    //         No Responses Available
-    //       </Text>
-    //     </View>
-    //   );
-    // }
+    if (!responses.length) {
+      return (
+        <View
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+            paddingTop: 40,
+            paddingBottom: 80,
+          }}>
+          <Icon name="information-circle" style={Styles.cnxNoDataIcon} />
+          <Text style={Styles.cnxNoDataMessageText}>
+            No Responses Available
+          </Text>
+        </View>
+      );
+    }
 
     // return (
     //   <FlatList
@@ -360,25 +350,30 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     // );
   };
 
-  const onNotInterested = async () => {
-    try {
-      setLoading(true);
-      const {data} = await facilitySubmissionsService();
-      Alert.alert(data.description);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      // console.log('Error', error);
-      // Alert.alert(error?.response?.data?.error?.description);
-    }
-  };
-
   const openImageGallery = () => {
     NavigationService.navigate('ImageGallery', {
       // images: candidate.resumePages.images,
       title: candidate.display.title,
       // initialRenderCount: preloadResumeCount,
     });
+  };
+
+  const openMessageScreen = () => {
+    NavigationService.navigate('ChatScreen', {});
+  };
+  const callNotInterested = async () => {
+    try {
+      setLoading(true);
+      const {data} = await notInterestedService({
+        declineSubmission: true,
+        submissionId: submissionId,
+      });
+      console.log('response', data);
+      setModalVisible(false);
+    } catch (error) {
+      setModalVisible(false);
+      console.log('Error', error);
+    }
   };
 
   const renderActionHeader = () => {
@@ -406,7 +401,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
             title="Not Interested"
           />
           <ConexusIconButton
-            // disabled={!candidate || !candidate.conversationAllowed}
+            disabled={!candidate || !candidate.conversationAllowed}
             onPress={() => setOfferModalVisible(true)}
             iconName="cn-money-bag"
             iconSize={20}
@@ -416,15 +411,18 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
         <TabBar
           selectedTabId={selectedTab.id}
           tabs={tabs}
+          onTabSelection={tab => setSelectedTab(tab)}
           // onTabSelection={tab => this.setState({selectedTab: tab})}
           style={{flex: 1}}
         />
         {offerModalVisible && (
           <MakeOfferModal
             title={'Make Offer'}
+            source={candidate.photoUrl}
+            candidateTitle={candidate.display.title}
             onRequestClose={() => setOfferModalVisible(false)}
             onDismiss={() => setOfferModalVisible(false)}
-            onPress={undefined}
+            onPress={() => openMessageScreen()}
             onClose={() => setOfferModalVisible(false)}
             cancel={() => setOfferModalVisible(false)}
           />
@@ -433,8 +431,8 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
           <NotInterestedModal
             title={'Are you sure you are not interested in this candidate?'}
             onRequestClose={() => setModalVisible(false)}
+            onPress={() => callNotInterested()}
             onDismiss={() => setModalVisible(false)}
-            onAction={() => onNotInterested()}
             onClose={() => setModalVisible(false)}
             onCancel={() => setModalVisible(false)}
           />
@@ -443,9 +441,38 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     );
   };
 
+  const validPhone = phoneFormatter.isValid10DigitPhoneNumber(callbackNumber);
+
+  const onCallbackChangeText = (callbackNumber: string) => {
+    setCallBackNumber({
+      callbackNumber: phoneFormatter.stripFormatting(callbackNumber),
+    });
+  };
+
   const showPhoneCallModal = () => {
     setContactOptionModalVisible(false);
     setPhoneCallModalVisible(true);
+  };
+
+  const makeCall = async () => {
+    setCalling(true);
+    Keyboard.dismiss();
+    try {
+      setLoading(true);
+      const {data} = await initiatePhoneCallService({
+        conversationId: '',
+        submissionId: submissionId,
+        callbackNumber: callbackNumber,
+        messageTypeId: '2',
+      });
+      console.log('response', data);
+      setPhoneCallModalVisible(false);
+      setLoading(false);
+    } catch (error) {
+      setPhoneCallModalVisible(false);
+      setLoading(false);
+      console.log('Error', error);
+    }
   };
 
   const renderCandidate = () => {
@@ -471,28 +498,32 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
               style={{width: 108, marginBottom: 14}}
               size={108}
               source={candidate.photoUrl}
-              // title={candidate.photoLabel}
+              title={candidate.photoLabel}
             />
             <Text style={AppFonts.bodyTextXtraLarge}>
               {candidate.display.title}
             </Text>
-
             {renderActionHeader()}
           </View>
-          {!loadingSummary && selectedTab === tabs[0] && (
+          {loadingSummary && selectedTab === tabs[0] && (
             <ConexusContentList
               style={styles.contentList}
               data={candidate.submissionSummary}></ConexusContentList>
           )}
-          {!loadingSummary && selectedTab === tabs[1] && renderQuestions()}
-          {loadingSummary && renderLoading(100)}
+          {
+            selectedTab === tabs[1] && Alert.alert('hi')
+            // renderQuestions()
+          }
+          {/* {loadingSummary && renderLoading(100)} */}
         </ScrollView>
         {!!candidate && candidate.conversationAllowed && (
           <View style={styles.footer}>
             <ActionButton
               loading={loading}
               title="CONTACT"
-              onPress={() => setContactOptionModalVisible(true)}
+              onPress={() => {
+                setContactOptionModalVisible(true);
+              }}
               customStyle={styles.contact}
               customTitleStyle={{
                 fontSize: 12,
@@ -513,9 +544,13 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
         )}
         {phoneCallModalVisible && (
           <PhoneCallModal
+            title={candidate.display.title}
+            value={phoneFormatter.format10Digit(callbackNumber)}
+            // onChangeText={onCallbackChangeText()}
+            // disabled={!validPhone}
             onRequestClose={() => setPhoneCallModalVisible(false)}
             onDismiss={() => setPhoneCallModalVisible(false)}
-            onPress={undefined}
+            onPress={() => makeCall()}
             onClose={() => setPhoneCallModalVisible(false)}
           />
         )}
