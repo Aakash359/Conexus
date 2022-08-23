@@ -1,8 +1,6 @@
-import React from 'react';
-
+import React, {useState, useEffect} from 'react';
 import {
   View,
-  ViewProperties,
   StyleSheet,
   ActivityIndicator,
   TouchableOpacity,
@@ -13,7 +11,7 @@ import {
 } from 'react-native';
 import {AppColors, AppFonts, AppSizes} from '../theme/index';
 import {logger} from 'react-native-logs';
-// import Video from 'react-native-video'
+import Video from 'react-native-video';
 import {ActionButton, IconTitleBlock, ScreenFooterButton} from '../components';
 import _ from 'lodash';
 import InCallManager from 'react-native-incall-manager';
@@ -24,19 +22,19 @@ const isAndroid = Platform.OS === 'android';
 
 const log = logger.createLogger();
 
-export interface ConexusVideoPlayerProps extends ViewProperties {
+export interface ConexusVideoPlayerProps {
   mediaUrl: string;
   actionButton?: (() => ConexusVideoActionButton) | ConexusVideoActionButton;
   menuButtons?: ConexusVideoActionButton[];
   autoPlay?: boolean;
   pausable?: boolean;
   showActionsOnEnd?: boolean;
-
+  style: any;
   activityIndicator?: () => any;
 
   onEnd?: () => any;
   onLoad?: () => any;
-  onError?: (error) => any;
+  onError?: (error: any) => any;
 
   renderStoppedOverlay?: () => JSX.Element;
   renderPlayOverlay?: () => JSX.Element;
@@ -73,431 +71,424 @@ export interface ConexusVideoActionButton {
   showOnError?: boolean;
 }
 
-export class ConexusVideoPlayer extends React.Component<
-  ConexusVideoPlayerProps,
-  ConexusVideoPlayerState
-> {
-  get pausable(): boolean {
-    return this.props.pausable;
-  }
+const ConexusVideoPlayer = (
+  props: ConexusVideoPlayerProps,
+  state: ConexusVideoPlayerState,
+) => {
+  const {volumeLocation, mediaUrl} = props;
+  const [volume, setVolume] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [hasEnded, setHasEnded] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
 
-  get isPaused(): boolean {
-    return this.state.isPaused;
-  }
+  const player = Video;
+  const progress: number = 0;
+  const pausable = (): boolean => {
+    return props.pausable;
+  };
 
-  get loaded(): boolean {
-    return this.state.loaded;
-  }
+  const isPauseded = (): boolean => {
+    return isPaused;
+  };
 
-  get isPlaying(): boolean {
-    return this.loaded && !this.isPaused && !this.hasError && !this.hasEnded;
-  }
+  // get loaded(): boolean {
+  //   return this.state.loaded;
+  // }
 
-  get hasEnded(): boolean {
-    return this.state.hasEnded;
-  }
+  // get isPlaying(): boolean {
+  //   return this.loaded && !this.isPaused && !this.hasError && !this.hasEnded;
+  // }
 
-  get hasError(): boolean {
-    return this.state.hasError;
-  }
+  // get hasEnded(): boolean {
+  //   return this.state.hasEnded;
+  // }
 
-  get autoPlay(): boolean {
-    return this.props.autoPlay;
-  }
+  const hasErrors = (): boolean => {
+    return hasError;
+  };
 
-  get mediaUrl(): string {
-    return this.props.mediaUrl;
-  }
+  const autoPlay = (): boolean => {
+    return props.autoPlay;
+  };
 
-  get hidePlayer(): boolean {
-    return !this.props.mediaUrl || this.hasError;
-  }
+  // get mediaUrl(): string {
+  //   return this.props.mediaUrl;
+  // }
 
-  get playWhenInactive(): boolean {
-    return this.props.playWhenInactive;
-  }
+  const hidePlayer = (): boolean => {
+    return !mediaUrl || hasErrors();
+  };
 
-  get replayTitle(): string {
-    return this.props.replayTitle || 'Replay';
-  }
+  const playWhenInactive = (): boolean => {
+    return props.playWhenInactive;
+  };
 
-  get hideErrors(): boolean {
-    return this.props.hideErrors;
-  }
+  // get replayTitle(): string {
+  //   return this.props.replayTitle || 'Replay';
+  // }
 
-  get hideErrorIcon(): boolean {
-    return !!this.props.hideErrorIcon;
-  }
+  // get hideErrors(): boolean {
+  //   return this.props.hideErrors;
+  // }
 
-  get errorIconName(): string {
-    return this.props.errorIconName || 'cn-info';
-  }
+  // get hideErrorIcon(): boolean {
+  //   return !!this.props.hideErrorIcon;
+  // }
 
-  get errorDisplayText(): string {
-    return (
-      this.props.errorDisplayText || `This video is currently unavailable.`
-    );
-  }
+  // get errorIconName(): string {
+  //   return this.props.errorIconName || 'cn-info';
+  // }
 
-  get volume(): number {
-    return this.state.volume;
-  }
-  set volume(value: number) {
-    SystemSetting.setVolume(value, {
-      playSound: false,
-      showUI: false,
-      type: 'music',
-    });
-    this.setState({volume: value});
-  }
+  // get errorDisplayText(): string {
+  //   return (
+  //     this.props.errorDisplayText || `This video is currently unavailable.`
+  //   );
+  // }
 
-  get defaultState(): ConexusVideoPlayerState {
-    return {
-      loaded: false,
-      isPaused: false,
-      hasEnded: false,
-      hasError: false,
-    };
-  }
+  // get volume(): number {
+  //   return this.state.volume;
+  // }
+  // set volume(value: number) {
+  //   SystemSetting.setVolume(value, {
+  //     playSound: false,
+  //     showUI: false,
+  //     type: 'music',
+  //   });
+  //   this.setState({volume: value});
+  // }
 
-  volumeListener = SystemSetting.addVolumeListener(
-    _.debounce(data => {
-      const volume = isAndroid ? data['music'] : data.value;
-      this.setState({volume: data.value});
-    }, 200),
-  );
+  // get defaultState(): ConexusVideoPlayerState {
+  //   return {
+  //     loaded: false,
+  //     isPaused: false,
+  //     hasEnded: false,
+  //     hasError: false,
+  //   };
+  // }
 
-  constructor(
-    props: ConexusVideoPlayerProps,
-    context: ConexusVideoPlayerState,
-  ) {
-    super(props, context);
-    this.state = {...this.defaultState};
-  }
+  // volumeListener = SystemSetting.addVolumeListener(
+  //   _.debounce(data => {
+  //     const volume = isAndroid ? data['music'] : data.value;
+  //     this.setState({volume: data.value});
+  //   }, 200),
+  // );
 
-  // _player: Video
+  // constructor(
+  //   props: ConexusVideoPlayerProps,
+  //   context: ConexusVideoPlayerState,
+  // ) {
+  //   super(props, context);
+  //   this.state = {...this.defaultState};
+  // }
 
-  componentDidMount() {
-    SystemSetting.getVolume().then(volume => {
-      this.setState({volume});
-    });
-  }
+  // componentDidMount() {
+  //   SystemSetting.getVolume().then(volume => {
+  //     this.setState({volume});
+  //   });
+  // }
 
-  componentWillMount() {
-    // Force audio to play via the primary speaker
-    if (Platform.OS === 'android') {
-      InCallManager.start({media: 'audio'});
-      InCallManager.setForceSpeakerphoneOn(true);
-    }
-  }
+  // componentWillMount() {
+  //   // Force audio to play via the primary speaker
+  //   if (Platform.OS === 'android') {
+  //     InCallManager.start({media: 'audio'});
+  //     InCallManager.setForceSpeakerphoneOn(true);
+  //   }
+  // }
 
-  componentWillUnmount() {
-    InCallManager.setKeepScreenOn(false);
-    InCallManager.setForceSpeakerphoneOn(null);
-    InCallManager.stop();
+  // componentWillUnmount() {
+  //   InCallManager.setKeepScreenOn(false);
+  //   InCallManager.setForceSpeakerphoneOn(null);
+  //   InCallManager.stop();
 
-    SystemSetting.removeVolumeListener(this.volumeListener);
-  }
+  //   SystemSetting.removeVolumeListener(this.volumeListener);
+  // }
 
-  getVolumeStyle(): ViewStyle {
-    const location = this.props.volumeLocation;
+  // getVolumeStyle(): ViewStyle {
+  //   const location = this.props.volumeLocation;
 
-    if (location === 'top-right') {
-      return {
-        position: 'absolute',
-        zIndex: 101,
-        right: 0,
-        width: 150,
-        top: 0,
-        padding: 10,
-        flexDirection: 'row',
-        backgroundColor: 'transparent',
-      };
-    }
+  //   if (location === 'top-right') {
+  //     return {
+  //       position: 'absolute',
+  //       zIndex: 101,
+  //       right: 0,
+  //       width: 150,
+  //       top: 0,
+  //       padding: 10,
+  //       flexDirection: 'row',
+  //       backgroundColor: 'transparent',
+  //     };
+  //   }
 
-    return {
-      position: 'absolute',
-      zIndex: 101,
-      left: 0,
-      width: 150,
-      top: 0,
-      padding: 10,
-      flexDirection: 'row',
-      backgroundColor: 'transparent',
-    };
-  }
+  //   return {
+  //     position: 'absolute',
+  //     zIndex: 101,
+  //     left: 0,
+  //     width: 150,
+  //     top: 0,
+  //     padding: 10,
+  //     flexDirection: 'row',
+  //     backgroundColor: 'transparent',
+  //   };
+  // }
 
-  replaying: boolean = false;
+  // replaying: boolean = false;
 
-  replay() {
-    if (this.replaying) {
+  // replay() {
+  //   if (this.replaying) {
+  //     return;
+  //   }
+
+  //   try {
+  //     this.replaying = true;
+  //     const loaded = this.state.loaded; // Preserve this value
+
+  //     this.setState({isPaused: true}, () => {
+  //       if (this._player) {
+  //         log.info('Replay');
+  //         this._player.seek(0);
+
+  //         this.setState({...this.defaultState, loaded}, () => {
+  //           log.info('replayed', this.state);
+  //         });
+  //       }
+  //     });
+  //   } finally {
+  //     this.replaying = false;
+  //   }
+  // }
+
+  // getActionButton(): ConexusVideoActionButton {
+  //   const {actionButton} = this.props;
+  //   if (actionButton && _.isFunction(actionButton)) {
+  //     return actionButton();
+  //   } else if (actionButton && !!actionButton['title']) {
+  //     return actionButton as ConexusVideoActionButton;
+  //   }
+
+  //   return undefined;
+  // }
+
+  const onEnd = () => {
+    setTimeout(() => {
+      setHasEnded(true);
+      if (props.onEnd) {
+        props.onEnd();
+      }
+    }, 0);
+  };
+
+  const onError = (error: any) => {
+    setTimeout(() => {
+      setHasError(true);
+      if (props.onError) {
+        props.onError(error);
+      }
+    }, 0);
+  };
+
+  const onLoad = () => {
+    setTimeout(() => {
+      setLoaded(true);
+      setIsPaused(!autoPlay);
+      player.seek(0);
+    }, 0);
+  };
+
+  const onProgress = event => {
+    progress = event.currentTime;
+  };
+
+  const togglePause = () => {
+    if (!pausable || !player) {
       return;
     }
+    setIsPaused(!isPauseded);
+  };
 
-    try {
-      this.replaying = true;
-      const loaded = this.state.loaded; // Preserve this value
+  // renderLoading() {
+  //   if (this.loaded) {
+  //     return null;
+  //   }
 
-      this.setState({isPaused: true}, () => {
-        if (this._player) {
-          log.info('Replay');
-          this._player.seek(0);
+  //   let indicator = (
+  //     <ActivityIndicator
+  //       color={this.props.loadingColor || AppColors.blue}
+  //       style={{flex: 1}}
+  //     />
+  //   );
 
-          this.setState({...this.defaultState, loaded}, () => {
-            log.info('replayed', this.state);
-          });
-        }
-      });
-    } finally {
-      this.replaying = false;
-    }
-  }
+  //   if (this.props.activityIndicator && this.props.activityIndicator.call) {
+  //     indicator = this.props.activityIndicator();
+  //   }
 
-  getActionButton(): ConexusVideoActionButton {
-    const {actionButton} = this.props;
-    if (actionButton && _.isFunction(actionButton)) {
-      return actionButton();
-    } else if (actionButton && !!actionButton['title']) {
-      return actionButton as ConexusVideoActionButton;
-    }
+  //   return <View style={[styles.container]}>{indicator}</View>;
+  // }
 
-    return undefined;
-  }
+  // renderActions() {
+  //   if (this.replaying) {
+  //     return null;
+  //   }
 
-  onEnd() {
-    log.info('onEnd');
+  //   if (!this.props.showActionsOnEnd && this.state.hasEnded) {
+  //     return null;
+  //   }
 
-    setTimeout(() => {
-      this.setState({hasEnded: true});
-      log.info('onEnd', 'SetState', this.state);
+  //   let buttons = [];
+  //   let overlayHeaderText = '';
 
-      if (this.props.onEnd) {
-        log.info('OnEnd', 'Calling this.props.onEnd');
-        this.props.onEnd();
-      }
-    }, 0);
-  }
-  onError(error) {
-    log.info('OnError', error);
+  //   const replayButton = {
+  //     title: this.replayTitle,
+  //     onPress: () => this.replay(),
+  //   };
+  //   const menuButtons = this.props.menuButtons || [];
 
-    setTimeout(() => {
-      this.setState({hasError: true});
+  //   if (this.hasError) {
+  //     overlayHeaderText = this.errorDisplayText;
+  //     replayButton.title = 'Retry';
+  //     buttons = [replayButton, ...menuButtons.filter(i => i.showOnError)];
+  //   } else if (this.isPaused) {
+  //     // Add Play to the top of the list
+  //     buttons = [{title: 'Play', onPress: () => this.togglePause()}];
 
-      if (this.props.onError) {
-        this.props.onError(error);
-      }
-    }, 0);
-  }
+  //     if (this.progress > 0) {
+  //       buttons.push(replayButton);
+  //     }
 
-  onLoad(event) {
-    log.info('onLoad', event);
+  //     buttons = [...buttons, ...menuButtons];
+  //   } else if (!this.loaded || this.isPlaying) {
+  //     if (this.isPlaying && this.props.showActionButtonWhilePlaying) {
+  //       const btnDetails = this.getActionButton();
 
-    setTimeout(() => {
-      this.setState({loaded: true, isPaused: !this.autoPlay});
-      this._player.seek(0);
-      log.info('onLoad', 'setState', this.state);
-    }, 0);
-  }
+  //       if (btnDetails) {
+  //         return (
+  //           <ScreenFooterButton
+  //             hideGradient
+  //             title={btnDetails.title}
+  //             onPress={btnDetails.onPress}></ScreenFooterButton>
+  //           // <View style={[styles.overlayFooter, this.props.overlayFooterStyle]} >
+  //           //     <ActionButton primary title={btnDetails.title} onPress={btnDetails.onPress}></ActionButton>
+  //           // </View>
+  //         );
+  //       }
+  //     }
 
-  progress: number = 0;
-  onProgress(event) {
-    this.progress = event.currentTime;
-  }
+  //     return null;
+  //   } else {
+  //     buttons = [replayButton, ...menuButtons];
+  //   }
 
-  togglePause() {
-    log.info('togglePause', this.state);
+  //   const actionButton = this.getActionButton();
 
-    if (!this.pausable || !this._player) {
-      return;
-    }
+  //   return (
+  //     <View style={[styles.overlay]}>
+  //       <View
+  //         style={[
+  //           styles.overlayContent,
+  //           this.hasError
+  //             ? this.props.overlayContentWithErrorStyle
+  //             : this.props.overlayContentStyle,
+  //         ]}>
+  //         {this.hasError && (
+  //           <IconTitleBlock
+  //             textColor={AppColors.white}
+  //             iconColor={AppColors.white}
+  //             style={styles.errorHeader}
+  //             iconName={this.hideErrorIcon ? undefined : this.errorIconName}
+  //             text={this.errorDisplayText}
+  //           />
+  //         )}
+  //         <View
+  //           style={[
+  //             styles.overlayButtons,
+  //             this.hasError ? styles.overlayButtonsWithError : null,
+  //           ]}>
+  //           {buttons.map((b, i) => (
+  //             <Button
+  //               key={'mb' + i}
+  //               rounded
+  //               transparent
+  //               style={styles.overlayButton}
+  //               onPress={b.onPress.bind(this)}>
+  //               <Text style={styles.overlayButtonText}>{b.title}</Text>
+  //             </Button>
+  //           ))}
+  //         </View>
+  //       </View>
+  //       {
+  //         !!actionButton && (
+  //           <ScreenFooterButton
+  //             hideGradient
+  //             title={actionButton.title}
+  //             onPress={actionButton.onPress}></ScreenFooterButton>
+  //         )
 
-    this.setState({isPaused: !this.isPaused});
-    log.info('togglePause', 'setState', this.state);
-  }
+  //         // <View style={[styles.overlayFooter, this.props.overlayFooterStyle]} >
+  //         //     <ActionButton primary title={actionButton.title} onPress={actionButton.onPress}></ActionButton>
+  //         // </View>
+  //       }
+  //     </View>
+  //   );
+  // }
 
-  renderLoading() {
-    if (this.loaded) {
-      return null;
-    }
+  // renderPausedOverlay(): JSX.Element | undefined {
+  //   if (!this.state.isPaused) {
+  //     return null;
+  //   }
+  //   if (
+  //     this.props.renderStoppedOverlay &&
+  //     this.props.renderStoppedOverlay.call
+  //   ) {
+  //     return this.props.renderStoppedOverlay();
+  //   }
 
-    let indicator = (
-      <ActivityIndicator
-        color={this.props.loadingColor || AppColors.blue}
-        style={{flex: 1}}
-      />
-    );
+  //   return null;
+  // }
 
-    if (this.props.activityIndicator && this.props.activityIndicator.call) {
-      indicator = this.props.activityIndicator();
-    }
+  // renderPlayOverlay(): JSX.Element | undefined {
+  //   if (this.state.isPaused) {
+  //     return null;
+  //   }
+  //   if (
+  //     this.isPlaying &&
+  //     this.props.renderPlayOverlay &&
+  //     this.props.renderPlayOverlay.call
+  //   ) {
+  //     return this.props.renderPlayOverlay();
+  //   }
 
-    return <View style={[styles.container]}>{indicator}</View>;
-  }
+  //   return null;
+  // }
 
-  renderActions() {
-    if (this.replaying) {
-      return null;
-    }
-
-    if (!this.props.showActionsOnEnd && this.state.hasEnded) {
-      return null;
-    }
-
-    let buttons = [];
-    let overlayHeaderText = '';
-
-    const replayButton = {
-      title: this.replayTitle,
-      onPress: () => this.replay(),
-    };
-    const menuButtons = this.props.menuButtons || [];
-
-    if (this.hasError) {
-      overlayHeaderText = this.errorDisplayText;
-      replayButton.title = 'Retry';
-      buttons = [replayButton, ...menuButtons.filter(i => i.showOnError)];
-    } else if (this.isPaused) {
-      // Add Play to the top of the list
-      buttons = [{title: 'Play', onPress: () => this.togglePause()}];
-
-      if (this.progress > 0) {
-        buttons.push(replayButton);
-      }
-
-      buttons = [...buttons, ...menuButtons];
-    } else if (!this.loaded || this.isPlaying) {
-      if (this.isPlaying && this.props.showActionButtonWhilePlaying) {
-        const btnDetails = this.getActionButton();
-
-        if (btnDetails) {
-          return (
-            <ScreenFooterButton
-              hideGradient
-              title={btnDetails.title}
-              onPress={btnDetails.onPress}></ScreenFooterButton>
-            // <View style={[styles.overlayFooter, this.props.overlayFooterStyle]} >
-            //     <ActionButton primary title={btnDetails.title} onPress={btnDetails.onPress}></ActionButton>
-            // </View>
-          );
-        }
-      }
-
-      return null;
-    } else {
-      buttons = [replayButton, ...menuButtons];
-    }
-
-    const actionButton = this.getActionButton();
-
-    return (
-      <View style={[styles.overlay]}>
-        <View
-          style={[
-            styles.overlayContent,
-            this.hasError
-              ? this.props.overlayContentWithErrorStyle
-              : this.props.overlayContentStyle,
-          ]}>
-          {this.hasError && (
-            <IconTitleBlock
-              textColor={AppColors.white}
-              iconColor={AppColors.white}
-              style={styles.errorHeader}
-              iconName={this.hideErrorIcon ? undefined : this.errorIconName}
-              text={this.errorDisplayText}
-            />
-          )}
-          <View
-            style={[
-              styles.overlayButtons,
-              this.hasError ? styles.overlayButtonsWithError : null,
-            ]}>
-            {buttons.map((b, i) => (
-              <Button
-                key={'mb' + i}
-                rounded
-                transparent
-                style={styles.overlayButton}
-                onPress={b.onPress.bind(this)}>
-                <Text style={styles.overlayButtonText}>{b.title}</Text>
-              </Button>
-            ))}
-          </View>
-        </View>
-        {
-          !!actionButton && (
-            <ScreenFooterButton
-              hideGradient
-              title={actionButton.title}
-              onPress={actionButton.onPress}></ScreenFooterButton>
-          )
-
-          // <View style={[styles.overlayFooter, this.props.overlayFooterStyle]} >
-          //     <ActionButton primary title={actionButton.title} onPress={actionButton.onPress}></ActionButton>
-          // </View>
-        }
-      </View>
-    );
-  }
-
-  renderPausedOverlay(): JSX.Element | undefined {
-    if (!this.state.isPaused) {
-      return null;
-    }
-    if (
-      this.props.renderStoppedOverlay &&
-      this.props.renderStoppedOverlay.call
-    ) {
-      return this.props.renderStoppedOverlay();
-    }
-
-    return null;
-  }
-
-  renderPlayOverlay(): JSX.Element | undefined {
-    if (this.state.isPaused) {
-      return null;
-    }
-    if (
-      this.isPlaying &&
-      this.props.renderPlayOverlay &&
-      this.props.renderPlayOverlay.call
-    ) {
-      return this.props.renderPlayOverlay();
-    }
-
-    return null;
-  }
-
-  renderPlayer() {
+  const renderPlayer = () => {
     return (
       <TouchableOpacity
-        disabled={!this.pausable || this.isPaused}
-        style={[styles.container, this.props.style]}
-        onPress={this.togglePause.bind(this)}>
-        {/* {
-                !this.hidePlayer &&
-                    <Video source={{ uri: this.mediaUrl }}   // Can be a URL or a local file.
-                        ref={ref => (this._player = ref)}
-                        resizeMode={'cover'}
-                        rate={1.0}                           // 0 is paused, 1 is normal.
-                        volume={this.volume}                 // 0 is muted, 1 is normal.
-                        muted={false}                        // Mutes the audio entirely.
-                        paused={this.isPaused}
-                        ignoreSilentSwitch={"ignore"}
-                        playWhenInactive={this.playWhenInactive}
-                        onLoad={this.onLoad.bind(this)}
-                        onEnd={this.onEnd.bind(this)}
-                        onError={this.onError.bind(this)}
-                        onProgress={this.onProgress.bind(this)}
-                        style={[styles.video]}
-                    />
-                } */}
-        {this.renderPausedOverlay()}
+        // disabled={!pausable() || isPauseded()}
+        style={[styles.container, props.style]}
+        onPress={togglePause}>
+        {!hidePlayer && (
+          <Video
+            source={{uri: mediaUrl}} // Can be a URL or a local file.
+            ref={(ref: any) => (player = ref)}
+            resizeMode={'cover'}
+            rate={1.0} // 0 is paused, 1 is normal.
+            // volume={volume} // 0 is muted, 1 is normal.
+            muted={false} // Mutes the audio entirely.
+            paused={isPauseded}
+            ignoreSilentSwitch={'ignore'}
+            playWhenInactive={playWhenInactive}
+            onLoad={onLoad()}
+            onEnd={onEnd()}
+            onError={onError()}
+            onProgress={onProgress()}
+            style={[styles.video]}
+          />
+        )}
+        {/* {this.renderPausedOverlay()}
         {this.renderPlayOverlay()}
         {this.renderActions()}
-        {this.renderLoading()}
-        {!this.hidePlayer && !!this.props.volumeLocation && (
+        {this.renderLoading()} */}
+        {/* {!hidePlayer && !!volumeLocation && (
           <View style={this.getVolumeStyle()}>
             <Slider
               style={{flex: 1, height: 54}}
@@ -519,19 +510,17 @@ export class ConexusVideoPlayer extends React.Component<
               thumbImage={require('./Images/player/volume.png')}
             />
           </View>
-        )}
+        )} */}
       </TouchableOpacity>
     );
-  }
+  };
 
-  render() {
-    if (this.hasError) {
-      return this.renderActions();
-    }
+  // if (this.hasError) {
+  //   return this.renderActions();
+  // }
 
-    return this.renderPlayer();
-  }
-}
+  return renderPlayer();
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -609,3 +598,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
+export default ConexusVideoPlayer;

@@ -37,6 +37,8 @@ interface NotInterestedModalProps {
   onClose: any;
   data: any;
   onPhoneCall: any;
+  onMessage: any;
+  onVideMessage: any;
 }
 
 export const ContactOptionModal = (props: NotInterestedModalProps) => {
@@ -45,7 +47,8 @@ export const ContactOptionModal = (props: NotInterestedModalProps) => {
     title,
     onClose,
     onPress,
-    data,
+    onMessage,
+    onVideMessage,
     customStyle,
     textColor,
     borderColor,
@@ -91,7 +94,7 @@ export const ContactOptionModal = (props: NotInterestedModalProps) => {
                 iconName="cn-chat-bubble-1"
                 iconSize={32}
                 title="Message"
-                // onPress={this._sendMessage.bind(this)}
+                onPress={onMessage}
               />
             </View>
           </View>
@@ -101,7 +104,7 @@ export const ContactOptionModal = (props: NotInterestedModalProps) => {
                 iconName="cn-video-message"
                 iconSize={32}
                 title="Video Message"
-                // onPress={this._videoMessage.bind(this)}
+                onPress={onVideMessage}
                 // disabled={!videoCall}
               />
             </View>

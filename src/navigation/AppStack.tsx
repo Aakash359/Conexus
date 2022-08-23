@@ -3,7 +3,7 @@ import {createDrawerNavigator} from '@react-navigation/drawer';
 import CustomDrawer from '../components/CustomDrawer';
 import {AppColors} from '.././theme';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import FacilityMessageCenterContainer from '../containers/MessageCenter/facility-message-center-container';
+import MessageCenter from '../containers/MessageCenter/messageCenter';
 import NavigationService, {navigationRef} from './NavigationService';
 import TabNavigator from './TabNavigator';
 import {NavigationContainer} from '@react-navigation/native';
@@ -18,6 +18,8 @@ import InterviewQuestionDetail from '../containers/InterviewQuestions/interviewQ
 import AddQuestion from '../containers/InterviewQuestions/AddQuestion';
 import HcpDetailView from '../containers/Facility/HcpDetail/HcpDetailView';
 import ImageGallery from '../containers/Facility/HcpDetail/imageGallery';
+import ConversationContainer from '../containers/MessageCenter/conversation';
+import VideoRecorder from '../containers/VideoRecorder/videoRecoder';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -126,6 +128,32 @@ const AppStack = () => {
             },
           }}
         />
+        <Stack.Screen
+          name="ConversationContainer"
+          component={ConversationContainer}
+          options={{
+            headerShown: true,
+            title: 'Conversation',
+            headerTitleStyle: {
+              color: AppColors.black,
+              fontWeight: 'bold',
+              fontSize: 22,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="VideoRecorder"
+          component={VideoRecorder}
+          options={{
+            headerShown: true,
+            title: 'VideoRecorder',
+            headerTitleStyle: {
+              color: AppColors.black,
+              fontWeight: 'bold',
+              fontSize: 22,
+            },
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -171,10 +199,7 @@ const DrawerStack = () => {
           ),
         }}
       />
-      <Drawer.Screen
-        name="Message Center"
-        component={FacilityMessageCenterContainer}
-      />
+      <Drawer.Screen name="Message Center" component={MessageCenter} />
     </Drawer.Navigator>
   );
 };

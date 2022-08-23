@@ -78,6 +78,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const [calling, setCalling] = useState(false);
   const submissionId = props?.route?.params?.submissionId;
 
+  const {onMessageSendCallback} = props;
   // get responses(): typeof CandidateResponseModel.Type[] {
   //   const {candidate} = this.state;
 
@@ -358,9 +359,6 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     });
   };
 
-  const openMessageScreen = () => {
-    NavigationService.navigate('ChatScreen', {});
-  };
   const callNotInterested = async () => {
     try {
       setLoading(true);
@@ -475,6 +473,22 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     }
   };
 
+  const openConversations = () => {
+    NavigationService.navigate('ConversationContainer');
+    setContactOptionModalVisible(false);
+  };
+
+  const onClickVideoMessage = () => {
+    NavigationService.navigate('VideoRecorder', {
+      finishedButtonTitle: 'Send',
+      videoMessage: true,
+      conversationId: candidate.conversationId,
+      submissionId: candidate.submissionId,
+      onMessageSendCallback: onMessageSendCallback,
+    });
+    setContactOptionModalVisible(false);
+  };
+
   const renderCandidate = () => {
     return (
       <View style={{flex: 1}}>
@@ -539,6 +553,8 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
             onRequestClose={() => setContactOptionModalVisible(false)}
             onDismiss={() => setContactOptionModalVisible(false)}
             onPress={() => showPhoneCallModal()}
+            onMessage={() => openConversations()}
+            onVideMessage={() => onClickVideoMessage()}
             onClose={() => setContactOptionModalVisible(false)}
           />
         )}
