@@ -25,6 +25,7 @@ import {ActionButton} from '../../../components/action-button';
 import {Avatar} from '../../../components/avatar';
 import {TabBar} from '../../../components/tab-bar';
 import {CandidateResponseRow} from './candidate-response-row';
+import moment from 'moment';
 // import {ImageCacheManager} from 'react-native-cached-image';
 import {useSelector} from '../../../redux/reducers/index';
 import NavigationService from '../../../navigation/NavigationService';
@@ -35,6 +36,8 @@ import ConexusContentList from '../../../components/conexus-content-list';
 import {PhoneCallModal} from '../../../components/Modals/phoneCallModal';
 import {candidateSubmissionsService} from '../../../services/candidateSubmissioService';
 import {notInterestedService} from '../../../services/notInterestedService';
+import {onChange} from 'react-native-reanimated';
+import {makeOfferService} from '../../../services/makeOfferService';
 
 interface HcpDetailProps {
   submissionId: string;
@@ -56,12 +59,14 @@ const tabs = [
 
 // const imageCacheManager = ImageCacheManager();
 const preloadResumeCount = 3;
+const dateFormat = 'MM/DD/YYYY';
 
 const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const [candidate, setCandidate] = useState(
     props?.route?.params?.candidate || {},
   );
   const [stateCandidate, setStateCandidate] = useState([]);
+  const [startDate, setStartDate] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [offerModalVisible, setOfferModalVisible] = useState(false);
   const [phoneCallModalVisible, setPhoneCallModalVisible] = useState(false);
@@ -374,7 +379,31 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     }
   };
 
+  const onClickMakeOffer = async (result: any) => {
+    try {
+      setLoading(false);
+      const {data} = await makeOfferService({
+        startDate: result,
+        submissionId: submissionId,
+        offerSubmission: true,
+      });
+      console.log('response', data);
+      setLoading(true);
+      setOfferModalVisible(false);
+    } catch (error) {
+      setOfferModalVisible(false);
+      setLoading(true);
+      console.log('Error', error);
+    }
+  };
+
+  const onChange = (changedDate: any) => {
+    console.log('Data', changedDate);
+  };
+
   const renderActionHeader = () => {
+    let date = moment(candidate.startDate).format(dateFormat);
+    console.log('candidate====>', date);
     return (
       <View style={headerStyle.rootView}>
         <View style={StyleSheet.flatten([headerStyle.actionRowView])}>
@@ -416,6 +445,9 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
         {offerModalVisible && (
           <MakeOfferModal
             title={'Make Offer'}
+            value={date}
+            onMakeOffer={(result: any) => onClickMakeOffer(result)}
+            // onChange={data => console.log('CHnagedDate===>', data)}
             source={candidate.photoUrl}
             candidateTitle={candidate.display.title}
             onRequestClose={() => setOfferModalVisible(false)}

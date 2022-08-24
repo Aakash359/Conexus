@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 let moment = require('moment');
 import {useSelector} from '../../redux/reducers/index';
-import {Avatar} from 'react-native-elements/dist/avatar/Avatar';
+import {Avatar} from '../../components/avatar';
 import {Circle} from '../../components/circle';
 import {ViewHeader} from '../../components/view-header';
 import {UserStore} from '../../stores';
@@ -114,34 +114,31 @@ const MessageCenter = (
             })
           }>
           <View style={itemStyles.itemSection}>
-            <Circle
-              size={10}
-              color={conversation.unreadCount ? AppColors.red : 'transparent'}
-              style={{marginTop: 19, marginRight: 4}}
-            />
             <Avatar
               size={48}
-              // style={{alignSelf: 'center', top: 3}}
               source={conversation.hcpPhotoUrl}
+              style={{alignSelf: 'center', top: 5}}
             />
-          </View>
-          <View style={itemStyles.wrapper}>
-            <Text
-              style={[
-                AppFonts.listItemTitleTouchable,
-                [itemStyles.displayText],
-              ]}>
+            <Text style={(AppFonts.listItemTitleTouchable, itemStyles.title)}>
               {conversation.display.title}
-            </Text>
-            <Text style={AppFonts.listItemDescription}>
-              {conversation.display.description}
             </Text>
             <Text
               style={[
                 {...AppFonts.bodyTextXtraSmall},
-                {textAlign: 'right', alignSelf: 'center'},
+                {
+                  marginStart: 120,
+                  textAlignVertical: 'center',
+                  top: 5,
+                  marginLeft: 10,
+                },
               ]}>
               {lastMessageDate}
+            </Text>
+          </View>
+
+          <View style={itemStyles.wrapper}>
+            <Text style={AppFonts.listItemDescription}>
+              {conversation.display.description}
             </Text>
           </View>
           <View style={itemStyles.itemSection}></View>
@@ -154,7 +151,7 @@ const MessageCenter = (
   const renderConversations = () => {
     return (
       <FlatList
-        style={{flex: 1}}
+        style={{flex: 1, backgroundColor: AppColors.baseGray}}
         // onRefresh={this.load.bind(this, true)}
         refreshing={refreshing}
         renderItem={renderConversationItem}
@@ -201,12 +198,19 @@ const itemStyles = StyleSheet.create({
     paddingRight: 8,
   },
   itemSection: {
-    borderWidth: 0,
-    borderBottomWidth: 0,
+    top: 5,
+    marginLeft: 5,
+    flexDirection: 'row',
+    marginBottom: 4,
   },
-  displayText: {
-    bottom: 20,
+  title: {
+    textAlignVertical: 'center',
+    top: 3,
+    fontSize: 18,
+    color: AppColors.blue,
+    marginLeft: 18,
   },
+
   wrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',

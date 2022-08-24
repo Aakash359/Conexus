@@ -24,66 +24,58 @@ interface MakeOfferLightboxProps {
   startDateProp: string;
   customStyle: any;
   onPress: any;
-  onSubmit: ({startDate: string}) => any;
+  value: any;
+  onChange: any;
+  onMakeOffer: any;
 }
 
 export const MakeOfferModal = (props: MakeOfferLightboxProps) => {
   const {
     source,
     onClose,
+    value,
     photoLabel,
     candidateTitle,
     cancel,
+    onMakeOffer,
     onPress,
     visible,
     customStyle,
     startDateProp,
     title,
-    onSubmit,
     customTitleStyle,
     candidateDescription,
   } = props;
 
   const dateFormat = 'MM/DD/YYYY';
 
-  const [startDate, setStartDate] = useState(
-    moment(startDateProp).isValid()
-      ? moment(startDateProp).format(dateFormat)
-      : moment().format(dateFormat),
-  );
-  const [date1, setDate1] = useState(new Date());
-  const [date2, setDate2] = useState(new Date());
-  const [mode1, setMode1] = useState('date');
-  const [mode2, setMode2] = useState('date');
-  const [show1, setShow1] = useState(false);
-  const [show2, setShow2] = useState(false);
+  const [startDate, setStartDate] = useState('');
+  const [date, setDate] = useState(new Date());
+  const [mode, setMode] = useState('date');
+  const [show, setShow] = useState(false);
 
   useEffect(() => {}, []);
 
-  const showMode1 = currentMode => {
-    setShow1(true);
-    console.log('Shiwe====>', setShow1(true));
-
-    setMode1(currentMode);
+  const showMode = currentMode => {
+    setShow(true);
+    setMode(currentMode);
   };
 
-  const onChange1 = (event: any, selectedDate: Date) => {
-    let currentDate1 = selectedDate || date1;
-    console.log('Datre====>');
-
-    setShow1(Platform.OS === 'ios');
-    setDate1(currentDate1);
-    let tempDate = new Date(currentDate1);
-    let fDate =
-      tempDate.getDate() +
-      '/' +
-      (tempDate.getMonth() + 1) +
-      '/' +
-      tempDate.getFullYear();
+  const onChange = (event: any, selectedDate: Date) => {
+    let currentDate = selectedDate || date;
+    setShow(Platform.OS === 'ios');
+    setDate(currentDate);
+    props.onChange(currentDate);
+    console.log('selectedDate====>', data);
   };
 
   const onStartDatePicked = () => {
-    showMode1('date');
+    showMode('date');
+  };
+
+  const onSubmit = () => {
+    let startDate = moment(date).format(dateFormat);
+    props.onMakeOffer(startDate);
   };
 
   return (
@@ -147,7 +139,7 @@ export const MakeOfferModal = (props: MakeOfferLightboxProps) => {
                 fontFamily: AppFonts.family.fontFamily,
               }}
               customStyle={styles.date}
-              title={'statDate'}
+              title={value ? value : 'statDate'}
               onPress={onStartDatePicked}
             />
           </View>
@@ -160,16 +152,16 @@ export const MakeOfferModal = (props: MakeOfferLightboxProps) => {
               }}
               customStyle={styles.makeOfrBtn}
               title="MAKE OFFER"
-              onPress={onPress}
+              onPress={onSubmit}
             />
-            {show1 && (
+            {show && (
               <DateTimePicker
                 testID="dateTimePicker"
-                value={date1}
-                mode={mode1}
+                value={date}
+                mode={mode}
+                minimumDate={new Date()}
                 is24Hour={true}
-                onChange={onChange1}
-                placeholder=" "
+                onChange={onChange}
               />
             )}
             <ActionButton

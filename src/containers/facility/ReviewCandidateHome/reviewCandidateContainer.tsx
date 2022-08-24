@@ -197,7 +197,11 @@ const ReviewCandidateContainer = (
     // >
 
     // </FacilitySelectionContainer>
-    <>{data && renderPositionList(data)}</>
+    <>
+      <View style={{flex: 1, backgroundColor: AppColors.baseGray}}>
+        {data && renderPositionList(data)}
+      </View>
+    </>
   );
 };
 

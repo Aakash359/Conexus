@@ -97,6 +97,7 @@ const Profile: React.FC<ProfileState> = () => {
 const style = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: AppColors.baseGray,
   },
   editView: {
     marginTop: 30,

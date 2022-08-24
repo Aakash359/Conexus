@@ -45,16 +45,14 @@ const AgentMessage = () => {
 
   const renderAccountManager = () => {
     return (
-      <View style={managerStyle.container}>
-        <View style={managerStyle.textContainer}>
-          <Image
-            style={managerStyle.image}
-            source={require('../../components/Images/bg.png')}
-          />
-          <Text style={managerStyle.title}>
-            {userInfo?.user?.userFacilities?.[0]?.manager?.acctManagerName}
-          </Text>
-        </View>
+      <View style={managerStyle.textContainer}>
+        <Image
+          style={managerStyle.image}
+          source={require('../../components/Images/bg.png')}
+        />
+        <Text style={managerStyle.title}>
+          {userInfo?.user?.userFacilities?.[0]?.manager?.acctManagerName}
+        </Text>
       </View>
     );
   };
@@ -122,19 +120,17 @@ const AgentMessage = () => {
 
   const renderForm = () => {
     return (
-      <View>
-        <TextInput
-          style={style.messageInput}
-          maxLength={1000}
-          rowSpan={12}
-          placeholder="Type your message"
-          placeholderTextColor={AppColors.mediumGray}
-          value={messageText}
-          returnKeyType="done"
-          multiline={false}
-          onChangeText={(text: any) => setMessageText(text)}
-        />
-      </View>
+      <TextInput
+        style={style.messageInput}
+        maxLength={1000}
+        rowSpan={12}
+        placeholder="Type your message"
+        placeholderTextColor={AppColors.mediumGray}
+        value={messageText}
+        returnKeyType="done"
+        multiline={false}
+        onChangeText={(text: any) => setMessageText(text)}
+      />
     );
   };
 
@@ -156,8 +152,8 @@ const AgentMessage = () => {
 
 const managerStyle = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    marginTop: 15,
+    flex: 1,
+    backgroundColor: 'red',
   },
   avatar: {
     paddingRight: 8,
@@ -170,7 +166,7 @@ const managerStyle = StyleSheet.create({
     borderRadius: 50 / 2,
   },
   textContainer: {
-    // flex: 1,
+    marginTop: 12,
     marginBottom: -20,
     flexDirection: 'row',
     marginLeft: 20,
@@ -187,6 +183,7 @@ const managerStyle = StyleSheet.create({
 const style = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: AppColors.baseGray,
   },
   btnEnable: {
     alignSelf: 'center',

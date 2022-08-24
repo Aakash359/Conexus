@@ -85,9 +85,7 @@ const TabNavigator = () => {
               style={{marginRight: 20}}
               size={26}
               name="chatbubble-outline"
-              onPress={() =>
-                NavigationService.dispatch(DrawerActions.openDrawer())
-              }
+              onPress={() => NavigationService.navigate('MessageCenter')}
             />
           ),
         }}

@@ -333,7 +333,7 @@ const Positions = (props: PositionsProps, state: PositionState) => {
     //   onFacilityChosen={(facilityId: string) => forceUpdate()}>
 
     // </FacilitySelectionContainer>
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: AppColors.baseGray}}>
       <TouchableOpacity
         onPress={() => NavigationService.navigate('InterviewQuestions')}>
         <Text>hi</Text>

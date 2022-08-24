@@ -74,7 +74,7 @@ const ConversationContainer = (
   const footerInputTargetValue = inputMinHeight;
   const scrollRef = React.createRef<ScrollView>();
   const animatableRef = useRef(new Animated.Value(0.0)).current;
-
+  const [messageList, setMessageList] = useState([]);
   const [sendEnabled, setSendEnabled] = useState(false);
   const [showFooterActions, setShowFooterActions] = useState(false);
   const [messageText, setMessageTexts] = useState('');
@@ -89,13 +89,13 @@ const ConversationContainer = (
     try {
       const {data} = await loadTextMessageService(conversationId);
       Keyboard.dismiss();
-      console.log('data===>', data);
+      setMessageList(data?.messages);
+      console.log('data===>', data?.messages);
       setRefreshing(false);
     } catch (error) {
       console.log(error);
       setRefreshing(false);
       setLoading(false);
-      setSendEnabled(!!messageText);
       Alert.alert(
         'Message Center Error',
         'We are having trouble loading your conversation. Please try again.',
@@ -154,22 +154,6 @@ const ConversationContainer = (
   // const canMakeVideoCall = (): boolean => {
   //   return this.props.userStore.isFacilityUser && !!this.submissionId;
   // };
-
-  // const activeConversation = (): any => {
-  //   const conversationStore: typeof ConversationStore.Type =
-  //     this.props.conversationStore;
-  //   return conversationStore.activeConversation;
-  // };
-
-  const showableMessages = (): any => {
-    if (!this.activeConversation) {
-      return [];
-    }
-
-    var result = this.activeConversation.messages || [];
-
-    return result;
-  };
 
   const applyMeasurements = () => {
     const footerActionsOpacity = showFooterActions ? 1 : 0;
@@ -277,21 +261,17 @@ const ConversationContainer = (
     setSendEnabled(false);
   };
 
-  // const onInputContentSizeChange = event => {
-  //   let newInputHeight = event.nativeEvent.contentSize.height + 12;
-
-  //   if (newInputHeight > inputMaxHeight) {
-  //     newInputHeight = inputMaxHeight;
-  //   }
-
-  //   if (newInputHeight < inputMinHeight) {
-  //     newInputHeight = inputMinHeight;
-  //   }
-
-  //   this.footerInputTargetValue = newInputHeight;
-
-  //   this.applyMeasurements();
-  // };
+  const onInputContentSizeChange = event => {
+    let newInputHeight = event.nativeEvent.contentSize.height + 12;
+    if (newInputHeight > inputMaxHeight) {
+      newInputHeight = inputMaxHeight;
+    }
+    if (newInputHeight < inputMinHeight) {
+      newInputHeight = inputMinHeight;
+    }
+    // footerInputTargetValue = newInputHeight;
+    // this.applyMeasurements();
+  };
 
   const onLayout = () => {
     // if (!view) return;
@@ -364,8 +344,6 @@ const ConversationContainer = (
   // };
 
   const sendTextMessage = async () => {
-    console.log('jns====>', messageText);
-
     if (!sendEnabled) {
       return;
     }
@@ -415,37 +393,6 @@ const ConversationContainer = (
   //     //     photoUrl: this.recipientPhotoUrl,
   //     //     title: this.recipientName
   //     // })
-  //   }
-  // };
-
-  // const loadMessages = (refreshing = false) => {
-  //   const {conversationStore} = this.props;
-  //   const {conversationId} = this.state;
-
-  //   if (conversationId && !conversationStore.loading) {
-  //     const loading = !refreshing;
-  //     this.setState({refreshing, loading});
-
-  //     conversationStore.loadActiveConversation(conversationId).then(
-  //       () => {
-  //         this.setState({
-  //           refreshing: false,
-  //           loading: false,
-  //           conversationId,
-  //         });
-  //       },
-  //       error => {
-  //         if (loading) {
-  //           Alert.alert(
-  //             'Message Center Error',
-  //             'We are having trouble loading your conversation. Please try again.',
-  //           );
-  //         }
-  //         this.setState({refreshing: false, loading: false});
-  //       },
-  //     );
-  //   } else {
-  //     this.setState({loading: false});
   //   }
   // };
 
@@ -562,42 +509,46 @@ const ConversationContainer = (
   //   );
   // };
 
-  // const renderTextMessageView = (
-  //   message: typeof ConversationMessageModel.Type,
-  //   index: number,
-  // ) => {
-  //   const time = moment(message.messageTimestamp).format('M/D/YYYY h:mm a');
-  //   const caption = `${message.senderFirstName} ${message.senderLastName}, ${time}`;
+  const renderTextMessageView = (message: any, index: number) => {
+    const time = moment(message.messageTimestamp).format('M/D/YYYY h:mm a');
+    const caption = `${message.senderFirstName} ${message.senderLastName}, ${time}`;
+    console.log('Okkk===>', message.messageId);
 
-  //   return (
-  //     <View
-  //       key={`message-${message.messageId}-${index}`}
-  //       style={[
-  //         style.messageView,
-  //         style.textMessageView,
-  //         message.sentByMe ? style.messageFromMeView : {},
-  //       ]}>
-  //       <View
-  //         style={[
-  //           style.textMessageTextWrapper,
-  //           message.sentByMe ? style.textMessageTextWrapperFromMe : {},
-  //         ]}>
-  //         <Text
-  //           selectable
-  //           style={[
-  //             style.textMessageText,
-  //             message.sentByMe ? style.textMessageTextFromMe : {},
-  //           ]}>
-  //           {message.messageText}
-  //         </Text>
-  //       </View>
-  //       <Text
-  //         style={[style.caption, message.sentByMe ? style.captionFrom : {}]}>
-  //         {caption}
-  //       </Text>
-  //     </View>
-  //   );
-  // };
+    return (
+      <View
+        key={`message-${message.messageId}-${index}`}
+        style={[
+          style.messageView,
+          style.textMessageView,
+          message.sentByMe ? style.messageFromMeView : {},
+        ]}
+        // style={[
+        //   style.messageView,
+        //   style.textMessageView,
+        //   message.sentByMe ? style.messageFromMeView : {},
+        // ]}
+      >
+        <View
+          style={[
+            style.textMessageTextWrapper,
+            message.sentByMe ? style.textMessageTextWrapperFromMe : {},
+          ]}>
+          <Text
+            selectable
+            style={[
+              style.textMessageText,
+              message.sentByMe ? style.textMessageTextFromMe : {},
+            ]}>
+            {message.messageText}
+          </Text>
+        </View>
+        <Text
+          style={[style.caption, message.sentByMe ? style.captionFrom : {}]}>
+          {caption}
+        </Text>
+      </View>
+    );
+  };
 
   const renderMessageScrollView = () => {
     return (
@@ -614,41 +565,41 @@ const ConversationContainer = (
         //   />
         // }
       >
-        {/* {this.showableMessages.map((message, index) => {
+        {messageList.map((message, index) => {
           if (message.messageTypeId === '1') {
-            return this.renderTextMessageView(message, index);
+            return renderTextMessageView(message, index);
           }
 
-          if (message.messageTypeId === '2') {
-            return this.renderAudioMessageView(message, index);
-          }
+          // if (message.messageTypeId === '2') {
+          //   return this.renderAudioMessageView(message, index);
+          // }
 
-          if (message.messageTypeId === '3') {
-            return this.renderVideoMessageView(message, index);
-          }
+          // if (message.messageTypeId === '3') {
+          //   return this.renderVideoMessageView(message, index);
+          // }
 
           return <View key={`scroll-item-${index}`} />;
-        })} */}
+        })}
       </ScrollView>
     );
   };
 
   const renderMessageList = () => {
-    // if (this.showableMessages.length) {
-    // return (
-    <Animated.View
-      style={[
-        {
-          flex: 1,
-          alignItems: 'stretch',
-          justifyContent: 'center',
-          backgroundColor: AppColors.baseGray,
-        },
-      ]}>
-      {renderMessageScrollView()}
-    </Animated.View>;
-    // );
-    // }
+    if (messageList.length) {
+      return (
+        <Animated.View
+          style={[
+            {
+              flex: 1,
+              alignItems: 'stretch',
+              justifyContent: 'center',
+              backgroundColor: AppColors.baseGray,
+            },
+          ]}>
+          {renderMessageScrollView()}
+        </Animated.View>
+      );
+    }
     if (loading) {
       return (
         <Animated.View
@@ -721,7 +672,7 @@ const ConversationContainer = (
               editable={true}
               multiline={true}
               style={footerStyle.input}
-              // onContentSizeChange={onInputContentSizeChange.bind(this)}
+              onContentSizeChange={onInputContentSizeChange}
             />
           </View>
           <TouchableOpacity
@@ -923,10 +874,9 @@ const style = StyleSheet.create({
   },
 
   messageView: {
-    flex: 1,
-    margin: 12,
-    marginTop: 6,
-    marginBottom: 16,
+    margin: 8,
+    marginTop: 0,
+    paddingVertical: 5,
     alignItems: 'stretch',
   },
 
@@ -947,12 +897,9 @@ const style = StyleSheet.create({
   },
 
   textMessageTextWrapper: {
-    flex: 1,
-    flexDirection: 'row',
+    padding: 10,
     maxWidth: AppSizes.screen.width * 0.65,
     minWidth: AppSizes.screen.width * 0.65,
-    padding: 8,
-    paddingHorizontal: 10,
     paddingTop: Platform.OS === 'android' ? 6 : 8,
     borderRadius: 6,
     backgroundColor: AppColors.white,

@@ -368,6 +368,7 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
 const styles = StyleSheet.create({
   rootContainer: {
     flex: 1,
+    backgroundColor: AppColors.baseGray,
   },
   footer: {
     right: 10,

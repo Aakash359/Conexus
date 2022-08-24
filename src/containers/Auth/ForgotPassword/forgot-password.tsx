@@ -79,7 +79,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={[{flex: 1, backgroundColor: 'white'}]}>
       <ScrollView
         contentContainerStyle={style.rootContainer}
         keyboardShouldPersistTaps="always">
@@ -151,6 +151,7 @@ const style = StyleSheet.create({
   rootContainer: {
     flex: 1,
     display: 'flex',
+    // backgroundColor: AppColors.lightBlue,
     justifyContent: 'flex-start',
   },
   errorTxt: {

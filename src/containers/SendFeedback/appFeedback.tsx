@@ -100,6 +100,7 @@ const SendFeedback = (props: AppFeedbackModalState) => {
 const style = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: AppColors.baseGray,
   },
   btnEnable: {
     alignSelf: 'center',

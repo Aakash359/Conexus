@@ -1,3 +1,3 @@
-export * from './conversation-container';
-export * from './facility-message-center-container';
+export * from './conversation';
+export * from './messageCenter';
 export * from './nurse-message-center-container';

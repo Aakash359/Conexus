@@ -343,6 +343,7 @@ const style = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'flex-start',
+    backgroundColor: AppColors.baseGray,
   },
   buttonHeader: {
     fontSize: 20,

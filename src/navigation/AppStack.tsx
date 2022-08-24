@@ -20,6 +20,7 @@ import HcpDetailView from '../containers/Facility/HcpDetail/HcpDetailView';
 import ImageGallery from '../containers/Facility/HcpDetail/imageGallery';
 import ConversationContainer from '../containers/MessageCenter/conversation';
 import VideoRecorder from '../containers/VideoRecorder/videoRecoder';
+import {DrawerActions} from '@react-navigation/native';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -152,6 +153,38 @@ const AppStack = () => {
               fontWeight: 'bold',
               fontSize: 22,
             },
+          }}
+        />
+        <Stack.Screen
+          name="InterviewQuestions"
+          component={InterviewQuestions}
+          options={{
+            headerShown: true,
+            title: 'InterviewQuestions',
+            headerTitleStyle: {
+              color: AppColors.black,
+              fontWeight: 'bold',
+              fontSize: 22,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="MessageCenter"
+          component={MessageCenter}
+          options={{
+            headerShown: true,
+            title: 'MessageCenter',
+            headerLeft: () => (
+              <Icons
+                color={AppColors.black}
+                style={{marginRight: 20}}
+                size={32}
+                name="menu"
+                onPress={() =>
+                  NavigationService.dispatch(DrawerActions.openDrawer())
+                }
+              />
+            ),
           }}
         />
       </Stack.Navigator>
