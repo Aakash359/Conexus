@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   Alert,
   StyleSheet,
@@ -15,17 +15,21 @@ import {
   Text,
   View,
 } from 'react-native';
-import {ConexusIconButton, ConexusIcon, Circle} from '../../components';
+import {ConexusIcon, Circle, ActionButton} from '../../components';
+import {ConexusIconButton} from '../../components/conexus-icon-button';
 import {ScreenType, showYesNoAlert} from '../../common';
 import {UserStore, VideoStore} from '../../stores';
 import {logger} from 'react-native-logs';
 import {AppFonts, AppSizes, AppColors} from '../../theme';
+import {TouchableOpacity} from 'react-native';
 import {
   ConversationStore,
   ConversationModel,
   ConversationMessageModel,
   conversationStoreInstance,
 } from '../../stores/message-center';
+import {sendTextMessageService} from '../../services/MessageCenter/sendTextMessageService';
+import {loadTextMessageService} from '../../services/MessageCenter/loadTextMessageService';
 
 let moment = require('moment');
 const SafeAreaView = require('react-native').SafeAreaView;
@@ -53,8 +57,8 @@ interface ConversationContainerState {
 }
 
 const actionRowHeight = 60;
-const footerInputVerticalPadding = 12;
-const inputMinHeight = 44;
+const footerInputVerticalPadding = 20;
+const inputMinHeight = 55;
 const inputMaxHeight = 164;
 const log = logger.createLogger();
 
@@ -62,62 +66,94 @@ const ConversationContainer = (
   props: ConversationContainerProps,
   state: ConversationContainerState,
 ) => {
-  // contentHeight: number = 0;
-  // currentKeyboardHeight = 0;
-  // paddingBottom = new Animated.Value(0);
-  // footerActionsOpacity = new Animated.Value(0);
-  // footerInputHeight = new Animated.Value(inputMinHeight);
-  // footerInputTargetValue = inputMinHeight;
-  // private scrollView: any;
-  // private view: any;
+  const contentHeight: number = 0;
+  const currentKeyboardHeight = 0;
+  const paddingBottom = new Animated.Value(0);
+  const footerActionsOpacity = new Animated.Value(0);
+  const footerInputHeight = new Animated.Value(inputMinHeight);
+  const footerInputTargetValue = inputMinHeight;
+  const scrollRef = React.createRef<ScrollView>();
+  const animatableRef = useRef(new Animated.Value(0.0)).current;
 
   const [sendEnabled, setSendEnabled] = useState(false);
-  const [showFooterActions, setShowFooterActions] = useState([]);
+  const [showFooterActions, setShowFooterActions] = useState(false);
   const [messageText, setMessageTexts] = useState('');
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const {startVideoMessage} = props;
+  const params = props?.route?.params;
+
+  const {conversationId} = params;
+
+  const loadMessages = async () => {
+    try {
+      const {data} = await loadTextMessageService(conversationId);
+      Keyboard.dismiss();
+      console.log('data===>', data);
+      setRefreshing(false);
+    } catch (error) {
+      console.log(error);
+      setRefreshing(false);
+      setLoading(false);
+      setSendEnabled(!!messageText);
+      Alert.alert(
+        'Message Center Error',
+        'We are having trouble loading your conversation. Please try again.',
+      );
+    }
+  };
+
+  useEffect(() => {
+    applyMeasurements();
+    setTimeout(() => {
+      loadMessages();
+      if (startVideoMessage) {
+        // sendVideoMessage();
+      }
+    }, 100);
+  }, []);
   // const conversationId =
 
   // this.paddingBottom = new Animated.Value(0);
   // this.applyMeasurements();
 
-  const hcpUserId = (): string => {
-    return this.activeConversation
-      ? this.activeConversation.hcpUserId
-      : this.props.recipientUserId;
-  };
+  // const hcpUserId = (): string => {
+  //   return this.activeConversation
+  //     ? this.activeConversation.hcpUserId
+  //     : this.props.recipientUserId;
+  // };
 
-  const recipientPhotoUrl = (): string => {
-    return this.activeConversation
-      ? this.activeConversation.hcpPhotoUrl
-      : this.props.recipientPhotoUrl;
-  };
+  // const recipientPhotoUrl = (): string => {
+  //   return this.activeConversation
+  //     ? this.activeConversation.hcpPhotoUrl
+  //     : this.props.recipientPhotoUrl;
+  // };
 
-  const recipientName = (): string => {
-    return this.activeConversation
-      ? this.activeConversation.hcpFirstName +
-          ' ' +
-          this.activeConversation.hcpLastName
-      : this.props.recipientName;
-  };
+  // const recipientName = (): string => {
+  //   return this.activeConversation
+  //     ? this.activeConversation.hcpFirstName +
+  //         ' ' +
+  //         this.activeConversation.hcpLastName
+  //     : this.props.recipientName;
+  // };
 
-  const canMakePhoneCall = (): boolean => {
-    return (
-      this.props.userStore.isFacilityUser &&
-      !!this.hcpUserId &&
-      !!this.recipientName
-    );
-  };
+  // const canMakePhoneCall = (): boolean => {
+  //   return (
+  //     this.props.userStore.isFacilityUser &&
+  //     !!this.hcpUserId &&
+  //     !!this.recipientName
+  //   );
+  // };
 
-  const submissionId = (): string => {
-    return this.activeConversation
-      ? this.activeConversation.submissionId
-      : this.props.submissionId;
-  };
+  // const submissionId = (): string => {
+  //   return this.activeConversation
+  //     ? this.activeConversation.submissionId
+  //     : this.props.submissionId;
+  // };
 
-  const canMakeVideoCall = (): boolean => {
-    return this.props.userStore.isFacilityUser && !!this.submissionId;
-  };
+  // const canMakeVideoCall = (): boolean => {
+  //   return this.props.userStore.isFacilityUser && !!this.submissionId;
+  // };
 
   // const activeConversation = (): any => {
   //   const conversationStore: typeof ConversationStore.Type =
@@ -133,6 +169,31 @@ const ConversationContainer = (
     var result = this.activeConversation.messages || [];
 
     return result;
+  };
+
+  const applyMeasurements = () => {
+    const footerActionsOpacity = showFooterActions ? 1 : 0;
+    const duration = 100;
+    let paddingBottom = currentKeyboardHeight;
+
+    if (AppSizes.isIPhoneX) {
+      paddingBottom -= AppSizes.iPhoneXFooterSize;
+    }
+
+    // Animated.parallel([
+    //   Animated.timing(paddingBottom, {
+    //     duration,
+    //     toValue: paddingBottom,
+    //   }),
+    //   Animated.timing(footerActionsOpacity, {
+    //     duration: duration,
+    //     toValue: footerActionsOpacity,
+    //   }),
+    //   Animated.timing(footerInputHeight, {
+    //     duration: duration,
+    //     toValue: footerInputTargetValue + footerInputVerticalPadding,
+    //   }),
+    // ]).start();
   };
 
   // keyboardDidCloseSubscription: EmitterSubscription;
@@ -171,108 +232,80 @@ const ConversationContainer = (
   //   this.view = null;
   // }
 
-  const onMessageSend = (conversationId: string) => {
-    if (
-      this.props.onMessageSendCallback &&
-      this.props.onMessageSendCallback.call
-    ) {
-      try {
-        this.props.onMessageSendCallback(conversationId);
-      } catch (error) {
-        log.info('ConversationContainer', 'onMessageSendError', error);
-      }
-    }
-  };
+  // const onMessageSend = (conversationId: string) => {
+  //   if (
+  //     this.props.onMessageSendCallback &&
+  //     this.props.onMessageSendCallback.call
+  //   ) {
+  //     try {
+  //       this.props.onMessageSendCallback(conversationId);
+  //     } catch (error) {
+  //       log.info('ConversationContainer', 'onMessageSendError', error);
+  //     }
+  //   }
+  // };
 
-  const keyboardWillShow = event => {
-    if (Platform.OS === 'android') {
-      this.currentKeyboardHeight = event.endCoordinates.height + 56;
-      this.applyMeasurements();
-    } else {
-      this.currentKeyboardHeight = event.endCoordinates.height;
-      this.applyMeasurements();
-    }
+  // const keyboardWillShow = event => {
+  //   if (Platform.OS === 'android') {
+  //     this.currentKeyboardHeight = event.endCoordinates.height + 56;
+  //     this.applyMeasurements();
+  //   } else {
+  //     this.currentKeyboardHeight = event.endCoordinates.height;
+  //     this.applyMeasurements();
+  //   }
 
-    setTimeout(() => {
-      if (this.scrollView) {
-        this.scrollView.scrollToEnd();
-      }
-    }, 400);
-  };
+  //   setTimeout(() => {
+  //     if (this.scrollView) {
+  //       this.scrollView.scrollToEnd();
+  //     }
+  //   }, 400);
+  // };
 
-  const keyboardWillHide = event => {
-    this.currentKeyboardHeight = 0;
-    this.applyMeasurements();
-  };
+  // const keyboardWillHide = event => {
+  //   this.currentKeyboardHeight = 0;
+  //   this.applyMeasurements();
+  // };
 
   const setMessageText = (messageText: string) => {
     messageText = messageText || '';
-    this.setState({messageText, sendEnabled: !!messageText});
+    setMessageTexts(messageText);
+    setSendEnabled(!!messageText);
   };
 
   const clearMessageText = () => {
-    this.setState({messageText: '', sendEnabled: false});
+    setMessageTexts('');
+    setSendEnabled(false);
   };
 
-  const scrollViewContentSizeChangeHandler = (contentWidth, contentHeight) => {
-    this.scrollView.scrollToEnd({animated: false});
-  };
+  // const onInputContentSizeChange = event => {
+  //   let newInputHeight = event.nativeEvent.contentSize.height + 12;
 
-  const onInputContentSizeChange = event => {
-    let newInputHeight = event.nativeEvent.contentSize.height + 12;
-
-    if (newInputHeight > inputMaxHeight) {
-      newInputHeight = inputMaxHeight;
-    }
-
-    if (newInputHeight < inputMinHeight) {
-      newInputHeight = inputMinHeight;
-    }
-
-    this.footerInputTargetValue = newInputHeight;
-
-    this.applyMeasurements();
-  };
-
-  const onLayout = () => {
-    if (!this.view) return;
-
-    this.view._component.measureInWindow((winX, winY, winWidth, winHeight) => {
-      this.contentHeight = winHeight;
-      this.applyMeasurements();
-    });
-  };
-
-  // const applyMeasurements=()=> {
-  //   const {showFooterActions} = this.state;
-  //   const footerActionsOpacity = showFooterActions ? 1 : 0;
-  //   const duration = 100;
-  //   let paddingBottom = this.currentKeyboardHeight;
-
-  //   if (AppSizes.isIPhoneX) {
-  //     paddingBottom -= AppSizes.iPhoneXFooterSize;
+  //   if (newInputHeight > inputMaxHeight) {
+  //     newInputHeight = inputMaxHeight;
   //   }
 
-  //   Animated.parallel([
-  //     Animated.timing(this.paddingBottom, {
-  //       duration,
-  //       toValue: paddingBottom,
-  //     }),
-  //     Animated.timing(this.footerActionsOpacity, {
-  //       duration: duration,
-  //       toValue: footerActionsOpacity,
-  //     }),
-  //     Animated.timing(this.footerInputHeight, {
-  //       duration: duration,
-  //       toValue: this.footerInputTargetValue + footerInputVerticalPadding,
-  //     }),
-  //   ]).start();
-  // }
-  const removeRead = (message: any) => {
-    log.info(message);
-    log.info('Read it');
-    message.updateReadState(true);
+  //   if (newInputHeight < inputMinHeight) {
+  //     newInputHeight = inputMinHeight;
+  //   }
+
+  //   this.footerInputTargetValue = newInputHeight;
+
+  //   this.applyMeasurements();
+  // };
+
+  const onLayout = () => {
+    // if (!view) return;
+    // view._component.measureInWindow((winX, winY, winWidth, winHeight) => {
+    //   contentHeight = winHeight;
+    //   applyMeasurements();
+    // });
   };
+
+  // const removeRead = (message: any) => {
+  //   log.info(message);
+  //   log.info('Read it');
+  //   message.updateReadState(true);
+  // };
 
   // const playVideoMessage = (videoUrl: string, message: any) => {
   //   const parms = {videoUrl, audioUrl: undefined};
@@ -283,116 +316,107 @@ const ConversationContainer = (
   //   this.removeRead(message);
   // };
 
-  const playAudioMessage = (message: any) => {
-    log.info('Message data: ', message);
-    const time = moment(message.messageTimestamp).format('M/D/YYYY h:mm a');
-    const avatarTitle = `${message.senderFirstName} ${message.senderLastName}`;
-    const avatarDescription = `Message recorded ${time}`;
-    const parms = {
-      audioUrl: message.audioUrl,
-      videoUrl: undefined,
-      avatarUrl: message.senderPhotoUrl,
-      avatarTitle,
-      avatarDescription,
-    };
+  // const playAudioMessage = (message: any) => {
+  //   log.info('Message data: ', message);
+  //   const time = moment(message.messageTimestamp).format('M/D/YYYY h:mm a');
+  //   const avatarTitle = `${message.senderFirstName} ${message.senderLastName}`;
+  //   const avatarDescription = `Message recorded ${time}`;
+  //   const parms = {
+  //     audioUrl: message.audioUrl,
+  //     videoUrl: undefined,
+  //     avatarUrl: message.senderPhotoUrl,
+  //     avatarTitle,
+  //     avatarDescription,
+  //   };
 
-    // Actions[ScreenType.AUDIO_PLAYER_LIGHTBOX](parms)
-  };
-
-  const toggleFooterActions = () => {
-    const {showFooterActions} = this.state;
-
-    setTimeout(() => {
-      if (this.scrollView && !showFooterActions) {
-        this.scrollView.scrollToEnd();
-      }
-    }, 200);
-
-    this.setState(
-      {showFooterActions: !showFooterActions},
-      this.applyMeasurements.bind(this),
-    );
-  };
-
-  const sendVideoMessage = () => {
-    Keyboard.dismiss();
-
-    const conversationId = this.activeConversation
-      ? this.activeConversation.conversationId
-      : '';
-    const submissionId = this.props.submissionId;
-    // Actions[ScreenType.VIDEO_RECORDER_LIGHTBOX]({ finishedButtonTitle: 'Send', videoMessage: true, conversationId, submissionId, onFinished: this.onVideoMessageSent.bind(this), onMessageSendCallback: this.onMessageSend.bind(this) });
-  };
-
-  const onVideoMessageSent = (archiveId: string, videoUrl: string) => {
-    try {
-      this.scrollView.scrollToEnd({animated: true});
-    } catch (error) {
-      log.info('ConversationContainer', 'onVideoMessageSent', 'Error', error);
-    }
-  };
-
-  // const sendTextMessage = () => {
-  //   const {conversationStore, submissionId} = this.props;
-  //   const {messageText, conversationId, sendEnabled} = this.state;
-
-  //   if (!sendEnabled) {
-  //     return;
-  //   }
-
-  //   this.clearMessageText();
-
-  //   return conversationStore
-  //     .sendTextMessage(
-  //       conversationId,
-  //       submissionId,
-  //       messageText.replace(/\s+$/g, ''),
-  //     )
-  //     .then(conversationId => {
-  //       this.clearMessageText();
-  //       Keyboard.dismiss();
-
-  //       log.info(
-  //         `SubmissionId: ${submissionId} generated conversationId: ${conversationId}`,
-  //       );
-  //       this.setState({conversationId});
-  //       this.onMessageSend(conversationId);
-  //     })
-  //     .catch(error => {
-  //       this.setState({messageText, sendEnabled: !!messageText});
-  //       log.info('_sendTextMessage', error);
-  //       showYesNoAlert({
-  //         title: 'Send Error',
-  //         message: 'The message could not be sent. Please try again.',
-  //         yesTitle: 'Try Again',
-  //         noTitle: 'Cancel',
-  //         onYes: this.sendTextMessage.bind(this),
-  //         onNo: () => {},
-  //       });
-  //     });
+  //   // Actions[ScreenType.AUDIO_PLAYER_LIGHTBOX](parms)
   // };
 
-  const initVideoCall = () => {
-    const {videoStore} = this.props;
-    if (this.canMakeVideoCall) {
-      videoStore.call(this.submissionId, this.hcpUserId, {
-        title: '',
-        name: this.recipientName,
-        subTitle: '',
-        photo: this.recipientPhotoUrl,
+  const toggleFooterActions = () => {
+    // setTimeout(() => {
+    //   if (scrollView && !showFooterActions) {
+    //     scrollView.scrollToEnd();
+    //   }
+    // }, 200);
+    setShowFooterActions(!showFooterActions);
+    // this.setState(
+    //   {showFooterActions: !showFooterActions},
+    //   this.applyMeasurements.bind(this),
+    // );
+  };
+
+  // const sendVideoMessage = () => {
+  //   Keyboard.dismiss();
+
+  //   const conversationId = this.activeConversation
+  //     ? this.activeConversation.conversationId
+  //     : '';
+  //   const submissionId = this.props.submissionId;
+  //   // Actions[ScreenType.VIDEO_RECORDER_LIGHTBOX]({ finishedButtonTitle: 'Send', videoMessage: true, conversationId, submissionId, onFinished: this.onVideoMessageSent.bind(this), onMessageSendCallback: this.onMessageSend.bind(this) });
+  // };
+
+  // const onVideoMessageSent = (archiveId: string, videoUrl: string) => {
+  //   try {
+  //     this.scrollView.scrollToEnd({animated: true});
+  //   } catch (error) {
+  //     log.info('ConversationContainer', 'onVideoMessageSent', 'Error', error);
+  //   }
+  // };
+
+  const sendTextMessage = async () => {
+    console.log('jns====>', messageText);
+
+    if (!sendEnabled) {
+      return;
+    }
+    clearMessageText();
+    try {
+      const {data} = await sendTextMessageService({
+        conversationId: conversationId || null,
+        submissionId: null,
+        messageText: messageText.replace(/\s+$/g, ''),
+        messageTypeId: '1',
+      });
+      Keyboard.dismiss();
+      console.log('data===>', data);
+      setRefreshing(false);
+    } catch (error) {
+      console.log(error);
+      setRefreshing(false);
+      setMessageTexts(messageText);
+      setSendEnabled(!!messageText);
+      showYesNoAlert({
+        title: 'Send Error',
+        message: 'The message could not be sent. Please try again.',
+        yesTitle: 'Try Again',
+        noTitle: 'Cancel',
+        // onYes: this.sendTextMessage.bind(this),
+        onNo: () => {},
       });
     }
   };
 
-  const initPhoneCall = () => {
-    if (this.canMakePhoneCall) {
-      // Actions.push(ScreenType.HCP_PHONE_CALL_LIGHTBOX, {
-      //     submissionId: this.submissionId,
-      //     photoUrl: this.recipientPhotoUrl,
-      //     title: this.recipientName
-      // })
-    }
-  };
+  // const initVideoCall = () => {
+  //   const {videoStore} = this.props;
+  //   if (this.canMakeVideoCall) {
+  //     videoStore.call(this.submissionId, this.hcpUserId, {
+  //       title: '',
+  //       name: this.recipientName,
+  //       subTitle: '',
+  //       photo: this.recipientPhotoUrl,
+  //     });
+  //   }
+  // };
+
+  // const initPhoneCall = () => {
+  //   if (this.canMakePhoneCall) {
+  //     // Actions.push(ScreenType.HCP_PHONE_CALL_LIGHTBOX, {
+  //     //     submissionId: this.submissionId,
+  //     //     photoUrl: this.recipientPhotoUrl,
+  //     //     title: this.recipientName
+  //     // })
+  //   }
+  // };
 
   // const loadMessages = (refreshing = false) => {
   //   const {conversationStore} = this.props;
@@ -425,169 +449,172 @@ const ConversationContainer = (
   //   }
   // };
 
-  const renderAudioMessageView = (
-    message: typeof ConversationMessageModel.Type,
-    index: number,
-  ) => {
-    const time = moment(message.messageTimestamp).format('M/D/YYYY h:mm a');
-    const caption = `${message.senderFirstName} ${message.senderLastName}, ${time}`;
+  // const renderAudioMessageView = (
+  //   message: typeof ConversationMessageModel.Type,
+  //   index: number,
+  // ) => {
+  //   const time = moment(message.messageTimestamp).format('M/D/YYYY h:mm a');
+  //   const caption = `${message.senderFirstName} ${message.senderLastName}, ${time}`;
 
-    if (!message.audioUrl) {
-      log.info('Skipping audio message render.  Empty tokBoxArchiveUrl');
-      return <View key={`message-${message.messageId}-${index}`} />;
-    }
+  //   if (!message.audioUrl) {
+  //     log.info('Skipping audio message render.  Empty tokBoxArchiveUrl');
+  //     return <View key={`message-${message.messageId}-${index}`} />;
+  //   }
 
-    return (
-      <View
-        key={`message-${message.messageId}-${index}`}
-        style={[
-          style.messageView,
-          style.audioMessageView,
-          message.sentByMe ? style.messageFromMeView : {},
-        ]}>
-        <TouchableHighlight
-          onPress={this.playAudioMessage.bind(this, message)}
-          style={[
-            style.audioMessageWrapper,
-            message.sentByMe ? style.audioMessageWrapperFromMe : {},
-          ]}>
-          <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-            <Circle
-              size={28}
-              color={message.sentByMe ? AppColors.white : AppColors.blue}
-              style={{alignItems: 'center', justifyContent: 'center'}}>
-              <ConexusIcon
-                style={{paddingLeft: 3}}
-                name="cn-play"
-                size={18}
-                color={message.sentByMe ? AppColors.blue : AppColors.white}
-              />
-            </Circle>
-            <Text
-              style={[
-                style.audioMessageText,
-                message.sentByMe ? style.audioMessageTextFromMe : {},
-              ]}>
-              Audio Message
-            </Text>
-          </View>
-        </TouchableHighlight>
-        <Text
-          style={[style.caption, message.sentByMe ? style.captionFrom : {}]}>
-          {caption}
-        </Text>
-      </View>
-    );
-  };
+  //   return (
+  //     <View
+  //       key={`message-${message.messageId}-${index}`}
+  //       style={[
+  //         style.messageView,
+  //         style.audioMessageView,
+  //         message.sentByMe ? style.messageFromMeView : {},
+  //       ]}>
+  //       <TouchableHighlight
+  //         onPress={this.playAudioMessage.bind(this, message)}
+  //         style={[
+  //           style.audioMessageWrapper,
+  //           message.sentByMe ? style.audioMessageWrapperFromMe : {},
+  //         ]}>
+  //         <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+  //           <Circle
+  //             size={28}
+  //             color={message.sentByMe ? AppColors.white : AppColors.blue}
+  //             style={{alignItems: 'center', justifyContent: 'center'}}>
+  //             <ConexusIcon
+  //               style={{paddingLeft: 3}}
+  //               name="cn-play"
+  //               size={18}
+  //               color={message.sentByMe ? AppColors.blue : AppColors.white}
+  //             />
+  //           </Circle>
+  //           <Text
+  //             style={[
+  //               style.audioMessageText,
+  //               message.sentByMe ? style.audioMessageTextFromMe : {},
+  //             ]}>
+  //             Audio Message
+  //           </Text>
+  //         </View>
+  //       </TouchableHighlight>
+  //       <Text
+  //         style={[style.caption, message.sentByMe ? style.captionFrom : {}]}>
+  //         {caption}
+  //       </Text>
+  //     </View>
+  //   );
+  // };
 
-  const renderVideoMessageView = (
-    message: typeof ConversationMessageModel.Type,
-    index: number,
-  ) => {
-    const time = moment(message.messageTimestamp).format('M/D/YYYY h:mm a');
-    const caption = `${message.senderFirstName} ${message.senderLastName}, ${time}`;
+  // const renderVideoMessageView = (
+  //   message: typeof ConversationMessageModel.Type,
+  //   index: number,
+  // ) => {
+  //   const time = moment(message.messageTimestamp).format('M/D/YYYY h:mm a');
+  //   const caption = `${message.senderFirstName} ${message.senderLastName}, ${time}`;
 
-    if (!message.tokBoxArchiveUrl) {
-      log.info('Skipping video message render.  Empty tokBoxArchiveUrl');
-      return <View key={`message-${message.messageId}-${index}`} />;
-    }
-    return (
-      <View
-        key={`message-${message.messageId}-${index}`}
-        style={[
-          style.messageView,
-          style.videoMessageView,
-          message.sentByMe ? style.messageFromMeView : {},
-        ]}>
-        <TouchableHighlight
-          onPress={this.playVideoMessage.bind(
-            this,
-            message.tokBoxArchiveUrl,
-            message,
-          )}
-          style={[
-            style.videoMessageWrapper,
-            message.sentByMe ? style.videoMessageWrapperFromMe : {},
-          ]}>
-          <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-            <Circle
-              size={28}
-              color={message.sentByMe ? AppColors.white : AppColors.blue}
-              style={{alignItems: 'center', justifyContent: 'center'}}>
-              <ConexusIcon
-                style={{paddingLeft: 3}}
-                name="cn-play"
-                size={18}
-                color={message.sentByMe ? AppColors.blue : AppColors.white}
-              />
-            </Circle>
-            <Text
-              style={[
-                style.videoMessageText,
-                message.sentByMe ? style.videoMessageTextFromMe : {},
-              ]}>
-              Video Message {message.read ? '' : ' *'}
-            </Text>
-          </View>
-        </TouchableHighlight>
-        <Text
-          style={[style.caption, message.sentByMe ? style.captionFrom : {}]}>
-          {caption}
-        </Text>
-      </View>
-    );
-  };
+  //   if (!message.tokBoxArchiveUrl) {
+  //     log.info('Skipping video message render.  Empty tokBoxArchiveUrl');
+  //     return <View key={`message-${message.messageId}-${index}`} />;
+  //   }
+  //   return (
+  //     <View
+  //       key={`message-${message.messageId}-${index}`}
+  //       style={[
+  //         style.messageView,
+  //         style.videoMessageView,
+  //         message.sentByMe ? style.messageFromMeView : {},
+  //       ]}>
+  //       <TouchableHighlight
+  //         onPress={this.playVideoMessage.bind(
+  //           this,
+  //           message.tokBoxArchiveUrl,
+  //           message,
+  //         )}
+  //         style={[
+  //           style.videoMessageWrapper,
+  //           message.sentByMe ? style.videoMessageWrapperFromMe : {},
+  //         ]}>
+  //         <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+  //           <Circle
+  //             size={28}
+  //             color={message.sentByMe ? AppColors.white : AppColors.blue}
+  //             style={{alignItems: 'center', justifyContent: 'center'}}>
+  //             <ConexusIcon
+  //               style={{paddingLeft: 3}}
+  //               name="cn-play"
+  //               size={18}
+  //               color={message.sentByMe ? AppColors.blue : AppColors.white}
+  //             />
+  //           </Circle>
+  //           <Text
+  //             style={[
+  //               style.videoMessageText,
+  //               message.sentByMe ? style.videoMessageTextFromMe : {},
+  //             ]}>
+  //             Video Message {message.read ? '' : ' *'}
+  //           </Text>
+  //         </View>
+  //       </TouchableHighlight>
+  //       <Text
+  //         style={[style.caption, message.sentByMe ? style.captionFrom : {}]}>
+  //         {caption}
+  //       </Text>
+  //     </View>
+  //   );
+  // };
 
-  const renderTextMessageView = (
-    message: typeof ConversationMessageModel.Type,
-    index: number,
-  ) => {
-    const time = moment(message.messageTimestamp).format('M/D/YYYY h:mm a');
-    const caption = `${message.senderFirstName} ${message.senderLastName}, ${time}`;
+  // const renderTextMessageView = (
+  //   message: typeof ConversationMessageModel.Type,
+  //   index: number,
+  // ) => {
+  //   const time = moment(message.messageTimestamp).format('M/D/YYYY h:mm a');
+  //   const caption = `${message.senderFirstName} ${message.senderLastName}, ${time}`;
 
-    return (
-      <View
-        key={`message-${message.messageId}-${index}`}
-        style={[
-          style.messageView,
-          style.textMessageView,
-          message.sentByMe ? style.messageFromMeView : {},
-        ]}>
-        <View
-          style={[
-            style.textMessageTextWrapper,
-            message.sentByMe ? style.textMessageTextWrapperFromMe : {},
-          ]}>
-          <Text
-            selectable
-            style={[
-              style.textMessageText,
-              message.sentByMe ? style.textMessageTextFromMe : {},
-            ]}>
-            {message.messageText}
-          </Text>
-        </View>
-        <Text
-          style={[style.caption, message.sentByMe ? style.captionFrom : {}]}>
-          {caption}
-        </Text>
-      </View>
-    );
-  };
+  //   return (
+  //     <View
+  //       key={`message-${message.messageId}-${index}`}
+  //       style={[
+  //         style.messageView,
+  //         style.textMessageView,
+  //         message.sentByMe ? style.messageFromMeView : {},
+  //       ]}>
+  //       <View
+  //         style={[
+  //           style.textMessageTextWrapper,
+  //           message.sentByMe ? style.textMessageTextWrapperFromMe : {},
+  //         ]}>
+  //         <Text
+  //           selectable
+  //           style={[
+  //             style.textMessageText,
+  //             message.sentByMe ? style.textMessageTextFromMe : {},
+  //           ]}>
+  //           {message.messageText}
+  //         </Text>
+  //       </View>
+  //       <Text
+  //         style={[style.caption, message.sentByMe ? style.captionFrom : {}]}>
+  //         {caption}
+  //       </Text>
+  //     </View>
+  //   );
+  // };
 
   const renderMessageScrollView = () => {
     return (
       <ScrollView
         style={style.messageListView}
-        ref={ref => (this.scrollView = ref)}
-        onContentSizeChange={this.scrollViewContentSizeChangeHandler.bind(this)}
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.refreshing}
-            onRefresh={this.loadMessages.bind(this, true)}
-          />
-        }>
-        {this.showableMessages.map((message, index) => {
+        ref={scrollRef}
+        onContentSizeChange={() =>
+          scrollRef.current?.scrollToEnd({animated: true})
+        }
+        // refreshControl={
+        //   <RefreshControl
+        //     refreshing={refreshing}
+        //     onRefresh={loadMessages(true)}
+        //   />
+        // }
+      >
+        {/* {this.showableMessages.map((message, index) => {
           if (message.messageTypeId === '1') {
             return this.renderTextMessageView(message, index);
           }
@@ -601,29 +628,28 @@ const ConversationContainer = (
           }
 
           return <View key={`scroll-item-${index}`} />;
-        })}
+        })} */}
       </ScrollView>
     );
   };
 
   const renderMessageList = () => {
-    const {loading} = this.state;
-
-    if (this.showableMessages.length) {
-      return (
-        <Animated.View
-          style={[
-            {
-              flex: 1,
-              alignItems: 'stretch',
-              justifyContent: 'center',
-              backgroundColor: AppColors.baseGray,
-            },
-          ]}>
-          {this.renderMessageScrollView()}
-        </Animated.View>
-      );
-    } else if (loading) {
+    // if (this.showableMessages.length) {
+    // return (
+    <Animated.View
+      style={[
+        {
+          flex: 1,
+          alignItems: 'stretch',
+          justifyContent: 'center',
+          backgroundColor: AppColors.baseGray,
+        },
+      ]}>
+      {renderMessageScrollView()}
+    </Animated.View>;
+    // );
+    // }
+    if (loading) {
       return (
         <Animated.View
           style={[
@@ -659,11 +685,14 @@ const ConversationContainer = (
               justifyContent: 'center',
               paddingBottom: 180,
             }}>
-            {!!this.recipientName && (
-              <Text>This is your first conversation with</Text>
-            )}
-            {!!this.recipientName && <Text>{this.recipientName}</Text>}
-            {!this.recipientName && <Text>No Messages Available</Text>}
+            {/* {!!recipientName && ( */}
+
+            <Text>This is your first conversation with</Text>
+            {/* )} */}
+            {/* {!!this.recipientName && <Text>{this.recipientName}</Text>} */}
+            {/* {!this.recipientName &&  */}
+            <Text>No Messages Available</Text>
+            {/* } */}
           </View>
         }
       </Animated.View>
@@ -671,45 +700,44 @@ const ConversationContainer = (
   };
 
   const renderFooter = () => {
-    const {sendEnabled, showFooterActions, messageText} = this.state;
-
     return (
       <Animated.View key="footer" style={[footerStyle.footerView]}>
         <Animated.View
-          style={[footerStyle.inputRow, {height: this.footerInputHeight}]}>
+          style={[footerStyle.inputRow, {height: footerInputHeight}]}>
           <View style={footerStyle.inputWrapper}>
             <ConexusIconButton
               iconName="cn-more"
               iconSize={16}
               color={AppColors.blue}
-              onPress={this.toggleFooterActions.bind(this)}
-              style={footerStyle.moreButton}></ConexusIconButton>
+              onPress={() => toggleFooterActions()}
+              style={footerStyle.moreButton}
+            />
             <TextInput
               underlineColorAndroid={'transparent'}
               value={messageText}
               selectionColor={AppColors.blue}
-              onChangeText={this.setMessageText.bind(this)}
+              onChangeText={messageText => setMessageText(messageText)}
               returnKeyType="default"
               editable={true}
               multiline={true}
               style={footerStyle.input}
-              onContentSizeChange={this.onInputContentSizeChange.bind(this)}
+              // onContentSizeChange={onInputContentSizeChange.bind(this)}
             />
           </View>
-          <Button
+          <TouchableOpacity
             style={StyleSheet.flatten([
               footerStyle.sendButton,
               !sendEnabled && footerStyle.sendButtonDisabled,
             ])}
-            onPress={this.sendTextMessage.bind(this)}>
+            onPress={() => sendTextMessage()}>
             <Text
               style={[
                 footerStyle.sendButtonText,
                 !sendEnabled && footerStyle.sendButtonTextDisabled,
               ]}>
-              Send
+              SEND
             </Text>
-          </Button>
+          </TouchableOpacity>
         </Animated.View>
         {!!showFooterActions && (
           <View style={[footerStyle.actionsRow]}>
@@ -719,31 +747,37 @@ const ConversationContainer = (
               iconName="cn-video-message"
               iconSize={24}
               color={AppColors.blue}
-              onPress={this.sendVideoMessage.bind(this)}
+              // onPress={this.sendVideoMessage.bind(this)}
               style={footerStyle.actionRowButton}
-              textStyle={footerStyle.actionButtonText}></ConexusIconButton>
-            {this.canMakeVideoCall && (
+              textStyle={footerStyle.actionButtonText}
+            />
+            {
+              // canMakeVideoCall && (
               <ConexusIconButton
                 disabled={!showFooterActions}
                 title="Video Call"
                 iconName="cn-video"
                 iconSize={24}
                 color={AppColors.blue}
-                onPress={this.initVideoCall.bind(this)}
+                // onPress={this.initVideoCall.bind(this)}
                 style={footerStyle.actionRowButton}
-                textStyle={footerStyle.actionButtonText}></ConexusIconButton>
-            )}
-            {this.canMakePhoneCall && (
+                textStyle={footerStyle.actionButtonText}
+              />
+              // )
+            }
+            {
+              // this.canMakePhoneCall &&
               <ConexusIconButton
                 disabled={!showFooterActions}
                 title="Phone Call"
                 iconName="cn-phone"
                 iconSize={24}
                 color={AppColors.blue}
-                onPress={this.initPhoneCall.bind(this)}
+                // onPress={this.initPhoneCall.bind(this)}
                 style={footerStyle.actionRowButton}
-                textStyle={footerStyle.actionButtonText}></ConexusIconButton>
-            )}
+                textStyle={footerStyle.actionButtonText}
+              />
+            }
           </View>
         )}
       </Animated.View>
@@ -752,9 +786,14 @@ const ConversationContainer = (
 
   return (
     <SafeAreaView style={[{flex: 1, backgroundColor: 'white'}]}>
-      <View>
-        <Text>hhi</Text>
-      </View>
+      <Animated.View
+        style={{flex: 1, paddingBottom: paddingBottom}}
+        onLayout={onLayout}
+        ref={animatableRef}
+        ref={animatableRef}>
+        {renderMessageList()}
+        {renderFooter()}
+      </Animated.View>
     </SafeAreaView>
   );
 };
@@ -796,6 +835,10 @@ const getInputStyle = () => {
 const footerStyle = StyleSheet.create({
   footerView: {
     flexDirection: 'column',
+    right: 0,
+    left: 0,
+    position: 'absolute',
+    bottom: 0,
     alignItems: 'stretch',
     ...getFooterShadows(),
     backgroundColor: AppColors.white,
@@ -853,7 +896,7 @@ const footerStyle = StyleSheet.create({
     color: AppColors.white,
   },
   sendButtonTextDisabled: {
-    color: AppColors.lightBlue,
+    color: AppColors.gray,
   },
 
   actionsRow: {

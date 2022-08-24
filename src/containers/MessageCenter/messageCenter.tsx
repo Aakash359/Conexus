@@ -105,14 +105,14 @@ const MessageCenter = (
       ).fromNow();
       const listItemKey = `${conversation.conversationId}`;
       result.push(
-        <View
+        <TouchableOpacity
           key={listItemKey}
           style={itemStyles.listItem}
-          // onPress={() =>
-          //     Actions[ScreenType.MESSAGE_CENTER.CONVERSATION]({
-          //     conversationId: conversation.conversationId
-          // })}
-        >
+          onPress={() =>
+            NavigationService.navigate('ConversationContainer', {
+              conversationId: conversation?.conversationId,
+            })
+          }>
           <View style={itemStyles.itemSection}>
             <Circle
               size={10}
@@ -145,7 +145,7 @@ const MessageCenter = (
             </Text>
           </View>
           <View style={itemStyles.itemSection}></View>
-        </View>,
+        </TouchableOpacity>,
       );
     });
     return result;

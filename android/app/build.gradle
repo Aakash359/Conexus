@@ -321,7 +321,14 @@ def isNewArchitectureEnabled() {
 }
 
 project.ext.vectoricons = [
-    iconFontNames: [ 'Ionicons.ttf', 'Feather.ttf','SimpleLineIcons.ttf','FontAwesome5.ttf','AntDesign.ttf' ] // Name of the font files you want to copy
+    iconFontNames: [ 
+        'Ionicons.ttf', 
+        'Feather.ttf',
+        'SimpleLineIcons.ttf',
+        'FontAwesome5.ttf',
+        'AntDesign.ttf',
+        'MaterialCommunityIcons.ttf'
+ ] // Name of the font files you want to copy
 ]
 
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"

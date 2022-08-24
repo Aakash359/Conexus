@@ -10,11 +10,8 @@ export const facilityUnitListService = async(data: { facilityId: any; }) => {
     headers: {
       Authorization: `Bearer ${ await AsyncStorage.getItem('authToken')}`,
     },
-}).then((response)=>{
-   const result = response.data.map((unitData: any) => {
-            console.log("Unitedata",unitData);
-            
-        })
+    }).then((response)=>{const result = response.data.map((unitData: any) => (unitData))
+      return result
 }
 );
 

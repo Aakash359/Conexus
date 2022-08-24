@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Text,
   TextInput,
+  Alert,
 } from 'react-native';
 import {AppFonts, AppColors} from '../../theme';
 import {ScreenType} from '../../common/constants';
@@ -21,11 +22,7 @@ import {UserStore, VideoStore} from '../../stores';
 import {ActionButton} from '../../components/action-button';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {showYesNoAlert, windowDimensions} from '../../common';
-
-import {logger} from 'react-native-logs';
 import {SelectUnitModal} from '../../components/Modals/selectUnitModal';
-
-const log = logger.createLogger();
 
 export interface CatalogQuestionContainerProps {
   questionId: string;
@@ -167,47 +164,19 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
   //   }
   // }
 
-  const openUnitSelector = () => {
-    Actions[ScreenType.RADIO_LIST_LIGHTBOX]({
-      title: 'Select a Unit',
-      value: this.unitTypeId,
-      showImages: false,
-      data: this.unitTypes.map(i => {
-        return {value: i.unitId, title: i.unitName};
-      }),
-      onClose: this.selectUnit.bind(this),
-    });
+  const onSelectUnit = () => {
+    Alert.alert('hi');
   };
 
   const renderUnitField = () => {
-    // const unitType = this.unitType;
-
     return (
-      <TouchableOpacity onPress={() => setModalVisible(true)}>
-        <View style={styles.chooserField}>
-          {/* {!unitType && ( */}
-          <Text style={styles.chooserFieldPlaceholder}>Choose a Unit</Text>
-          {/* )} */}
-          {/* {!!unitType && ( */}
-          <Text style={styles.chooserFieldText}></Text>
-          {/* )} */}
-
-          <Icon
-            style={{color: AppColors.mediumGray, left: 230}}
-            name="chevron-down"
-            size={22}
-          />
-        </View>
-        {modalVisible && (
-          <SelectUnitModal
-            title={'Select a unit'}
-            onRequestClose={() => setModalVisible(false)}
-            onDismiss={() => setModalVisible(false)}
-            onPress={undefined}
-            onClose={() => setModalVisible(false)}
-          />
-        )}
-      </TouchableOpacity>
+      <SelectUnitModal
+        title={'Select a unit'}
+        onRequestClose={() => setModalVisible(false)}
+        onDismiss={() => setModalVisible(false)}
+        onPress={() => onSelectUnit()}
+        onClose={() => setModalVisible(false)}
+      />
     );
   };
 
@@ -415,7 +384,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: windowDimensions.width * 0.6,
   },
-
   header: {
     ...AppFonts.bodyTextNormal,
     alignItems: 'center',
@@ -423,48 +391,40 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     textAlign: 'center',
   },
-
   headerTitle: {
     ...AppFonts.title,
     paddingLeft: 18,
     paddingRight: 18,
   },
-
   headerDescription: {
     ...AppFonts.description,
     paddingLeft: 18,
     paddingRight: 18,
   },
-
   form: {
     paddingTop: 18,
     paddingBottom: 18,
     paddingHorizontal: 20,
   },
-
   switch: {
     position: 'relative',
     top: Platform.OS === 'android' ? 0 : 0,
   },
-
   switchLabel: {
     paddingLeft: 8,
     top: 3.5,
     opacity: 0.75,
   },
-
   switchLabelEnabled: {
     paddingLeft: 8,
     opacity: 1,
   },
-
   defaultQuestionField: {
     flexDirection: 'row',
     marginLeft: 20,
     alignItems: 'flex-start',
     marginTop: 20,
   },
-
   questionInput: {
     textAlignVertical: 'top',
     backgroundColor: AppColors.white,
@@ -479,7 +439,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     borderRadius: 5,
   },
-
   readonlyQuestionInputContainer: {
     backgroundColor: AppColors.white,
     borderRadius: 6,
@@ -490,40 +449,14 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     padding: 4,
   },
-
   readonlyQuestionInput: {
     ...AppFonts.bodyTextLarge,
     fontWeight: '600',
     color: AppColors.gray,
     textAlign: 'center',
   },
-
-  chooserField: {
-    backgroundColor: AppColors.white,
-    borderRadius: 6,
-    marginLeft: 20,
-    width: '90%',
-    borderColor: AppColors.lightBlue,
-    borderWidth: 1,
-    padding: 12,
-    flexDirection: 'row',
-    alignItems: 'stretch',
-  },
-
-  chooserFieldText: {
-    ...AppFonts.buttonText,
-    color: AppColors.darkBlue,
-  },
-
   chooserFieldIcon: {
     alignSelf: 'flex-end',
-  },
-
-  chooserFieldPlaceholder: {
-    ...AppFonts.buttonText,
-    color: AppColors.darkBlue,
-    fontStyle: 'italic',
-    opacity: 0.6,
   },
 });
 

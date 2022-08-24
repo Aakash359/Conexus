@@ -182,24 +182,31 @@ const Positions = (props: PositionsProps, state: PositionState) => {
     );
   };
 
-  const renderNeed = (need: any, index) => {
-    const titleParts = [];
-    !!need.specialty && titleParts.push(need.specialty);
-    !!need.discipline && titleParts.push(need.discipline);
-    titleParts.push(need.needId);
-    console.log('Nedd====>', need);
+  const renderNeed = (items: any, index) => {
+    console.log('snjnjskn====>', items);
 
-    const descriptionParts = [];
-    !!need.shift && descriptionParts.push(need.shift);
+    return (
+      <View>
+        <Text>hikckdnk</Text>
+      </View>
+    );
+    // const titleParts = [];
+    // !!need.specialty && titleParts.push(need.specialty);
+    // !!need.discipline && titleParts.push(need.discipline);
+    // titleParts.push(need.needId);
+    // console.log('Nedd====>', need);
 
-    const expanded = expandedNeedId === need.needId;
+    // const descriptionParts = [];
+    // !!need.shift && descriptionParts.push(need.shift);
 
-    let paddingBottom = 0;
-    let result: JSX.Element[] = [];
+    // const expanded = expandedNeedId === need.needId;
 
-    if (!expanded) {
-      paddingBottom = index === need.length - 1 ? 18 : 0;
-    }
+    // let paddingBottom = 0;
+    // let result: JSX.Element[] = [];
+
+    // if (!expanded) {
+    //   paddingBottom = index === need.length - 1 ? 18 : 0;
+    // }
 
     // const cardButtons = [];
     // if (expanded) {
@@ -217,23 +224,23 @@ const Positions = (props: PositionsProps, state: PositionState) => {
     //   );
     // }
 
-    const cardStyle = expanded
-      ? [styles.listItemExpanded, {...getCardShadows()}]
-      : [styles.listItem, {...getCardShadows()}];
-    result.push(
-      <View
-        style={{
-          flex: 1,
-          marginTop: 200,
-          margin: 8,
-          // paddingBottom,
-          backgroundColor: 'yellow',
-        }}>
-        <Text>hhi</Text>
-      </View>,
-    );
+    // const cardStyle = expanded
+    //   ? [styles.listItemExpanded, {...getCardShadows()}]
+    //   : [styles.listItem, {...getCardShadows()}];
+    // result.push(
+    //   <View
+    //     style={{
+    //       flex: 1,
+    //       marginTop: 200,
+    //       margin: 8,
+    //       // paddingBottom,
+    //       backgroundColor: 'yellow',
+    //     }}>
+    //     <Text>hhi</Text>
+    //   </View>,
+    // );
 
-    return result;
+    // return result;
     // return (
     //   <>
     //     <View
@@ -291,6 +298,7 @@ const Positions = (props: PositionsProps, state: PositionState) => {
     const needSummaryData = needSummary.map(item =>
       item.needDetails.map((_items: any) => renderNeed(_items)),
     );
+
     // if (needSummaryData.length) {
     //   needSummaryData.unshift(
     //     <ViewHeader
@@ -326,6 +334,11 @@ const Positions = (props: PositionsProps, state: PositionState) => {
 
     // </FacilitySelectionContainer>
     <View style={{flex: 1}}>
+      <TouchableOpacity
+        onPress={() => NavigationService.navigate('InterviewQuestions')}>
+        <Text>hi</Text>
+      </TouchableOpacity>
+
       <FlatList
         refreshControl={
           <RefreshControl
@@ -335,7 +348,7 @@ const Positions = (props: PositionsProps, state: PositionState) => {
             // onRefresh={load(false)}
           />
         }
-        renderItem={renderNeedSection()}
+        renderItem={renderNeedSection}
         data={needs}
       />
     </View>

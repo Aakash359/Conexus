@@ -37,18 +37,18 @@ export const ConexusIconButton = (props: ConexusIconButtonProps) => {
       onPress={onPress}
       disabled={disabled}
       style={[defaultStyle.button, Style]}>
-      {/* <Icon
+      <Icon
         style={title ? {marginBottom: 6} : {}}
         name={iconName}
         size={IconSize}
-        color={color()}
-      /> */}
-      <ConexusIcon
+        color={color}
+      />
+      {/* <ConexusIcon
         name={iconName}
         size={IconSize}
         // color={color()}
         style={title ? {marginBottom: 6} : {}}
-      />
+      /> */}
       {title && (
         <Text
           style={StyleSheet.flatten([

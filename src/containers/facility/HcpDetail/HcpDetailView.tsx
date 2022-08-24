@@ -394,14 +394,14 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
         <View style={headerStyle.actionRowView}>
           <ConexusIconButton
             onPress={() => setModalVisible(true)}
-            iconName="cn-person-remove"
+            iconName="offer"
             iconSize={20}
             title="Not Interested"
           />
           <ConexusIconButton
             disabled={!candidate || !candidate.conversationAllowed}
             onPress={() => setOfferModalVisible(true)}
-            iconName="cn-money-bag"
+            iconName="offer"
             iconSize={20}
             title="Make Offer"
           />
