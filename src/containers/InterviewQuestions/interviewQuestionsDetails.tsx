@@ -19,6 +19,7 @@ import {
   QuestionModel,
 } from '../../../stores/facility';
 import {showYesNoAlert} from '../../common';
+import {useSelector} from '../../redux/reducers/index';
 import Styles from '../../theme/styles';
 import SortableList from 'react-native-sortable-list';
 import {ActionButton} from '../../components/action-button';
@@ -26,6 +27,8 @@ import {AppFonts} from '../../theme';
 import {windowDimensions} from '../../common/window-dimensions';
 import Tab from '../../theme/components/Tab';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {needQuestionsService} from '../../services/InterviewQuestions/needQuestionsService';
+import _ from 'lodash';
 
 export interface InterviewQuestionDetailProps {
   questionSectionId: string;
@@ -58,47 +61,77 @@ const InterviewQuestionDetail = (
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState([]);
+  const [needQuestionList, setNeedQuestionList] = useState([]);
   const [loadingError, setLoadingError] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const userInfo = useSelector(state => state.userReducer);
   const propsData = [props?.route?.params] ? [props?.route?.params] : {};
-  const {needId} = propsData;
+  const {needId, sectionTitleOverride, questionSectionId} = propsData?.[0];
+  const {sectionFacilityID, sections} = propsData?.[0];
+  const {facilityId} = sectionFacilityID;
   const [selectedTabId, setSelectedTabID] = useState(
-    propsData?.needId ? 'other' : 'default',
+    needId ? 'other' : 'default',
   );
+  const facilityID = userInfo?.user?.userFacilities?.[0]?.facilityId;
 
   //   const onSave=()=> {
   //     return onSave || function () {};
   //   }
 
-  const section = (): any => {
-    // if (needId) {
-    //   return facilityQuestionsStore.needSection;
-    // }
+  useEffect(() => {
+    loadNeedQuestions();
+  }, []);
 
-    return questionSectionId;
+  const findQuestionSection = (facilityID: string, sectionId: string): any => {
+    const facility = facilityID === facilityId;
+    if (facility) {
+      return facility.questionSections.find(
+        (section: {sectionId: string}) => section.sectionId === sectionId,
+      );
+    }
+
+    return null;
   };
 
-  //   const showableQuestions=(): any=> {
+  const section = (): any => {
+    if (needId) {
+      return needQuestionList;
+    }
+    return findQuestionSection(questionSectionId, facilityID);
+  };
 
-  //     // if (!section) {
-  //     //   return [];
-  //     // }
-
-  //     // let questions = [];
-
-  //     // if (needId) {
-  //     //   questions = section.questions || [];
-  //     // } else {
-  //     //   questions = this.showDefault
-  //     //     ? this.section.defaultQuestions
-  //     //     : this.section.questions;
-  //     // }
-
-  //     // return questions.filter(q => !q['deleted']);
-  //   }
+  const loadNeedQuestions = async (refreshing: boolean = false) => {
+    setLoading(true);
+    setLoadingError(false);
+    try {
+      const {data} = await needQuestionsService(needId);
+      let questions = _.orderBy(data, ['displayOrder'], ['asc']);
+      setNeedQuestionList(questions);
+      setRefreshing(false);
+      setLoading(false);
+    } catch (error) {
+      console.log('Load questions error', error);
+      setRefreshing(false);
+      setLoading(false);
+    }
+  };
 
   const showDefault = () => {
     return selectedTabId === 'default';
+  };
+
+  const showableQuestions = (): any => {
+    if (!section) {
+      return [];
+    }
+    let questions = [];
+
+    if (needId) {
+      questions = needQuestionList || [];
+    } else {
+      questions = showDefault() ? sections?.defaultQuestions : needQuestionList;
+    }
+    return questions.filter(q => !q['deleted']);
   };
 
   //   get defaultListContentHeight() {
@@ -156,8 +189,6 @@ const InterviewQuestionDetail = (
   //   }
 
   const newQuestion = () => {
-    const {refreshing, silentRefreshing} = this.state;
-
     if (refreshing || silentRefreshing) {
       return;
     }
@@ -269,37 +300,35 @@ const InterviewQuestionDetail = (
   };
 
   const renderUnitHeader = () => {
-    const questionCount =
-      sections.questions.length + sections.defaultQuestions.length;
-    const description = `${questionCount} question${
-      questionCount === 0 || questionCount > 1 ? 's' : ''
-    }`;
+    // const questionCount =
+    //   sections.questions.length + sections.defaultQuestions.length;
+    // const description = `${questionCount} question${
+    //   questionCount === 0 || questionCount > 1 ? 's' : ''
+    // }`;
     const actionText = editing ? 'Finished' : 'Edit';
-
     return (
       <ViewHeader
         first
         title={
-          props.sectionTitleOverride ||
-          props?.route?.params?.sections?.sectionTitle
+          sectionTitleOverride || props?.route?.params?.sections?.sectionTitle
         }
-        description={description}
+        // description={description}
         titleStyle={{color: AppColors.white}}
         descriptionStyle={{color: AppColors.white}}
         style={{backgroundColor: AppColors.blue, borderBottomWidth: 0}}
         actionStyle={{borderWidth: 0}}
-        actionText={questionCount > 0 ? actionText : ''}
+        // actionText={questionCount > 0 ? actionText : ''}
         onActionPress={toggleEditing}
       />
     );
   };
 
-  const getQuestionsBadge = (questions: any, defaultQuestions: boolean) => {
-    const count = questions.filter(
-      q => q.defaultFlag === defaultQuestions,
-    ).length;
-    return count.toString();
-  };
+  // const getQuestionsBadge = (questions: any, defaultQuestions: boolean) => {
+  //   const count = questions.filter(
+  //     q => q.defaultFlag === defaultQuestions,
+  //   ).length;
+  //   return count.toString();
+  // };
 
   const renderTabs = () => {
     const tabs = [
@@ -327,24 +356,25 @@ const InterviewQuestionDetail = (
     );
   };
 
-  //   refreshSection(silent = false) {
-  //     this.setState({refreshing: !silent, silentRefreshing: silent}, () => {
-  //       this.props.facilityQuestionsStore.load(this.props.needId).then(
-  //         () => {
-  //           if (!this.section && !this.props.needId) {
-  //             // Actions.pop()
-  //           } else {
-  //             this.setState({refreshing: false, silentRefreshing: false});
-  //           }
-  //         },
-  //         err => {
-  //           this.setState({refreshing: false, silentRefreshing: false});
-  //         },
-  //       );
-  //     });
-  //   }
+  const refreshSection = (silent = false) => {
+    setRefreshing(!silent);
+    setSilentRefreshing(silent);
+    // this.setState({refreshing: !silent, silentRefreshing: silent}, () => {
+    //   this.props.facilityQuestionsStore.load(this.props.needId).then(
+    //     () => {
+    //       if (!this.section && !this.props.needId) {
+    //         // Actions.pop()
+    //       } else {
+    //         this.setState({refreshing: false, silentRefreshing: false});
+    //       }
+    //     },
+    //     err => {
+    //       this.setState({refreshing: false, silentRefreshing: false});
+    //     },
+    //   );
+    // });
+  };
 
-  const rowOrder: Array<string> = [];
   //   newOrder: Array<string> = [];
   //   onChangeOrder(rowMap: RowMap, newOrder: string[]) {
   //     this.newOrder = newOrder;
@@ -366,86 +396,85 @@ const InterviewQuestionDetail = (
   //     this.setState({saving: false});
   //   }
 
-  // const renderSortableList = () => {
-  //   const rowMap: RowMap = {};
-  //   rowOrder = [];
-
-  //   // const questions = showableQuestions;
-
-  //   // this.showableQuestions.forEach((question, index) => {
-  //   //   if (!question.deleted) {
-  //   //     // This
-  //   //     rowMap[index] = question;
-  //   //     this.rowOrder.push(index.toString());
-  //   //   }
-  //   // });
-
-  //   return (
-  //     <SortableList
-  //       style={{flex: 1}}
-  //       sortingEnabled={editing}
-  //       // refreshControl={
-  //       //   <RefreshControl
-  //       //     tintColor={AppColors.blue}
-  //       //     colors={[AppColors.blue]}
-  //       //     refreshing={refreshing}
-  //       //     onRefresh={this.refreshSection.bind(this, false)}
-  //       //   />
-  //       // }
-  //       onChangeOrder={this.onChangeOrder.bind(this, rowMap)}
-  //       onReleaseRow={this.onReleaseRow.bind(this, rowMap)}
-  //       data={rowMap}
-  //       renderRow={({data, active, index}) => {
-  //         var paddingBottom =
-  //           index + 1 === questions.length
-  //             ? AppSizes.conexusFooterButtonHeight + 20
-  //             : 0;
-  //         var question: typeof QuestionModel.Type = data;
-
-  //         return (
-  //           // <SortableQuestionRow
-  //           //   marginBottom={paddingBottom}
-  //           //   allowDeleteQuestion={true}
-  //           //   text={data.text}
-  //           //   videoUrl={data.tokBoxArchiveUrl}
-  //           //   onDeleteQuestion={this.deleteQuestion.bind(
-  //           //     this,
-  //           //     question.id,
-  //           //     question.needId,
-  //           //   )}
-  //           //   onOpenQuestion={this.openQuestion.bind(
-  //           //     this,
-  //           //     question.id,
-  //           //     question.needId,
-  //           //     question.unitId,
-  //           //   )}
-  //           //   onPlayQuestion={this.playQuestion.bind(
-  //           //     this,
-  //           //     question.id,
-  //           //     question.needId,
-  //           //   )}
-  //           //   dragActive={active}
-  //           //   editing={editing}
-  //           // />
-  //         );
-  //       }}
-  //     />
-  //   );
-  // };
+  const renderSortableList = () => {
+    const rowMap: RowMap = {};
+    const rowOrder: Array<string> = [];
+    const questions = showableQuestions;
+    sections?.defaultQuestions.forEach(
+      (question: {deleted: any}, index: string | number) => {
+        if (!question.deleted) {
+          rowMap[index] = question;
+          rowOrder.push(index.toString());
+        }
+      },
+    );
+    console.log('====================================');
+    console.log(rowMap);
+    console.log('====================================');
+    // return (
+    //   <SortableList
+    //     style={{flex: 1}}
+    //     sortingEnabled={editing}
+    //     // refreshControl={
+    //     //   <RefreshControl
+    //     //     tintColor={AppColors.blue}
+    //     //     colors={[AppColors.blue]}
+    //     //     refreshing={refreshing}
+    //     //     onRefresh={this.refreshSection.bind(this, false)}
+    //     //   />
+    //     // }
+    //     onChangeOrder={this.onChangeOrder.bind(this, rowMap)}
+    //     onReleaseRow={this.onReleaseRow.bind(this, rowMap)}
+    //     data={rowMap}
+    //     renderRow={({data, active, index}) => {
+    //       var paddingBottom =
+    //         index + 1 === questions.length
+    //           ? AppSizes.conexusFooterButtonHeight + 20
+    //           : 0;
+    //       var question: typeof QuestionModel.Type = data;
+    //       return (
+    //         // <SortableQuestionRow
+    //         //   marginBottom={paddingBottom}
+    //         //   allowDeleteQuestion={true}
+    //         //   text={data.text}
+    //         //   videoUrl={data.tokBoxArchiveUrl}
+    //         //   onDeleteQuestion={this.deleteQuestion.bind(
+    //         //     this,
+    //         //     question.id,
+    //         //     question.needId,
+    //         //   )}
+    //         //   onOpenQuestion={this.openQuestion.bind(
+    //         //     this,
+    //         //     question.id,
+    //         //     question.needId,
+    //         //     question.unitId,
+    //         //   )}
+    //         //   onPlayQuestion={this.playQuestion.bind(
+    //         //     this,
+    //         //     question.id,
+    //         //     question.needId,
+    //         //   )}
+    //         //   dragActive={active}
+    //         //   editing={editing}
+    //         // />
+    //       );
+    //     }}
+    //   />
+    // );
+  };
 
   const renderEmptyList = () => {
     return (
       <ScrollView
         style={{flex: 1}}
-        // refreshControl={
-        //   <RefreshControl
-        //     tintColor={AppColors.blue}
-        //     colors={[AppColors.blue]}
-        //     refreshing={refreshing}
-        //     onRefresh={refreshSection(false)}
-        //   />
-        // }
-      >
+        refreshControl={
+          <RefreshControl
+            tintColor={AppColors.blue}
+            colors={[AppColors.blue]}
+            refreshing={refreshing}
+            onRefresh={() => refreshSection(false)}
+          />
+        }>
         <View
           style={StyleSheet.flatten([
             {paddingBottom: 220},
@@ -460,47 +489,43 @@ const InterviewQuestionDetail = (
     );
   };
 
-  //   const renderLoadingContainer=()=> {
-  //     return (
-  //       <Container>
-  //         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-  //           <ActivityIndicator color={AppColors.blue}></ActivityIndicator>
-  //         </View>
-  //       </Container>
-  //     );
-  //   }
+  const renderLoadingContainer = () => {
+    return (
+      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+        <ActivityIndicator color={AppColors.blue}></ActivityIndicator>
+      </View>
+    );
+  };
 
-  //   const renderLoadingErrorContainer =()=> {
-  //     return (
-  //       <Container>
-  //         <View
-  //           style={StyleSheet.flatten([
-  //             {paddingBottom: 220},
-  //             Styles.cnxNoDataMessageContainer,
-  //           ])}>
-  //           <Icon name="information-circle" style={Styles.cnxNoDataIcon} />
-  //           <Text style={Styles.cnxNoDataMessageText}>
-  //             An error occured while loading.
-  //           </Text>
-  //         </View>
-  //       </Container>
-  //     );
-  //   }
+  const renderLoadingErrorContainer = () => {
+    return (
+      <View
+        style={StyleSheet.flatten([
+          {paddingBottom: 220},
+          Styles.cnxNoDataMessageContainer,
+        ])}>
+        <Icon name="information-circle" style={Styles.cnxNoDataIcon} />
+        <Text style={Styles.cnxNoDataMessageText}>
+          An error occurred while loading.
+        </Text>
+      </View>
+    );
+  };
 
-  // if (loading) {
-  //   return renderLoadingContainer();
-  // }
+  if (loading) {
+    return renderLoadingContainer();
+  }
 
-  // if (loadingError) {
-  //   renderLoadingErrorContainer();
-  // }
+  if (loadingError) {
+    renderLoadingErrorContainer();
+  }
 
   return (
     <View style={{flex: 1}}>
-      {!!questionSectionId && renderUnitHeader()}
-      {!!sections && renderTabs()}
-      {renderEmptyList()}
-      {/* {renderSortableList()} */}
+      {section() && renderUnitHeader()}
+      {!needId && section() && renderTabs()}
+      {showableQuestions().length == 0 && renderEmptyList()}
+      {renderSortableList()}
       {!editing && (
         <View style={styles.footer}>
           <ActionButton

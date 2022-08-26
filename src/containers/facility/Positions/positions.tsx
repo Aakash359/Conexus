@@ -80,7 +80,6 @@ const Positions = (props: PositionsProps, state: PositionState) => {
 
   const showNeedQuestions = (need: any) => {
     NavigationService.navigate('InterviewQuestionDetail', {
-      questionSectionId: section.sectionId,
       needId: need.needId,
       sectionTitleOverride: need.display.title,
       // onSave: this.load.bind(this),
@@ -170,12 +169,6 @@ const Positions = (props: PositionsProps, state: PositionState) => {
     );
   };
 
-  // const renderStatus = (i: never) => {
-  //   console.log('====================================');
-  //   console.log('Aakash===>', i);
-  //   console.log('====================================');
-  // };
-
   const renderNeedSection = (item: undefined, index: undefined) => {
     const data = Object.values(item);
 
@@ -249,7 +242,6 @@ const Positions = (props: PositionsProps, state: PositionState) => {
     });
 
     if (needSummaryData.length) {
-      console.log('Akash===>', status);
       status.map((i: {Status: string}) =>
         needSummaryData.unshift(
           <ViewHeader

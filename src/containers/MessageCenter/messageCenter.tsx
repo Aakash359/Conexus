@@ -87,7 +87,6 @@ const MessageCenter = (
     let position = item as any;
     let i = index;
     const needKey = `need-${position.needId}`;
-    console.log('Aakash===>', item);
     let result: JSX.Element[] = [];
 
     result.push(

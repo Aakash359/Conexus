@@ -41,11 +41,12 @@ const InterviewQuestions = (
 ) => {
   const [loading, setLoading] = useState(false);
   const [section, setSection] = useState([]);
-  const [facility, setFacility] = useState([]);
+  const [facility, setFacility] = useState({});
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     load();
+    setFacility(facility);
   }, []);
 
   const selectedFacilityId = () => {
@@ -105,8 +106,9 @@ const InterviewQuestions = (
       setRefreshing(false);
     }
     try {
-      const {data} = await facilityQuestionsService(needId | '');
+      const {data} = await facilityQuestionsService();
       let sectionData = data.filter((i: any) => !!i);
+
       setFacility(sectionData?.[0]);
       setSection(sectionData?.[0]?.questionSections);
       setRefreshing(false);
@@ -124,11 +126,10 @@ const InterviewQuestions = (
   };
 
   const showSection = (section: any) => {
-    console.log('Section===>', section);
-
     NavigationService.navigate('InterviewQuestionDetail', {
       questionSectionId: section.sectionId,
       title: section.sectionTitle,
+      sectionFacilityID: facility,
       sections: section,
       // onSave() {
       //     this.forceUpdate()
@@ -169,7 +170,7 @@ const InterviewQuestions = (
     NavigationService.navigate('AddQuestion', {
       questionId: '0',
       initialUnitId: '',
-      needId: needId,
+      // needId: needId,
       // onSave: () => {
       //     forceUpdate()
       // }

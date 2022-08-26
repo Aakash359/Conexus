@@ -113,7 +113,6 @@ export const SelectUnitModal = (
   };
 
   const selectValue = (value: any) => {
-    console.log('Aakash===>', value);
     setModalVisible(false);
     setValue(value);
   };
