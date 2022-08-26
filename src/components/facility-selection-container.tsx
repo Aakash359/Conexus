@@ -29,7 +29,7 @@ interface FacilitySelectionContainerProps {
   onFacilityChosen?: (facilityId: string) => any;
   userStore?: UserStore;
   expectOverrideFacilities?: boolean;
-  overrideFacilities?: FacilitySelectionItem[];
+  overrideFacilities?: any;
   showNewQuestionButton?: boolean;
   needId?: string;
 }

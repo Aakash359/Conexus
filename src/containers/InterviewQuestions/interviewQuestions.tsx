@@ -44,7 +44,6 @@ const InterviewQuestions = (
   const [facility, setFacility] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
-  const {needId} = props;
   useEffect(() => {
     load();
   }, []);
@@ -112,7 +111,7 @@ const InterviewQuestions = (
       setSection(sectionData?.[0]?.questionSections);
       setRefreshing(false);
     } catch (error) {
-      log.info(error);
+      console.log('Error', error);
       setRefreshing(false);
       showYesNoAlert({
         title: `We're Sorry`,
@@ -180,17 +179,15 @@ const InterviewQuestions = (
   return (
     <>
       {/* <FacilitySelectionContainer
-      // showNoData={showNoData}
-      // showLoading={showLoading}
-      // noDataText="No Questions Available"
-      // facilityHeaderCaption="Showing questions for"
-      // refreshing={refreshing}
-      // onRefresh={load(true)}
-      // onFacilityChosen={(facilityId: string) => this.forceUpdate()}
-      // expectOverrideFacilities={true}
-      // overrideFacilities={facilities}
-      // showNewQuestionButton={true}
-      // needId={needId}
+        noDataText="No Questions Available"
+        facilityHeaderCaption="Showing questions for"
+        refreshing={refreshing}
+        // onRefresh={load(true)}
+        // onFacilityChosen={(facilityId: string) => this.forceUpdate()}
+        expectOverrideFacilities={true}
+        // overrideFacilities={facilities}
+        showNewQuestionButton={true}
+        // needId={needId}
       ></FacilitySelectionContainer> */}
       <FlatList
         style={styles.list}

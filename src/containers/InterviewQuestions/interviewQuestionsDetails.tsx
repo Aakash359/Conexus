@@ -54,15 +54,16 @@ const InterviewQuestionDetail = (
   props: InterviewQuestionDetailProps,
   state: InterviewQuestionDetailState,
 ) => {
-  const {questionSectionId, sections, needId} = props?.route.params;
   const [silentRefreshing, setSilentRefreshing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState([]);
   const [loadingError, setLoadingError] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const propsData = [props?.route?.params] ? [props?.route?.params] : {};
+  const {needId} = propsData;
   const [selectedTabId, setSelectedTabID] = useState(
-    needId ? 'other' : 'default',
+    propsData?.needId ? 'other' : 'default',
   );
 
   //   const onSave=()=> {
@@ -70,8 +71,6 @@ const InterviewQuestionDetail = (
   //   }
 
   const section = (): any => {
-    const {questionSectionId, needId} = props;
-
     // if (needId) {
     //   return facilityQuestionsStore.needSection;
     // }

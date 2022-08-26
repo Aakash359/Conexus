@@ -126,7 +126,6 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
 
   const preloadResumePages = () => {
     let i = 0;
-    console.log('candidate====>', candidate);
 
     const promises = [];
 
@@ -403,7 +402,6 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
 
   const renderActionHeader = () => {
     let date = moment(candidate.startDate).format(dateFormat);
-    console.log('candidate====>', date);
     return (
       <View style={headerStyle.rootView}>
         <View style={StyleSheet.flatten([headerStyle.actionRowView])}>
