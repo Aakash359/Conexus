@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   StyleSheet,
@@ -7,7 +7,7 @@ import {
   Platform,
   ViewStyle,
   Text,
-  Button,
+  Alert,
 } from 'react-native';
 import {AppColors, AppFonts, AppSizes} from '../theme/index';
 import {logger} from 'react-native-logs';
@@ -69,21 +69,25 @@ export interface ConexusVideoActionButton {
   title: string;
   onPress: () => void;
   showOnError?: boolean;
+  loaded: any;
 }
 
 const ConexusVideoPlayer = (
   props: ConexusVideoPlayerProps,
   state: ConexusVideoPlayerState,
 ) => {
-  const {volumeLocation, mediaUrl} = props;
+  const {volumeLocation, mediaUrl, actionButton, showActionsOnEnd} = props;
   const [volume, setVolume] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [hasEnded, setHasEnded] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const replaying: boolean = false;
 
-  const player = Video;
-  const progress: number = 0;
+  const videoRef = useRef<Video>(null);
+  // const progress: number = 0;
+  const player: Video = null;
+
   const pausable = (): boolean => {
     return props.pausable;
   };
@@ -92,17 +96,17 @@ const ConexusVideoPlayer = (
     return isPaused;
   };
 
-  // get loaded(): boolean {
-  //   return this.state.loaded;
-  // }
+  const loads = (): boolean => {
+    return loaded;
+  };
 
-  // get isPlaying(): boolean {
-  //   return this.loaded && !this.isPaused && !this.hasError && !this.hasEnded;
-  // }
+  const isPlaying = (): boolean => {
+    return loads() && !isPauseded() && !hasErrors() && !hasEnd();
+  };
 
-  // get hasEnded(): boolean {
-  //   return this.state.hasEnded;
-  // }
+  const hasEnd = (): boolean => {
+    return hasEnded;
+  };
 
   const hasErrors = (): boolean => {
     return hasError;
@@ -124,27 +128,25 @@ const ConexusVideoPlayer = (
     return props.playWhenInactive;
   };
 
-  // get replayTitle(): string {
-  //   return this.props.replayTitle || 'Replay';
-  // }
+  const replayTitle = (): string => {
+    return props.replayTitle || 'Replay';
+  };
 
   // get hideErrors(): boolean {
   //   return this.props.hideErrors;
   // }
 
-  // get hideErrorIcon(): boolean {
-  //   return !!this.props.hideErrorIcon;
-  // }
+  const hideErrorIcons = (): boolean => {
+    return !!props.hideErrorIcon;
+  };
 
-  // get errorIconName(): string {
-  //   return this.props.errorIconName || 'cn-info';
-  // }
+  const errorIconNames = (): string => {
+    return props.errorIconName || 'cn-info';
+  };
 
-  // get errorDisplayText(): string {
-  //   return (
-  //     this.props.errorDisplayText || `This video is currently unavailable.`
-  //   );
-  // }
+  const errorDisplayText = (): string => {
+    return props.errorDisplayText || `This video is currently unavailable.`;
+  };
 
   // get volume(): number {
   //   return this.state.volume;
@@ -204,70 +206,66 @@ const ConexusVideoPlayer = (
   //   SystemSetting.removeVolumeListener(this.volumeListener);
   // }
 
-  // getVolumeStyle(): ViewStyle {
-  //   const location = this.props.volumeLocation;
+  const getVolumeStyle = (): ViewStyle => {
+    const location = volumeLocation;
 
-  //   if (location === 'top-right') {
-  //     return {
-  //       position: 'absolute',
-  //       zIndex: 101,
-  //       right: 0,
-  //       width: 150,
-  //       top: 0,
-  //       padding: 10,
-  //       flexDirection: 'row',
-  //       backgroundColor: 'transparent',
-  //     };
-  //   }
+    if (location === 'top-right') {
+      return {
+        position: 'absolute',
+        zIndex: 101,
+        right: 0,
+        width: 150,
+        top: 0,
+        padding: 10,
+        flexDirection: 'row',
+        backgroundColor: 'transparent',
+      };
+    }
 
-  //   return {
-  //     position: 'absolute',
-  //     zIndex: 101,
-  //     left: 0,
-  //     width: 150,
-  //     top: 0,
-  //     padding: 10,
-  //     flexDirection: 'row',
-  //     backgroundColor: 'transparent',
-  //   };
-  // }
+    return {
+      position: 'absolute',
+      zIndex: 101,
+      left: 0,
+      width: 150,
+      top: 0,
+      padding: 10,
+      flexDirection: 'row',
+      backgroundColor: 'transparent',
+    };
+  };
 
-  // replaying: boolean = false;
+  const replay = () => {
+    if (replaying) {
+      return;
+    }
+    try {
+      replaying = true;
+      const loads = loaded; // Preserve this value
+      setIsPaused(true);
+      // this.setState({isPaused: true}, () => {
+      //   if (this._player) {
+      //     log.info('Replay');
+      //     this._player.seek(0);
 
-  // replay() {
-  //   if (this.replaying) {
-  //     return;
-  //   }
+      //     this.setState({...this.defaultState, loaded}, () => {
+      //       log.info('replayed', this.state);
+      //     });
+      //   }
+      // });
+    } finally {
+      replaying = false;
+    }
+  };
 
-  //   try {
-  //     this.replaying = true;
-  //     const loaded = this.state.loaded; // Preserve this value
+  const getActionButton = (): ConexusVideoActionButton => {
+    if (actionButton && _.isFunction(actionButton)) {
+      return actionButton();
+    } else if (actionButton && !!actionButton['title']) {
+      return actionButton as ConexusVideoActionButton;
+    }
 
-  //     this.setState({isPaused: true}, () => {
-  //       if (this._player) {
-  //         log.info('Replay');
-  //         this._player.seek(0);
-
-  //         this.setState({...this.defaultState, loaded}, () => {
-  //           log.info('replayed', this.state);
-  //         });
-  //       }
-  //     });
-  //   } finally {
-  //     this.replaying = false;
-  //   }
-  // }
-
-  // getActionButton(): ConexusVideoActionButton {
-  //   const {actionButton} = this.props;
-  //   if (actionButton && _.isFunction(actionButton)) {
-  //     return actionButton();
-  //   } else if (actionButton && !!actionButton['title']) {
-  //     return actionButton as ConexusVideoActionButton;
-  //   }
-
-  //   return undefined;
-  // }
+    return undefined;
+  };
 
   const onEnd = () => {
     setTimeout(() => {
@@ -291,7 +289,7 @@ const ConexusVideoPlayer = (
     setTimeout(() => {
       setLoaded(true);
       setIsPaused(!autoPlay);
-      player.seek(0);
+      // player.seek(0);
     }, 0);
   };
 
@@ -325,111 +323,117 @@ const ConexusVideoPlayer = (
   //   return <View style={[styles.container]}>{indicator}</View>;
   // }
 
-  // renderActions() {
-  //   if (this.replaying) {
-  //     return null;
-  //   }
+  const renderActions = () => {
+    if (replaying) {
+      return null;
+    }
 
-  //   if (!this.props.showActionsOnEnd && this.state.hasEnded) {
-  //     return null;
-  //   }
+    if (!showActionsOnEnd && hasEnded) {
+      return null;
+    }
 
-  //   let buttons = [];
-  //   let overlayHeaderText = '';
+    let buttons = [];
+    let overlayHeaderText = '';
 
-  //   const replayButton = {
-  //     title: this.replayTitle,
-  //     onPress: () => this.replay(),
-  //   };
-  //   const menuButtons = this.props.menuButtons || [];
+    const replayButton = {
+      title: replayTitle,
+      onPress: () => replay(),
+    };
+    const menuButtons = props.menuButtons || [];
 
-  //   if (this.hasError) {
-  //     overlayHeaderText = this.errorDisplayText;
-  //     replayButton.title = 'Retry';
-  //     buttons = [replayButton, ...menuButtons.filter(i => i.showOnError)];
-  //   } else if (this.isPaused) {
-  //     // Add Play to the top of the list
-  //     buttons = [{title: 'Play', onPress: () => this.togglePause()}];
+    if (hasError) {
+      overlayHeaderText = errorDisplayText();
+      replayButton.title = 'Retry';
+      buttons = [replayButton, ...menuButtons.filter(i => i.showOnError)];
+    } else if (isPauseded()) {
+      // Add Play to the top of the list
+      buttons = [{title: 'Play', onPress: () => togglePause()}];
 
-  //     if (this.progress > 0) {
-  //       buttons.push(replayButton);
-  //     }
+      // if (progress() > 0) {
+      //   buttons.push(replayButton);
+      // }
 
-  //     buttons = [...buttons, ...menuButtons];
-  //   } else if (!this.loaded || this.isPlaying) {
-  //     if (this.isPlaying && this.props.showActionButtonWhilePlaying) {
-  //       const btnDetails = this.getActionButton();
+      buttons = [...buttons, ...menuButtons];
+    } else if (!loads() || isPlaying()) {
+      if (isPlaying() && props.showActionButtonWhilePlaying) {
+        const btnDetails = getActionButton();
+        console.log('====================================');
+        console.log('buttonTitle====>', btnDetails);
+        console.log('====================================');
+        if (btnDetails) {
+          // return (
+          //   <Text>hi</Text>
+          //   // <ScreenFooterButton
+          //   //   hideGradient
+          //   //   title={btnDetails.title}
+          //   //   onPress={btnDetails.onPress}>
+          //   //   </ScreenFooterButton>
+          //   // <View style={[styles.overlayFooter, this.props.overlayFooterStyle]} >
+          //   //     <ActionButton primary title={btnDetails.title} onPress={btnDetails.onPress}></ActionButton>
+          //   // </View>
+          // );
+        }
+      }
 
-  //       if (btnDetails) {
-  //         return (
-  //           <ScreenFooterButton
-  //             hideGradient
-  //             title={btnDetails.title}
-  //             onPress={btnDetails.onPress}></ScreenFooterButton>
-  //           // <View style={[styles.overlayFooter, this.props.overlayFooterStyle]} >
-  //           //     <ActionButton primary title={btnDetails.title} onPress={btnDetails.onPress}></ActionButton>
-  //           // </View>
-  //         );
-  //       }
-  //     }
+      return null;
+    } else {
+      buttons = [replayButton, ...menuButtons];
+    }
 
-  //     return null;
-  //   } else {
-  //     buttons = [replayButton, ...menuButtons];
-  //   }
+    const actionButton = getActionButton();
 
-  //   const actionButton = this.getActionButton();
+    return (
+      <Text>hi</Text>
+      // <View style={[styles.overlay]}>
+      //   <View
+      //     style={[
+      //       styles.overlayContent,
+      //       hasErrors()
+      //         ? props.overlayContentWithErrorStyle
+      //         : props.overlayContentStyle,
+      //     ]}>
+      //     {hasErrors() && (
+      //       <IconTitleBlock
+      //         textColor={AppColors.white}
+      //         iconColor={AppColors.white}
+      //         style={styles.errorHeader}
+      //         iconName={hideErrorIcons() ? undefined : errorIconNames()}
+      //         text={errorDisplayText}
+      //       />
+      //     )}
+      //     <View
+      //       style={[
+      //         styles.overlayButtons,
+      //         hasErrors() ? styles.overlayButtonsWithError : null,
+      //       ]}>
+      //       {buttons.map((b, i) => (
+      //         <Text>{b.title}</Text>
+      //         // <TouchableOpacity
+      //         //   key={'mb' + i}
+      //         //   rounded
+      //         //   transparent
+      //         //   style={styles.overlayButton}
+      //         //   onPress={() => b.onPress()}>
+      //         //   <Text style={styles.overlayButtonText}>{b.title}</Text>
+      //         // </TouchableOpacity>
+      //       ))}
+      //     </View>
+      //   </View>
+      //   {
+      //     !!actionButton && (
+      //       <ScreenFooterButton
+      //         hideGradient
+      //         title={actionButton.title}
+      //         onPress={actionButton.onPress}></ScreenFooterButton>
+      //     )
 
-  //   return (
-  //     <View style={[styles.overlay]}>
-  //       <View
-  //         style={[
-  //           styles.overlayContent,
-  //           this.hasError
-  //             ? this.props.overlayContentWithErrorStyle
-  //             : this.props.overlayContentStyle,
-  //         ]}>
-  //         {this.hasError && (
-  //           <IconTitleBlock
-  //             textColor={AppColors.white}
-  //             iconColor={AppColors.white}
-  //             style={styles.errorHeader}
-  //             iconName={this.hideErrorIcon ? undefined : this.errorIconName}
-  //             text={this.errorDisplayText}
-  //           />
-  //         )}
-  //         <View
-  //           style={[
-  //             styles.overlayButtons,
-  //             this.hasError ? styles.overlayButtonsWithError : null,
-  //           ]}>
-  //           {buttons.map((b, i) => (
-  //             <Button
-  //               key={'mb' + i}
-  //               rounded
-  //               transparent
-  //               style={styles.overlayButton}
-  //               onPress={b.onPress.bind(this)}>
-  //               <Text style={styles.overlayButtonText}>{b.title}</Text>
-  //             </Button>
-  //           ))}
-  //         </View>
-  //       </View>
-  //       {
-  //         !!actionButton && (
-  //           <ScreenFooterButton
-  //             hideGradient
-  //             title={actionButton.title}
-  //             onPress={actionButton.onPress}></ScreenFooterButton>
-  //         )
-
-  //         // <View style={[styles.overlayFooter, this.props.overlayFooterStyle]} >
-  //         //     <ActionButton primary title={actionButton.title} onPress={actionButton.onPress}></ActionButton>
-  //         // </View>
-  //       }
-  //     </View>
-  //   );
-  // }
+      //     // <View style={[styles.overlayFooter, this.props.overlayFooterStyle]} >
+      //     //     <ActionButton primary title={actionButton.title} onPress={actionButton.onPress}></ActionButton>
+      //     // </View>
+      //   }
+      // </View>
+    );
+  };
 
   // renderPausedOverlay(): JSX.Element | undefined {
   //   if (!this.state.isPaused) {
@@ -462,61 +466,66 @@ const ConexusVideoPlayer = (
 
   const renderPlayer = () => {
     return (
-      <TouchableOpacity
-        // disabled={!pausable() || isPauseded()}
-        style={[styles.container, props.style]}
-        onPress={togglePause}>
-        {!hidePlayer && (
-          <Video
-            source={{uri: mediaUrl}} // Can be a URL or a local file.
-            ref={(ref: any) => (player = ref)}
-            resizeMode={'cover'}
-            rate={1.0} // 0 is paused, 1 is normal.
-            // volume={volume} // 0 is muted, 1 is normal.
-            muted={false} // Mutes the audio entirely.
-            paused={isPauseded}
-            ignoreSilentSwitch={'ignore'}
-            playWhenInactive={playWhenInactive}
-            onLoad={onLoad()}
-            onEnd={onEnd()}
-            onError={onError()}
-            onProgress={onProgress()}
-            style={[styles.video]}
-          />
-        )}
-        {/* {this.renderPausedOverlay()}
-        {this.renderPlayOverlay()}
-        {this.renderActions()}
-        {this.renderLoading()} */}
-        {/* {!hidePlayer && !!volumeLocation && (
-          <View style={this.getVolumeStyle()}>
-            <Slider
-              style={{flex: 1, height: 54}}
-              value={this.state.volume}
-              onValueChange={_.debounce(value => {
-                this.volume = value;
-              })}
-              thumbTintColor={AppColors.blue}
-              minimumTrackTintColor={AppColors.blue}
-              maximumTrackTintColor={AppColors.white}
-              trackStyle={{height: 2}}
-              thumbStyle={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 24,
-                height: 24,
-                borderRadius: 12,
-              }}
-              thumbImage={require('./Images/player/volume.png')}
-            />
-          </View>
-        )} */}
-      </TouchableOpacity>
+      <Video
+        source={{
+          uri: 'http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',
+        }} // Can be a URL or a local file.
+        ref={videoRef}
+        style={{height: 200, width: 200}}
+        // resizeMode={'cover'}
+        // rate={1.0} // 0 is paused, 1 is normal.
+        // // volume={this.volume} // 0 is muted, 1 is normal.
+        // muted={false} // Mutes the audio entirely.
+        // paused={isPauseded}
+        // ignoreSilentSwitch={'ignore'}
+        // playWhenInactive={playWhenInactive}
+        // onLoad={onLoad()}
+        // onEnd={onEnd()}
+        // onError={onError()}
+        // onProgress={onProgress()}
+        // style={[styles.video]}
+      />
+
+      // <TouchableOpacity
+      //   disabled={!pausable() || isPauseded()}
+      //   style={[styles.container, props.style]}
+      //   onPress={() => togglePause()}>
+      //   {
+
+      //   }
+      //   {/* {renderPausedOverlay()} */}
+      //   {/* {renderPlayOverlay()} */}
+      //   {/* {renderActions()} */}
+      //   {/* {renderLoading()} */}
+      //   {
+      //     <View style={getVolumeStyle()}>
+      //       {/* <Slider
+      //         style={{flex: 1, height: 54}}
+      //         value={volume}
+      //         onValueChange={_.debounce(value => {
+      //           volume = value;
+      //         })}
+      //         thumbTintColor={AppColors.blue}
+      //         minimumTrackTintColor={AppColors.blue}
+      //         maximumTrackTintColor={AppColors.white}
+      //         trackStyle={{height: 2}}
+      //         thumbStyle={{
+      //           alignItems: 'center',
+      //           justifyContent: 'center',
+      //           width: 24,
+      //           height: 24,
+      //           borderRadius: 12,
+      //         }}
+      //         thumbImage={require('./Images/player/volume.png')}
+      //       /> */}
+      //     </View>
+      //   }
+      // </TouchableOpacity>
     );
   };
 
-  // if (this.hasError) {
-  //   return this.renderActions();
+  // if (hasError) {
+  //   return renderActions();
   // }
 
   return renderPlayer();

@@ -30,7 +30,7 @@ const ReviewCandidateContainer = (
   const mounted: boolean = false;
   const userInfo = useSelector(state => state.userReducer);
   const [facilityId, setFacilityId] = useState('');
-  const [refreshing, setRefreshing] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
   const [data, setData] = useState([]);
 
   const saveToken = async () => {
@@ -178,12 +178,10 @@ const ReviewCandidateContainer = (
         submissions={data}
         selectedFacilityId={facilityId}
         refreshing={refreshing}
-        // onRefresh={load(true)}
+        onRefresh={() => load(true)}
       />
     );
   };
-
-  // const {facilitySubmissionsStore} = this.props;
 
   return (
     // <FacilitySelectionContainer

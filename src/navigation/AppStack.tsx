@@ -21,6 +21,7 @@ import ImageGallery from '../containers/Facility/HcpDetail/imageGallery';
 import ConversationContainer from '../containers/MessageCenter/conversation';
 import VideoRecorder from '../containers/VideoRecorder/videoRecoder';
 import {DrawerActions} from '@react-navigation/native';
+import VideoPlayer from '../containers/VideoPlayer/videoPlayer';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -153,6 +154,13 @@ const AppStack = () => {
               fontWeight: 'bold',
               fontSize: 22,
             },
+          }}
+        />
+        <Stack.Screen
+          name="VideoPlayer"
+          component={VideoPlayer}
+          options={{
+            headerShown: false,
           }}
         />
         <Stack.Screen

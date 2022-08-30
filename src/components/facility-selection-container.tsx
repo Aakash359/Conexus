@@ -93,7 +93,7 @@ const FacilitySelectionContainer = (props: FacilitySelectionContainerProps) => {
     const {expectOverrideFacilities} = props;
     if (expectOverrideFacilities) {
       const {overrideFacilities} = props;
-      return overrideFacilities.length > 0;
+      return overrideFacilities;
     }
 
     return props.userInfo?.user?.userFacilities?.length > 1;

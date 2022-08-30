@@ -16,6 +16,8 @@ import java.util.List;
 import android.os.Bundle;
 import com.microsoft.codepush.react.CodePush;
 import com.oblador.vectoricons.VectorIconsPackage;
+import com.brentvatne.react.ReactVideoPackage;
+
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -37,6 +39,7 @@ public class MainApplication extends Application implements ReactApplication {
           
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
+          new ReactVideoPackage();
           new VectorIconsPackage();
           return packages;
         }

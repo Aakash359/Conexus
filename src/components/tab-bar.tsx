@@ -49,46 +49,10 @@ export const TabBar = (props: TabBarProps) => {
   //   });
   // }
 
-  const selectTab = (tab: TabDetails) => {
+  const selectTab = (tab: any) => {
     setSelectedTab(tab);
     props.onTabSelection(tab);
   };
-
-  // const renderButton = (tab: TabDetails) => {
-  //   const Selected = selectedTab === tab;
-
-  //   return (
-  //     <TouchableOpacity
-  //       key={tab.id}
-  //       style={Selected ? styles.buttonSelected : styles.button}
-  //       onPress={selectTab(tab)}
-  // >
-  //       <View style={{flex: 1, alignItems: 'center', flexDirection: 'row'}}>
-  //         <Text
-  //           style={Selected ? styles.buttonSelectedText : styles.buttonText}>
-  //           {tab.title}
-  //         </Text>
-  //         {!!tab.badge && (
-  //           <BubbleLabel
-  //             height={16}
-  //             title={tab.badge}
-  //             style={StyleSheet.flatten([
-  //               styles.badge,
-  //               {
-  //                 width: tab.badge.length === 1 ? 16 : 24,
-  //                 backgroundColor: tab.badgeColor || AppColors.green,
-  //               },
-  //             ])}
-  //             textStyle={StyleSheet.flatten([
-  //               styles.badgeText,
-  //               {color: tab.badgeTextColor || AppColors.white},
-  //             ])}
-  //           />
-  //         )}
-  //       </View>
-  //     </TouchableOpacity>
-  //   );
-  // };
 
   const tabElements = tabs.map(tab => {
     const Selected = selectedTab === tab;
@@ -98,7 +62,9 @@ export const TabBar = (props: TabBarProps) => {
         <TouchableOpacity
           key={tab.id}
           style={Selected ? styles.buttonSelected : styles.button}
-          onPress={tab => selectTab(tab)}>
+          onPress={tab => {
+            selectTab(tab);
+          }}>
           <View style={{flex: 1, alignItems: 'center', flexDirection: 'row'}}>
             <Text
               style={Selected ? styles.buttonSelectedText : styles.buttonText}>

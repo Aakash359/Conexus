@@ -279,7 +279,7 @@ const Positions = (props: PositionsProps, state: PositionState) => {
             tintColor={AppColors.blue}
             colors={[AppColors.blue]}
             refreshing={refreshing}
-            // onRefresh={load(false)}
+            onRefresh={() => load(false)}
           />
         }
         renderItem={renderNeedSection}

@@ -58,3 +58,6 @@ export class StoreType {
   static DEVICE = 'deviceStore'
   static ALL = [StoreType.USER, StoreType.DEVICE]
 }
+
+
+

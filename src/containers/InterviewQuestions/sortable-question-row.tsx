@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Text,
   StyleSheet,
@@ -9,8 +9,9 @@ import {
   ViewStyle,
   TouchableOpacity,
 } from 'react-native';
-import {AppFonts, AppColors} from '../../../theme';
-import {Circle, ConexusIcon} from '../../../components';
+import {Circle} from '../../components/circle';
+import {ConexusIcon} from '../../components/conexus-icon';
+import {AppFonts, AppColors} from '../../theme';
 
 export interface SortableQuestionProps {
   editing: boolean;
@@ -24,89 +25,85 @@ export interface SortableQuestionProps {
   marginBottom?: number;
 }
 
-const SortableQuestionRow = (props:SortableQuestionProps)=>{
-  
-  const _style: ViewStyle;
-  const _activeAnimationValue: any;
+const SortableQuestionRow = (props: SortableQuestionProps) => {
+  const _activeAnimationValue: any = new Animated.Value(0);
 
-  constructor(props, state) {
-    super(props, state);
+  const {
+    onOpenQuestion,
+    onPlayQuestion,
+    onDeleteQuestion,
+    videoUrl,
+    allowDeleteQuestion,
+    editing,
+    marginBottom,
+    text,
+  } = props;
 
-    this._activeAnimationValue = new Animated.Value(0);
-    this._style =
-      Platform.OS === 'android' ? this._getAndroidStyle() : this._getIosStyle();
-  }
-  _getIosStyle() {
+  const getIosStyle = () => {
     return {
       transform: [
         {
-          scale: this._activeAnimationValue.interpolate({
+          scale: _activeAnimationValue.interpolate({
             inputRange: [0, 1],
             outputRange: [1, 1.1],
           }),
         },
       ],
-      shadowRadius: this._activeAnimationValue.interpolate({
+      shadowRadius: _activeAnimationValue.interpolate({
         inputRange: [0, 1],
         outputRange: [2, 10],
       }),
     };
-  }
+  };
 
-  _getAndroidStyle() {
+  const getAndroidStyle = () => {
     return {
       transform: [
         {
-          scale: this._activeAnimationValue.interpolate({
+          scale: _activeAnimationValue.interpolate({
             inputRange: [0, 1],
             outputRange: [1, 1.03],
           }),
         },
       ],
-      elevation: this._activeAnimationValue.interpolate({
+      elevation: _activeAnimationValue.interpolate({
         inputRange: [0, 1],
         outputRange: [2, 6],
       }),
     };
-  }
+  };
 
-  _openQuestion() {
-    const {onOpenQuestion, editing} = this.props;
+  const _style = Platform.OS === 'android' ? getAndroidStyle() : getIosStyle();
 
-    if (onOpenQuestion && !!onOpenQuestion.call) {
+  const openQuestion = () => {
+    if (props.onOpenQuestion && !!props.onOpenQuestion.call) {
       onOpenQuestion(editing);
     }
-  }
+  };
 
-  _playQuestion() {
-    const {onPlayQuestion} = this.props;
-
-    if (onPlayQuestion && !!onPlayQuestion.call) {
+  const playQuestion = () => {
+    if (props.onPlayQuestion && !!props.onPlayQuestion.call) {
       onPlayQuestion();
     }
-  }
+  };
 
-  _deleteQuestion() {
-    const {onDeleteQuestion} = this.props;
-
-    if (onDeleteQuestion && onDeleteQuestion.call) {
+  const deleteQuestion = () => {
+    if (props.onDeleteQuestion && props.onDeleteQuestion.call) {
       onDeleteQuestion();
     }
-  }
+  };
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.dragActive !== nextProps.dragActive) {
-      Animated.timing(this._activeAnimationValue, {
-        duration: 300,
-        easing: Easing.bounce,
-        toValue: Number(nextProps.dragActive),
-      }).start();
-    }
-  }
+  // componentWillReceiveProps(nextProps) {
+  //   if (this.props.dragActive !== nextProps.dragActive) {
+  //     Animated.timing(this._activeAnimationValue, {
+  //       duration: 300,
+  //       easing: Easing.bounce,
+  //       toValue: Number(nextProps.dragActive),
+  //     }).start();
+  //   }
+  // }
 
-  _renderPlayIcon() {
-    const {videoUrl} = this.props;
-
+  const renderPlayIcon = () => {
     if (!videoUrl) {
       return (
         <Circle size={46} color={AppColors.white} style={styles.circle}>
@@ -121,7 +118,7 @@ const SortableQuestionRow = (props:SortableQuestionProps)=>{
     }
 
     return (
-      <TouchableOpacity onPress={this._playQuestion.bind(this)}>
+      <TouchableOpacity onPress={playQuestion}>
         <Circle size={46} color={AppColors.white} style={styles.circle}>
           <ConexusIcon
             style={styles.playIcon}
@@ -132,14 +129,12 @@ const SortableQuestionRow = (props:SortableQuestionProps)=>{
         </Circle>
       </TouchableOpacity>
     );
-  }
+  };
 
-  _renderIcon() {
-    const {editing} = this.props;
-
+  const renderIcon = () => {
     return (
       <View style={[styles.iconContainer, {marginRight: 12}]}>
-        {!editing && this._renderPlayIcon()}
+        {!editing && renderPlayIcon()}
         {editing && (
           <ConexusIcon
             name={'cn-hamburger'}
@@ -150,52 +145,44 @@ const SortableQuestionRow = (props:SortableQuestionProps)=>{
         )}
       </View>
     );
-  }
+  };
 
-  _renderDeleteIcon() {
+  const renderDeleteIcon = () => {
     return (
       <TouchableOpacity
         style={[styles.iconContainer, {marginLeft: 12}]}
-        onPress={this._deleteQuestion.bind(this)}>
+        onPress={deleteQuestion}>
         <ConexusIcon name={'cn-x'} color={AppColors.red} size={16} style={{}} />
       </TouchableOpacity>
     );
-  }
+  };
 
-  render() {
-    const {text, editing, marginBottom, allowDeleteQuestion} = this.props;
-
-    return (
-      <Animated.View
-        style={[
-          styles.question,
-          this._style,
-          {marginBottom: marginBottom || 0},
-        ]}>
-        {this._renderIcon()}
-        {editing && (
-          <View style={styles.questionDetailsButton}>
-            <Text style={styles.questionTextEditing}>
-              {text}
-              {this._style.marginBottom}
-            </Text>
-          </View>
-        )}
-        {!editing && (
-          <TouchableOpacity
-            style={styles.questionDetailsButton}
-            onPress={editing ? null : this._openQuestion.bind(this)}>
-            <Text style={styles.questionText}>
-              {text}
-              {this._style.marginBottom}
-            </Text>
-          </TouchableOpacity>
-        )}
-        {editing && allowDeleteQuestion && this._renderDeleteIcon()}
-      </Animated.View>
-    );
-  }
-}
+  return (
+    <Animated.View
+      style={[styles.question, _style, {marginBottom: marginBottom || 0}]}>
+      {renderIcon()}
+      {editing && (
+        <View style={styles.questionDetailsButton}>
+          <Text style={styles.questionTextEditing}>
+            {text}
+            {_style.marginBottom}
+          </Text>
+        </View>
+      )}
+      {!editing && (
+        <TouchableOpacity
+          style={styles.questionDetailsButton}
+          onPress={editing ? null : openQuestion}>
+          <Text style={styles.questionText}>
+            {text}
+            {_style.marginBottom}
+          </Text>
+        </TouchableOpacity>
+      )}
+      {editing && allowDeleteQuestion && renderDeleteIcon()}
+    </Animated.View>
+  );
+};
 
 const getRowShadows = () => {
   return Platform.OS === 'android'
@@ -263,3 +250,5 @@ const styles = StyleSheet.create({
     left: 6,
   },
 });
+
+export default SortableQuestionRow;

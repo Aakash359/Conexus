@@ -25,7 +25,7 @@ const FacilityListHeaderItem = (props: FacilityListHeaderItemProps) => {
   const {caption} = props;
 
   const facilities = (): FacilitySelectionItem[] => {
-    if (props.overrideFacilities && props.overrideFacilities.length > 0) {
+    if (props.overrideFacilities) {
       return props.overrideFacilities;
     }
 
@@ -119,9 +119,6 @@ const FacilityListHeaderItem = (props: FacilityListHeaderItemProps) => {
       hideSelectedIcon: true,
       onClose: facilityChosen(),
     });
-    // Actions[ScreenType.RADIO_LIST_LIGHTBOX]({
-
-    // });
   };
 
   const title = selectedFacility ? selectedFacility.facilityName : '';

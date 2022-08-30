@@ -23,7 +23,7 @@ import {TabDetails, ScreenFooterButton} from '../../../components';
 import {ConexusIconButton} from '../../../components/conexus-icon-button';
 import {ActionButton} from '../../../components/action-button';
 import {Avatar} from '../../../components/avatar';
-import {TabBar} from '../../../components/tab-bar';
+
 import {CandidateResponseRow} from './candidate-response-row';
 import moment from 'moment';
 // import {ImageCacheManager} from 'react-native-cached-image';
@@ -38,11 +38,14 @@ import {candidateSubmissionsService} from '../../../services/candidateSubmissioS
 import {notInterestedService} from '../../../services/notInterestedService';
 import {onChange} from 'react-native-reanimated';
 import {makeOfferService} from '../../../services/makeOfferService';
+import {TOP_TAB_SCREENS} from '../../../navigation/TabNavigator';
+import {TabBar} from '../../../components/tab-bar';
 
 interface HcpDetailProps {
   submissionId: string;
   candidate?: any;
   onClose?: () => any;
+  screen: any;
 }
 
 interface HcpDetailState {
@@ -65,6 +68,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const [candidate, setCandidate] = useState(
     props?.route?.params?.candidate || {},
   );
+  const [data, setData] = useState([]);
   const [stateCandidate, setStateCandidate] = useState([]);
   const [startDate, setStartDate] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
@@ -82,8 +86,9 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   );
   const [calling, setCalling] = useState(false);
   const submissionId = props?.route?.params?.submissionId;
+  const validPhone = phoneFormatter.isValid10DigitPhoneNumber(callbackNumber);
+  const {onMessageSendCallback, screen} = props;
 
-  const {onMessageSendCallback} = props;
   // get responses(): typeof CandidateResponseModel.Type[] {
   //   const {candidate} = this.state;
 
@@ -104,52 +109,51 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   //   return result;
   // }
 
-  // const refreshCandidate = (refreshing: boolean = false) => {
-  //   setRefreshing(refreshing);
-  //   setLoadingSummary(loadingSummary);
+  const refreshCandidate = (refreshing: boolean = false) => {
+    console.log('Okkk===>', 'loading', loadingSummary);
 
-  //   loadCandidateBySubmissionId(submissionId).then(
-  //     (candidate: ) => {
-  //       this.setState({refreshing: false, candidate, loadingSummary: false});
-  //       this._preloadResumePages();
-  //     },
-  //     () => {
-  //       //TODO HANDLE ERROR
-  //       this.setState({
-  //         refreshing: false,
-  //         candidate: null,
-  //         loadingSummary: false,
-  //       });
-  //     },
-  //   );
-  // };
+    setRefreshing(refreshing);
+    setLoadingSummary(loadingSummary);
 
-  const preloadResumePages = () => {
+    // loadCandidateBySubmissionId(submissionId).then(
+    //   (candidate: ) => {
+    //     this.setState({refreshing: false, candidate, loadingSummary: false});
+    //     this._preloadResumePages();
+    //   },
+    //   () => {
+    //     //TODO HANDLE ERROR
+    //     this.setState({
+    //       refreshing: false,
+    //       candidate: null,
+    //       loadingSummary: false,
+    //     });
+    //   },
+    // );
+  };
+
+  const preloadResumePages = (data: any) => {
     let i = 0;
-
     const promises = [];
+    console.log('Data====>', data);
 
-    // if (propsCandidate) {
-    //   while (
-    //     i < preloadResumeCount &&
-    //     i < propsCandidate.resumePages.pageCount
-    //   ) {
-    //     promises.push(
-    //       new Promise((resolve, reject) => {
-    //         console.log(
-    //           'Pre-loading candidate resume image: ' +
-    //             propsCandidate.resumePages.images[i],
-    //         );
-    //         return imageCacheManager
-    //           .downloadAndCacheUrl(propsCandidate.resumePages.images[i])
-    //           .then(resolve, reject);
-    //       }),
-    //     );
-    //     i += 1;
-    //   }
+    if (data) {
+      while (i < preloadResumeCount && i < data.resumePages.pageCount) {
+        promises.push(
+          new Promise((resolve, reject) => {
+            console.log(
+              'Pre-loading candidate resume image: ' +
+                candidate.resumePages.originalPdf,
+            );
+            return imageCacheManager
+              .downloadAndCacheUrl(candidate.resumePages.originalPdf)
+              .then(resolve, reject);
+          }),
+        );
+        i += 1;
+      }
 
-    //   return Promise.all(promises);
-    // }
+      return Promise.all(promises);
+    }
 
     return Promise.resolve();
   };
@@ -159,8 +163,9 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     setLoadingSummary(true);
     try {
       const {data} = await candidateSubmissionsService(submissionId);
-      setCandidate(data);
-      preloadResumePages();
+
+      setData(data);
+      preloadResumePages(data);
       setRefreshing(false);
       setLoadingSummary(false);
     } catch (error) {
@@ -186,12 +191,6 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     // }
   }, []);
 
-  // componentWillUnmount() {
-  //   if (this.props.onClose && this.props.onClose.call) {
-  //     this.props.onClose();
-  //   }
-  // }
-
   // getAnswerPlaylist(): AnswerRatingItem[] {
   //   const responses = this.responses;
 
@@ -214,13 +213,6 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   //     };
   //   });
   //   return answers;
-  // }
-
-  // showContactCandidateLightbox() {
-  //   Actions[ScreenType.CONTACT_CANDIDATE_LIGHTBOX]({
-  //     candidate: this.state.candidate,
-  //     onMessageSendCallback: this.state.candidate.setConversationId.bind(this),
-  //   });
   // }
 
   // showAnswers(initialIndex = 0) {
@@ -266,62 +258,13 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   //   Actions[ScreenType.AUDIO_PLAYER_LIGHTBOX](parms);
   // }
 
-  // showNotInterestedLightbox() {
-  //   const {facilitySubmissionsStore} = this.props;
-  //   const {candidate} = this.state;
-
-  //   Actions[ScreenType.YES_NO_LIGHTBOX]({
-  //     yesTitle: "I'm Not Interested",
-  //     yesDanger: true,
-  //     noTitle: 'Cancel',
-  //     title: "Are you sure you're not interested in this candidate?",
-  //     onAnswer: (result: boolean) => {
-  //       if (result) {
-  //         this.setState({candidate: null}); // Shows loading
-
-  //         candidate
-  //           .saveNotInterested()
-  //           .then(facilitySubmissionsStore.load)
-  //           .then(() => Actions.pop())
-  //           .catch(() => Actions.pop());
-  //       }
-  //     },
-  //   });
-  // }
-
-  // showMakeOfferLightbox() {
-  //   const {facilitySubmissionsStore} = this.props;
-  //   const {candidate} = this.state;
-
-  //   Actions[ScreenType.FACILITIES.MAKE_OFFER_LIGHTBOX]({
-  //     photoUrl: candidate.photoUrl,
-  //     photoLabel: candidate.photoLabel,
-  //     candidateTitle: candidate.display.title,
-  //     candidateDescription: candidate.display.description,
-  //     startDate: candidate.startDate,
-  //     onSubmit: (result: {startDate: string}) => {
-  //       if (result) {
-  //         log.info('HcpDetailView', 'saveOffer');
-  //         candidate.setStartDate(result.startDate);
-  //         candidate.saveMakeOffer()
-  //           .then(facilitySubmissionsStore.load)
-  //           .catch(error => {
-  //             log.info('HcpDetailView', 'saveOffer', 'error', error);
-  //           });
-  //       }
-  //     },
-  //   });
-  // }
-
   const renderQuestions = () => {
     const responses = [];
-    // console.log('CaNDUAUBUSX====>', candidate.);
-
-    // candidate.sections.forEach((section: {questions: any[]}) => {
-    //   section.questions.forEach(response => {
-    //     responses.push(response);
-    //   });
-    // });
+    data.sections.forEach((section: {questions: any[]}) => {
+      section.questions.forEach(response => {
+        responses.push(response);
+      });
+    });
 
     if (!responses.length) {
       return (
@@ -433,6 +376,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
             title="Make Offer"
           />
         </View>
+
         <TabBar
           selectedTabId={selectedTab.id}
           tabs={tabs}
@@ -468,8 +412,6 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
       </View>
     );
   };
-
-  const validPhone = phoneFormatter.isValid10DigitPhoneNumber(callbackNumber);
 
   const onCallbackChangeText = (callbackNumber: string) => {
     setCallBackNumber({
@@ -526,7 +468,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
           refreshControl={
             <RefreshControl
               Refreshing={refreshing}
-              // onRefresh={refreshCandidate(true)}
+              onRefresh={() => refreshCandidate(true)}
             />
           }
           style={styles.rootView}
@@ -552,12 +494,10 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
           {loadingSummary && selectedTab === tabs[0] && (
             <ConexusContentList
               style={styles.contentList}
-              data={candidate.submissionSummary}></ConexusContentList>
+              data={candidate.submissionSummary}
+            />
           )}
-          {
-            selectedTab === tabs[1] && Alert.alert('hi')
-            // renderQuestions()
-          }
+          {selectedTab === tabs[1] && renderQuestions(data)}
           {/* {loadingSummary && renderLoading(100)} */}
         </ScrollView>
         {!!candidate && candidate.conversationAllowed && (

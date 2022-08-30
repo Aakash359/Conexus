@@ -16,6 +16,7 @@ import {
 } from '../../stores/facility/';
 import {UserStore} from '../../stores/';
 import {FacilitySelectionItem} from '../../components';
+import {Avatar} from '../../components/avatar';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import {ActionButton} from '../../components/action-button';
 import {logger} from 'react-native-logs';
@@ -89,14 +90,12 @@ const InterviewQuestions = (
   //   return [];
   // };
 
-  const facilities = (): FacilitySelectionItem[] => {
-    return facility.map((f: any) => {
-      return {
-        facilityId: f.facilityId,
-        facilityName: f.facilityName,
-        photoUrl: f.facPhotoUrl || '',
-      };
-    });
+  const facilities = (): any => {
+    return {
+      facilityId: facility.facilityId,
+      facilityName: facility.facilityName,
+      photoUrl: facility.facPhotoUrl || '',
+    };
   };
 
   const load = async (refreshing: boolean = false) => {
@@ -108,7 +107,6 @@ const InterviewQuestions = (
     try {
       const {data} = await facilityQuestionsService();
       let sectionData = data.filter((i: any) => !!i);
-
       setFacility(sectionData?.[0]);
       setSection(sectionData?.[0]?.questionSections);
       setRefreshing(false);
@@ -179,17 +177,17 @@ const InterviewQuestions = (
 
   return (
     <>
-      {/* <FacilitySelectionContainer
+      <FacilitySelectionContainer
         noDataText="No Questions Available"
         facilityHeaderCaption="Showing questions for"
         refreshing={refreshing}
-        // onRefresh={load(true)}
+        onRefresh={() => load(true)}
         // onFacilityChosen={(facilityId: string) => this.forceUpdate()}
         expectOverrideFacilities={true}
-        // overrideFacilities={facilities}
+        overrideFacilities={facilities()}
         showNewQuestionButton={true}
-        // needId={needId}
-      ></FacilitySelectionContainer> */}
+        needId={props.needId}
+      />
       <FlatList
         style={styles.list}
         refreshControl={
@@ -197,7 +195,7 @@ const InterviewQuestions = (
             tintColor={AppColors.blue}
             colors={[AppColors.blue]}
             refreshing={refreshing}
-            // onRefresh={load(true)}
+            onRefresh={() => load(true)}
           />
         }
         ListFooterComponent={() => {

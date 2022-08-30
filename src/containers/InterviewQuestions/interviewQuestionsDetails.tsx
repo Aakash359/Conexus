@@ -6,18 +6,13 @@ import {
   RefreshControl,
   ScrollView,
   Alert,
+  FlatList,
   Text,
 } from 'react-native';
 import {AppColors, AppSizes} from '../../theme';
 import {TabDetails} from '../../components';
 import {TabBar} from '../../components/tab-bar';
 import {ViewHeader} from '../../components/view-header';
-import {SortableQuestionRow} from './sortable-question-row';
-import {
-  FacilityQuestionsStore,
-  QuestionSectionModel,
-  QuestionModel,
-} from '../../../stores/facility';
 import {showYesNoAlert} from '../../common';
 import {useSelector} from '../../redux/reducers/index';
 import Styles from '../../theme/styles';
@@ -29,13 +24,15 @@ import Tab from '../../theme/components/Tab';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {needQuestionsService} from '../../services/InterviewQuestions/needQuestionsService';
 import _ from 'lodash';
+import SortableQuestionRow from './sortable-question-row';
+import NavigationService from '../../navigation/NavigationService';
+import {deleteQuestionsService} from '../../services/InterviewQuestions/deleteQuestionsService';
 
 export interface InterviewQuestionDetailProps {
   questionSectionId: string;
   needId: string;
   sectionTitleOverride?: string;
   facilityQuestionsStore: any;
-  userStore?: UserStore;
   onSave?: () => any;
 }
 
@@ -50,7 +47,7 @@ export interface InterviewQuestionDetailState {
 }
 
 type RowMap = {
-  [key: string]: typeof QuestionModel.Type;
+  [key: string]: any;
 };
 
 const InterviewQuestionDetail = (
@@ -68,10 +65,11 @@ const InterviewQuestionDetail = (
   const propsData = [props?.route?.params] ? [props?.route?.params] : {};
   const {needId, sectionTitleOverride, questionSectionId} = propsData?.[0];
   const {sectionFacilityID, sections} = propsData?.[0];
-  const {facilityId} = sectionFacilityID;
+  const {facilityId} = sectionFacilityID ? sectionFacilityID : {};
   const [selectedTabId, setSelectedTabID] = useState(
     needId ? 'other' : 'default',
   );
+  const newOrder: Array<string> = [];
   const facilityID = userInfo?.user?.userFacilities?.[0]?.facilityId;
 
   //   const onSave=()=> {
@@ -106,6 +104,7 @@ const InterviewQuestionDetail = (
     try {
       const {data} = await needQuestionsService(needId);
       let questions = _.orderBy(data, ['displayOrder'], ['asc']);
+
       setNeedQuestionList(questions);
       setRefreshing(false);
       setLoading(false);
@@ -134,54 +133,6 @@ const InterviewQuestionDetail = (
     return questions.filter(q => !q['deleted']);
   };
 
-  //   get defaultListContentHeight() {
-  //     return AppSizes.screen.height - AppSizes.navbarHeight;
-  //   }
-
-  //   constructor(
-  //     props: CatalogSectionContainerProps,
-  //     state: CatalogSectionContainerState,
-  //   ) {
-  //     super(props, state);
-
-  //     this.state = {
-  //       editing: false,
-  //       selectedTabId: !!props.needId ? 'other' : 'default',
-  //       refreshing: false,
-  //       silentRefreshing: false,
-  //       saving: false,
-  //       loading: false,
-  //       loadingError: false,
-  //     };
-  //   }
-
-  //   componentWillMount() {
-  //     if (this.props.needId) {
-  //       this.props.facilityQuestionsStore.reset();
-  //     }
-  //   }
-
-  //   componentDidMount() {
-  //     if (this.props.needId) {
-  //       this.loadNeedQuestions();
-  //     }
-  //   }
-
-  //   loadNeedQuestions() {
-  //     this.props.facilityQuestionsStore.reset();
-  //     this.setState({loading: true, loadingError: false});
-
-  //     this.props.facilityQuestionsStore
-  //       .load(this.props.needId)
-  //       .then(() => {
-  //         this.setState({loading: false, loadingError: false});
-  //       })
-  //       .catch(error => {
-  //         log.info('Load questions error', error);
-  //         this.setState({loading: false, loadingError: true});
-  //       });
-  //   }
-
   //   onQuestionClose() {
   //     if (!this.section && !this.props.needId) {
   //       // return Actions.pop();
@@ -206,106 +157,85 @@ const InterviewQuestionDetail = (
     // })
   };
 
-  //   openQuestion(questionId: string, needId: string, unitId: string) {
-  //     const {refreshing, silentRefreshing} = this.state;
+  const openQuestion = (questionId: string, needId: string, unitId: string) => {
+    console.log('Aakash====>', questionId, needId, unitId);
 
-  //     if (refreshing || silentRefreshing) {
-  //       return;
-  //     }
+    if (refreshing || silentRefreshing) {
+      return;
+    }
+    NavigationService.navigate('AddQuestion', {
+      title: 'Modify Question',
+      questionId: questionId,
+      initialUnitId: unitId,
+      needId: needId,
+      // onClose: this.onQuestionClose.bind(this),
+    });
+  };
 
-  //     // Actions[ScreenType.FACILITIES.CATALOG_QUESTION]({
-  //     //     title: 'Modify Question',
-  //     //     questionId: questionId,
-  //     //     initialUnitId: unitId,
-  //     //     needId: needId,
-  //     //     onClose: this.onQuestionClose.bind(this),
-  //     //     onSave: () => {
-  //     //         this.onSave()
-  //     //         this.forceUpdate()
-  //     //     }
-  //     // })
-  //   }
+  const playQuestion = (questionId: string, needId: string, question: any) => {
+    if (refreshing || silentRefreshing) {
+      return;
+    }
+    // const question = this.props.facilityQuestionsStore.findQuestion(
+    //   this.props.userStore.selectedFacilityId,
+    //   questionId,
+    // );
 
-  //   playQuestion(questionId: string, needId: string) {
-  //     const {refreshing, silentRefreshing} = this.state;
+    // if (!question) {
+    //   return Alert.alert('Question Not Available');
+    // }
+    NavigationService.navigate('VideoPlayer', {
+      videoUrl: question.tokBoxArchiveUrl,
+    });
 
-  //     if (refreshing || silentRefreshing) {
-  //       return;
-  //     }
+    // Actions[ScreenType.FACILITIES.QUESTION_PLAYBACK_LIGHTBOX]({ videoUrl: question.tokBoxArchiveUrl })
+  };
 
-  //     var question = this.props.facilityQuestionsStore.findQuestion(
-  //       this.props.userStore.selectedFacilityId,
-  //       questionId,
-  //     );
+  const deleteQuestion = async (questionId: string, needId: string) => {
+    const tryDelete = async () => {
+      try {
+        const {data} = await deleteQuestionsService(questionId, needId);
+        console.log('data====>', data);
 
-  //     if (!question) {
-  //       return Alert.alert('Question Not Available');
-  //     }
-
-  //     // Actions[ScreenType.FACILITIES.QUESTION_PLAYBACK_LIGHTBOX]({ videoUrl: question.tokBoxArchiveUrl })
-  //   }
-
-  //   deleteQuestion(questionId: string, needId: string) {
-  //     const {facilityQuestionsStore} = this.props;
-
-  //     const tryDelete = () => {
-  //       facilityQuestionsStore.deleteQuestion(questionId, needId).then(
-  //         () => {
-  //           this.onSave();
-  //           this.forceUpdate();
-  //           facilityQuestionsStore.load(needId).then(() => {
-  //             this.onSave();
-
-  //             if (!this.section && !this.props.needId) {
-  //               // return Actions.pop();
-  //             }
-
-  //             this.forceUpdate();
-  //           });
-  //         },
-  //         error => {
-  //           log.info('Delete error', error);
-
-  //           showYesNoAlert({
-  //             onNo: () => {},
-  //             onYes: tryDelete.bind(this),
-  //             yesTitle: 'Retry',
-  //             noTitle: 'Cancel',
-  //             title: 'Delete Error',
-  //             message: 'An error occurred while deleting the question.',
-  //           });
-  //         },
-  //       );
-  //     };
-
-  //     showYesNoAlert({
-  //       onNo: () => {},
-  //       onYes: tryDelete.bind(this),
-  //       yesStyle: {color: AppColors.red},
-  //       yesTitle: 'Delete',
-  //       noTitle: 'Cancel',
-  //       title: 'Are you sure?',
-  //       message: 'This action can not be undone.',
-  //     });
-  //   }
+        // setRefreshing(false);
+        // setLoading(false);
+      } catch (error) {
+        console.log('Load questions error', error);
+        showYesNoAlert({
+          onNo: () => {},
+          onYes: () => tryDelete(),
+          noTitle: 'Cancel',
+          title: 'Delete Error',
+          message: 'An error occurred while deleting the question.',
+        });
+      }
+    };
+    showYesNoAlert({
+      onNo: () => {},
+      onYes: () => tryDelete(),
+      yesStyle: {color: AppColors.red},
+      yesTitle: 'Delete',
+      noTitle: 'Cancel',
+      title: 'Are you sure?',
+      message: 'This action can not be undone.',
+    });
+  };
 
   const toggleEditing = () => {
     setEditing(!editing);
   };
 
   const onTabSelection = (tab: TabDetails) => {
-    console.log('Tab===>', tab);
-
     // setSelectedTabID(Tab.id)
   };
 
   const renderUnitHeader = () => {
-    // const questionCount =
-    //   sections.questions.length + sections.defaultQuestions.length;
-    // const description = `${questionCount} question${
-    //   questionCount === 0 || questionCount > 1 ? 's' : ''
-    // }`;
-    const actionText = editing ? 'Finished' : 'Edit';
+    let sectionData = sections ? sections : {};
+    const questionCount = needQuestionList.length;
+    const description = `${questionCount} question${
+      questionCount === 0 || questionCount > 1 ? 's' : ''
+    }`;
+    const actionText = editing ? 'FINISH' : 'EDIT';
     return (
       <ViewHeader
         first
@@ -317,7 +247,7 @@ const InterviewQuestionDetail = (
         descriptionStyle={{color: AppColors.white}}
         style={{backgroundColor: AppColors.blue, borderBottomWidth: 0}}
         actionStyle={{borderWidth: 0}}
-        // actionText={questionCount > 0 ? actionText : ''}
+        actionText={actionText}
         onActionPress={toggleEditing}
       />
     );
@@ -375,98 +305,89 @@ const InterviewQuestionDetail = (
     // });
   };
 
-  //   newOrder: Array<string> = [];
-  //   onChangeOrder(rowMap: RowMap, newOrder: string[]) {
-  //     this.newOrder = newOrder;
-  //     log.info('New Order: ', newOrder);
-  //   }
+  // const onChangeOrder = (rowMap: RowMap, newOrder: string[]) => {
+  //   const newOrders: Array<string> = ([] = newOrder);
+  // };
 
-  //  const onReleaseRow=(rowMap: RowMap, rowKey)=> {
-  //     log.info('Row Released');
+  // const onReleaseRow = (rowMap: RowMap, rowKey) => {
+  //   log.info('Row Released');
 
-  //     const currentIndex = parseInt(rowKey);
-  //     const newIndex = this.newOrder.findIndex(v => v === rowKey);
+  //   const currentIndex = parseInt(rowKey);
+  //   const newIndex = newOrder.findIndex(v => v === rowKey);
 
-  //     this.setState({saving: true});
+  //   this.setState({saving: true});
 
-  //     this.showDefault
-  //       ? this.section.moveDefaultQuestion(currentIndex, newIndex)
-  //       : this.section.moveQuestion(currentIndex, newIndex);
+  //   this.showDefault
+  //     ? this.section.moveDefaultQuestion(currentIndex, newIndex)
+  //     : this.section.moveQuestion(currentIndex, newIndex);
 
-  //     this.setState({saving: false});
-  //   }
+  //   this.setState({saving: false});
+  // };
 
   const renderSortableList = () => {
     const rowMap: RowMap = {};
     const rowOrder: Array<string> = [];
     const questions = showableQuestions;
-    sections?.defaultQuestions.forEach(
-      (question: {deleted: any}, index: string | number) => {
-        if (!question.deleted) {
-          rowMap[index] = question;
-          rowOrder.push(index.toString());
-        }
-      },
+    if (needId) {
+      needQuestionList.forEach(
+        (question: {deleted: any}, index: string | number) => {
+          if (!question.deleted) {
+            rowMap[index] = question;
+            rowOrder.push(index.toString());
+          }
+        },
+      );
+    } else {
+      sections?.defaultQuestions.forEach(
+        (question: {deleted: any}, index: string | number) => {
+          if (!question.deleted) {
+            rowMap[index] = question;
+            rowOrder.push(index.toString());
+          }
+        },
+      );
+    }
+    let rowData = Object.values(rowMap);
+
+    return (
+      <FlatList
+        style={{flex: 1, backgroundColor: AppColors.baseGray}}
+        refreshing={refreshing}
+        renderItem={({item, index, active}) => {
+          var paddingBottom =
+            index + 1 === questions.length
+              ? AppSizes.conexusFooterButtonHeight + 20
+              : 0;
+          var question: any = item;
+          return (
+            <SortableQuestionRow
+              marginBottom={paddingBottom}
+              allowDeleteQuestion={true}
+              text={item.text}
+              videoUrl={item.tokBoxArchiveUrl}
+              onDeleteQuestion={() =>
+                deleteQuestion(question.id, question.needId)
+              }
+              onOpenQuestion={() =>
+                openQuestion(question.id, question.needId, question.unitId)
+              }
+              onPlayQuestion={() =>
+                playQuestion(question.id, question.needId, question)
+              }
+              dragActive={active}
+              editing={editing}
+            />
+          );
+        }}
+        data={rowData}
+      />
     );
-    console.log('====================================');
-    console.log(rowMap);
-    console.log('====================================');
-    // return (
-    //   <SortableList
-    //     style={{flex: 1}}
-    //     sortingEnabled={editing}
-    //     // refreshControl={
-    //     //   <RefreshControl
-    //     //     tintColor={AppColors.blue}
-    //     //     colors={[AppColors.blue]}
-    //     //     refreshing={refreshing}
-    //     //     onRefresh={this.refreshSection.bind(this, false)}
-    //     //   />
-    //     // }
-    //     onChangeOrder={this.onChangeOrder.bind(this, rowMap)}
-    //     onReleaseRow={this.onReleaseRow.bind(this, rowMap)}
-    //     data={rowMap}
-    //     renderRow={({data, active, index}) => {
-    //       var paddingBottom =
-    //         index + 1 === questions.length
-    //           ? AppSizes.conexusFooterButtonHeight + 20
-    //           : 0;
-    //       var question: typeof QuestionModel.Type = data;
-    //       return (
-    //         // <SortableQuestionRow
-    //         //   marginBottom={paddingBottom}
-    //         //   allowDeleteQuestion={true}
-    //         //   text={data.text}
-    //         //   videoUrl={data.tokBoxArchiveUrl}
-    //         //   onDeleteQuestion={this.deleteQuestion.bind(
-    //         //     this,
-    //         //     question.id,
-    //         //     question.needId,
-    //         //   )}
-    //         //   onOpenQuestion={this.openQuestion.bind(
-    //         //     this,
-    //         //     question.id,
-    //         //     question.needId,
-    //         //     question.unitId,
-    //         //   )}
-    //         //   onPlayQuestion={this.playQuestion.bind(
-    //         //     this,
-    //         //     question.id,
-    //         //     question.needId,
-    //         //   )}
-    //         //   dragActive={active}
-    //         //   editing={editing}
-    //         // />
-    //       );
-    //     }}
-    //   />
-    // );
   };
 
   const renderEmptyList = () => {
     return (
       <ScrollView
-        style={{flex: 1}}
+        style={{flex: 1, backgroundColor: AppColors.baseGray}}
         refreshControl={
           <RefreshControl
             tintColor={AppColors.blue}
@@ -522,10 +443,10 @@ const InterviewQuestionDetail = (
 
   return (
     <View style={{flex: 1}}>
-      {section() && renderUnitHeader()}
-      {!needId && section() && renderTabs()}
+      {renderUnitHeader()}
+      {!needId && renderTabs()}
       {showableQuestions().length == 0 && renderEmptyList()}
-      {renderSortableList()}
+      {showableQuestions().length > 0 && renderSortableList()}
       {!editing && (
         <View style={styles.footer}>
           <ActionButton
