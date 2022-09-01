@@ -12,11 +12,15 @@ import {
 import {AppColors, AppFonts, AppSizes} from '../theme/index';
 import {logger} from 'react-native-logs';
 import Video from 'react-native-video';
-import {ActionButton, IconTitleBlock, ScreenFooterButton} from '../components';
+import {ActionButton} from '../components';
+
 import _ from 'lodash';
 import InCallManager from 'react-native-incall-manager';
 import SystemSetting from 'react-native-system-setting';
 import Slider from 'react-native-slider';
+import IconTitleBlock from './icon-title-block';
+import {windowDimensions} from '../common/window-dimensions';
+import ScreenFooterButton from './screen-footer-button';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -39,7 +43,7 @@ export interface ConexusVideoPlayerProps {
   renderStoppedOverlay?: () => JSX.Element;
   renderPlayOverlay?: () => JSX.Element;
   replayTitle?: string;
-  playWhenInactive?: boolean;
+  playWhenInactive?: () => JSX.Element;
 
   hideErrors?: boolean;
   hideErrorIcon?: boolean;
@@ -160,14 +164,14 @@ const ConexusVideoPlayer = (
   //   this.setState({volume: value});
   // }
 
-  // get defaultState(): ConexusVideoPlayerState {
-  //   return {
-  //     loaded: false,
-  //     isPaused: false,
-  //     hasEnded: false,
-  //     hasError: false,
-  //   };
-  // }
+  const defaultState = (): ConexusVideoPlayerState => {
+    return {
+      loaded: false,
+      isPaused: false,
+      hasEnded: false,
+      hasError: false,
+    };
+  };
 
   // volumeListener = SystemSetting.addVolumeListener(
   //   _.debounce(data => {
@@ -239,21 +243,16 @@ const ConexusVideoPlayer = (
       return;
     }
     try {
-      replaying = true;
+      const replaying: boolean = false;
       const loads = loaded; // Preserve this value
       setIsPaused(true);
-      // this.setState({isPaused: true}, () => {
-      //   if (this._player) {
-      //     log.info('Replay');
-      //     this._player.seek(0);
-
-      //     this.setState({...this.defaultState, loaded}, () => {
-      //       log.info('replayed', this.state);
-      //     });
-      //   }
-      // });
+      if (player) {
+        console.log('Replay');
+        player.seek(0);
+        setLoaded(defaultState, loaded);
+      }
     } finally {
-      replaying = false;
+      replaying;
     }
   };
 
@@ -301,27 +300,26 @@ const ConexusVideoPlayer = (
     if (!pausable || !player) {
       return;
     }
-    setIsPaused(!isPauseded);
+    setIsPaused(!isPauseded());
   };
 
-  // renderLoading() {
-  //   if (this.loaded) {
-  //     return null;
-  //   }
+  const renderLoading = () => {
+    if (loads()) {
+      return null;
+    }
+    let indicator = (
+      <ActivityIndicator
+        color={props.loadingColor || AppColors.blue}
+        style={{flex: 1}}
+      />
+    );
 
-  //   let indicator = (
-  //     <ActivityIndicator
-  //       color={this.props.loadingColor || AppColors.blue}
-  //       style={{flex: 1}}
-  //     />
-  //   );
+    if (props.activityIndicator && props.activityIndicator.call) {
+      indicator = props.activityIndicator();
+    }
 
-  //   if (this.props.activityIndicator && this.props.activityIndicator.call) {
-  //     indicator = this.props.activityIndicator();
-  //   }
-
-  //   return <View style={[styles.container]}>{indicator}</View>;
-  // }
+    return <View style={[styles.container]}>{indicator}</View>;
+  };
 
   const renderActions = () => {
     if (replaying) {
@@ -341,10 +339,10 @@ const ConexusVideoPlayer = (
     };
     const menuButtons = props.menuButtons || [];
 
-    if (hasError) {
+    if (hasErrors()) {
       overlayHeaderText = errorDisplayText();
-      replayButton.title = 'Retry';
-      buttons = [replayButton, ...menuButtons.filter(i => i.showOnError)];
+      // replayButton.title = 'Retry';
+      // buttons = [replayButton, ...menuButtons.filter(i => i.showOnError)];
     } else if (isPauseded()) {
       // Add Play to the top of the list
       buttons = [{title: 'Play', onPress: () => togglePause()}];
@@ -357,21 +355,18 @@ const ConexusVideoPlayer = (
     } else if (!loads() || isPlaying()) {
       if (isPlaying() && props.showActionButtonWhilePlaying) {
         const btnDetails = getActionButton();
-        console.log('====================================');
-        console.log('buttonTitle====>', btnDetails);
-        console.log('====================================');
+        console.log('BtnDetails===>', btnDetails);
+
         if (btnDetails) {
-          // return (
-          //   <Text>hi</Text>
-          //   // <ScreenFooterButton
-          //   //   hideGradient
-          //   //   title={btnDetails.title}
-          //   //   onPress={btnDetails.onPress}>
-          //   //   </ScreenFooterButton>
-          //   // <View style={[styles.overlayFooter, this.props.overlayFooterStyle]} >
-          //   //     <ActionButton primary title={btnDetails.title} onPress={btnDetails.onPress}></ActionButton>
-          //   // </View>
-          // );
+          return (
+            <View style={[styles.overlayFooter, props.overlayFooterStyle]}>
+              <ActionButton
+                primary
+                title={btnDetails.title}
+                onPress={btnDetails.onPress}
+              />
+            </View>
+          );
         }
       }
 
@@ -383,144 +378,124 @@ const ConexusVideoPlayer = (
     const actionButton = getActionButton();
 
     return (
-      <Text>hi</Text>
-      // <View style={[styles.overlay]}>
-      //   <View
-      //     style={[
-      //       styles.overlayContent,
-      //       hasErrors()
-      //         ? props.overlayContentWithErrorStyle
-      //         : props.overlayContentStyle,
-      //     ]}>
-      //     {hasErrors() && (
-      //       <IconTitleBlock
-      //         textColor={AppColors.white}
-      //         iconColor={AppColors.white}
-      //         style={styles.errorHeader}
-      //         iconName={hideErrorIcons() ? undefined : errorIconNames()}
-      //         text={errorDisplayText}
-      //       />
-      //     )}
-      //     <View
-      //       style={[
-      //         styles.overlayButtons,
-      //         hasErrors() ? styles.overlayButtonsWithError : null,
-      //       ]}>
-      //       {buttons.map((b, i) => (
-      //         <Text>{b.title}</Text>
-      //         // <TouchableOpacity
-      //         //   key={'mb' + i}
-      //         //   rounded
-      //         //   transparent
-      //         //   style={styles.overlayButton}
-      //         //   onPress={() => b.onPress()}>
-      //         //   <Text style={styles.overlayButtonText}>{b.title}</Text>
-      //         // </TouchableOpacity>
-      //       ))}
-      //     </View>
-      //   </View>
-      //   {
-      //     !!actionButton && (
-      //       <ScreenFooterButton
-      //         hideGradient
-      //         title={actionButton.title}
-      //         onPress={actionButton.onPress}></ScreenFooterButton>
-      //     )
-
-      //     // <View style={[styles.overlayFooter, this.props.overlayFooterStyle]} >
-      //     //     <ActionButton primary title={actionButton.title} onPress={actionButton.onPress}></ActionButton>
-      //     // </View>
-      //   }
-      // </View>
+      <View style={[styles.overlay]}>
+        <View
+          style={[
+            styles.overlayContent,
+            hasErrors()
+              ? props.overlayContentWithErrorStyle
+              : props.overlayContentStyle,
+          ]}>
+          {/* {hasErrors() && (
+            <IconTitleBlock
+              textColor={AppColors.white}
+              iconColor={AppColors.white}
+              style={styles.errorHeader}
+              iconName={hideErrorIcons() ? undefined : errorIconNames()}
+              text={errorDisplayText()}
+            />
+          )} */}
+          <View
+            style={[
+              styles.overlayButtons,
+              hasErrors() ? styles.overlayButtonsWithError : null,
+            ]}>
+            {buttons.map((b, i) => (
+              <TouchableOpacity
+                key={'mb' + i}
+                style={styles.overlayButton}
+                onPress={() => b.onPress()}>
+                <Text style={styles.overlayButtonText}>{b.title}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+        {!actionButton && (
+          <View style={styles.footer}>
+            <ActionButton
+              title={actionButton.title}
+              customStyle={styles.btnEnable}
+              onPress={actionButton.onPress}
+            />
+          </View>
+        )}
+      </View>
     );
   };
 
-  // renderPausedOverlay(): JSX.Element | undefined {
-  //   if (!this.state.isPaused) {
-  //     return null;
-  //   }
-  //   if (
-  //     this.props.renderStoppedOverlay &&
-  //     this.props.renderStoppedOverlay.call
-  //   ) {
-  //     return this.props.renderStoppedOverlay();
-  //   }
+  const renderPausedOverlay = (): JSX.Element | undefined => {
+    if (!isPaused) {
+      return null;
+    }
+    if (props.renderStoppedOverlay && props.renderStoppedOverlay.call()) {
+      return props.renderStoppedOverlay();
+    }
 
-  //   return null;
-  // }
+    return null;
+  };
 
-  // renderPlayOverlay(): JSX.Element | undefined {
-  //   if (this.state.isPaused) {
-  //     return null;
-  //   }
-  //   if (
-  //     this.isPlaying &&
-  //     this.props.renderPlayOverlay &&
-  //     this.props.renderPlayOverlay.call
-  //   ) {
-  //     return this.props.renderPlayOverlay();
-  //   }
-
-  //   return null;
-  // }
+  const renderPlayOverlay = (): JSX.Element | any => {
+    if (!isPaused) {
+      return null;
+    }
+    if (renderPlayOverlay && renderPlayOverlay.call()) {
+      return renderPlayOverlay();
+    }
+    return null;
+  };
 
   const renderPlayer = () => {
     return (
-      <Video
-        source={{
-          uri: 'http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',
-        }} // Can be a URL or a local file.
-        ref={videoRef}
-        style={{height: 200, width: 200}}
-        // resizeMode={'cover'}
-        // rate={1.0} // 0 is paused, 1 is normal.
-        // // volume={this.volume} // 0 is muted, 1 is normal.
-        // muted={false} // Mutes the audio entirely.
-        // paused={isPauseded}
-        // ignoreSilentSwitch={'ignore'}
-        // playWhenInactive={playWhenInactive}
-        // onLoad={onLoad()}
-        // onEnd={onEnd()}
-        // onError={onError()}
-        // onProgress={onProgress()}
-        // style={[styles.video]}
-      />
-
-      // <TouchableOpacity
-      //   disabled={!pausable() || isPauseded()}
-      //   style={[styles.container, props.style]}
-      //   onPress={() => togglePause()}>
-      //   {
-
-      //   }
-      //   {/* {renderPausedOverlay()} */}
-      //   {/* {renderPlayOverlay()} */}
-      //   {/* {renderActions()} */}
-      //   {/* {renderLoading()} */}
-      //   {
-      //     <View style={getVolumeStyle()}>
-      //       {/* <Slider
-      //         style={{flex: 1, height: 54}}
-      //         value={volume}
-      //         onValueChange={_.debounce(value => {
-      //           volume = value;
-      //         })}
-      //         thumbTintColor={AppColors.blue}
-      //         minimumTrackTintColor={AppColors.blue}
-      //         maximumTrackTintColor={AppColors.white}
-      //         trackStyle={{height: 2}}
-      //         thumbStyle={{
-      //           alignItems: 'center',
-      //           justifyContent: 'center',
-      //           width: 24,
-      //           height: 24,
-      //           borderRadius: 12,
-      //         }}
-      //         thumbImage={require('./Images/player/volume.png')}
-      //       /> */}
-      //     </View>
-      //   }
-      // </TouchableOpacity>
+      <TouchableOpacity
+        disabled={!pausable() || isPauseded()}
+        style={[styles.container, props.style]}
+        onPress={() => togglePause()}>
+        {
+          <Video
+            source={{uri: mediaUrl}}
+            ref={videoRef}
+            resizeMode={'cover'}
+            rate={1.0} // 0 is paused, 1 is normal.
+            // volume={this.volume} // 0 is muted, 1 is normal.
+            muted={false} // Mutes the audio entirely.
+            paused={isPauseded()}
+            ignoreSilentSwitch={'ignore'}
+            playWhenInactive={playWhenInactive()}
+            onLoad={onLoad()}
+            onEnd={onEnd()}
+            onError={onError()}
+            // onProgress={onProgress()}
+            style={[styles.video]}
+          />
+        }
+        {renderPausedOverlay()}
+        {renderPlayOverlay()}
+        {renderActions()}
+        {renderLoading()}
+        {
+          <View style={getVolumeStyle()}>
+            {/* <Slider
+            style={{flex: 1, height: 54}}
+            value={volume}
+            onValueChange={_.debounce(value => {
+              volume = value;
+            })}
+            thumbTintColor={AppColors.blue}
+            minimumTrackTintColor={AppColors.blue}
+            maximumTrackTintColor={AppColors.white}
+            trackStyle={{height: 2}}
+            thumbStyle={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 24,
+              height: 24,
+              borderRadius: 12,
+            }}
+            thumbImage={require('./Images/player/volume.png')}
+            /> */}
+          </View>
+        }
+      </TouchableOpacity>
     );
   };
 
@@ -542,6 +517,16 @@ const styles = StyleSheet.create({
     flex: 1,
     alignSelf: 'stretch',
     alignItems: 'stretch',
+  },
+  footer: {
+    right: 10,
+    left: 10,
+    position: 'absolute',
+    bottom: 20,
+  },
+  btnEnable: {
+    alignSelf: 'center',
+    width: windowDimensions.width * 0.5,
   },
   video: {
     position: 'absolute',

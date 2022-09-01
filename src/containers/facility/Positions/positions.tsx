@@ -80,6 +80,7 @@ const Positions = (props: PositionsProps, state: PositionState) => {
 
   const showNeedQuestions = (need: any) => {
     NavigationService.navigate('InterviewQuestionDetail', {
+      props: props,
       needId: need.needId,
       sectionTitleOverride: need.display.title,
       // onSave: this.load.bind(this),

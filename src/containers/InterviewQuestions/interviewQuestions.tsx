@@ -116,12 +116,14 @@ const InterviewQuestions = (
       showYesNoAlert({
         title: `We're Sorry`,
         message: 'An error occurred while loading available questions.',
-        onYes: load(refreshing),
+        onYes: () => load(refreshing),
         yesTitle: 'Retry',
         noTitle: 'Canel',
       });
     }
   };
+
+  const forceUpdate = () => {};
 
   const showSection = (section: any) => {
     NavigationService.navigate('InterviewQuestionDetail', {
@@ -129,9 +131,9 @@ const InterviewQuestions = (
       title: section.sectionTitle,
       sectionFacilityID: facility,
       sections: section,
-      // onSave() {
-      //     this.forceUpdate()
-      // }
+      onSave() {
+        forceUpdate();
+      },
     });
   };
 
@@ -169,9 +171,9 @@ const InterviewQuestions = (
       questionId: '0',
       initialUnitId: '',
       // needId: needId,
-      // onSave: () => {
-      //     forceUpdate()
-      // }
+      onSave: () => {
+        forceUpdate();
+      },
     });
   };
 

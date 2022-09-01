@@ -3,6 +3,7 @@ import {ViewProperties, StyleSheet, View, Platform} from 'react-native';
 import {AppColors, AppSizes} from '../theme';
 import {ActionButton} from '../components/action-button';
 import LinearGradient from 'react-native-linear-gradient';
+import {windowDimensions} from '../common/window-dimensions';
 
 interface ScreenFooterButtonProps {
   title: string;
@@ -12,20 +13,11 @@ interface ScreenFooterButtonProps {
   danger?: boolean;
 }
 
-// export interface ScreenFooterButtonState {}
-
-const ScreenFooterButton: React.FC<ScreenFooterButtonProps> = ({
-  title,
-  onPress,
-  disabled,
-  hideGradient,
-  danger,
-}) => {
-  // constructor(props: ScreenFooterButtonProps, state: ScreenFooterButtonState) {
-  //   super(props, state);
-  // }
-
-  // componentWillMount() {}
+const ScreenFooterButton = (
+  props: ScreenFooterButtonProps,
+  state: ScreenFooterButtonState,
+) => {
+  const {hideGradient, onPress, disabled, danger, title} = props;
 
   if (hideGradient) {
     return (
@@ -36,7 +28,7 @@ const ScreenFooterButton: React.FC<ScreenFooterButtonProps> = ({
           style={styles.button}
           primary
           title={title}
-          // onPress={onPress}
+          onPress={onPress}
         />
       </View>
     );
@@ -56,7 +48,7 @@ const ScreenFooterButton: React.FC<ScreenFooterButtonProps> = ({
         style={styles.button}
         primary
         title={title}
-        // onPress={onPress}
+        onPress={onPress}
       />
     </LinearGradient>
   );
@@ -81,7 +73,8 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    justifyContent: 'flex-end',
+    alignSelf: 'center',
+    width: windowDimensions.width * 0.5,
   },
 });
 

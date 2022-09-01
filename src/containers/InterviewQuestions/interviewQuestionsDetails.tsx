@@ -26,7 +26,10 @@ import {needQuestionsService} from '../../services/InterviewQuestions/needQuesti
 import _ from 'lodash';
 import SortableQuestionRow from './sortable-question-row';
 import NavigationService from '../../navigation/NavigationService';
-import {deleteQuestionsService} from '../../services/InterviewQuestions/deleteQuestionsService';
+import {
+  deleteInterviewQuestionsService,
+  deleteNeedInterviewQuestionsService,
+} from '../../services/InterviewQuestions';
 
 export interface InterviewQuestionDetailProps {
   questionSectionId: string;
@@ -64,7 +67,7 @@ const InterviewQuestionDetail = (
   const userInfo = useSelector(state => state.userReducer);
   const propsData = [props?.route?.params] ? [props?.route?.params] : {};
   const {needId, sectionTitleOverride, questionSectionId} = propsData?.[0];
-  const {sectionFacilityID, sections} = propsData?.[0];
+  const {sectionFacilityID, sections, onSave} = propsData?.[0];
   const {facilityId} = sectionFacilityID ? sectionFacilityID : {};
   const [selectedTabId, setSelectedTabID] = useState(
     needId ? 'other' : 'default',
@@ -72,9 +75,9 @@ const InterviewQuestionDetail = (
   const newOrder: Array<string> = [];
   const facilityID = userInfo?.user?.userFacilities?.[0]?.facilityId;
 
-  //   const onSave=()=> {
-  //     return onSave || function () {};
-  //   }
+  // const onSaved = () => {
+  //   return onSave || function () {};
+  // };
 
   useEffect(() => {
     loadNeedQuestions();
@@ -130,7 +133,7 @@ const InterviewQuestionDetail = (
     } else {
       questions = showDefault() ? sections?.defaultQuestions : needQuestionList;
     }
-    return questions.filter(q => !q['deleted']);
+    return questions.filter((q: {[x: string]: any}) => !q['deleted']);
   };
 
   //   onQuestionClose() {
@@ -158,8 +161,6 @@ const InterviewQuestionDetail = (
   };
 
   const openQuestion = (questionId: string, needId: string, unitId: string) => {
-    console.log('Aakash====>', questionId, needId, unitId);
-
     if (refreshing || silentRefreshing) {
       return;
     }
@@ -191,19 +192,38 @@ const InterviewQuestionDetail = (
     // Actions[ScreenType.FACILITIES.QUESTION_PLAYBACK_LIGHTBOX]({ videoUrl: question.tokBoxArchiveUrl })
   };
 
-  const deleteQuestion = async (questionId: string, needId: string) => {
-    const tryDelete = async () => {
+  const deleteNeedQuestion = async (
+    questionId: string,
+    needId: string,
+    facilityId: string,
+  ) => {
+    const tryDelete = async (
+      questionId: string,
+      needId: string,
+      facilityId: string,
+    ) => {
+      console.log('Okk===>', needId, questionId, facilityId);
+      setRefreshing(true);
+      setLoading(true);
       try {
-        const {data} = await deleteQuestionsService(questionId, needId);
-        console.log('data====>', data);
-
-        // setRefreshing(false);
-        // setLoading(false);
+        const needPayload = {
+          facilityId: facilityId,
+          id: questionId,
+          needId: needId,
+          deleted: true,
+        };
+        const {data} = await deleteNeedInterviewQuestionsService(needPayload);
+        setRefreshing(false);
+        loadNeedQuestions();
+        setLoading(false);
+        console.log('interview Question Deleted response====>', data);
       } catch (error) {
         console.log('Load questions error', error);
+        setRefreshing(false);
+        setLoading(false);
         showYesNoAlert({
           onNo: () => {},
-          onYes: () => tryDelete(),
+          onYes: () => tryDelete(questionId, needId, facilityId),
           noTitle: 'Cancel',
           title: 'Delete Error',
           message: 'An error occurred while deleting the question.',
@@ -212,7 +232,44 @@ const InterviewQuestionDetail = (
     };
     showYesNoAlert({
       onNo: () => {},
-      onYes: () => tryDelete(),
+      onYes: () => tryDelete(questionId, needId, facilityId),
+      yesStyle: {color: AppColors.red},
+      yesTitle: 'Delete',
+      noTitle: 'Cancel',
+      title: 'Are you sure?',
+      message: 'This action can not be undone.',
+    });
+  };
+
+  const deleteInterviewQuestion = async (questionId: string) => {
+    const tryDelete = async (questionId: string) => {
+      try {
+        const interviewQuestionPayload = {
+          questionId: questionId,
+        };
+        const {data} = await deleteInterviewQuestionsService(
+          interviewQuestionPayload,
+        );
+        onSaved();
+        setRefreshing(false);
+        setLoading(false);
+        console.log('interview Question Deleted response====>', data);
+      } catch (error) {
+        console.log('Load questions error', error);
+        setRefreshing(false);
+        setLoading(false);
+        showYesNoAlert({
+          onNo: () => {},
+          onYes: () => tryDelete(questionId),
+          noTitle: 'Cancel',
+          title: 'Delete Error',
+          message: 'An error occurred while deleting the question.',
+        });
+      }
+    };
+    showYesNoAlert({
+      onNo: () => {},
+      onYes: () => tryDelete(questionId),
       yesStyle: {color: AppColors.red},
       yesTitle: 'Delete',
       noTitle: 'Cancel',
@@ -289,6 +346,8 @@ const InterviewQuestionDetail = (
   const refreshSection = (silent = false) => {
     setRefreshing(!silent);
     setSilentRefreshing(silent);
+    loadNeedQuestions();
+
     // this.setState({refreshing: !silent, silentRefreshing: silent}, () => {
     //   this.props.facilityQuestionsStore.load(this.props.needId).then(
     //     () => {
@@ -327,7 +386,7 @@ const InterviewQuestionDetail = (
   const renderSortableList = () => {
     const rowMap: RowMap = {};
     const rowOrder: Array<string> = [];
-    const questions = showableQuestions;
+
     if (needId) {
       needQuestionList.forEach(
         (question: {deleted: any}, index: string | number) => {
@@ -347,12 +406,22 @@ const InterviewQuestionDetail = (
         },
       );
     }
+    const questions = showableQuestions;
+
     let rowData = Object.values(rowMap);
 
     return (
       <FlatList
         style={{flex: 1, backgroundColor: AppColors.baseGray}}
-        refreshing={refreshing}
+        sortingEnabled={editing}
+        refreshControl={
+          <RefreshControl
+            tintColor={AppColors.blue}
+            colors={[AppColors.blue]}
+            refreshing={refreshing}
+            onRefresh={() => refreshSection(false)}
+          />
+        }
         renderItem={({item, index, active}) => {
           var paddingBottom =
             index + 1 === questions.length
@@ -366,7 +435,9 @@ const InterviewQuestionDetail = (
               text={item.text}
               videoUrl={item.tokBoxArchiveUrl}
               onDeleteQuestion={() =>
-                deleteQuestion(question.id, question.needId)
+                needId
+                  ? deleteNeedQuestion(question.id, needId, question.facilityId)
+                  : deleteInterviewQuestion(question.id)
               }
               onOpenQuestion={() =>
                 openQuestion(question.id, question.needId, question.unitId)

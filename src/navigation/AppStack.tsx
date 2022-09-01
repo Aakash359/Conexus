@@ -98,13 +98,21 @@ const AppStack = () => {
         <Stack.Screen
           name="InterviewQuestionDetail"
           component={InterviewQuestionDetail}
-          options={{
-            headerTitleStyle: {
-              color: AppColors.black,
-              fontWeight: 'bold',
-              fontSize: 22,
-            },
-          }}
+          options={({route}) => ({
+            title:
+              route?.params?.props?.route?.name == 'Positions'
+                ? 'Interview Questions'
+                : route?.params?.sections?.sectionTitle,
+          })}
+
+          // options={{
+
+          //   headerTitleStyle: {
+          //     color: AppColors.black,
+          //     fontWeight: 'bold',
+          //     fontSize: 22,
+          //   },
+          // }}
         />
         <Stack.Screen
           name="HcpDetailView"

@@ -5,7 +5,7 @@ import {AppFonts, AppColors, AppSizes} from '../theme';
 import {ConexusLightbox} from '../lightboxes/base-lightbox';
 import LinearGradient from 'react-native-linear-gradient';
 
-interface QuestionPlaybackHeaderProps extends ViewProperties {
+interface QuestionPlaybackHeaderProps {
   onClose?: () => any;
   showAvatar?: boolean;
   avatarTitle?: string;
@@ -15,110 +15,98 @@ interface QuestionPlaybackHeaderProps extends ViewProperties {
   countdownTitle?: string;
   countdownDescription?: string;
   questionText?: string;
+  style: any;
 }
 
 interface QuestionPlaybackState {}
 
-export class QuestionPlaybackHeader extends React.Component<
-  QuestionPlaybackHeaderProps,
-  QuestionPlaybackState
-> {
-  lightbox: ConexusLightbox;
+const QuestionPlaybackHeader = (
+  props: QuestionPlaybackHeaderProps,
+  state: QuestionPlaybackState,
+) => {
+  const {
+    style,
+    showAvatar,
+    avatarTitle,
+    avatarDescription,
+    avatarUrl,
+    showCountdown,
+    countdownTitle,
+    countdownDescription,
+    questionText,
+  } = props;
 
-  constructor(
-    props: QuestionPlaybackHeaderProps,
-    state: QuestionPlaybackState,
-  ) {
-    super(props, state);
+  const close = () => {
+    // lightbox.closeModal();
+  };
 
-    this.state = {};
-  }
-
-  close() {
-    this.lightbox.closeModal();
-  }
-
-  render() {
-    const {
-      style,
-      showAvatar,
-      avatarTitle,
-      avatarDescription,
-      avatarUrl,
-      showCountdown,
-      countdownTitle,
-      countdownDescription,
-      questionText,
-    } = this.props;
-
-    if (showAvatar || showCountdown) {
-      return (
-        <View style={style}>
-          <LinearGradient
-            style={{
-              height: 240,
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-            }}
-            colors={['rgba(0, 0, 0, .6)', 'rgba(0, 0, 0, 0)']}></LinearGradient>
-          <View style={[styles.questionHeader]}>
-            {showAvatar && (
-              <View style={styles.avatarContainer}>
-                <Avatar size={34} source={avatarUrl} />
-                <View style={{position: 'relative'}}>
-                  <View style={[{position: 'absolute', top: 1, left: 1}]}>
-                    <Text style={styles.avatarTitleBg}>{avatarTitle}</Text>
-                    <Text style={styles.avatarDescriptionBg}>
-                      {avatarDescription}
-                    </Text>
-                  </View>
-                  <View style={[]}>
-                    <Text style={styles.avatarTitle}>{avatarTitle}</Text>
-                    <Text style={styles.avatarDescription}>
-                      {avatarDescription}
-                    </Text>
-                  </View>
+  if (showAvatar || showCountdown) {
+    return (
+      <View style={style}>
+        <LinearGradient
+          style={{
+            height: 240,
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+          }}
+          colors={['rgba(0, 0, 0, .6)', 'rgba(0, 0, 0, 0)']}></LinearGradient>
+        <View style={[styles.questionHeader]}>
+          {showAvatar && (
+            <View style={styles.avatarContainer}>
+              <Avatar size={34} source={avatarUrl} />
+              <View style={{position: 'relative'}}>
+                <View style={[{position: 'absolute', top: 1, left: 1}]}>
+                  <Text style={styles.avatarTitleBg}>{avatarTitle}</Text>
+                  <Text style={styles.avatarDescriptionBg}>
+                    {avatarDescription}
+                  </Text>
+                </View>
+                <View style={[]}>
+                  <Text style={styles.avatarTitle}>{avatarTitle}</Text>
+                  <Text style={styles.avatarDescription}>
+                    {avatarDescription}
+                  </Text>
                 </View>
               </View>
-            )}
-            {showCountdown && (
-              <View
-                style={[
-                  countdownStyle.view,
-                  {position: 'absolute', right: 19, top: 21},
-                ]}>
-                <Text style={countdownStyle.titleBg}>{countdownTitle}</Text>
-                <Text style={countdownStyle.secondsLeftBg}>
-                  {countdownDescription}
-                </Text>
-              </View>
-            )}
-            {showCountdown && (
-              <View style={[countdownStyle.view, {right: 20, top: 20}]}>
-                <Text style={countdownStyle.title}>{countdownTitle}</Text>
-                <Text style={countdownStyle.secondsLeft}>
-                  {countdownDescription}
-                </Text>
-              </View>
-            )}
-          </View>
-          <View
-            style={{
-              position: 'relative',
-              ...{marginTop: showAvatar ? 12 : 175},
-            }}>
-            <Text style={styles.questionTextBg}>{questionText}</Text>
-            <Text style={styles.questionText}>{questionText}</Text>
-          </View>
+            </View>
+          )}
+          {showCountdown && (
+            <View
+              style={[
+                countdownStyle.view,
+                {position: 'absolute', right: 19, top: 21},
+              ]}>
+              <Text style={countdownStyle.titleBg}>{countdownTitle}</Text>
+              <Text style={countdownStyle.secondsLeftBg}>
+                {countdownDescription}
+              </Text>
+            </View>
+          )}
+          {showCountdown && (
+            <View style={[countdownStyle.view, {right: 20, top: 20}]}>
+              <Text style={countdownStyle.title}>{countdownTitle}</Text>
+              <Text style={countdownStyle.secondsLeft}>
+                {countdownDescription}
+              </Text>
+            </View>
+          )}
         </View>
-      );
-    }
-
-    return <View />;
+        <View
+          style={{
+            position: 'relative',
+            ...{marginTop: showAvatar ? 12 : 175},
+          }}>
+          <Text style={styles.questionTextBg}>{questionText}</Text>
+          <Text style={styles.questionText}>{questionText}</Text>
+        </View>
+      </View>
+    );
   }
-}
+
+  return <View />;
+};
 
 const countdownStyle = StyleSheet.create({
   view: {

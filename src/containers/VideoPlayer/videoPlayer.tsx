@@ -100,11 +100,11 @@ const VideoPlayer = (props: VideoPlayer, state: VideoPlayerState) => {
             return activityIndicator;
           }}
           actionButton={{title: 'Close', onPress: onClose}}
-          // renderStoppedOverlay={renderQuestionHeader}
-          // onError={onError}
+          renderStoppedOverlay={renderQuestionHeader()}
+          onError={() => onError}
           style={styles.videoPlayer}
-          // overlayFooterStyle={styles.overlayFooter}
-          // loadingColor={AppColors.blue}
+          overlayFooterStyle={styles.overlayFooter}
+          loadingColor={AppColors.blue}
           volumeLocation="top-left"
         />
       }
