@@ -40,6 +40,8 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
   const [messageText, setMessageText] = useState('');
   const [messageTextError, setMessageTextError] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const propsData = props?.route?.params || {};
+  console.log('Aakah===>', propsData?.unitName);
 
   const messageTextBlur = () => {
     if (messageText && messageText.length) {
@@ -171,7 +173,7 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
   const renderUnitField = () => {
     return (
       <SelectUnitModal
-        title={'Select a unit'}
+        title={propsData?.unitName || 'Select a unit'}
         onRequestClose={() => setModalVisible(false)}
         onDismiss={() => setModalVisible(false)}
         onPress={() => onSelectUnit()}
@@ -300,7 +302,7 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
             placeholder="Type your question"
             placeholderTextColor={AppColors.mediumGray}
             autoFocus={false}
-            // value={this._question.text}
+            value={propsData?.questionText || ''}
             showError={messageTextError}
             returnKeyType="done"
             onBlur={messageTextBlur}
@@ -335,17 +337,29 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
         {/* {this._question.isNewQuestion
               ? this.renderEditableHeader()
               : this.renderReadOnlyHeader()} */}
-
         {renderDefaultQuestionField()}
-        <View style={styles.footer}>
-          <ActionButton
-            title="RECORD YOUR QUESTION"
-            loading={loading}
-            customTitleStyle={{fontSize: 16}}
-            // onPress={this.recordQuestion.bind(this)}
-            customStyle={styles.btnEnable}
-          />
-        </View>
+        {
+          <View style={styles.footer}>
+            <ActionButton
+              title="RECORD YOUR QUESTION"
+              loading={loading}
+              customTitleStyle={{fontSize: 16}}
+              // onPress={this.recordQuestion.bind(this)}
+              customStyle={styles.btnEnable}
+            />
+          </View>
+        }
+        {propsData?.questionHasUrl && propsData?.questionId && (
+          <View style={styles.footer}>
+            <ActionButton
+              title="PLAY QUESTION"
+              loading={loading}
+              customTitleStyle={{fontSize: 16}}
+              // onPress={this.recordQuestion.bind(this)}
+              customStyle={styles.btnEnable}
+            />
+          </View>
+        )}
       </View>
     );
   };

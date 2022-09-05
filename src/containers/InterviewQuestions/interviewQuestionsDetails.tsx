@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import {AppColors, AppSizes} from '../../theme';
 import {TabDetails} from '../../components';
-import {TabBar} from '../../components/tab-bar';
 import {ViewHeader} from '../../components/view-header';
 import {showYesNoAlert} from '../../common';
 import {useSelector} from '../../redux/reducers/index';
@@ -20,7 +19,6 @@ import SortableList from 'react-native-sortable-list';
 import {ActionButton} from '../../components/action-button';
 import {AppFonts} from '../../theme';
 import {windowDimensions} from '../../common/window-dimensions';
-import Tab from '../../theme/components/Tab';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {needQuestionsService} from '../../services/InterviewQuestions/needQuestionsService';
 import _ from 'lodash';
@@ -30,6 +28,9 @@ import {
   deleteInterviewQuestionsService,
   deleteNeedInterviewQuestionsService,
 } from '../../services/InterviewQuestions';
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+
+const Tab = createMaterialTopTabNavigator();
 
 export interface InterviewQuestionDetailProps {
   questionSectionId: string;
@@ -67,7 +68,7 @@ const InterviewQuestionDetail = (
   const userInfo = useSelector(state => state.userReducer);
   const propsData = [props?.route?.params] ? [props?.route?.params] : {};
   const {needId, sectionTitleOverride, questionSectionId} = propsData?.[0];
-  const {sectionFacilityID, sections, onSave} = propsData?.[0];
+  const {sectionFacilityID, sections, onSave} = propsData?.[0] || {};
   const {facilityId} = sectionFacilityID ? sectionFacilityID : {};
   const [selectedTabId, setSelectedTabID] = useState(
     needId ? 'other' : 'default',
@@ -118,10 +119,6 @@ const InterviewQuestionDetail = (
     }
   };
 
-  const showDefault = () => {
-    return selectedTabId === 'default';
-  };
-
   const showableQuestions = (): any => {
     if (!section) {
       return [];
@@ -146,6 +143,17 @@ const InterviewQuestionDetail = (
     if (refreshing || silentRefreshing) {
       return;
     }
+    NavigationService.navigate('AddQuestion', {
+      title: 'Add Question',
+      //     questionId: '0',
+      //     initialUnitId: this.section ? this.section.sectionId : '',
+      //     needId: this.props.needId,
+      //     onClose: this.onQuestionClose.bind(this),
+      //     onSave: () => {
+      //         this.onSave()
+      //         this.forceUpdate()
+      //     }
+    });
 
     // Actions[ScreenType.FACILITIES.CATALOG_QUESTION]({
     //     title: 'Add Question',
@@ -160,15 +168,27 @@ const InterviewQuestionDetail = (
     // })
   };
 
-  const openQuestion = (questionId: string, needId: string, unitId: string) => {
+  const openQuestion = (
+    questionId: string,
+    needId: string,
+    unitId: string,
+    questionText: string,
+    questionHasUrl: string,
+    unitName: string,
+  ) => {
     if (refreshing || silentRefreshing) {
       return;
     }
     NavigationService.navigate('AddQuestion', {
       title: 'Modify Question',
       questionId: questionId,
+      unitName: unitName,
+      questionText: questionText,
       initialUnitId: unitId,
       needId: needId,
+      questionHasUrl: questionHasUrl,
+      sections: sections ? sections : {},
+
       // onClose: this.onQuestionClose.bind(this),
     });
   };
@@ -282,10 +302,6 @@ const InterviewQuestionDetail = (
     setEditing(!editing);
   };
 
-  const onTabSelection = (tab: TabDetails) => {
-    // setSelectedTabID(Tab.id)
-  };
-
   const renderUnitHeader = () => {
     let sectionData = sections ? sections : {};
     const questionCount = needQuestionList.length;
@@ -317,29 +333,97 @@ const InterviewQuestionDetail = (
   //   return count.toString();
   // };
 
-  const renderTabs = () => {
-    const tabs = [
-      {
-        id: 'default',
-        title: 'Default Questions',
-        // badge: showDefault() ? ''
-        //   : getQuestionsBadge(sections.defaultQuestions, true),
-      },
-      {
-        id: 'other',
-        title: 'Other Questions',
-        // badge: showDefault() ? getQuestionsBadge(this.section.questions, false)
-        //   : '',
-      },
-    ];
+  // const renderTabs = () => {
+  //   const tabs = [
+  //     {
+  //       id: 'default',
+  //       title: 'Default Questions',
+  //       // badge: showDefault() ? ''
+  //       //   : getQuestionsBadge(sections.defaultQuestions, true),
+  //     },
+  //     {
+  //       id: 'other',
+  //       title: 'Other Questions',
+  //       // badge: showDefault() ? getQuestionsBadge(this.section.questions, false)
+  //       //   : '',
+  //     },
+  //   ];
 
+  //   return (
+  //     <TabBar
+  //       style={styles.tabBar}
+  //       tabs={tabs}
+  //       selectedTabId={selectedTabId}
+  //       onTabSelection={() => onTabSelection(tabs)}
+  //     />
+  //   );
+  // };
+
+  const DefaultQuestions = (route: any) => {
     return (
-      <TabBar
-        style={styles.tabBar}
-        tabs={tabs}
-        selectedTabId={selectedTabId}
-        onTabSelection={() => onTabSelection(tabs)}
-      />
+      <ScrollView
+        style={{flex: 1, backgroundColor: AppColors.baseGray}}
+        refreshControl={
+          <RefreshControl
+            tintColor={AppColors.blue}
+            colors={[AppColors.blue]}
+            refreshing={refreshing}
+            onRefresh={() => refreshSection(false)}
+          />
+        }>
+        {showableQuestions().length > 0 && renderSortableList(route)}
+      </ScrollView>
+    );
+  };
+  const OtherQuestions = (route: any) => {
+    return (
+      <View style={{flex: 1, backgroundColor: AppColors.baseGray}}>
+        <ScrollView
+          style={{flex: 1, backgroundColor: AppColors.baseGray}}
+          refreshControl={
+            <RefreshControl
+              tintColor={AppColors.blue}
+              colors={[AppColors.blue]}
+              refreshing={refreshing}
+              onRefresh={() => refreshSection(false)}
+            />
+          }>
+          {showableQuestions().length > 0 && renderSortableList(route)}
+        </ScrollView>
+      </View>
+    );
+  };
+
+  const showDefault = () => {
+    return selectedTabId === 'default';
+  };
+
+  const renderTabs = () => {
+    return (
+      <Tab.Navigator
+        screenOptions={{
+          headerShown: true,
+          tabBarShowLabel: true,
+          tabBarStyle: {backgroundColor: AppColors.white},
+          tabBarLabelStyle: {fontWeight: 'bold'},
+          tabBarActiveTintColor: AppColors.blue,
+          tabBarInactiveTintColor: AppColors.mediumGray,
+        }}>
+        <Tab.Screen
+          name="DefaultQuestions"
+          component={route => DefaultQuestions(route)}
+          options={{
+            title: 'Default Questions',
+          }}
+        />
+        <Tab.Screen
+          name="OtherQuestions"
+          component={route => OtherQuestions(route)}
+          options={{
+            title: 'Other Questions',
+          }}
+        />
+      </Tab.Navigator>
     );
   };
 
@@ -347,21 +431,6 @@ const InterviewQuestionDetail = (
     setRefreshing(!silent);
     setSilentRefreshing(silent);
     loadNeedQuestions();
-
-    // this.setState({refreshing: !silent, silentRefreshing: silent}, () => {
-    //   this.props.facilityQuestionsStore.load(this.props.needId).then(
-    //     () => {
-    //       if (!this.section && !this.props.needId) {
-    //         // Actions.pop()
-    //       } else {
-    //         this.setState({refreshing: false, silentRefreshing: false});
-    //       }
-    //     },
-    //     err => {
-    //       this.setState({refreshing: false, silentRefreshing: false});
-    //     },
-    //   );
-    // });
   };
 
   // const onChangeOrder = (rowMap: RowMap, newOrder: string[]) => {
@@ -383,7 +452,7 @@ const InterviewQuestionDetail = (
   //   this.setState({saving: false});
   // };
 
-  const renderSortableList = () => {
+  const renderSortableList = (route: any) => {
     const rowMap: RowMap = {};
     const rowOrder: Array<string> = [];
 
@@ -397,14 +466,25 @@ const InterviewQuestionDetail = (
         },
       );
     } else {
-      sections?.defaultQuestions.forEach(
-        (question: {deleted: any}, index: string | number) => {
-          if (!question.deleted) {
-            rowMap[index] = question;
-            rowOrder.push(index.toString());
-          }
-        },
-      );
+      if (route?.route?.name == 'DefaultQuestions') {
+        sections?.defaultQuestions.forEach(
+          (question: {deleted: any}, index: string | number) => {
+            if (!question.deleted) {
+              rowMap[index] = question;
+              rowOrder.push(index.toString());
+            }
+          },
+        );
+      } else {
+        sections?.questions.forEach(
+          (question: {deleted: any}, index: string | number) => {
+            if (!question.deleted) {
+              rowMap[index] = question;
+              rowOrder.push(index.toString());
+            }
+          },
+        );
+      }
     }
     const questions = showableQuestions;
 
@@ -428,6 +508,8 @@ const InterviewQuestionDetail = (
               ? AppSizes.conexusFooterButtonHeight + 20
               : 0;
           var question: any = item;
+          console.log('Question===>', question);
+
           return (
             <SortableQuestionRow
               marginBottom={paddingBottom}
@@ -440,7 +522,14 @@ const InterviewQuestionDetail = (
                   : deleteInterviewQuestion(question.id)
               }
               onOpenQuestion={() =>
-                openQuestion(question.id, question.needId, question.unitId)
+                openQuestion(
+                  question.id,
+                  question.needId,
+                  question.unitId,
+                  question.text,
+                  question.tokBoxArchiveUrl,
+                  question.unitName,
+                )
               }
               onPlayQuestion={() =>
                 playQuestion(question.id, question.needId, question)
@@ -517,7 +606,7 @@ const InterviewQuestionDetail = (
       {renderUnitHeader()}
       {!needId && renderTabs()}
       {showableQuestions().length == 0 && renderEmptyList()}
-      {showableQuestions().length > 0 && renderSortableList()}
+
       {!editing && (
         <View style={styles.footer}>
           <ActionButton

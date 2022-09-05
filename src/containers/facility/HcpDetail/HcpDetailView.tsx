@@ -19,7 +19,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Styles from '../../../theme/styles';
 import {AppFonts, AppSizes, AppColors} from '../../../theme';
 import {facilitySubmissionsService} from '../../../services/Facility/facilitySubmissionsService';
-import {TabDetails, ScreenFooterButton} from '../../../components';
+import {TabDetails} from '../../../components';
 import {ConexusIconButton} from '../../../components/conexus-icon-button';
 import {ActionButton} from '../../../components/action-button';
 import {Avatar} from '../../../components/avatar';
@@ -36,10 +36,10 @@ import ConexusContentList from '../../../components/conexus-content-list';
 import {PhoneCallModal} from '../../../components/Modals/phoneCallModal';
 import {candidateSubmissionsService} from '../../../services/candidateSubmissioService';
 import {notInterestedService} from '../../../services/notInterestedService';
-import {onChange} from 'react-native-reanimated';
 import {makeOfferService} from '../../../services/makeOfferService';
-import {TOP_TAB_SCREENS} from '../../../navigation/TabNavigator';
-import {TabBar} from '../../../components/tab-bar';
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+
+const Tab = createMaterialTopTabNavigator();
 
 interface HcpDetailProps {
   submissionId: string;
@@ -69,8 +69,6 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     props?.route?.params?.candidate || {},
   );
   const [data, setData] = useState([]);
-  const [stateCandidate, setStateCandidate] = useState([]);
-  const [startDate, setStartDate] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [offerModalVisible, setOfferModalVisible] = useState(false);
   const [phoneCallModalVisible, setPhoneCallModalVisible] = useState(false);
@@ -87,31 +85,27 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const [calling, setCalling] = useState(false);
   const submissionId = props?.route?.params?.submissionId;
   const validPhone = phoneFormatter.isValid10DigitPhoneNumber(callbackNumber);
-  const {onMessageSendCallback, screen} = props;
+  const {onMessageSendCallback} = props;
 
-  // get responses(): typeof CandidateResponseModel.Type[] {
-  //   const {candidate} = this.state;
+  const responses = (): any => {
+    if (!candidate) {
+      return [];
+    }
+    const result: any[] = [];
+    candidate.sections.forEach((section: {questions: any[]}) => {
+      section.questions.forEach(
+        (question: {answerVideoUrl: any; answerAudioPath: any}) => {
+          if (question.answerVideoUrl || question.answerAudioPath) {
+            result.push(question);
+          }
+        },
+      );
+    });
 
-  //   if (!candidate) {
-  //     return [];
-  //   }
-
-  //   const result = [];
-
-  //   candidate.sections.forEach(section => {
-  //     section.questions.forEach(question => {
-  //       if (question.answerVideoUrl || question.answerAudioPath) {
-  //         result.push(question);
-  //       }
-  //     });
-  //   });
-
-  //   return result;
-  // }
+    return result;
+  };
 
   const refreshCandidate = (refreshing: boolean = false) => {
-    console.log('Okkk===>', 'loading', loadingSummary);
-
     setRefreshing(refreshing);
     setLoadingSummary(loadingSummary);
 
@@ -134,7 +128,6 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const preloadResumePages = (data: any) => {
     let i = 0;
     const promises = [];
-    console.log('Data====>', data);
 
     if (data) {
       while (i < preloadResumeCount && i < data.resumePages.pageCount) {
@@ -163,8 +156,8 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     setLoadingSummary(true);
     try {
       const {data} = await candidateSubmissionsService(submissionId);
-
-      setData(data);
+      let questionsData = data ? data : [];
+      setData(questionsData);
       preloadResumePages(data);
       setRefreshing(false);
       setLoadingSummary(false);
@@ -177,6 +170,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   useEffect(() => {
     // this.state.candidate.setViewed(candidate.submissionId);
     loadCandidate();
+
     // if (!candidate) {
 
     // }
@@ -191,80 +185,87 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     // }
   }, []);
 
-  // getAnswerPlaylist(): AnswerRatingItem[] {
-  //   const responses = this.responses;
+  const getAnswerPlaylist = (): any => {
+    const playListResponse = responses();
 
-  //   var answers = responses.map(response => {
-  //     return {
-  //       id: response.questionId,
-  //       videoUrl: response.answerVideoUrl,
-  //       audioUrl: response.answerAudioPath,
-  //       questionText: response.questionText,
-  //       rating: response.feedbackResponse as -1 | 0 | 1,
-  //       saveResponse: (questionId: string, rating: -1 | 0 | 1) => {
-  //         return this.state.candidate
-  //           .saveFeedbackResponse(questionId, rating)
-  //           .then(() => {
-  //             return new Promise((resolve, reject) => {
-  //               this.forceUpdate(resolve);
-  //             });
-  //           });
-  //       },
-  //     };
-  //   });
-  //   return answers;
-  // }
+    var answers = playListResponse.map(
+      (response: {
+        questionId: any;
+        answerVideoUrl: any;
+        answerAudioPath: any;
+        questionText: any;
+        feedbackResponse: number;
+      }) => {
+        return {
+          id: response.questionId,
+          videoUrl: response.answerVideoUrl,
+          audioUrl: response.answerAudioPath,
+          questionText: response.questionText,
+          rating: response.feedbackResponse as -1 | 0 | 1,
+          saveResponse: (questionId: string, rating: -1 | 0 | 1) => {
+            return this.state.candidate
+              .saveFeedbackResponse(questionId, rating)
+              .then(() => {
+                return new Promise((resolve, reject) => {
+                  this.forceUpdate(resolve);
+                });
+              });
+          },
+        };
+      },
+    );
+    return answers;
+  };
 
-  // showAnswers(initialIndex = 0) {
-  //   const answerPlaylist = this.getAnswerPlaylist();
+  const showInterviewRatingsLightBox = (initialIndex = 0) => {
+    const answerPlaylist = getAnswerPlaylist();
 
-  //   if (answerPlaylist.length === 0) {
-  //     Alert.alert(
-  //       'Interviews Unavailable',
-  //       'The answers for the specified interview questions are currently unavailable.',
-  //     );
-  //   } else {
-  //     if (answerPlaylist[initialIndex].audioUrl) {
-  //       this.playAudioAnswer(initialIndex);
-  //     } else {
-  //       this.showInterviewRatingsLightBox(initialIndex);
-  //     }
-  //   }
-  // }
+    // Actions[ScreenType.ANSWER_RATINGS_LIGHTBOX]({
+    //   initialIndex,
+    //   answers: answerPlaylist,
+    //   title: this.state.candidate.display.title,
+    // });
+  };
 
-  // showInterviewRatingsLightBox(initialIndex = 0) {
-  //   const answerPlaylist = this.getAnswerPlaylist();
+  const showAnswers = (initialIndex = 0) => {
+    const answerPlaylist = getAnswerPlaylist();
 
-  //   Actions[ScreenType.ANSWER_RATINGS_LIGHTBOX]({
-  //     initialIndex,
-  //     answers: answerPlaylist,
-  //     title: this.state.candidate.display.title,
-  //   });
-  // }
+    if (answerPlaylist.length === 0) {
+      Alert.alert(
+        'Interviews Unavailable',
+        'The answers for the specified interview questions are currently unavailable.',
+      );
+    } else {
+      if (answerPlaylist[initialIndex].audioUrl) {
+        playAudioAnswer(initialIndex);
+      } else {
+        showInterviewRatingsLightBox(initialIndex);
+      }
+    }
+  };
 
-  // playAudioAnswer(index = 0) {
-  //   const {candidate} = this.state;
-  //   const answerPlaylist = this.getAnswerPlaylist();
-  //   const answer = answerPlaylist[index];
-  //   const avatarTitle = `${candidate.firstName} ${candidate.lastName}`;
-  //   const avatarDescription = answer.questionText;
-  //   const parms = {
-  //     audioUrl: answer.audioUrl,
-  //     avatarUrl: candidate.photoUrl,
-  //     avatarTitle,
-  //     avatarDescription,
-  //   };
+  const playAudioAnswer = (index = 0) => {
+    const answerPlaylist = getAnswerPlaylist();
+    const answer = answerPlaylist[index];
+    const avatarTitle = `${candidate.firstName} ${candidate.lastName}`;
+    const avatarDescription = answer.questionText;
+    const parms = {
+      audioUrl: answer.audioUrl,
+      avatarUrl: candidate.photoUrl,
+      avatarTitle,
+      avatarDescription,
+    };
 
-  //   Actions[ScreenType.AUDIO_PLAYER_LIGHTBOX](parms);
-  // }
+    // Actions[ScreenType.AUDIO_PLAYER_LIGHTBOX](parms);
+  };
 
-  const renderQuestions = () => {
-    const responses = [];
-    data.sections.forEach((section: {questions: any[]}) => {
-      section.questions.forEach(response => {
-        responses.push(response);
-      });
-    });
+  const renderQuestions = (data: never[] | []) => {
+    const responses: string | readonly any[] | null | undefined = [];
+    // data.sections.forEach((section: {questions: any[]}) => {
+    //   section.questions.forEach(response => {
+    //     responses.push(response);
+    //   });
+    // });
 
     if (!responses.length) {
       return (
@@ -284,23 +285,25 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
       );
     }
 
-    // return (
-    //   <FlatList
-    //     style={{paddingBottom: 220}}
-    //     data={responses}
-    //     renderItem={({item, index}) => (
-    //       <CandidateResponseRow
-    //         response={item}
-    //         onPlayResponse={this.showAnswers.bind(this, index)}
-    //       />
-    //     )}
-    //   />
-    // );
+    return (
+      <FlatList
+        style={{paddingBottom: 220}}
+        data={responses}
+        renderItem={({item, index}) => (
+          <CandidateResponseRow
+            response={item}
+            onPlayResponse={showAnswers(index)}
+          />
+        )}
+      />
+    );
   };
 
-  const openImageGallery = () => {
+  const openImageGallery = data => {
+    console.log('Candiddate---->', data);
+
     NavigationService.navigate('ImageGallery', {
-      // images: candidate.resumePages.images,
+      images: data?.resumePages?.originalPdf,
       title: candidate.display.title,
       // initialRenderCount: preloadResumeCount,
     });
@@ -342,6 +345,53 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const onChange = (changedDate: any) => {
     console.log('Data', changedDate);
   };
+  const Summary = () => {
+    return (
+      <View style={{flex: 1, backgroundColor: AppColors.baseGray}}>
+        {loadingSummary && renderLoading(100)}
+        <ConexusContentList
+          style={styles.contentList}
+          data={candidate.submissionSummary}
+        />
+      </View>
+    );
+  };
+  const VirtualInterView = () => {
+    return (
+      <View style={{flex: 1, backgroundColor: AppColors.baseGray}}>
+        {renderQuestions(data || [])}
+      </View>
+    );
+  };
+
+  const MyTabs = () => {
+    return (
+      <Tab.Navigator
+        screenOptions={{
+          headerShown: true,
+          tabBarShowLabel: true,
+          tabBarStyle: {backgroundColor: AppColors.white},
+          tabBarLabelStyle: {fontWeight: 'bold'},
+          tabBarActiveTintColor: AppColors.blue,
+          tabBarInactiveTintColor: AppColors.mediumGray,
+        }}>
+        <Tab.Screen
+          name="Summary"
+          component={Summary}
+          options={{
+            title: 'Summary',
+          }}
+        />
+        <Tab.Screen
+          name="Virtual InterView"
+          component={VirtualInterView}
+          options={{
+            title: 'Virtual Interview',
+          }}
+        />
+      </Tab.Navigator>
+    );
+  };
 
   const renderActionHeader = () => {
     let date = moment(candidate.startDate).format(dateFormat);
@@ -376,14 +426,6 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
             title="Make Offer"
           />
         </View>
-
-        <TabBar
-          selectedTabId={selectedTab.id}
-          tabs={tabs}
-          onTabSelection={tab => setSelectedTab(tab)}
-          // onTabSelection={tab => this.setState({selectedTab: tab})}
-          style={{flex: 1}}
-        />
         {offerModalVisible && (
           <MakeOfferModal
             title={'Make Offer'}
@@ -446,7 +488,10 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   };
 
   const openConversations = () => {
-    NavigationService.navigate('ConversationContainer');
+    NavigationService.navigate('ConversationContainer', {
+      candidate: candidate,
+      onMessageSendCallback: candidate.conversationId || '',
+    });
     setContactOptionModalVisible(false);
   };
 
@@ -463,16 +508,14 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
 
   const renderCandidate = () => {
     return (
-      <View style={{flex: 1}}>
+      <View style={styles.rootView}>
         <ScrollView
           refreshControl={
             <RefreshControl
               Refreshing={refreshing}
               onRefresh={() => refreshCandidate(true)}
             />
-          }
-          style={styles.rootView}
-          contentContainerStyle={styles.rootViewContent}>
+          }>
           <View style={styles.headerViews}>
             <Icon
               style={styles.closeButton}
@@ -491,16 +534,20 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
             </Text>
             {renderActionHeader()}
           </View>
-          {loadingSummary && selectedTab === tabs[0] && (
+
+          {/* {loadingSummary && selectedTab === tabs[0] && (
             <ConexusContentList
               style={styles.contentList}
               data={candidate.submissionSummary}
             />
-          )}
-          {selectedTab === tabs[1] && renderQuestions(data)}
-          {/* {loadingSummary && renderLoading(100)} */}
+          )} */}
+
+          {/* {selectedTab === tabs[1] && renderQuestions(data)} */}
         </ScrollView>
-        {!!candidate && candidate.conversationAllowed && (
+
+        {MyTabs()}
+
+        {
           <View style={styles.footer}>
             <ActionButton
               loading={loading}
@@ -515,8 +562,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
               }}
             />
           </View>
-        )}
-
+        }
         {contactOptionModalVisible && (
           <ContactOptionModal
             title={'Contact Options'}
@@ -558,8 +604,8 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
 
 const styles = StyleSheet.create({
   rootView: {
-    width: windowDimensions.width,
-    backgroundColor: variables.baseGray,
+    flex: 1,
+    backgroundColor: AppColors.baseGray,
   },
 
   footer: {

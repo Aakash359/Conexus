@@ -1,7 +1,18 @@
 import React, {useEffect, useState} from 'react';
-import {Text, StyleSheet, View, InteractionManager} from 'react-native';
+import {
+  Text,
+  StyleSheet,
+  View,
+  InteractionManager,
+  TouchableOpacity,
+  Button,
+} from 'react-native';
 import variables from '../../../theme';
-import Gallery from 'react-native-image-gallery';
+// import {
+//   ImageGallery,
+//   ImageObject,
+// } from '@georstat/react-native-image-gallery';
+import {ImageGallery} from '@georstat/react-native-image-gallery';
 import {ConexusIconButton} from '../../../components/conexus-icon-button';
 import {ModalHeader} from '../../../components/modal-header';
 import {AppFonts} from '../../../theme';
@@ -22,7 +33,15 @@ interface ImageGalleryState {
   showGallery: boolean;
 }
 
-const ImageGallery = (props: ImageGalleryProps, state: ImageGalleryState) => {
+// const images = [
+//   {
+//     id: 1,
+//     url: 'https://i.picsum.photos/id/100/2500/1656.jpg?hmac=gWyN-7ZB32rkAjMhKXQgdHOIBRHyTSgzuOK6U0vXb1w',
+//     // any other extra info you want
+//   },
+// ];
+
+const ImageGalleries = (props: ImageGalleryProps, state: ImageGalleryState) => {
   const {initialRenderCount, title} = props;
 
   //   const Images = props.images.map((uri: any) => {
@@ -30,9 +49,12 @@ const ImageGallery = (props: ImageGalleryProps, state: ImageGalleryState) => {
   //   });
 
   const [index, setIndex] = useState(0);
-  const [images, setImages] = useState('');
+  const [images, setImages] = useState(props?.route?.params?.images || '');
   const [allImages, setAllImages] = useState('');
   const [showGallery, setShowGallery] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
+  const openGallery = () => setIsOpen(true);
+  const closeGallery = () => setIsOpen(false);
 
   let displayCount = initialRenderCount || 2;
 
@@ -108,8 +130,17 @@ const ImageGallery = (props: ImageGalleryProps, state: ImageGalleryState) => {
           {/* {index + 1} of {allImages.length} */}
         </Text>
       </View>
-      <View style={{flex: 1}}>
-        {/* {showGallery && (
+      <View>
+        <Button onPress={openGallery} title="Open Gallery" />
+        <ImageGallery
+          close={() => closeGallery()}
+          isOpen={isOpen}
+          images={images}
+          // renderFooterComponent={renderFooterComponent}
+          // renderHeaderComponent={renderHeaderComponent}
+        />
+      </View>
+      {/* {showGallery && (
           <Gallery
             style={{flex: 1}}
             images={images}
@@ -120,7 +151,6 @@ const ImageGallery = (props: ImageGalleryProps, state: ImageGalleryState) => {
             initialPage={0}
           />
         )} */}
-      </View>
     </View>
   );
 };
@@ -155,4 +185,4 @@ const style = StyleSheet.create({
   },
 });
 
-export default ImageGallery;
+export default ImageGalleries;

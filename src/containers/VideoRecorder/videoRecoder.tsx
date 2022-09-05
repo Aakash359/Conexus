@@ -5,7 +5,7 @@ import {AppColors, AppSizes} from '../../theme';
 
 import {VideoStore, ConversationStore} from '../stores';
 import {ConexusVideoActionButton} from '../../components';
-import {ConexusVideoRecorder} from '../../components/conexus-video-recorder';
+import {ConexusVideoRecorder} from '../../components';
 
 import InCallManager from 'react-native-incall-manager';
 import {showYesNoAlert} from '../../common/cancel-retry-alert';
@@ -50,51 +50,59 @@ const VideoRecorder = (
   const videoMessageSendComplete = false;
   const propsData = props?.route?.params;
   const {videoMessage, conversationId, submissionId} = propsData;
-
-  console.log('Aakas====>', videoMessage);
-
-  // useEffect(() => {
-  //   StatusBar.setHidden(true);
-  //   initVideoSession();
-  //   InCallManager.start({media: 'video'});
-  //   InCallManager.setKeepScreenOn(true);
-  //   InCallManager.setForceSpeakerphoneOn(true);
-  // }, []);
-
-  // componentWillUnmount() {
-  //   StatusBar.setHidden(false);
-  //   InCallManager.setKeepScreenOn(false);
-  //   InCallManager.setForceSpeakerphoneOn(null);
-  //   InCallManager.stop();
-  // }
+  const {videoStore} = props;
 
   // const initVideoSession = () => {
-  //   const {videoStore} = this.props;
-  //   log.info('VideoRecorderLightbox', 'Initing video session');
+  //   try {
+  //     const {data} = await initVideoSessionService({
+  //       conversationId: conversationId || null,
+  //       submissionId: null,
+  //       messageText: messageText.replace(/\s+$/g, ''),
+  //       messageTypeId: '1',
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //     showYesNoAlert({
+  //       title: `We're Sorry`,
+  //       message: 'An error occurred while connecting to our recording service.',
+  //       yesTitle: 'Try Again',
+  //       noTitle: 'Cancel',
+  //       onYes: this.initVideoSession.bind(this),
+  //       onNo: this.onCanceled.bind(this),
+  //     });
+  //   }
 
-  //   videoStore.initVideoSession().then(
-  //     () => {
-  //       this.setState({showRecorder: true, loading: false});
-  //     },
-  //     error => {
-  //       log.info('Video Session init from video recorder lightbox.', error);
-  //       showYesNoAlert({
-  //         title: `We're Sorry`,
-  //         message:
-  //           'An error occurred while connecting to our recording service.',
-  //         yesTitle: 'Try Again',
-  //         noTitle: 'Cancel',
-  //         onYes: this.initVideoSession.bind(this),
-  //         onNo: this.onCanceled.bind(this),
-  //       });
-  //     },
-  //   );
+  //  videoStore.initVideoSession().then(
+  //   () => {
+  //     this.setState({showRecorder: true, loading: false});
+  //   },
+  //   error => {
+  //     log.info('Video Session init from video recorder lightbox.', error);
+  //     showYesNoAlert({
+  //       title: `We're Sorry`,
+  //       message:
+  //         'An error occurred while connecting to our recording service.',
+  //       yesTitle: 'Try Again',
+  //       noTitle: 'Cancel',
+  //       onYes: this.initVideoSession.bind(this),
+  //       onNo: this.onCanceled.bind(this),
+  //     });
+  //   },
+  // );
   // };
 
-  // const onRecorderError = (error, code?: string) => {
-  //   setShowRecorder(false);
-  //   setLoading(false);
-  // };
+  useEffect(() => {
+    StatusBar.setHidden(true);
+    // initVideoSession();
+    InCallManager.start({media: 'video'});
+    InCallManager.setKeepScreenOn(true);
+    InCallManager.setForceSpeakerphoneOn(true);
+  }, []);
+
+  const onRecorderError = (error, code?: string) => {
+    setShowRecorder(false);
+    setLoading(false);
+  };
 
   // const onPlayError = () => {
   //   setTimeout(() => {
@@ -113,27 +121,18 @@ const VideoRecorder = (
 
   // const onRecordComplete = (archiveId: string, videoUrl: string) => {
 
-  //   this.setState({
-  //     closeable: true,
-  //     showRecorder: false,
-  //     showPlayer: true,
-  //     archiveId,
-  //     videoUrl,
-  //   });
+  // const onFinished = (archiveId: string, videoUrl: string) => {
+  //   if (videoMessage && !videoMessageSendComplete) {
+  //     return sendVideoMessage(archiveId, videoUrl);
+  //   }
+
+  //   if (props.onFinished && props.onFinished.call) {
+  //     props.onFinished(archiveId, videoUrl);
+  //   }
+
+  //   StatusBar.setHidden(false);
+  //   // return Actions.pop()
   // };
-
-  const onFinished = (archiveId: string, videoUrl: string) => {
-    if (videoMessage && !videoMessageSendComplete) {
-      return sendVideoMessage(archiveId, videoUrl);
-    }
-
-    if (props.onFinished && props.onFinished.call) {
-      props.onFinished(archiveId, videoUrl);
-    }
-
-    StatusBar.setHidden(false);
-    // return Actions.pop()
-  };
 
   // const onMessageSend = (conversationId: string) => {
   //   if (
@@ -163,42 +162,42 @@ const VideoRecorder = (
   //   this.setState({closeable: false});
   // };
 
-  const sendVideoMessage = (archiveId: string, videoUrl: string) => {
-    const {conversationId, conversationStore, submissionId} = this.props;
+  // const sendVideoMessage = (archiveId: string, videoUrl: string) => {
+  //   const {conversationId, conversationStore, submissionId} = this.props;
 
-    if (!conversationId && !submissionId) {
-      throw new Error(
-        'Either a conversationID or a submissionId is required to send a video message',
-      );
-    }
+  //   if (!conversationId && !submissionId) {
+  //     throw new Error(
+  //       'Either a conversationID or a submissionId is required to send a video message',
+  //     );
+  //   }
 
-    return conversationStore
-      .sendVideoMessage(conversationId, submissionId, archiveId, videoUrl)
-      .then(() => {
-        this.videoMessageSendComplete = true;
-        this.onFinished(archiveId, videoUrl);
-        this.onMessageSend(conversationId);
-      })
-      .catch(error => {
-        log.info('sendVideoMessage error', error);
-        showYesNoAlert({
-          title: 'Send Error',
-          message: 'The message could not be sent. Please try again.',
-          yesTitle: 'Try Again',
-          onYes: this.sendVideoMessage.bind(
-            this,
-            conversationId,
-            submissionId,
-            archiveId,
-            videoUrl,
-          ),
-          onNo: () => {
-            this.videoMessageSendComplete = true;
-            this.onFinished(archiveId, videoUrl);
-          },
-        });
-      });
-  };
+  //   return conversationStore
+  //     .sendVideoMessage(conversationId, submissionId, archiveId, videoUrl)
+  //     .then(() => {
+  //       this.videoMessageSendComplete = true;
+  //       this.onFinished(archiveId, videoUrl);
+  //       this.onMessageSend(conversationId);
+  //     })
+  //     .catch(error => {
+  //       log.info('sendVideoMessage error', error);
+  //       showYesNoAlert({
+  //         title: 'Send Error',
+  //         message: 'The message could not be sent. Please try again.',
+  //         yesTitle: 'Try Again',
+  //         onYes: this.sendVideoMessage.bind(
+  //           this,
+  //           conversationId,
+  //           submissionId,
+  //           archiveId,
+  //           videoUrl,
+  //         ),
+  //         onNo: () => {
+  //           this.videoMessageSendComplete = true;
+  //           this.onFinished(archiveId, videoUrl);
+  //         },
+  //       });
+  //     });
+  // };
 
   const menuButtons: ConexusVideoActionButton[] = [
     {
@@ -213,7 +212,7 @@ const VideoRecorder = (
 
   return (
     <>
-      {/* {!showRecorder && (
+      {!showRecorder && (
         <ConexusVideoRecorder
           style={{
             flex: 1,
@@ -225,11 +224,11 @@ const VideoRecorder = (
               onCanceled();
             }
           }}
-          onRecordStart={onRecordStart}
-          onRecordComplete={onRecordComplete}
-          onRecordError={onRecordError}
+          // onRecordStart={onRecordStart}
+          // onRecordComplete={onRecordComplete}
+          // onRecordError={onRecordError}
         />
-      )} */}
+      )}
 
       {/* {
         <ConexusVideoPlayer
@@ -242,19 +241,19 @@ const VideoRecorder = (
           activityIndicator={() => {
             return activityIndicator;
           }}
-          // actionButton={{
-          //   title: finishedButtonTitle,
-          //   onPress: onFinished(archiveId, videoUrl),
-          // }}
-          // onLoad={() => console.log('Video Loaded')}
+          actionButton={{
+            title: finishedButtonTitle,
+            // onPress: onFinished(archiveId, videoUrl),
+          }}
+          onLoad={() => console.log('Video Loaded')}
           // onError={onPlayError}
           style={{flex: 1}}
           overlayFooterStyle={styles.overlayFooter}
         />
       } */}
-      {/* {loading && (
+      {loading && (
         <ActivityIndicator color={AppColors.blue} style={{flex: 1}} />
-      )} */}
+      )}
     </>
   );
 };

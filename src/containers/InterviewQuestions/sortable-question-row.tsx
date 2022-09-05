@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {Circle} from '../../components/circle';
-import {ConexusIcon} from '../../components/conexus-icon';
+import Icon from 'react-native-vector-icons/Ionicons';
 import {AppFonts, AppColors} from '../../theme';
 
 export interface SortableQuestionProps {
@@ -106,27 +106,23 @@ const SortableQuestionRow = (props: SortableQuestionProps) => {
   const renderPlayIcon = () => {
     if (!videoUrl) {
       return (
-        <Circle size={46} color={AppColors.white} style={styles.circle}>
-          <ConexusIcon
-            style={styles.playIcon}
-            name={'cn-play'}
-            color={AppColors.lightBlue}
-            size={24}
-          />
-        </Circle>
+        <Icon
+          style={styles.playIcon}
+          name={'play-circle-outline'}
+          color={AppColors.lightBlue}
+          size={46}
+        />
       );
     }
 
     return (
       <TouchableOpacity onPress={playQuestion}>
-        <Circle size={46} color={AppColors.white} style={styles.circle}>
-          <ConexusIcon
-            style={styles.playIcon}
-            name={'cn-play'}
-            color={AppColors.blue}
-            size={24}
-          />
-        </Circle>
+        <Icon
+          style={styles.playIcon}
+          name={'play-circle-outline'}
+          color={AppColors.blue}
+          size={46}
+        />
       </TouchableOpacity>
     );
   };
@@ -136,10 +132,10 @@ const SortableQuestionRow = (props: SortableQuestionProps) => {
       <View style={[styles.iconContainer, {marginRight: 12}]}>
         {!editing && renderPlayIcon()}
         {editing && (
-          <ConexusIcon
-            name={'cn-hamburger'}
+          <Icon
+            name={'menu-outline'}
             color={AppColors.blue}
-            size={16}
+            size={38}
             style={{}}
           />
         )}
@@ -152,7 +148,12 @@ const SortableQuestionRow = (props: SortableQuestionProps) => {
       <TouchableOpacity
         style={[styles.iconContainer, {marginLeft: 12}]}
         onPress={deleteQuestion}>
-        <ConexusIcon name={'cn-x'} color={AppColors.red} size={16} style={{}} />
+        <Icon
+          name={'close-outline'}
+          color={AppColors.red}
+          size={35}
+          style={{}}
+        />
       </TouchableOpacity>
     );
   };
@@ -243,9 +244,6 @@ const styles = StyleSheet.create({
   },
 
   playIcon: {
-    margin: 16,
-    width: 24,
-    height: 24,
     position: 'relative',
     left: 6,
   },

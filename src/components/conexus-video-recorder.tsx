@@ -6,12 +6,14 @@ import {
   FlexAlignType,
   ActivityIndicator,
   ViewStyle,
+  Alert,
 } from 'react-native';
-import {ScreenFooterButton} from '../components';
+import {ActionButton, ScreenFooterButton} from '../components';
 import {logger} from 'react-native-logs';
 import {AppFonts, AppColors, AppSizes} from '../theme';
 import {VideoStore} from '../stores';
 import {Publisher} from 'react-native-opentok';
+import {windowDimensions} from '../common';
 
 interface ConexusVideoRecorderProps {
   onRecordComplete?: (archiveId: string, videoUrl: string) => any;
@@ -24,209 +26,62 @@ interface ConexusVideoRecorderProps {
   onComplete: (success, data: any) => any;
 }
 
+interface Step {
+  stepState?: {[key: string]: any};
+  initStep: () => Promise<any>;
+  startRender: () => any;
+  onComplete: () => any;
+}
+
 interface VideoRecorderState {
   currentStep: Step;
 }
 
-interface Step {
-  stepState?: {[key: string]: any};
-  initStep: () => Promise<any>;
-  render: () => any;
-  onComplete: () => any;
-}
-
-const ConexusVideoRecorder = (
+export const ConexusVideoRecorder = (
   props: ConexusVideoRecorderProps,
   state: VideoRecorderState,
 ) => {
   // const _publisher: Publisher;
+  const {onErrorStep, onRecordStep} = props;
+  const [currentStep, setCurrentStep] = useState('');
 
-  // const [currentSteps, setCurrentStep] = useState('');
+  const style = (): any[] => {
+    return [props.style, {backgroundColor: AppColors.black}];
+  };
 
-  // useEffect(() => {
-  //   this.goNextStep(this.recordStep);
-  // }, []);
+  const currentSteps = (): Step => {
+    return state.currentStep;
+  };
 
-  // const recordStep = ():Step => {
-  //   stepState: {
-  //     mode: 'waiting',
-  //   },
-  //   initStep: () => {
-  //     log.info('ConexusVideoRecorder', 'Starting recording process');
-
-  //     const onRecordStep = this.props.onRecordStep;
-  //     if (onRecordStep && onRecordStep.call) {
-  //       onRecordStep();
-  //     }
-
-  //     this.recordStep.stepState.mode = 'waiting';
-
-  //     return Promise.resolve();
-  //   },
-  //   onComplete: () => {
-  //     if (this.recordStep.stepState.mode === 'waiting') {
-  //       log.info(
-  //         'ConexusVideoRecorder',
-  //         'Setting recordset mode to "recording-start"',
-  //       );
-  //       this.recordStep.stepState.mode = 'recording-start';
-
-  //       if (this.props.onRecordStart && this.props.onRecordStart.call) {
-  //         log.info('ConexusVideoRecorder', 'Calling this.props.onRecordStart');
-
-  //         this.props.onRecordStart();
-  //       }
-
-  //       log.info('ConexusVideoRecorder', 'Calling force update');
-
-  //       this.forceUpdate(() => {
-  //         log.info(
-  //           'ConexusVideoRecorder',
-  //           'Calling this.props.videoStore.recordSession()',
-  //         );
-
-  //         this.props.videoStore
-  //           .recordSession()
-  //           .then(() => {
-  //             log.info(
-  //               'ConexusVideoRecorder',
-  //               'Setting this.recordStep.stepState.mode to "recording"',
-  //             );
-
-  //             // Once we have a session, we will show the publisher
-  //             this.recordStep.stepState.mode = 'recording';
-
-  //             this.forceUpdate();
-  //           })
-  //           .catch(error => {
-  //             this.props.onRecordError(error);
-  //             this.goNextStep(this.errorStep);
-  //           });
-  //       });
-  //     } else {
-  //       log.info(
-  //         'ConexusVideoRecorder',
-  //         'Setting this.recordStep.stepState.mode to "recording-ending"',
-  //       );
-  //       this.recordStep.stepState.mode = 'recording-ending';
-
-  //       log.info('ConexusVideoRecorder', 'Forcing update');
-
-  //       this.forceUpdate(() => {
-  //         log.info(
-  //           'ConexusVideoRecorder',
-  //           'Telling videostore to stop recording',
-  //         );
-
-  //         this.props.videoStore.stopRecordingSession().then(
-  //           (archive: any) => {
-  //             this.forceUpdate();
-
-  //             if (
-  //               this.props.onRecordComplete &&
-  //               this.props.onRecordComplete.call
-  //             ) {
-  //               log.info(
-  //                 'ConexusVideoRecorder',
-  //                 'Calling this.props.onRecordComplete',
-  //                 archive.id,
-  //                 archive.Url,
-  //               );
-  //               this.props.onRecordComplete(archive.Id, archive.Url);
-  //             }
-
-  //             if (this.props.onComplete && this.props.onComplete.call) {
-  //               log.info(
-  //                 'ConexusVideoRecorder',
-  //                 'Calling this.props.onComplete',
-  //                 true,
-  //                 null,
-  //               );
-  //               this.props.onComplete(true, null);
-  //             }
-  //           },
-  //           error => {
-  //             log.info('ConexusVideoRecorder', 'Error', error);
-
-  //             if (this.props.onRecordError && this.props.onRecordError.call) {
-  //               log.info(
-  //                 'ConexusVideoRecorder',
-  //                 'Calling this.props.onRecordError',
-  //                 error,
-  //               );
-  //               this.props.onRecordError(error);
-  //             }
-
-  //             this.goNextStep(this.errorStep);
-  //           },
-  //         );
-  //       });
-  //     }
-
-  //     return void 0;
-  //   },
-  //   render: () => {
-  //     let footerButton = <View />;
-  //     let showCountdown = false;
-  //     let showQuestion = true;
-  //     let showPublisher = !!this.props.videoStore.sessionId;
-  //     let showActivity = false;
-
-  //     if (this.recordStep.stepState.mode === 'waiting') {
-  //       showCountdown = true;
-  //       footerButton = (
-  //         <ScreenFooterButton
-  //           hideGradient
-  //           title="Start Recording"
-  //           onPress={() => {
-  //             this.recordStep.onComplete();
-  //           }}
-  //         />
-  //       );
-  //     }
-
-  //     if (this.recordStep.stepState.mode === 'recording-start') {
-  //       showActivity = true;
-  //       showQuestion = false;
-  //       footerButton = <View />;
-  //     }
-
-  //     if (this.recordStep.stepState.mode === 'recording') {
-  //       showCountdown = true;
-  //       footerButton = (
-  //         <ScreenFooterButton
-  //           danger
-  //           hideGradient
-  //           title="Stop Recording"
-  //           onPress={() => {
-  //             this.recordStep.onComplete();
-  //           }}
-  //         />
-  //       );
-  //     }
-
-  //     if (this.recordStep.stepState.mode === 'recording-ending') {
-  //       showQuestion = false;
-  //       showPublisher = false;
-  //       showActivity = true;
-  //     }
-
-  //     if (this.recordStep.stepState.mode === 'recording-end') {
-  //       showPublisher = false;
-  //       showQuestion = false;
-  //     }
-  //     const {videoStore} = this.props;
-  //     return (
-  //       <View style={this.style}>
-  //         {/* {showPublisher && <Publisher style={recorderStyle.publisher} ref={(i) => this._publisher = i} sessionId={videoStore.sessionId} />}
-  //                   {showActivity && this.renderActivity()}
-  //                   {footerButton} */}
-  //       </View>
-  //     );
-  //   },
+  // const recordStep = (): Step => {
+  //   const initStep
   // };
 
-  // private readonly errorStep: Step = {
+  const goNextStep = (nextStep: Step) => {
+    setTimeout(() => {
+      if (nextStep) {
+        nextStep.initStep().then(
+          () => setCurrentStep(nextStep),
+          () => {
+            errorStep.initStep().then(
+              () => {
+                setCurrentStep(errorStep);
+              },
+              error => {
+                console.log('Conexus Video Recorder', 'ERROR', error);
+              },
+            );
+          },
+        );
+      }
+    }, 0);
+  };
+
+  useEffect(() => {
+    goNextStep(recordStep());
+  }, []);
+
+  // const errorStep: Step = {
   //   initStep: () => {
   //     const onErrorStep = this.props.onErrorStep;
 
@@ -240,38 +95,38 @@ const ConexusVideoRecorder = (
   //     log.info('ErrorStep Init Complete');
   //     return Promise.resolve();
   //   },
-  //   render: () => {
-  //     log.info('Error step render');
-  //     return (
-  //       <View style={this.style}>
-  //         <View style={{flex: 1, padding: 20}}>
-  //           <Text
-  //             style={{
-  //               marginTop: 200,
-  //               textAlign: 'center',
-  //               ...AppFonts.bodyTextLarge,
-  //               color: 'white',
-  //             }}>
-  //             An error occurred while recording.
-  //           </Text>
-  //           <Text
-  //             style={{
-  //               marginTop: 12,
-  //               textAlign: 'center',
-  //               ...AppFonts.bodyTextNormal,
-  //               color: 'white',
-  //             }}>
-  //             Please try again.
-  //           </Text>
-  //           <ScreenFooterButton
-  //             hideGradient
-  //             title="Continue"
-  //             onPress={this.errorStep.onComplete.bind(this)}
-  //           />
-  //         </View>
-  //       </View>
-  //     );
-  //   },
+  //   // render: () => {
+  //   //   log.info('Error step render');
+  //   //   return (
+  //   //     <View style={this.style}>
+  //   //       <View style={{flex: 1, padding: 20}}>
+  //   //         <Text
+  //   //           style={{
+  //   //             marginTop: 200,
+  //   //             textAlign: 'center',
+  //   //             ...AppFonts.bodyTextLarge,
+  //   //             color: 'white',
+  //   //           }}>
+  //   //           An error occurred while recording.
+  //   //         </Text>
+  //   //         <Text
+  //   //           style={{
+  //   //             marginTop: 12,
+  //   //             textAlign: 'center',
+  //   //             ...AppFonts.bodyTextNormal,
+  //   //             color: 'white',
+  //   //           }}>
+  //   //           Please try again.
+  //   //         </Text>
+  //   //         <ScreenFooterButton
+  //   //           hideGradient
+  //   //           title="Continue"
+  //   //           onPress={this.errorStep.onComplete.bind(this)}
+  //   //         />
+  //   //       </View>
+  //   //     </View>
+  //   //   );
+  //   // },
   //   onComplete: () => {
   //     log.info('ErrorStep, OnComplete');
 
@@ -281,92 +136,82 @@ const ConexusVideoRecorder = (
   //   },
   // };
 
-  const currentStep = (): Step => {
-    return this.state.currentStep;
+  const startRender = () => {
+    Alert.alert('hi');
+    let footerButton = <View />;
+    let showCountdown = false;
+    let showQuestion = true;
+    // let showPublisher = !!this.props.videoStore.sessionId;
+    let showActivity = false;
+
+    if (state?.currentStep?.stepState?.mode == 'waiting') {
+      showCountdown = true;
+      footerButton = (
+        <View style={recorderStyle.footer}>
+          <ActionButton
+            title={actionButton.title}
+            customStyle={recorderStyle.btnEnable}
+            onPress={actionButton.onPress}
+          />
+        </View>
+        // <ScreenFooterButton
+        //   hideGradient
+        //   title="Start Recording"
+        //   onPress={() => {
+        //     this.recordStep.onComplete();
+        //   }}
+        // />
+      );
+    }
+
+    // if (this.recordStep.stepState.mode === 'recording-start') {
+    //   showActivity = true;
+    //   showQuestion = false;
+    //   footerButton = <View />;
+    // }
+
+    // if (this.recordStep.stepState.mode === 'recording') {
+    //   showCountdown = true;
+    //   footerButton = (
+    //     <ScreenFooterButton
+    //       danger
+    //       hideGradient
+    //       title="Stop Recording"
+    //       onPress={() => {
+    //         this.recordStep.onComplete();
+    //       }}
+    //     />
+    //   );
+    // }
+
+    // if (this.recordStep.stepState.mode === 'recording-ending') {
+    //   showQuestion = false;
+    //   showPublisher = false;
+    //   showActivity = true;
+    // }
+
+    // if (this.recordStep.stepState.mode === 'recording-end') {
+    //   showPublisher = false;
+    //   showQuestion = false;
+    // }
+    // return (
+    //   <View style={this.style}>
+    //     {showPublisher && (
+    //       <Publisher
+    //         style={recorderStyle.publisher}
+    //         ref={i => (this._publisher = i)}
+    //         sessionId={videoStore.sessionId}
+    //       />
+    //     )}
+    //     {showActivity && this.renderActivity()}
+    //     {footerButton}
+    //   </View>
+    // );
   };
 
-  const style = (): any[] => {
-    return [props.style, {backgroundColor: AppColors.black}];
-  };
-
-  // componentDidMount() {
-  //   this.goNextStep(this.recordStep);
+  // if (!!currentStep) {
+  //   return state.currentStep.startRender();
   // }
-
-  // goNextStep(nextStep: Step) {
-  //   setTimeout(() => {
-  //     if (nextStep) {
-  //       nextStep.initStep().then(
-  //         () => {
-  //           this.setState({currentStep: nextStep});
-  //         },
-  //         () => {
-  //           this.errorStep.initStep().then(
-  //             () => {
-  //               this.setState({currentStep: this.errorStep});
-  //             },
-  //             error => {
-  //               // Well we tried!
-  //               log.info('Conexus Video Recorder', 'ERROR', error);
-  //             },
-  //           );
-  //         },
-  //       );
-  //     }
-  //   }, 0);
-  // }
-
-  // const startRender = () => {
-  // let footerButton = <View />
-  // let showCountdown = false
-  // let showQuestion = true
-  // let showPublisher = !!this.props.videoStore.sessionId
-  // let showActivity = false
-
-  // if (this.recordStep.stepState.mode === 'waiting') {
-  //     showCountdown = true;
-  //     footerButton = <ScreenFooterButton hideGradient title="Start Recording" onPress={() => {
-  //         this.recordStep.onComplete()
-  //     }} />
-  // }
-
-  // if (this.recordStep.stepState.mode === 'recording-start') {
-  //     showActivity = true
-  //     showQuestion = false
-  //     footerButton = <View />
-  // }
-
-  // if (this.recordStep.stepState.mode === 'recording') {
-  //     showCountdown = true;
-  //     footerButton = <ScreenFooterButton danger hideGradient title="Stop Recording" onPress={() => {
-  //         this.recordStep.onComplete()
-  //     }} />
-  // }
-
-  // if (this.recordStep.stepState.mode === 'recording-ending') {
-  //     showQuestion = false
-  //     showPublisher = false
-  //     showActivity = true
-  // }
-
-  // if (this.recordStep.stepState.mode === 'recording-end') {
-  //     showPublisher = false
-  //     showQuestion = false
-  // }
-  //   return (
-  //     <View style={this.style}>
-  //       {showPublisher && (
-  //         <Publisher
-  //           style={recorderStyle.publisher}
-  //           ref={i => (this._publisher = i)}
-  //           sessionId={videoStore.sessionId}
-  //         />
-  //       )}
-  //       {showActivity && this.renderActivity()}
-  //       {footerButton}
-  //     </View>
-  //   );
-  // };
 
   // renderActivity() {
   //   return (
@@ -374,15 +219,7 @@ const ConexusVideoRecorder = (
   //   );
   // }
 
-  // if (!!currentStep) {
-  //   return startRender();
-  // }
-
-  return (
-    <View>
-      <Text>hi</Text>
-    </View>
-  );
+  return <View style={props.style} />;
 };
 
 const absolutePosition = {
@@ -397,7 +234,17 @@ const absolutePosition = {
 };
 
 const recorderStyle = StyleSheet.create({
-  // publisher: {
-  //     ...absolutePosition
-  // }
+  publisher: {
+    ...absolutePosition,
+  },
+  footer: {
+    right: 10,
+    left: 10,
+    position: 'absolute',
+    bottom: 20,
+  },
+  btnEnable: {
+    alignSelf: 'center',
+    width: windowDimensions.width * 0.5,
+  },
 });

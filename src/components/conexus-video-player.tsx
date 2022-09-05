@@ -17,7 +17,7 @@ import {ActionButton} from '../components';
 import _ from 'lodash';
 import InCallManager from 'react-native-incall-manager';
 import SystemSetting from 'react-native-system-setting';
-import Slider from 'react-native-slider';
+import Slider from '@react-native-community/slider';
 import IconTitleBlock from './icon-title-block';
 import {windowDimensions} from '../common/window-dimensions';
 import ScreenFooterButton from './screen-footer-button';
@@ -81,7 +81,7 @@ const ConexusVideoPlayer = (
   state: ConexusVideoPlayerState,
 ) => {
   const {volumeLocation, mediaUrl, actionButton, showActionsOnEnd} = props;
-  const [volume, setVolume] = useState(false);
+  const [volume, setVolume] = useState(10);
   const [hasError, setHasError] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [hasEnded, setHasEnded] = useState(false);
@@ -152,17 +152,14 @@ const ConexusVideoPlayer = (
     return props.errorDisplayText || `This video is currently unavailable.`;
   };
 
-  // get volume(): number {
-  //   return this.state.volume;
-  // }
-  // set volume(value: number) {
-  //   SystemSetting.setVolume(value, {
-  //     playSound: false,
-  //     showUI: false,
-  //     type: 'music',
-  //   });
-  //   this.setState({volume: value});
-  // }
+  const Volume = (value: number) => {
+    SystemSetting.setVolume(value, {
+      playSound: false,
+      showUI: false,
+      type: 'music',
+    });
+    setVolume(value);
+  };
 
   const defaultState = (): ConexusVideoPlayerState => {
     return {
@@ -292,7 +289,7 @@ const ConexusVideoPlayer = (
     }, 0);
   };
 
-  const onProgress = event => {
+  const onProgress = (event: {currentTime: any}) => {
     progress = event.currentTime;
   };
 
@@ -330,7 +327,7 @@ const ConexusVideoPlayer = (
       return null;
     }
 
-    let buttons = [];
+    let buttons: any[] = [];
     let overlayHeaderText = '';
 
     const replayButton = {
@@ -474,6 +471,17 @@ const ConexusVideoPlayer = (
         {renderLoading()}
         {
           <View style={getVolumeStyle()}>
+            <Slider
+              style={{flex: 1, height: 54}}
+              minimumValue={0}
+              value={volume}
+              thumbTintColor={AppColors.blue}
+              maximumValue={1}
+              minimumTrackTintColor={AppColors.blue}
+              maximumTrackTintColor={AppColors.white}
+              onValueChange={value => setVolume(value)}
+              thumbImage={require('./Images/player/volume.png')}
+            />
             {/* <Slider
             style={{flex: 1, height: 54}}
             value={volume}

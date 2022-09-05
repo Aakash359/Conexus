@@ -22,14 +22,11 @@ import {UserStore, VideoStore} from '../../stores';
 import {logger} from 'react-native-logs';
 import {AppFonts, AppSizes, AppColors} from '../../theme';
 import {TouchableOpacity} from 'react-native';
-import {
-  ConversationStore,
-  ConversationModel,
-  ConversationMessageModel,
-  conversationStoreInstance,
-} from '../../stores/message-center';
 import {sendTextMessageService} from '../../services/MessageCenter/sendTextMessageService';
 import {loadTextMessageService} from '../../services/MessageCenter/loadTextMessageService';
+import NavigationService from '../../navigation/NavigationService';
+import {useSelector} from '../../redux/reducers/index';
+import {initVideoConferenceService} from '../../services/VideoCallingServices/videoServices';
 
 let moment = require('moment');
 const SafeAreaView = require('react-native').SafeAreaView;
@@ -73,6 +70,7 @@ const ConversationContainer = (
   const footerInputHeight = new Animated.Value(inputMinHeight);
   const footerInputTargetValue = inputMinHeight;
   const scrollRef = React.createRef<ScrollView>();
+  const scrollViewRef = useRef();
   const animatableRef = useRef(new Animated.Value(0.0)).current;
   const [messageList, setMessageList] = useState([]);
   const [sendEnabled, setSendEnabled] = useState(false);
@@ -82,15 +80,17 @@ const ConversationContainer = (
   const [loading, setLoading] = useState(false);
   const {startVideoMessage} = props;
   const params = props?.route?.params;
+  const userInfo = useSelector(state => state.userReducer);
+  const {conversationId, candidate} = params;
+  const {userId, firstName, lastName, photoUrl} = candidate;
 
-  const {conversationId} = params;
-
+  let recipientsName = `${candidate.firstName} ${candidate.lastName}`;
+  const {submissionId} = candidate;
   const loadMessages = async () => {
     try {
       const {data} = await loadTextMessageService(conversationId);
       Keyboard.dismiss();
       setMessageList(data?.messages);
-      console.log('data===>', data?.messages);
       setRefreshing(false);
     } catch (error) {
       console.log(error);
@@ -103,6 +103,34 @@ const ConversationContainer = (
     }
   };
 
+  const uuid = () => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
+      /[xy]/g,
+      function (c) {
+        let r = (Math.random() * 16) | 0,
+          v = c === 'x' ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      },
+    );
+  };
+
+  // const keyboardWillShow = (event: {endCoordinates: {height: number}}) => {
+  //   console.log('Evenet====>', event);
+
+  //   if (Platform.OS === 'android') {
+  //     crrentKueyboardHeight = event.endCoordinates.height + 56;
+  //     applyMeasurements();
+  //   } else {
+  //     currentKeyboardHeight = event.endCoordinates.height;
+  //     applyMeasurements();
+  //   }
+  //   // setTimeout(() => {
+  //   //   if (scrollView) {
+  //   //     this.scrollView.scrollToEnd();
+  //   //   }
+  //   // }, 400);
+  // };
+
   useEffect(() => {
     applyMeasurements();
     setTimeout(() => {
@@ -110,18 +138,27 @@ const ConversationContainer = (
       if (startVideoMessage) {
         // sendVideoMessage();
       }
+      // conversationStore.clearActiveConversation();
+      //   this.scrollView = null;
+      //   this.view = null;
     }, 100);
-  }, []);
+    // const keyboardWillShowSubscription: EmitterSubscription =
+    //   Keyboard.addListener('keyboardWillShow', keyboardWillShow());
+    // const keyboardWillHideSubscription: EmitterSubscription =
+    //   Keyboard.addListener('keyboardWillShow', keyboardWillShow());
+    // return () => {
+    //   keyboardWillShowSubscription.remove();
+    //   keyboardWillHideSubscription.remove();
+    // };
+  });
   // const conversationId =
 
   // this.paddingBottom = new Animated.Value(0);
   // this.applyMeasurements();
 
-  // const hcpUserId = (): string => {
-  //   return this.activeConversation
-  //     ? this.activeConversation.hcpUserId
-  //     : this.props.recipientUserId;
-  // };
+  const hcpUserId = (): string => {
+    return messageList ? messageList.hcpUserId : userId;
+  };
 
   // const recipientPhotoUrl = (): string => {
   //   return this.activeConversation
@@ -129,13 +166,11 @@ const ConversationContainer = (
   //     : this.props.recipientPhotoUrl;
   // };
 
-  // const recipientName = (): string => {
-  //   return this.activeConversation
-  //     ? this.activeConversation.hcpFirstName +
-  //         ' ' +
-  //         this.activeConversation.hcpLastName
-  //     : this.props.recipientName;
-  // };
+  const recipientName = (): any => {
+    return messageList
+      ? messageList.hcpFirstName + ' ' + messageList.hcpLastName
+      : recipientName;
+  };
 
   // const canMakePhoneCall = (): boolean => {
   //   return (
@@ -145,15 +180,17 @@ const ConversationContainer = (
   //   );
   // };
 
-  // const submissionId = (): string => {
-  //   return this.activeConversation
-  //     ? this.activeConversation.submissionId
-  //     : this.props.submissionId;
-  // };
-
   // const canMakeVideoCall = (): boolean => {
   //   return this.props.userStore.isFacilityUser && !!this.submissionId;
   // };
+
+  const activeConversation = (): any => {
+    return messageList;
+  };
+
+  const submissionIdFun = (): string => {
+    return messageList ? messageList.submissionId : props.submissionId;
+  };
 
   const applyMeasurements = () => {
     const footerActionsOpacity = showFooterActions ? 1 : 0;
@@ -180,42 +217,6 @@ const ConversationContainer = (
     // ]).start();
   };
 
-  // keyboardDidCloseSubscription: EmitterSubscription;
-  // keyboardWillShowSubscription: EmitterSubscription;
-  // keyboardWillHideSubscription: EmitterSubscription;
-
-  // componentDidMount() {
-  //   const {startVideoMessage} = this.props;
-
-  //   setTimeout(() => {
-  //     this.loadMessages();
-
-  //     if (startVideoMessage) {
-  //       this.sendVideoMessage();
-  //     }
-  //   }, 100);
-  // }
-
-  // componentWillMount() {
-  //   this.keyboardWillShowSubscription = Keyboard.addListener(
-  //     'keyboardWillShow',
-  //     this.keyboardWillShow,
-  //   );
-  //   this.keyboardWillHideSubscription = Keyboard.addListener(
-  //     'keyboardWillHide',
-  //     this.keyboardWillHide,
-  //   );
-  // }
-
-  // componentWillUnmount() {
-  //   const {conversationStore} = this.props;
-  //   this.keyboardWillShowSubscription.remove();
-  //   this.keyboardWillHideSubscription.remove();
-  //   conversationStore.clearActiveConversation();
-  //   this.scrollView = null;
-  //   this.view = null;
-  // }
-
   // const onMessageSend = (conversationId: string) => {
   //   if (
   //     this.props.onMessageSendCallback &&
@@ -228,15 +229,6 @@ const ConversationContainer = (
   //     }
   //   }
   // };
-
-  // const keyboardWillShow = event => {
-  //   if (Platform.OS === 'android') {
-  //     this.currentKeyboardHeight = event.endCoordinates.height + 56;
-  //     this.applyMeasurements();
-  //   } else {
-  //     this.currentKeyboardHeight = event.endCoordinates.height;
-  //     this.applyMeasurements();
-  //   }
 
   //   setTimeout(() => {
   //     if (this.scrollView) {
@@ -261,7 +253,9 @@ const ConversationContainer = (
     setSendEnabled(false);
   };
 
-  const onInputContentSizeChange = event => {
+  const onInputContentSizeChange = (event: {
+    nativeEvent: {contentSize: {height: number}};
+  }) => {
     let newInputHeight = event.nativeEvent.contentSize.height + 12;
     if (newInputHeight > inputMaxHeight) {
       newInputHeight = inputMaxHeight;
@@ -273,13 +267,13 @@ const ConversationContainer = (
     // this.applyMeasurements();
   };
 
-  const onLayout = () => {
-    // if (!view) return;
-    // view._component.measureInWindow((winX, winY, winWidth, winHeight) => {
-    //   contentHeight = winHeight;
-    //   applyMeasurements();
-    // });
-  };
+  // const onLayout = () => {
+  //   if (!view:any) return;
+  //   view._component.measureInWindow((winX, winY, winWidth, winHeight) => {
+  //     contentHeight = winHeight;
+  //     applyMeasurements();
+  //   });
+  // };
 
   // const removeRead = (message: any) => {
   //   log.info(message);
@@ -325,23 +319,26 @@ const ConversationContainer = (
     // );
   };
 
-  // const sendVideoMessage = () => {
-  //   Keyboard.dismiss();
+  const onVideoMessageSent = (archiveId: string, videoUrl: string) => {
+    try {
+      scrollViewRef.current.scrollToEnd({animated: true});
+    } catch (error) {
+      log.info('ConversationContainer', 'onVideoMessageSent', 'Error', error);
+    }
+  };
 
-  //   const conversationId = this.activeConversation
-  //     ? this.activeConversation.conversationId
-  //     : '';
-  //   const submissionId = this.props.submissionId;
-  //   // Actions[ScreenType.VIDEO_RECORDER_LIGHTBOX]({ finishedButtonTitle: 'Send', videoMessage: true, conversationId, submissionId, onFinished: this.onVideoMessageSent.bind(this), onMessageSendCallback: this.onMessageSend.bind(this) });
-  // };
+  const sendVideoMessage = () => {
+    Keyboard.dismiss();
 
-  // const onVideoMessageSent = (archiveId: string, videoUrl: string) => {
-  //   try {
-  //     this.scrollView.scrollToEnd({animated: true});
-  //   } catch (error) {
-  //     log.info('ConversationContainer', 'onVideoMessageSent', 'Error', error);
-  //   }
-  // };
+    NavigationService.navigate('VideoRecorder', {
+      finishedButtonTitle: 'Send',
+      videoMessage: true,
+      conversationId,
+      submissionId,
+      onFinished: onVideoMessageSent(),
+      // onMessageSendCallback: this.onMessageSend.bind(this),
+    });
+  };
 
   const sendTextMessage = async () => {
     if (!sendEnabled) {
@@ -374,17 +371,52 @@ const ConversationContainer = (
     }
   };
 
-  // const initVideoCall = () => {
-  //   const {videoStore} = this.props;
-  //   if (this.canMakeVideoCall) {
-  //     videoStore.call(this.submissionId, this.hcpUserId, {
-  //       title: '',
-  //       name: this.recipientName,
-  //       subTitle: '',
-  //       photo: this.recipientPhotoUrl,
-  //     });
-  //   }
-  // };
+  const videoCall = async (data: any, userId: any, submissionId: any) => {
+    try {
+      const payload = {
+        submissionId,
+        userId: [userId],
+      };
+
+      const {data} = await initVideoConferenceService(payload);
+      let result = {
+        sessionId: data.sessionId,
+        token: data.token,
+        autoAnswer: true,
+        isOutgoing: true,
+      };
+      NavigationService.navigate('VideoCalling', result);
+      setRefreshing(false);
+    } catch (error) {
+      console.log(error);
+      // setRefreshing(false);
+      // setMessageTexts(messageText);
+      // setSendEnabled(!!messageText);
+      // showYesNoAlert({
+      //   title: 'Send Error',
+      //   message: 'The message could not be sent. Please try again.',
+      //   yesTitle: 'Try Again',
+      //   noTitle: 'Cancel',
+      //   // onYes: this.sendTextMessage.bind(this),
+      //   onNo: () => {},
+      // });
+    }
+  };
+
+  const initVideoCall = () => {
+    // let hcpUserId = messageList ? messageList.hcpUserId : userId;
+    // let submissionId = messageList
+    //   ? messageList.submissionId
+    //   : props.submissionId;
+
+    const payload = {
+      title: '',
+      name: recipientsName,
+      subTitle: '',
+      photo: photoUrl,
+    };
+    return videoCall(payload, userId, submissionId);
+  };
 
   // const initPhoneCall = () => {
   //   if (this.canMakePhoneCall) {
@@ -698,7 +730,7 @@ const ConversationContainer = (
               iconName="cn-video-message"
               iconSize={24}
               color={AppColors.blue}
-              // onPress={this.sendVideoMessage.bind(this)}
+              onPress={() => sendVideoMessage()}
               style={footerStyle.actionRowButton}
               textStyle={footerStyle.actionButtonText}
             />
@@ -710,7 +742,7 @@ const ConversationContainer = (
                 iconName="cn-video"
                 iconSize={24}
                 color={AppColors.blue}
-                // onPress={this.initVideoCall.bind(this)}
+                onPress={() => initVideoCall()}
                 style={footerStyle.actionRowButton}
                 textStyle={footerStyle.actionButtonText}
               />
@@ -739,7 +771,7 @@ const ConversationContainer = (
     <SafeAreaView style={[{flex: 1, backgroundColor: 'white'}]}>
       <Animated.View
         style={{flex: 1, paddingBottom: paddingBottom}}
-        onLayout={onLayout}
+        // onLayout={onLayout}
         ref={animatableRef}
         ref={animatableRef}>
         {renderMessageList()}

@@ -12,6 +12,8 @@
       android:roundIcon="@mipmap/ic_launcher_round"
       android:allowBackup="false"
       android:theme="@style/AppTheme">
+     <meta-data android:name="OPENTOK_API_KEY" android:value="45977722" />
+
       <activity
         android:name=".SplashActivity"
         android:theme="@style/SplashTheme"

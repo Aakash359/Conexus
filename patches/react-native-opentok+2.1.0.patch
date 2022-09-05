@@ -1,0 +1,51 @@
+diff --git a/node_modules/react-native-opentok/android/build.gradle b/node_modules/react-native-opentok/android/build.gradle
+index 1ae98b6..c968fbd 100644
+--- a/node_modules/react-native-opentok/android/build.gradle
++++ b/node_modules/react-native-opentok/android/build.gradle
+@@ -31,6 +31,6 @@ repositories {
+ }
+ 
+ dependencies {
+-    compile 'com.facebook.react:react-native:+'
+-    compile 'com.opentok.android:opentok-android-sdk:2.12.+'
++    implementation 'com.facebook.react:react-native:+'
++    implementation 'com.opentok.android:opentok-android-sdk:2.12.+'
+ }
+diff --git a/node_modules/react-native-opentok/android/src/main/java/com/rnopentok/RNOpenTokPublisherView.java b/node_modules/react-native-opentok/android/src/main/java/com/rnopentok/RNOpenTokPublisherView.java
+index a9f5836..9217061 100644
+--- a/node_modules/react-native-opentok/android/src/main/java/com/rnopentok/RNOpenTokPublisherView.java
++++ b/node_modules/react-native-opentok/android/src/main/java/com/rnopentok/RNOpenTokPublisherView.java
+@@ -10,7 +10,7 @@ import com.opentok.android.Session;
+ import com.opentok.android.Stream;
+ import com.opentok.android.Publisher;
+ import com.opentok.android.PublisherKit;
+-import android.support.annotation.Nullable;
++import androidx.annotation.Nullable;
+ import android.view.View;
+ 
+ public class RNOpenTokPublisherView extends RNOpenTokView implements PublisherKit.PublisherListener {
+diff --git a/node_modules/react-native-opentok/android/src/main/java/com/rnopentok/RNOpenTokPublisherViewManager.java b/node_modules/react-native-opentok/android/src/main/java/com/rnopentok/RNOpenTokPublisherViewManager.java
+index 01efea5..f9c6a6c 100644
+--- a/node_modules/react-native-opentok/android/src/main/java/com/rnopentok/RNOpenTokPublisherViewManager.java
++++ b/node_modules/react-native-opentok/android/src/main/java/com/rnopentok/RNOpenTokPublisherViewManager.java
+@@ -1,6 +1,6 @@
+ package com.rnopentok;
+ 
+-import android.support.annotation.Nullable;
++import androidx.annotation.Nullable;
+ 
+ import com.facebook.react.uimanager.ThemedReactContext;
+ import com.facebook.react.uimanager.annotations.ReactProp;
+diff --git a/node_modules/react-native-opentok/android/src/main/java/com/rnopentok/RNOpenTokScreenSharingCapturer.java b/node_modules/react-native-opentok/android/src/main/java/com/rnopentok/RNOpenTokScreenSharingCapturer.java
+index 1fda508..17dc02c 100644
+--- a/node_modules/react-native-opentok/android/src/main/java/com/rnopentok/RNOpenTokScreenSharingCapturer.java
++++ b/node_modules/react-native-opentok/android/src/main/java/com/rnopentok/RNOpenTokScreenSharingCapturer.java
+@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
+ import android.graphics.Canvas;
+ import android.os.Handler;
+ import android.view.View;
+-import android.support.annotation.Nullable;
++import androidx.annotation.Nullable;
+ 
+ import com.opentok.android.BaseVideoCapturer;
+ import com.facebook.react.bridge.ReadableMap;

@@ -17,11 +17,12 @@ import Icons from 'react-native-vector-icons/Ionicons';
 import InterviewQuestionDetail from '../containers/InterviewQuestions/interviewQuestionsDetails';
 import AddQuestion from '../containers/InterviewQuestions/AddQuestion';
 import HcpDetailView from '../containers/Facility/HcpDetail/HcpDetailView';
-import ImageGallery from '../containers/Facility/HcpDetail/imageGallery';
+import ImageGalleries from '../containers/Facility/HcpDetail/imageGallery';
 import ConversationContainer from '../containers/MessageCenter/conversation';
 import VideoRecorder from '../containers/VideoRecorder/videoRecoder';
 import {DrawerActions} from '@react-navigation/native';
 import VideoPlayer from '../containers/VideoPlayer/videoPlayer';
+import VideoCalling from '../containers/VideoCalling/calling';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -86,14 +87,15 @@ const AppStack = () => {
         <Stack.Screen
           name="AddQuestion"
           component={AddQuestion}
-          options={{
-            title: 'Add a Question',
-            headerTitleStyle: {
-              color: AppColors.black,
-              fontWeight: 'bold',
-              fontSize: 22,
-            },
-          }}
+          options={({route}) => ({
+            title:
+              route?.params?.sections?.defaultQuestions.length ||
+              route?.params?.sections?.questions.length ||
+              (route?.params?.sections?.defaultQuestions.length &&
+                route?.params?.sections?.questions.length)
+                ? route?.params?.title
+                : ' Add Questions',
+          })}
         />
         <Stack.Screen
           name="InterviewQuestionDetail"
@@ -128,7 +130,7 @@ const AppStack = () => {
         />
         <Stack.Screen
           name="ImageGallery"
-          component={ImageGallery}
+          component={ImageGalleries}
           options={{
             headerShown: false,
             headerTitleStyle: {
@@ -141,15 +143,12 @@ const AppStack = () => {
         <Stack.Screen
           name="ConversationContainer"
           component={ConversationContainer}
-          options={{
-            headerShown: true,
-            title: 'Conversation',
-            headerTitleStyle: {
-              color: AppColors.black,
-              fontWeight: 'bold',
-              fontSize: 22,
-            },
-          }}
+          options={({route}) => ({
+            title:
+              ((route?.params || {})?.candidate || {})?.display?.title || ''
+                ? route?.params?.candidate?.display?.title
+                : 'Conversation',
+          })}
         />
         <Stack.Screen
           name="VideoRecorder"
@@ -167,6 +166,13 @@ const AppStack = () => {
         <Stack.Screen
           name="VideoPlayer"
           component={VideoPlayer}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="VideoCalling"
+          component={VideoCalling}
           options={{
             headerShown: false,
           }}
