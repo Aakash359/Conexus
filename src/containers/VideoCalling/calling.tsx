@@ -21,8 +21,6 @@ const VideoCalling = (props: ICallProps) => {
 
   const {sessionId, token} = props?.route?.params;
 
-  console.log('Aakash====>', sessionId, token);
-
   // componentWillUnmount() {
   //   // this.publisher = null
   // }

@@ -23,6 +23,8 @@ import VideoRecorder from '../containers/VideoRecorder/videoRecoder';
 import {DrawerActions} from '@react-navigation/native';
 import VideoPlayer from '../containers/VideoPlayer/videoPlayer';
 import VideoCalling from '../containers/VideoCalling/calling';
+import {useSelector} from '../redux/reducers/index';
+import NurseHome from '../containers/NurseHome/nurseHome';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -215,6 +217,8 @@ const AppStack = () => {
 };
 
 const DrawerStack = () => {
+  const userInfo = useSelector(state => state.userReducer);
+  const userType = (userInfo?.user?.userType).toUpperCase();
   return (
     <Drawer.Navigator
       drawerContent={props => <CustomDrawer {...props} />}
@@ -228,17 +232,28 @@ const DrawerStack = () => {
         drawerInactiveTintColor: AppColors.blue,
         drawerLabelStyle: {
           marginLeft: 10,
-          // fontFamily: fonts.h3,
           fontSize: 18,
         },
       }}>
-      <Drawer.Screen
-        name="Review Candidates"
-        component={TabNavigator}
-        options={{
-          headerShown: false,
-        }}
-      />
+      {userType == 'HCP' ? (
+        <Drawer.Screen
+          name="NurseHome"
+          component={NurseHome}
+          options={{
+            headerShown: true,
+            title: 'Nurse',
+          }}
+        />
+      ) : (
+        <Drawer.Screen
+          name="Review Candidates"
+          component={TabNavigator}
+          options={{
+            headerShown: false,
+          }}
+        />
+      )}
+
       <Drawer.Screen
         name="Interview Questions"
         component={InterviewQuestions}

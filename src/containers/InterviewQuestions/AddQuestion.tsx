@@ -9,6 +9,7 @@ import {
   Text,
   TextInput,
   Alert,
+  Keyboard,
 } from 'react-native';
 import {AppFonts, AppColors} from '../../theme';
 import {ScreenType} from '../../common/constants';
@@ -23,6 +24,7 @@ import {ActionButton} from '../../components/action-button';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {showYesNoAlert, windowDimensions} from '../../common';
 import {SelectUnitModal} from '../../components/Modals/selectUnitModal';
+import NavigationService from '../../navigation/NavigationService';
 
 export interface CatalogQuestionContainerProps {
   questionId: string;
@@ -41,7 +43,7 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
   const [messageTextError, setMessageTextError] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const propsData = props?.route?.params || {};
-  console.log('Aakah===>', propsData?.unitName);
+  console.log('Aakah===>', propsData);
 
   const messageTextBlur = () => {
     if (messageText && messageText.length) {
@@ -51,19 +53,7 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
     }
   };
 
-  // const question: typeof QuestionModel.Type;
-
-  // const onSave() {
-  //   return this.props.onSave || function () {};
-  // }
-
-  // get onClose() {
-  //   return this.props.onClose || function () {};
-  // }
-
-  // unitTypes: Array<typeof FacilityUnitModel.Type>;
-
-  // get unitType(): typeof FacilityUnitModel.Type {
+  // const unitType = (): typeof FacilityUnitModel.Type => {
   //   const unitId = this._question.unitId;
 
   //   let result = this.unitTypes.find(unitType => {
@@ -77,97 +67,40 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
   //   }
 
   //   return result;
-  // }
+  // };
 
-  // get unitTypeId(): string {
-  //   const unitType = this.unitType;
+  // const unitTypeId = (): string => {
+  //   const unitType = propsData.
   //   return unitType ? unitType.unitId : '';
-  // }
-
-  //   if (parseInt(this.props.questionId) < 1) {
-  //     this._question = QuestionModel.create({
-  //       id: '0',
-  //       needId: this.props.needId,
-  //       unitId: this.props.initialUnitId,
-  //     });
-  //   } else {
-  //     this.loadQuestion();
-  //   }
-  // }
-
-  // componentWillUnmount() {
-  //   if (this.onClose) {
-  //     this.onClose();
-  //   }
-  // }
-
-  // componentWillMount() {
-  //   this.setState({loading: true});
-
-  //   loadFacilityUnits(this.props.userStore.selectedFacilityId).then(
-  //     unitTypes => {
-  //       this.unitTypes = unitTypes;
-  //       const unitType = this.unitType;
-
-  //       if (this._question.isNewQuestion && unitType) {
-  //         this._question.setUnit(unitType.unitId, unitType.unitName);
-  //       }
-
-  //       this.setState({loading: false});
-  //     },
-  //     err => {
-  //       log.info('Load units error', err);
-  //       this.setState({loading: true});
-  //       Alert.alert(`We're Sorry`, 'Units are unavailable for this facility.');
-  //       // Actions.pop()
-  //     },
-  //   );
-  // }
+  // };
 
   useEffect(() => {});
 
-  // loadQuestion(newId: string = null) {
-  //   if (this.props.needId) {
-  //     this._question =
-  //       this.props.facilityQuestionsStore.needSection.questions.find(
-  //         q => q.id === (newId || this.props.questionId),
-  //       );
-  //   } else {
-  //     this._question = this.props.facilityQuestionsStore.findQuestion(
-  //       this.props.userStore.selectedFacilityId,
-  //       newId || this.props.questionId,
-  //     );
-  //   }
-  // }
-
-  // selectUnit(unitId: string) {
-  //   const existingUnitType = this.unitTypes.find(
-  //     i => i.unitId === this._question.unitId,
-  //   );
-  //   const newUnitType = this.unitTypes.find(i => i.unitId === unitId);
-
-  //   if (newUnitType) {
-  //     this._question.setUnit(newUnitType.unitId, newUnitType.unitName);
-  //   }
-
-  //   this.forceUpdate();
-
-  //   const onCancel = () => {
-  //     if (existingUnitType) {
-  //       this._question.setUnit(
-  //         existingUnitType.unitId,
-  //         existingUnitType.unitName,
-  //       );
-  //     }
-  //   };
-
-  //   if (!this._question.isNewQuestion) {
-  //     this.saveQuestion(onCancel);
-  //   }
-  // }
-
   const onSelectUnit = () => {
     Alert.alert('hi');
+    // const existingUnitType = this.unitTypes.find(
+    //   i => i.unitId === this._question.unitId,
+    // );
+    // const newUnitType = this.unitTypes.find(i => i.unitId === unitId);
+
+    // if (newUnitType) {
+    //   this._question.setUnit(newUnitType.unitId, newUnitType.unitName);
+    // }
+
+    // this.forceUpdate();
+
+    // const onCancel = () => {
+    //   if (existingUnitType) {
+    //     this._question.setUnit(
+    //       existingUnitType.unitId,
+    //       existingUnitType.unitName,
+    //     );
+    //   }
+    // };
+
+    // if (!this._question.isNewQuestion) {
+    //   this.saveQuestion(onCancel);
+    // }
   };
 
   const renderUnitField = () => {
@@ -230,36 +163,35 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
   //   );
   // }
 
-  // recordQuestion() {
-  //   if (this.validate()) {
-  //     Keyboard.dismiss();
-  //     // Actions[ScreenType.FACILITIES.RECORD_QUESTION]({
-  //     //     videoUrl: this._question.tokBoxArchiveUrl,
-  //     //     text: this._question.text,
-  //     //     onSave: (archiveId) => {
-  //     //         this._question.setArchiveId(archiveId);
-  //     //         this.saveQuestion(null, true)
-  //     //     }
-  //     // })
-  //   }
-  // }
+  const validate = () => {
+    if (!(propsData?.questionText || '').trim() && !messageText.trim) {
+      Alert.alert(
+        'Validation Error',
+        'Please enter the text of your question.',
+      );
+      return false;
+    }
 
-  // validate() {
-  //   if (!(this._question.text || '').trim()) {
-  //     Alert.alert(
-  //       'Validation Error',
-  //       'Please enter the text of your question.',
-  //     );
-  //     return false;
-  //   }
+    // if (!unitTypeId) {
+    //   Alert.alert('Validation Error', 'Please choose a unit.');
+    //   return false;
+    // }
+    return true;
+  };
 
-  //   if (!this.unitTypeId) {
-  //     Alert.alert('Validation Error', 'Please choose a unit.');
-  //     return false;
-  //   }
-
-  //   return true;
-  // }
+  const recordQuestion = () => {
+    if (validate()) {
+      Keyboard.dismiss();
+      // Actions[ScreenType.FACILITIES.RECORD_QUESTION]({
+      //     videoUrl: this._question.tokBoxArchiveUrl,
+      //     text: this._question.text,
+      //     onSave: (archiveId) => {
+      //         this._question.setArchiveId(archiveId);
+      //         this.saveQuestion(null, true)
+      //     }
+      // })
+    }
+  };
 
   const renderDefaultQuestionField = () => {
     return (
@@ -290,9 +222,14 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
   const renderEditableHeader = () => {
     return (
       <View>
-        <Text style={styles.header}>
-          Enter the text of your question below.
-        </Text>
+        {propsData?.questionHasUrl && propsData?.questionId ? (
+          ''
+        ) : (
+          <Text style={styles.header}>
+            Enter the text of your question below.
+          </Text>
+        )}
+
         <View style={styles.form}>
           <TextInput
             style={[styles.questionInput]}
@@ -302,7 +239,7 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
             placeholder="Type your question"
             placeholderTextColor={AppColors.mediumGray}
             autoFocus={false}
-            value={propsData?.questionText || ''}
+            value={propsData ? propsData?.questionText : messageText}
             showError={messageTextError}
             returnKeyType="done"
             onBlur={messageTextBlur}
@@ -344,7 +281,7 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
               title="RECORD YOUR QUESTION"
               loading={loading}
               customTitleStyle={{fontSize: 16}}
-              // onPress={this.recordQuestion.bind(this)}
+              onPress={() => recordQuestion()}
               customStyle={styles.btnEnable}
             />
           </View>
@@ -355,7 +292,11 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
               title="PLAY QUESTION"
               loading={loading}
               customTitleStyle={{fontSize: 16}}
-              // onPress={this.recordQuestion.bind(this)}
+              onPress={() =>
+                NavigationService.navigate('VideoPlayer', {
+                  videoUrl: propsData?.questionHasUrl || '',
+                })
+              }
               customStyle={styles.btnEnable}
             />
           </View>

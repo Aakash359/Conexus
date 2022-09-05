@@ -1,11 +1,7 @@
 import React from 'react';
 import {Alert, StyleSheet, FlatList, ActivityIndicator} from 'react-native';
-// import {Container, Text, ListItem, Left, Right, Body} from 'native-base';
 let moment = require('moment');
 import {Avatar, Circle} from '../../components';
-
-import {ScreenType} from '../../common';
-// import { Actions } from 'react-native-router-flux'
 import {UserStore} from '../../stores';
 import {AppFonts, AppColors} from '../../theme';
 import {
@@ -13,6 +9,7 @@ import {
   ConversationModel,
 } from '../../stores/message-center';
 import {logger} from 'react-native-logs';
+
 const log = logger.createLogger();
 interface NurseMessageCenterProps {
   conversationStore?: typeof ConversationStore.Type;
