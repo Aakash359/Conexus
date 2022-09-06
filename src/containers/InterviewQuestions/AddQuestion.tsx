@@ -41,9 +41,10 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
   const [loading, setLoading] = useState(false);
   const [messageText, setMessageText] = useState('');
   const [messageTextError, setMessageTextError] = useState(false);
+  const [unitValue, setUnitValue] = useState('');
+  const [flagValue, setFlagValue] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const propsData = props?.route?.params || {};
-  console.log('Aakah===>', propsData);
 
   const messageTextBlur = () => {
     if (messageText && messageText.length) {
@@ -69,51 +70,7 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
   //   return result;
   // };
 
-  // const unitTypeId = (): string => {
-  //   const unitType = propsData.
-  //   return unitType ? unitType.unitId : '';
-  // };
-
   useEffect(() => {});
-
-  const onSelectUnit = () => {
-    Alert.alert('hi');
-    // const existingUnitType = this.unitTypes.find(
-    //   i => i.unitId === this._question.unitId,
-    // );
-    // const newUnitType = this.unitTypes.find(i => i.unitId === unitId);
-
-    // if (newUnitType) {
-    //   this._question.setUnit(newUnitType.unitId, newUnitType.unitName);
-    // }
-
-    // this.forceUpdate();
-
-    // const onCancel = () => {
-    //   if (existingUnitType) {
-    //     this._question.setUnit(
-    //       existingUnitType.unitId,
-    //       existingUnitType.unitName,
-    //     );
-    //   }
-    // };
-
-    // if (!this._question.isNewQuestion) {
-    //   this.saveQuestion(onCancel);
-    // }
-  };
-
-  const renderUnitField = () => {
-    return (
-      <SelectUnitModal
-        title={propsData?.unitName || 'Select a unit'}
-        onRequestClose={() => setModalVisible(false)}
-        onDismiss={() => setModalVisible(false)}
-        onPress={() => onSelectUnit()}
-        onClose={() => setModalVisible(false)}
-      />
-    );
-  };
 
   // onDefaultQuestionChanged(defaultFlag: boolean) {
   //   const existingValue = this._question.defaultFlag;
@@ -164,7 +121,7 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
   // }
 
   const validate = () => {
-    if (!(propsData?.questionText || '').trim() && !messageText.trim) {
+    if (!(propsData?.questionText || '').trim() && !messageText.trim()) {
       Alert.alert(
         'Validation Error',
         'Please enter the text of your question.',
@@ -172,24 +129,24 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
       return false;
     }
 
-    // if (!unitTypeId) {
-    //   Alert.alert('Validation Error', 'Please choose a unit.');
-    //   return false;
-    // }
+    if (!propsData.questionUnitId && !unitValue) {
+      Alert.alert('Validation Error', 'Please choose a unit.');
+      return false;
+    }
     return true;
   };
 
   const recordQuestion = () => {
     if (validate()) {
       Keyboard.dismiss();
-      // Actions[ScreenType.FACILITIES.RECORD_QUESTION]({
-      //     videoUrl: this._question.tokBoxArchiveUrl,
-      //     text: this._question.text,
-      //     onSave: (archiveId) => {
-      //         this._question.setArchiveId(archiveId);
-      //         this.saveQuestion(null, true)
-      //     }
-      // })
+      NavigationService.navigate('VideoRecorder', {
+        videoUrl: '',
+        text: messageText,
+        // onSave: archiveId => {
+        //   this._question.setArchiveId(archiveId);
+        //   this.saveQuestion(null, true);
+        // },
+      });
     }
   };
 
@@ -198,11 +155,12 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
       <View style={styles.defaultQuestionField}>
         <Switch
           style={styles.switch}
-          // value={this._question.defaultFlag}
-          // onValueChange={this.onDefaultQuestionChanged.bind(
-          //   this,
-          //   !this._question.defaultFlag,
-          // )}
+          value={
+            propsData.questionDefaultFlag
+              ? propsData.questionDefaultFlag
+              : flagValue
+          }
+          onValueChange={flag => setFlagValue(flag)}
         />
 
         <TouchableOpacity
@@ -263,6 +221,19 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
           {'\u201D'}
         </Text>
       </View>
+    );
+  };
+
+  const renderUnitField = () => {
+    return (
+      <SelectUnitModal
+        title={unitValue ? unitValue : 'Select a unit'}
+        onRequestClose={() => setModalVisible(false)}
+        onClose={() => setModalVisible(false)}
+        // unitValue={unitValue}
+        onSelectUnit={value => setUnitValue(value)}
+        // onClose={() => setModalVisible(false)}
+      />
     );
   };
 

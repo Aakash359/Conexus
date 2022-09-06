@@ -61,7 +61,7 @@ const InterviewQuestionDetail = (
   const [silentRefreshing, setSilentRefreshing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [editing, setEditing] = useState([]);
+  const [editing, setEditing] = useState(false);
   const [needQuestionList, setNeedQuestionList] = useState([]);
   const [loadingError, setLoadingError] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -175,6 +175,8 @@ const InterviewQuestionDetail = (
     questionText: string,
     questionHasUrl: string,
     unitName: string,
+    questionUnitId: string,
+    questionDefaultFlag: boolean,
   ) => {
     if (refreshing || silentRefreshing) {
       return;
@@ -187,7 +189,9 @@ const InterviewQuestionDetail = (
       initialUnitId: unitId,
       needId: needId,
       questionHasUrl: questionHasUrl,
+      questionUnitId: questionUnitId,
       sections: sections ? sections : {},
+      questionDefaultFlag: questionDefaultFlag,
 
       // onClose: this.onQuestionClose.bind(this),
     });
@@ -397,6 +401,55 @@ const InterviewQuestionDetail = (
   const showDefault = () => {
     return selectedTabId === 'default';
   };
+  const badge = (route: any) => {
+    let screenName = route?.route?.name;
+    console.log('ScreenName===>', screenName);
+
+    return (
+      <>
+        {screenName == 'DefaultQuestions' ? (
+          ''
+        ) : (
+            <View
+              style={{
+                width: 20,
+                height: 20,
+                borderRadius: 20 / 2,
+                borderWidth: 0.1,
+                borderColor: AppColors.mediumGray,
+                backgroundColor: AppColors.green,
+                alignItems: 'center',
+                left: 80,
+                top: 10,
+              }}>
+              <Text
+                style={{color: AppColors.white, textAlignVertical: 'center'}}>
+                {sections?.defaultQuestions.length}
+              </Text>
+            </View>
+          ) || screenName == 'OtherQuestions' ? (
+          <View
+            style={{
+              width: 20,
+              height: 20,
+              borderRadius: 20 / 2,
+              borderWidth: 0.1,
+              borderColor: AppColors.mediumGray,
+              backgroundColor: AppColors.green,
+              alignItems: 'center',
+              left: 80,
+              top: 10,
+            }}>
+            <Text style={{color: AppColors.white, textAlignVertical: 'center'}}>
+              {sections?.defaultQuestions.length}
+            </Text>
+          </View>
+        ) : (
+          ''
+        )}
+      </>
+    );
+  };
 
   const renderTabs = () => {
     return (
@@ -412,16 +465,22 @@ const InterviewQuestionDetail = (
         <Tab.Screen
           name="DefaultQuestions"
           component={route => DefaultQuestions(route)}
-          options={{
+          options={route => ({
+            tabBarIcon: ({focused, color}) => {
+              return badge(route);
+            },
             title: 'Default Questions',
-          }}
+          })}
         />
         <Tab.Screen
           name="OtherQuestions"
           component={route => OtherQuestions(route)}
-          options={{
+          options={route => ({
+            tabBarIcon: ({focused, color}) => {
+              return badge(route);
+            },
             title: 'Other Questions',
-          }}
+          })}
         />
       </Tab.Navigator>
     );
@@ -508,8 +567,6 @@ const InterviewQuestionDetail = (
               ? AppSizes.conexusFooterButtonHeight + 20
               : 0;
           var question: any = item;
-          console.log('Question===>', question);
-
           return (
             <SortableQuestionRow
               marginBottom={paddingBottom}
@@ -529,6 +586,8 @@ const InterviewQuestionDetail = (
                   question.text,
                   question.tokBoxArchiveUrl,
                   question.unitName,
+                  question.unitId,
+                  question.defaultFlag,
                 )
               }
               onPlayQuestion={() =>

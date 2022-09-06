@@ -131,6 +131,7 @@ const InterviewQuestions = (
       title: section.sectionTitle,
       sectionFacilityID: facility,
       sections: section,
+      props: props,
       onSave() {
         forceUpdate();
       },

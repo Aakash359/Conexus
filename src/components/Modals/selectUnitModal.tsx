@@ -44,9 +44,10 @@ interface SelectUnitModalProps {
   showImages: any;
   facilityImages: any;
   hideSelectedIcon: any;
-  value: any;
+  unitValue: any;
   actionText: any;
   unitName: any;
+  onSelectUnit: any;
 }
 
 interface SelectUnitModalState {
@@ -72,7 +73,7 @@ export const SelectUnitModal = (
     onPress,
     data,
     facilityImages,
-    showImages,
+    onSelectUnit,
     customStyle,
     textColor,
     borderColor,
@@ -81,12 +82,13 @@ export const SelectUnitModal = (
     hideSelectedIcon,
     actionText,
     unitName,
+    unitValue,
   } = props;
 
   const [loading, setLoading] = useState(false);
   const [unitData, setUnitData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [value, setValue] = useState(props.value);
+  const [value, setValue] = useState('');
   const userInfo = useSelector(state => state.userReducer);
 
   useEffect(() => {
@@ -112,19 +114,18 @@ export const SelectUnitModal = (
     }
   };
 
-  const selectValue = (value: any) => {
+  const selectValue = (value: any, unitId: any) => {
     setModalVisible(false);
-    setValue(value);
+    onSelectUnit(value, unitId);
   };
 
   const renderItem = ({item, index}) => {
     var i: RadioListItem = item;
-
     return (
       <TouchableOpacity
         key={`${i.unitName}${index}`}
         style={styles.listItem}
-        onPress={() => selectValue(i.unitName)}>
+        onPress={() => selectValue(i.unitName, i.unitId)}>
         {/* {showImages && ( */}
         <>
           <Avatar
@@ -157,9 +158,15 @@ export const SelectUnitModal = (
       <TouchableOpacity onPress={() => setModalVisible(true)}>
         <View style={styles.chooserField}>
           {<Text style={styles.chooserFieldPlaceholder}>{title}</Text>}
-          {value && <Text style={styles.chooserFieldText}>{value}</Text>}
+          {unitValue && (
+            <Text style={styles.chooserFieldText}>{unitValue}</Text>
+          )}
           <Icon
-            style={{color: AppColors.mediumGray, left: 230}}
+            style={
+              title
+                ? {color: AppColors.mediumGray, left: 230}
+                : {color: AppColors.mediumGray, left: 20}
+            }
             name="chevron-down"
             size={22}
           />
@@ -168,10 +175,9 @@ export const SelectUnitModal = (
       {modalVisible && (
         <Modal
           visible={visible}
-          onDismiss={onClose}
           overlayPointerEvents={'auto'}
           animationType="fade"
-          onRequestClose={onClose}
+          onRequestClose={() => setModalVisible(false)}
           transparent={true}>
           <View style={styles.cardStyle}>
             <View style={styles.cardItemStyle}>
@@ -181,7 +187,7 @@ export const SelectUnitModal = (
                   style={{color: AppColors.mediumGray}}
                   name="ios-close-circle-sharp"
                   size={22}
-                  onPress={onClose}
+                  onPress={() => setModalVisible(false)}
                 />
               </View>
               <ScrollView contentContainerStyle={styles.content}>
@@ -210,9 +216,10 @@ const styles = StyleSheet.create({
   },
   chooserFieldPlaceholder: {
     ...AppFonts.buttonText,
-    color: AppColors.darkBlue,
-    fontStyle: 'italic',
+    color: AppColors.mediumGray,
+    fontStyle: 'regular',
     opacity: 0.6,
+    fontSize: 14,
   },
   chooserFieldText: {
     ...AppFonts.buttonText,
