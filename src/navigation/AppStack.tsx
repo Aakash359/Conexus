@@ -235,7 +235,7 @@ const DrawerStack = () => {
           fontSize: 18,
         },
       }}>
-      {userType == 'HCP' ? (
+      {userType != 'HCP' ? (
         <Drawer.Screen
           name="NurseHome"
           component={NurseHome}

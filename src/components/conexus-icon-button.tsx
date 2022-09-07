@@ -4,7 +4,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  Alert,
+  Image,
 } from 'react-native';
 import {ConexusIcon} from '../components/conexus-icon';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -20,11 +20,20 @@ interface ConexusIconButtonProps {
   style?: any;
   disabled?: boolean;
   textStyle?: TextStyle;
+  imageSource: any;
 }
 
 export const ConexusIconButton = (props: ConexusIconButtonProps) => {
-  const {disabled, textStyle, onPress, title, style, iconName, iconSize} =
-    props;
+  const {
+    disabled,
+    imageSource,
+    textStyle,
+    onPress,
+    title,
+    style,
+    iconName,
+    iconSize,
+  } = props;
 
   const color = () => {
     return disabled ? variables.gray : color || variables.blue;
@@ -37,18 +46,8 @@ export const ConexusIconButton = (props: ConexusIconButtonProps) => {
       onPress={onPress}
       disabled={disabled}
       style={[defaultStyle.button, Style]}>
-      <Icon
-        style={title ? {marginBottom: 6} : {}}
-        name={iconName}
-        size={IconSize}
-        color={color}
-      />
-      {/* <ConexusIcon
-        name={iconName}
-        size={IconSize}
-        // color={color()}
-        style={title ? {marginBottom: 6} : {}}
-      /> */}
+      <Image style={[style]} source={imageSource} />
+
       {title && (
         <Text
           style={StyleSheet.flatten([
@@ -77,6 +76,7 @@ const defaultStyle = StyleSheet.create({
 
   text: {
     ...AppFonts.bodyTextNormal,
+
     fontWeight: '600',
   },
 });

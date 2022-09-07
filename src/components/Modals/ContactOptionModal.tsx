@@ -39,6 +39,8 @@ interface NotInterestedModalProps {
   onPhoneCall: any;
   onMessage: any;
   onVideMessage: any;
+  videoCall: any;
+  videoChat: any;
 }
 
 export const ContactOptionModal = (props: NotInterestedModalProps) => {
@@ -49,6 +51,8 @@ export const ContactOptionModal = (props: NotInterestedModalProps) => {
     onPress,
     onMessage,
     onVideMessage,
+    videoCall,
+    videoChat,
     customStyle,
     textColor,
     borderColor,
@@ -83,16 +87,17 @@ export const ContactOptionModal = (props: NotInterestedModalProps) => {
           <View style={styles.iconRow1}>
             <View style={styles.iconContainerLeft}>
               <ConexusIconButton
+                imageSource={require('../Images/phone-call.png')}
+                style={styles.image}
                 iconName="cn-phone"
-                iconSize={32}
                 title="Phone Call"
                 onPress={onPress}
               />
             </View>
             <View style={styles.iconContainerRight}>
               <ConexusIconButton
-                iconName="cn-chat-bubble-1"
-                iconSize={32}
+                style={styles.image}
+                imageSource={require('../Images/message.png')}
                 title="Message"
                 onPress={onMessage}
               />
@@ -101,20 +106,42 @@ export const ContactOptionModal = (props: NotInterestedModalProps) => {
           <View style={styles.iconRow2}>
             <View style={styles.iconContainerLeft}>
               <ConexusIconButton
-                iconName="cn-video-message"
-                iconSize={32}
+                style={
+                  !videoCall
+                    ? [
+                        {
+                          width: 35,
+                          height: 35,
+                          tintColor: AppColors.gray,
+                          alignSelf: 'center',
+                        },
+                      ]
+                    : [styles.image]
+                }
+                imageSource={require('../Images/video-call.png')}
                 title="Video Message"
                 onPress={onVideMessage}
-                // disabled={!videoCall}
+                disabled={!videoCall}
               />
             </View>
             <View style={styles.iconContainerRight}>
               <ConexusIconButton
-                iconName="cn-video"
-                iconSize={32}
+                style={
+                  !videoChat
+                    ? [
+                        {
+                          width: 35,
+                          height: 35,
+                          tintColor: AppColors.gray,
+                          alignSelf: 'center',
+                        },
+                      ]
+                    : [styles.image]
+                }
+                imageSource={require('../Images/video-message.png')}
                 title="Video Call"
                 // onPress={this._videoCall.bind(this)}
-                // disabled={!videoChat}
+                disabled={!videoChat}
               />
             </View>
           </View>
@@ -131,6 +158,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.4)',
+  },
+  image: {
+    width: 35,
+    height: 35,
+    tintColor: AppColors.blue,
+    alignSelf: 'center',
   },
   iconContainerRight: {
     padding: 12,

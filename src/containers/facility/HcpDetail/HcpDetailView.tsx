@@ -299,7 +299,9 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     );
   };
 
-  const openImageGallery = data => {
+  const openImageGallery = (
+    data: {resumePages: {originalPdf: any}} | undefined,
+  ) => {
     console.log('Candiddate---->', data);
 
     NavigationService.navigate('ImageGallery', {
@@ -414,14 +416,29 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
         <View style={headerStyle.actionRowView}>
           <ConexusIconButton
             onPress={() => setModalVisible(true)}
-            iconName="offer"
+            style={styles.image}
+            imageSource={require('../../../components/Images/add-person.png')}
             iconSize={20}
             title="Not Interested"
           />
           <ConexusIconButton
+            style={
+              !candidate || !candidate.conversationAllowed
+                ? [
+                    {
+                      width: 25,
+                      height: 25,
+                      tintColor: AppColors.gray,
+                      marginHorizontal: 20,
+                      marginTop: 5,
+                      alignSelf: 'center',
+                    },
+                  ]
+                : [styles.image]
+            }
             disabled={!candidate || !candidate.conversationAllowed}
             onPress={() => setOfferModalVisible(true)}
-            iconName="offer"
+            imageSource={require('../../../components/Images/offer_icon.png')}
             iconSize={20}
             title="Make Offer"
           />
@@ -431,7 +448,6 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
             title={'Make Offer'}
             value={date}
             onMakeOffer={(result: any) => onClickMakeOffer(result)}
-            // onChange={data => console.log('CHnagedDate===>', data)}
             source={candidate.photoUrl}
             candidateTitle={candidate.display.title}
             onRequestClose={() => setOfferModalVisible(false)}
@@ -490,7 +506,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const openConversations = () => {
     NavigationService.navigate('ConversationContainer', {
       candidate: candidate,
-      onMessageSendCallback: candidate.conversationId || '',
+      conversationId: candidate.conversationId || '',
     });
     setContactOptionModalVisible(false);
   };
@@ -505,6 +521,17 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     });
     setContactOptionModalVisible(false);
   };
+
+  let communicationTypes: any = candidate.communicationTypes;
+  let videoChat =
+    communicationTypes.filter((type: {typeId: string}) => {
+      return type.typeId == '1';
+    })[0].available || false;
+
+  let videoCall =
+    communicationTypes.filter((type: {typeId: string}) => {
+      return type.typeId == '2';
+    })[0].available || false;
 
   const renderCandidate = () => {
     return (
@@ -534,15 +561,6 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
             </Text>
             {renderActionHeader()}
           </View>
-
-          {/* {loadingSummary && selectedTab === tabs[0] && (
-            <ConexusContentList
-              style={styles.contentList}
-              data={candidate.submissionSummary}
-            />
-          )} */}
-
-          {/* {selectedTab === tabs[1] && renderQuestions(data)} */}
         </ScrollView>
 
         {MyTabs()}
@@ -566,6 +584,8 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
         {contactOptionModalVisible && (
           <ContactOptionModal
             title={'Contact Options'}
+            videoCall={videoCall}
+            videoChat={videoChat}
             onRequestClose={() => setContactOptionModalVisible(false)}
             onDismiss={() => setContactOptionModalVisible(false)}
             onPress={() => showPhoneCallModal()}
@@ -606,6 +626,14 @@ const styles = StyleSheet.create({
   rootView: {
     flex: 1,
     backgroundColor: AppColors.baseGray,
+  },
+  image: {
+    width: 25,
+    height: 25,
+    tintColor: AppColors.blue,
+    marginHorizontal: 20,
+    marginTop: 5,
+    alignSelf: 'center',
   },
 
   footer: {

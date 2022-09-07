@@ -12,20 +12,12 @@ import {useSelector} from '../../redux/reducers/index';
 import {Avatar} from '../../components/avatar';
 import {Circle} from '../../components/circle';
 import {ViewHeader} from '../../components/view-header';
-import {UserStore} from '../../stores';
 import {AppFonts, AppColors} from '../../theme';
-import {
-  ConversationStore,
-  ConversationPositionModel,
-} from '../../stores/message-center';
 import NavigationService from '../../navigation/NavigationService';
 import {conversationsService} from '../../services/MessageCenter/conversationsService';
 import FacilitySelectionContainer from '../../components/facility-selection-container';
 
-interface MessageCenterProps {
-  conversationStore?: typeof ConversationStore.Type;
-  userStore?: UserStore;
-}
+interface MessageCenterProps {}
 
 interface MessageCenterState {
   refreshing: boolean;
@@ -42,17 +34,12 @@ const MessageCenter = (
 
   const userInfo = useSelector(state => state.userReducer);
 
-  console.log('Lof===>', conversationData);
-
   const selectedFacilityId = () => {
     return userInfo?.user?.userFacilities?.[0]?.facilityId;
   };
 
   const selectedFacility = () => {
-    return conversationData.find(
-      i => i.facilityId === selectedFacilityId,
-      console.log('i===>', i),
-    );
+    return conversationData.find(i => i.facilityId === selectedFacilityId);
   };
 
   const showNoData = (): boolean => {
@@ -163,7 +150,6 @@ const MessageCenter = (
     try {
       const {data} = await conversationsService();
       setConversationData(data?.[0]?.positions);
-      console.log('data===>', data);
       setRefreshing(false);
     } catch (error) {
       console.log(error);
