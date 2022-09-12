@@ -17,6 +17,7 @@ import android.os.Bundle;
 import com.microsoft.codepush.react.CodePush;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.brentvatne.react.ReactVideoPackage;
+import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;  // <--- Import Package
 
 
 public class MainApplication extends Application implements ReactApplication {
@@ -35,7 +36,8 @@ public class MainApplication extends Application implements ReactApplication {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
           new SplashScreenReactPackage(); // SplashScreen Snippets
-           
+          new ReactNativePushNotificationPackage();
+ 
           
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());

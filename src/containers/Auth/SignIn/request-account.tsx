@@ -8,6 +8,7 @@ import {
   View,
   Alert,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 import Toast from 'react-native-toast-message';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -15,9 +16,6 @@ import {signUp} from '../../../services/authService';
 import variables from '../../../theme';
 import {Field} from '../../../components/field';
 import {windowDimensions} from '../../../common';
-import {ScreenType, StoreType} from '../common/constants';
-import {logger} from 'react-native-logs';
-import {ConexusIcon} from '../components/conexus-icon';
 import {AppColors, AppFonts} from '../../../theme';
 import NavigationService from '../../../navigation/NavigationService';
 import {ActionButton} from '../../../components/action-button';
@@ -145,17 +143,9 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
         <KeyboardAvoidingView behavior="position" style={style.rootContainer}>
           <View style={style.content}>
             <View style={style.form}>
-              {/* <ConexusIcon
-                name="cn-logo"
-                size={70}
-                color={AppColors.blue}
+              <Image
                 style={style.logo}
-              /> */}
-              <Icon
-                name="leaf"
-                size={100}
-                color={AppColors.blue}
-                style={style.logo}
+                source={require('../../../components/Images/conexus-logo.jpg')}
               />
               <View style={style.field}>
                 <Field
@@ -307,7 +297,8 @@ const style = StyleSheet.create({
   },
   logo: {
     alignSelf: 'center',
-    marginBottom: 5,
+    height: 80,
+    width: 80,
   },
   title: {
     marginTop: variables.contentPadding * 2,

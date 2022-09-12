@@ -156,13 +156,7 @@ const AppStack = () => {
           name="VideoRecorder"
           component={VideoRecorder}
           options={{
-            headerShown: true,
-            title: 'VideoRecorder',
-            headerTitleStyle: {
-              color: AppColors.black,
-              fontWeight: 'bold',
-              fontSize: 22,
-            },
+            headerShown: false,
           }}
         />
         <Stack.Screen
@@ -235,7 +229,7 @@ const DrawerStack = () => {
           fontSize: 18,
         },
       }}>
-      {userType != 'HCP' ? (
+      {userType === 'HCP' ? (
         <Drawer.Screen
           name="NurseHome"
           component={NurseHome}

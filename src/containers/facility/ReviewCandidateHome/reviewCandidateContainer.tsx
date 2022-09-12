@@ -7,11 +7,13 @@ import {useSelector} from '../../../redux/reducers/index';
 // import {FacilityModel} from '../../stores/facility/facility-model';
 import FacilitySelectionContainer from '../../../components/facility-selection-container';
 import NavigationService from '../../../navigation/NavigationService';
-
+import PushNotification from 'react-native-push-notification';
 import {facilitySubmissionsService} from '../../../services/Facility/facilitySubmissionsService';
 import {AppColors} from '../../../theme';
 import {CandidateList} from './candidateList';
+import OneSignal from 'react-native-onesignal';
 
+import RemotePushController from '../../../services/remoteNotificationService';
 interface ReviewContainerProps {
   // facilitySubmissionsStore: typeof FacilitySubmissionsStore.Type;
   userStore: UserStore;
@@ -43,10 +45,13 @@ const ReviewCandidateContainer = (
   };
 
   useEffect(() => {
-    let mounted = true;
     load(false);
     saveToken();
     getToken();
+    OneSignal.setAppId('901bc478-b323-4f6f-bc1f-bee60a47c811');
+    OneSignal.setNotificationOpenedHandler(notification => {
+      console.log('OneSignal: notification opened:', notification);
+    });
   }, []);
 
   // const selectedFacility = () => {
@@ -127,51 +132,6 @@ const ReviewCandidateContainer = (
     }
   };
 
-  // componentDidMount() {
-  //   console.log('Yehi Problem hai====>', FacilitySubmissionsStore);
-
-  //   this.mounted = true;
-
-  //   if (this.props.userStore.isFacilityUser) {
-  //     this.load(false);
-  //   }
-  // }
-
-  //   submissionsStorePromise.then(
-  //     () => {
-  //       if (this.mounted) {
-  //         log.info('ReviewContainer', 'Submissions loaded');
-
-  //         this.setState({refreshing: false}, () => {
-  //           submissionsStorePromise = undefined;
-  //         });
-  //       } else {
-  //         log.info(
-  //           'ReviewContainer',
-  //           'Not mounted so doing nothing after data loaded.',
-  //         );
-  //       }
-  //     },
-  //     error => {
-  //       if (this.mounted) {
-  //         submissionsStorePromise = undefined;
-  //         this.setState({refreshing: false});
-  //       } else {
-  //         log.info(
-  //           'ReviewContainer',
-  //           'Not mounted so doing nothing after data loaded.',
-  //         );
-  //       }
-
-  //       log.info('ReviewContainer', 'ERROR', error);
-  //       Alert.alert(
-  //         'Error',
-  //         'We are having trouble loading your positions and candidates. Please try again.',
-  //       );
-  //     },
-  //   );
-  // }
-
   const renderPositionList = (data: string) => {
     return (
       <CandidateList
@@ -197,6 +157,13 @@ const ReviewCandidateContainer = (
     // </FacilitySelectionContainer>
     <>
       <View style={{flex: 1, backgroundColor: AppColors.baseGray}}>
+        {/* <TouchableOpacity onPress={() => handleButtonPress()}>
+          <Text style={{justifyContent: 'center', alignSelf: 'center'}}>
+            Hi
+          </Text>
+        </TouchableOpacity>
+        <RemotePushController /> */}
+
         {data && renderPositionList(data)}
       </View>
     </>

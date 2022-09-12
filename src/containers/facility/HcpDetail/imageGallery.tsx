@@ -3,23 +3,24 @@ import {
   Text,
   StyleSheet,
   View,
-  InteractionManager,
-  TouchableOpacity,
-  Button,
+  Image,
+  TouchableHighlight,
+  Falsy,
+  ImageStyle,
+  RecursiveArray,
+  RegisteredStyle,
+  ViewStyle,
 } from 'react-native';
-import variables from '../../../theme';
-// import {
-//   ImageGallery,
-//   ImageObject,
-// } from '@georstat/react-native-image-gallery';
-import {ImageGallery} from '@georstat/react-native-image-gallery';
+import variables, {AppColors} from '../../../theme';
+import ImageSlider from 'react-native-image-slider';
 import {ConexusIconButton} from '../../../components/conexus-icon-button';
 import {ModalHeader} from '../../../components/modal-header';
 import {AppFonts} from '../../../theme';
 import {CachedImage} from 'react-native-cached-image';
+import Icon from 'react-native-vector-icons/Ionicons';
 import NavigationService from '../../../navigation/NavigationService';
 
-interface ImageGalleryProps extends ViewProperties {
+interface ImageGalleryProps {
   images: Array<string>;
   title?: string;
   initialRenderCount?: number;
@@ -42,20 +43,15 @@ interface ImageGalleryState {
 // ];
 
 const ImageGalleries = (props: ImageGalleryProps, state: ImageGalleryState) => {
-  const {initialRenderCount, title} = props;
-
-  //   const Images = props.images.map((uri: any) => {
-  //     return {source: {uri}};
-  //   });
-
   const [index, setIndex] = useState(0);
-  const [images, setImages] = useState(props?.route?.params?.images || '');
+  // const [images, setImages] = useState(props?.route?.params?.images || '');
   const [allImages, setAllImages] = useState('');
   const [showGallery, setShowGallery] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const openGallery = () => setIsOpen(true);
   const closeGallery = () => setIsOpen(false);
-
+  const {initialRenderCount} = props;
+  const {title} = props?.route?.params;
   let displayCount = initialRenderCount || 2;
 
   // provide the gallery the first 2 images initially so they load quickly. The candiate-detail view should have them cached.
@@ -82,7 +78,14 @@ const ImageGalleries = (props: ImageGalleryProps, state: ImageGalleryState) => {
   //     }, 1000);
   //   }
 
-  const renderError = error => {
+  const images = [
+    'https://placeimg.com/640/640/nature',
+    'https://placeimg.com/640/640/people',
+    'https://placeimg.com/640/640/animals',
+    'https://placeimg.com/640/640/beer',
+  ];
+
+  const renderError = (error: any) => {
     return (
       <View
         style={{
@@ -90,7 +93,8 @@ const ImageGalleries = (props: ImageGalleryProps, state: ImageGalleryState) => {
           backgroundColor: 'white',
           alignItems: 'center',
           justifyContent: 'center',
-        }}>
+        }}
+      >
         <Text style={{color: 'black', fontSize: 15, fontStyle: 'italic'}}>
           This image cannot be displayed...
         </Text>
@@ -102,7 +106,7 @@ const ImageGalleries = (props: ImageGalleryProps, state: ImageGalleryState) => {
     return <CachedImage {...imageProps} />;
   };
 
-  const onChangeImage = index => {
+  const onChangeImage = (index: React.SetStateAction<number>) => {
     setIndex(index);
   };
 
@@ -113,13 +117,15 @@ const ImageGalleries = (props: ImageGalleryProps, state: ImageGalleryState) => {
         flexDirection: 'column',
         alignItems: 'stretch',
         backgroundColor: variables.baseGray,
-      }}>
+      }}
+    >
       <ModalHeader
         title={title}
         right={() => (
-          <ConexusIconButton
-            iconName="cn-x"
-            iconSize={22}
+          <Icon
+            name="close-outline"
+            size={30}
+            color={AppColors.blue}
             onPress={() => NavigationService.goBack()}
           />
         )}
@@ -130,16 +136,36 @@ const ImageGalleries = (props: ImageGalleryProps, state: ImageGalleryState) => {
           {/* {index + 1} of {allImages.length} */}
         </Text>
       </View>
-      <View>
-        <Button onPress={openGallery} title="Open Gallery" />
-        <ImageGallery
-          close={() => closeGallery()}
-          isOpen={isOpen}
-          images={images}
-          // renderFooterComponent={renderFooterComponent}
-          // renderHeaderComponent={renderHeaderComponent}
-        />
-      </View>
+      <ImageSlider
+        loopBothSides
+        autoPlayWithInterval={3000}
+        images={images}
+        customSlide={({index, item, width}) => (
+          <>
+            <View key={index} style={[style, style.customSlide]}>
+              <Image source={{uri: item}} style={style.customImage} />
+            </View>
+          </>
+        )}
+        customButtons={(position: number, move: (arg0: number) => void) => (
+          <View style={style.buttons}>
+            {images.map((image, index) => {
+              return (
+                <TouchableHighlight
+                  key={index}
+                  underlayColor="#ccc"
+                  onPress={() => move(index)}
+                  style={style.button}
+                >
+                  <Text style={position === index && style.buttonSelected}>
+                    {index + 1}
+                  </Text>
+                </TouchableHighlight>
+              );
+            })}
+          </View>
+        )}
+      />
       {/* {showGallery && (
           <Gallery
             style={{flex: 1}}
@@ -168,7 +194,7 @@ const style = StyleSheet.create({
   },
   modalSubheaderText: {
     ...AppFonts.bodyTextNormal,
-    color: variables.white,
+    color: AppColors.white,
   },
   footer: {
     backgroundColor: variables.blue,
@@ -182,6 +208,58 @@ const style = StyleSheet.create({
   },
   circle: {
     margin: 3,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#F5FCFF',
+  },
+  slider: {backgroundColor: '#000', height: 350},
+  content1: {
+    width: '100%',
+    height: 50,
+    marginBottom: 10,
+    backgroundColor: '#000',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  content2: {
+    width: '100%',
+    height: 100,
+    marginTop: 10,
+    backgroundColor: '#000',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  contentText: {color: '#fff'},
+  buttons: {
+    zIndex: 1,
+    height: 15,
+    marginTop: -25,
+    marginBottom: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  button: {
+    margin: 3,
+    width: 15,
+    height: 15,
+    opacity: 0.9,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonSelected: {
+    opacity: 1,
+    color: AppColors.red,
+  },
+  customSlide: {
+    backgroundColor: AppColors.baseGray,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  customImage: {
+    width: 392,
+    height: 500,
   },
 });
 

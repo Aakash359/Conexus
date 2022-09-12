@@ -36,18 +36,17 @@ const CustomDrawer = props => {
     <View style={{flex: 1}}>
       <DrawerContentScrollView
         {...props}
-        contentContainerStyle={{marginTop: 50}}>
+        contentContainerStyle={{marginTop: 50}}
+      >
         {/* <ConexusIcon
           name="cn-logo"
           size={50}
           color={AppColors.blue}
           style={{marginRight: 20}}
         /> */}
-        <Icon
-          name="leaf"
-          size={50}
-          color={AppColors.blue}
+        <Image
           style={styles.logo}
+          source={require('../components/Images/conexus-logo.jpg')}
         />
         <View style={styles.headerContainer}>
           <DrawerItemList {...props} />
@@ -70,7 +69,8 @@ const CustomDrawer = props => {
                     color: AppColors.mediumGray,
                     fontFamily: 'Roboto-Medium',
                   },
-                ]}>
+                ]}
+              >
                 Your Account Manager is
               </Text>
               <Text style={[styles.text, {color: AppColors.mediumGray}]}>
@@ -108,7 +108,8 @@ const CustomDrawer = props => {
             style={{
               flexDirection: 'row',
               backgroundColor: 'yellow',
-            }}>
+            }}
+          >
             <Text style={styles.account}>Account Preference</Text>
             <Image
               style={[styles.image, {marginTop: -40}]}
@@ -180,13 +181,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: AppColors.blue,
   },
-  screenTitle: {
-    fontSize: 24,
-    marginTop: 8,
-    fontWeight: 'bold',
-  },
   logo: {
-    alignSelf: 'center',
+    alignSelf: 'flex-start',
+    color: AppColors.blue,
+    left: 15,
+    bottom: 10,
+    height: 100,
+    width: 100,
   },
 });
 

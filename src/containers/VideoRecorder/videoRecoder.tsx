@@ -1,15 +1,26 @@
-import React, {useState, useEffect} from 'react';
-import {StyleSheet, ActivityIndicator, StatusBar} from 'react-native';
-import {ConexusLightbox} from '../lightboxes/base-lightbox';
+import React, {useState, useEffect, useRef} from 'react';
+import {
+  StyleSheet,
+  ActivityIndicator,
+  StatusBar,
+  View,
+  Text,
+  Alert,
+} from 'react-native';
 import {AppColors, AppSizes} from '../../theme';
-
+import Icon from 'react-native-vector-icons/Ionicons';
 import {VideoStore, ConversationStore} from '../stores';
 import {ConexusVideoActionButton} from '../../components';
 import {ConexusVideoRecorder} from '../../components';
-
+import variables from '../../theme';
 import InCallManager from 'react-native-incall-manager';
 import {showYesNoAlert} from '../../common/cancel-retry-alert';
 import ConexusVideoPlayer from '../../components/conexus-video-player';
+import {initVideoSessionService} from '../../services/VideoCallingServices';
+import {windowDimensions} from '../../common';
+import NavigationService from '../../navigation/NavigationService';
+import OpenTok, {Publisher, Subscriber} from 'react-native-opentok';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 interface VideoRecorderProps {
   finishedButtonTitle?: string;
@@ -32,6 +43,12 @@ interface VideoRecorderState {
   closeable: boolean;
 }
 
+const enum VideoStatus {
+  CONNECTING = 'CONNECTING',
+  CONNECTED = 'CONNECTED',
+  DISCONNECTED = 'DISCONNECTED',
+}
+
 const VideoRecorder = (
   props: VideoRecorderProps,
   state: VideoRecorderState,
@@ -46,57 +63,124 @@ const VideoRecorder = (
   const [videoUrl, setVideoUrl] = useState('');
   const [loading, setLoading] = useState(true);
   const [closeable, setCloseable] = useState(true);
-
+  const [videoSessionData, setVideoSessionData] = useState([]);
   const videoMessageSendComplete = false;
   const propsData = props?.route?.params;
-  const {videoMessage, conversationId, submissionId} = propsData;
-  const {videoStore} = props;
-
-  // const initVideoSession = () => {
-  //   try {
-  //     const {data} = await initVideoSessionService({
-  //       conversationId: conversationId || null,
-  //       submissionId: null,
-  //       messageText: messageText.replace(/\s+$/g, ''),
-  //       messageTypeId: '1',
-  //     });
-  //   } catch (error) {
-  //     console.log(error);
-  //     showYesNoAlert({
-  //       title: `We're Sorry`,
-  //       message: 'An error occurred while connecting to our recording service.',
-  //       yesTitle: 'Try Again',
-  //       noTitle: 'Cancel',
-  //       onYes: this.initVideoSession.bind(this),
-  //       onNo: this.onCanceled.bind(this),
-  //     });
+  // const {videoMessage, conversationId, submissionId, text} = propsData;
+  // const {sessionId, sessionToken} = videoSessionData;
+  const cameraRef = useRef<Video>(null);
+  // const onCanceled = () => {
+  //   if (props.onCanceled && props.onCanceled.call) {
+  //     props.onCanceled();
   //   }
+  //   StatusBar.setHidden(false);
+  // };
 
-  //  videoStore.initVideoSession().then(
-  //   () => {
-  //     this.setState({showRecorder: true, loading: false});
-  //   },
-  //   error => {
-  //     log.info('Video Session init from video recorder lightbox.', error);
-  //     showYesNoAlert({
-  //       title: `We're Sorry`,
-  //       message:
-  //         'An error occurred while connecting to our recording service.',
-  //       yesTitle: 'Try Again',
-  //       noTitle: 'Cancel',
-  //       onYes: this.initVideoSession.bind(this),
-  //       onNo: this.onCanceled.bind(this),
-  //     });
-  //   },
-  // );
+  const videoRecord = async () => {
+    if (cameraRef && cameraRef.current) {
+      cameraRef.current.open({maxLength: 30}, data => {
+        console.log('captured data', data); // data.uri is the file path
+      });
+    }
+  };
+
+  // const setConnected = flow(function* (isConnected: boolean) {
+  //   self.status = isConnected
+  //     ? VideoStatus.CONNECTED
+  //     : VideoStatus.DISCONNECTED;
+  //   if (!isConnected && self.isCall && self.retry) {
+  //     self.retryCount--;
+  //     yield connectSession();
+  //   }
+  // });
+
+  // OpenTok.on(OpenTok.events.ON_SIGNAL_RECEIVED, (e: any) => {
+  //   console.log(OpenTok.events.ON_SIGNAL_RECEIVED, e);
+  // });
+
+  // OpenTok.on(OpenTok.events.ON_SESSION_DID_CONNECT, (e: {sessionId: any}) => {
+  //   console.log('did-connect', e), setSessionId(e.sessionId);
+  //   SessionId, SessionToken;
+  // });
+
+  // OpenTok.on(OpenTok.events.ON_SESSION_DID_FAIL_WITH_ERROR, (e: any) => {
+  //   console.log(OpenTok.events.ON_SESSION_DID_FAIL_WITH_ERROR, e);
+  // });
+
+  // OpenTok.on(OpenTok.events.ON_SESSION_DID_DISCONNECT, (e: any) => {
+  //   console.log(OpenTok.events.ON_SESSION_DID_DISCONNECT, e);
+  // });
+
+  // const connectSession = ()=>{
+  //   const isPublishing = false;
+  //   const isSubscribed = false;
+  //   const inCall = false;
+  //   const  status = VideoStatus.CONNECTED
+  //   if (status !== VideoStatus.CONNECTED) {
+  //     console.log('VideoStore:connectingSession:', status);
+  //     let status = VideoStatus.CONNECTING;
+  //     let inCall = true;
+  //     let result = yield OpenTok.connect(sessionId, sessionToken);
+  //     if (result) {
+  //       console.log('VideoStore:connectedSession:', status);
+  //       status = VideoStatus.CONNECTED;
+  //     } else {
+  //       console.log('VideoStore:connectingFailedSession:', status);
+  //     }
+  //   } else {
+  //     console.log('VideoStore:alreadyConnected', status);
+  //   }
+  // };
+
+  const initVideoSession = async () => {
+    try {
+      const {data} = await initVideoSessionService();
+      setVideoSessionData(data);
+      // connectSession();
+    } catch (error) {
+      console.log(error);
+      showYesNoAlert({
+        title: `We're Sorry`,
+        message: 'An error occurred while connecting to our recording service.',
+        yesTitle: 'Try Again',
+        noTitle: 'Cancel',
+        onYes: () => initVideoSession(),
+        onNo: () => onCanceled(),
+      });
+    }
+  };
+
+  // const setConnected = (isConnected: boolean)=> {
+  //     const status = isConnected ? VideoStatus.CONNECTED : VideoStatus.DISCONNECTED
+  //       if (!isConnected && isCall && retry) {
+  //         self.retryCount--
+  //         yield connectSession()
+  //       }
+  // }
+
+  const setSessionId = (sessionId: string) => {
+    return sessionId;
+  };
+
+  // const connectionSetup = () => {
+  //   OpenTok.on(OpenTok.events.ON_SIGNAL_RECEIVED, (e: any) => {
+  //     console.log(OpenTok.events.ON_SIGNAL_RECEIVED, e);
+  //   });
+
+  //   OpenTok.on(OpenTok.events.ON_SESSION_DID_CONNECT, (e: {sessionId: any}) =>
+  //     setSessionId(e.sessionId)
+  //     setConnected(true),
+  //   )
   // };
 
   useEffect(() => {
+    // connectionSetup();
     StatusBar.setHidden(true);
-    // initVideoSession();
+    initVideoSession();
     InCallManager.start({media: 'video'});
     InCallManager.setKeepScreenOn(true);
     InCallManager.setForceSpeakerphoneOn(true);
+    OpenTok.connect(sessionId, sessionToken);
   }, []);
 
   const onRecorderError = (error, code?: string) => {
@@ -104,107 +188,12 @@ const VideoRecorder = (
     setLoading(false);
   };
 
-  // const onPlayError = () => {
-  //   setTimeout(() => {
-  //     showYesNoAlert({
-  //       title: `We're Sorry`,
-  //       message: 'An error occurred while playing this video.',
-  //       yesTitle: 'Try Again',
-  //       noTitle: 'Cancel',
-  //       onYes: () => {
-  //         setShowPlayer(true);
-  //       },
-  //       onNo: onCanceled(z),
-  //     });
-  //   }, 0);
-  // };
-
-  // const onRecordComplete = (archiveId: string, videoUrl: string) => {
-
-  // const onFinished = (archiveId: string, videoUrl: string) => {
-  //   if (videoMessage && !videoMessageSendComplete) {
-  //     return sendVideoMessage(archiveId, videoUrl);
-  //   }
-
-  //   if (props.onFinished && props.onFinished.call) {
-  //     props.onFinished(archiveId, videoUrl);
-  //   }
-
-  //   StatusBar.setHidden(false);
-  //   // return Actions.pop()
-  // };
-
-  // const onMessageSend = (conversationId: string) => {
-  //   if (
-  //     this.props.onMessageSendCallback &&
-  //     this.props.onMessageSendCallback.call
-  //   ) {
-  //     try {
-  //       this.props.onMessageSendCallback(conversationId);
-  //     } catch (error) {
-  //       log.info('VideoRecorderLightbox', 'onMessageSendError', error);
-  //     }
-  //   }
-  // };
-
-  const onCanceled = () => {
-    if (props.onCanceled && props.onCanceled.call) {
-      props.onCanceled();
-    }
-    StatusBar.setHidden(false);
-  };
-
-  // const onRecordError = () => {
-  //   // Do nothing. The recorder shows an error page
-  // };
-
-  // const onRecordStart = () => {
-  //   this.setState({closeable: false});
-  // };
-
-  // const sendVideoMessage = (archiveId: string, videoUrl: string) => {
-  //   const {conversationId, conversationStore, submissionId} = this.props;
-
-  //   if (!conversationId && !submissionId) {
-  //     throw new Error(
-  //       'Either a conversationID or a submissionId is required to send a video message',
-  //     );
-  //   }
-
-  //   return conversationStore
-  //     .sendVideoMessage(conversationId, submissionId, archiveId, videoUrl)
-  //     .then(() => {
-  //       this.videoMessageSendComplete = true;
-  //       this.onFinished(archiveId, videoUrl);
-  //       this.onMessageSend(conversationId);
-  //     })
-  //     .catch(error => {
-  //       log.info('sendVideoMessage error', error);
-  //       showYesNoAlert({
-  //         title: 'Send Error',
-  //         message: 'The message could not be sent. Please try again.',
-  //         yesTitle: 'Try Again',
-  //         onYes: this.sendVideoMessage.bind(
-  //           this,
-  //           conversationId,
-  //           submissionId,
-  //           archiveId,
-  //           videoUrl,
-  //         ),
-  //         onNo: () => {
-  //           this.videoMessageSendComplete = true;
-  //           this.onFinished(archiveId, videoUrl);
-  //         },
-  //       });
-  //     });
-  // };
-
-  const menuButtons: ConexusVideoActionButton[] = [
-    {
-      title: 'Cancel Message',
-      onPress: onCanceled(),
-    },
-  ];
+  // const menuButtons: ConexusVideoActionButton[] = [
+  //   {
+  //     title: 'Cancel Message',
+  //     onPress: onCanceled(),
+  //   },
+  // ];
 
   const activityIndicator = (
     <ActivityIndicator style={{flex: 1}} color={AppColors.blue} />
@@ -212,23 +201,37 @@ const VideoRecorder = (
 
   return (
     <>
-      {!showRecorder && (
-        <ConexusVideoRecorder
-          style={{
-            flex: 1,
-            width: AppSizes.screen.width,
-            height: AppSizes.screen.height,
-          }}
-          onComplete={(result: boolean, data: object) => {
-            if (!result) {
-              onCanceled();
-            }
-          }}
-          // onRecordStart={onRecordStart}
-          // onRecordComplete={onRecordComplete}
-          // onRecordError={onRecordError}
+      <View style={styles.headerViews}>
+        <Icon
+          style={styles.closeButton}
+          name="ios-close-circle-sharp"
+          size={22}
+          onPress={() => NavigationService.goBack()}
         />
-      )}
+        <TouchableOpacity onPress={() => videoRecord()}>
+          <Text>Opne</Text>
+        </TouchableOpacity>
+        <VideoRecorder ref={cameraRef} />
+        {/* {!showRecorder && (
+          <ConexusVideoRecorder
+            style={{
+              flex: 1,
+              width: AppSizes.screen.width,
+              height: AppSizes.screen.height,
+            }}
+            SessionId={sessionId}
+            SessionToken={sessionToken}
+            onComplete={(result: boolean, data: object) => {
+              if (!result) {
+                onCanceled();
+              }
+            }}
+            // onRecordStart={onRecordStart}
+            // onRecordComplete={onRecordComplete}
+            // onRecordError={onRecordError}
+          />
+        )} */}
+      </View>
 
       {/* {
         <ConexusVideoPlayer
@@ -251,22 +254,21 @@ const VideoRecorder = (
           overlayFooterStyle={styles.overlayFooter}
         />
       } */}
-      {loading && (
+      {/* {loading && (
         <ActivityIndicator color={AppColors.blue} style={{flex: 1}} />
-      )}
+      )} */}
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  lightbox: {
+  headerViews: {
     flex: 1,
-    padding: 0,
-    backgroundColor: AppColors.black,
-    borderRadius: 0,
   },
-  overlayFooter: {
-    marginBottom: AppSizes.isIPhoneX ? AppSizes.iPhoneXFooterSize : 0,
+  closeButton: {
+    position: 'absolute',
+    right: 12,
+    top: 12,
   },
 });
 

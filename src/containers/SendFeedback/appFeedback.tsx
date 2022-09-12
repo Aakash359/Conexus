@@ -24,7 +24,6 @@ const SendFeedback = (props: AppFeedbackModalState) => {
   const userInfo = useSelector(state => state.userReducer);
   const [loading, setLoading] = useState(false);
   const [messageText, setMessageText] = useState('');
-  console.log('Okk====>', userInfo?.user?.userFacilities?.[0]?.facilityId);
 
   const onSendFeedback = async () => {
     if (messageText && messageText.length) {

@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Text} from 'react-native';
+import {StyleSheet, View, Text, Image} from 'react-native';
 import NavigationService from '../../../navigation/NavigationService';
 import variables from '../../../theme';
 import {Field} from '../../../components';
@@ -55,30 +55,10 @@ const SelectAccount = () => {
     <SafeAreaView style={[{flex: 1, backgroundColor: 'white'}]}>
       <View style={style.content}>
         <View style={style.form}>
-          {/* <ConexusIcon
-            name="cn-logo"
-            size={70}
-            color={AppColors.blue}
+          <Image
             style={style.logo}
-          /> */}
-          <Icon
-            name="leaf"
-            size={100}
-            color={AppColors.blue}
-            style={style.logo}
+            source={require('../../../components/Images/conexus-logo.jpg')}
           />
-          {/* <View style={style.picker} >
-                                <Picker style={{height:40, backgroundColor:AppColors.white}}
-                                    selectedValue={this.state.accountType}
-                                    onValueChange={(itemValue, itemIndex) => {
-                                        Actions[ScreenType.REQUEST_ACCOUNT]({ userType: itemValue})
-                                    }
-                                    }>
-                                    <Picker.Item label='I am a ...' value="-1" />
-                                    <Picker.Item label='Job Candidate' value="0" />
-                                    <Picker.Item label='Facility' value="1" />
-                                </Picker>
-                            </View> */}
           <View style={style.picker}>
             <Text style={style.iam}>I am a...</Text>
           </View>
@@ -89,7 +69,8 @@ const SelectAccount = () => {
           </TouchableOpacity>
           <TouchableOpacity onPress={requestCandidateAccount}>
             <View
-              style={[style.btnContainer, {backgroundColor: AppColors.blue}]}>
+              style={[style.btnContainer, {backgroundColor: AppColors.blue}]}
+            >
               <Text style={style.facility}>JOB CANDIDATE</Text>
             </View>
           </TouchableOpacity>
@@ -153,7 +134,8 @@ const style = StyleSheet.create({
 
   logo: {
     alignSelf: 'center',
-    marginBottom: 5,
+    height: 80,
+    width: 80,
   },
 
   title: {

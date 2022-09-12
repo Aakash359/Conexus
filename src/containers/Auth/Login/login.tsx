@@ -8,6 +8,7 @@ import {
   Platform,
   Keyboard,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 import NavigationService from '../../../navigation/NavigationService';
 import {ActionButton} from '../../../components/action-button';
@@ -115,11 +116,9 @@ const LoginScreen = () => {
       <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={-190}>
         <View style={style.content}>
           <View style={style.form}>
-            <Icon
-              name="leaf"
-              size={100}
-              color={AppColors.blue}
+            <Image
               style={style.logo}
+              source={require('../../../components/Images/conexus-logo.jpg')}
             />
             <Text style={style.title}>Sign-In</Text>
             <View style={style.field}>
@@ -216,6 +215,8 @@ const style = StyleSheet.create({
   },
   logo: {
     alignSelf: 'center',
+    height: 100,
+    width: 100,
   },
   content: {
     display: 'flex',

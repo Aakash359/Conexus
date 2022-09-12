@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Alert,
   Keyboard,
+  Image,
 } from 'react-native';
 import variables from '../../../theme';
 import {Field} from '../../../components/field';
@@ -34,6 +35,7 @@ const ForgotPassword = () => {
     email: '',
   });
   const [loading, setLoading] = useState(false);
+  const [isRecoveringPassword, setIsRecoveringPassword] = useState(false);
   const [errors, setErrors] = useState('');
 
   const handleOnchange = (text: any, input: any) => {
@@ -62,14 +64,17 @@ const ForgotPassword = () => {
   const recoverPasswordFn = async () => {
     try {
       setLoading(true);
+      setIsRecoveringPassword(true);
       const {data} = await forgotPassword({
         username: inputs.email,
       });
       Alert.alert(data.description);
+      setIsRecoveringPassword(false);
       setLoading(false);
       NavigationService.navigate('LoginScreen');
     } catch (error) {
       setLoading(false);
+      setIsRecoveringPassword(false);
       console.log('Error', error);
       Alert.alert(error?.response?.data?.error?.description);
     }
@@ -79,16 +84,18 @@ const ForgotPassword = () => {
   };
 
   return (
-    <SafeAreaView style={[{flex: 1, backgroundColor: 'white'}]}>
+    <SafeAreaView style={[{flex: 1, backgroundColor: AppColors.baseGray}]}>
       <ScrollView
         contentContainerStyle={style.rootContainer}
-        keyboardShouldPersistTaps="always">
+        keyboardShouldPersistTaps="always"
+      >
         <KeyboardAvoidingView behavior="position" style={style.rootContainer}>
           <View
             style={StyleSheet.flatten([
               Styles.cnxWhiteHeader,
               {paddingTop: 20},
-            ])}>
+            ])}
+          >
             <TouchableOpacity onPress={goBack}>
               <Icon
                 name="arrow-back"
@@ -97,11 +104,9 @@ const ForgotPassword = () => {
                 style={style.backArrow}
               />
             </TouchableOpacity>
-            <Icon
-              name="leaf"
-              size={100}
-              color={AppColors.blue}
+            <Image
               style={style.logo}
+              source={require('../../../components/Images/conexus-logo.jpg')}
             />
             <Text style={style.title}>Sign In</Text>
           </View>
@@ -126,7 +131,9 @@ const ForgotPassword = () => {
               textColor={variables.blue}
               title="RECOVER NOW"
               loading={loading}
-              disabled={inputs.email ? loading : 'false'}
+              disabled={
+                inputs.email ? {loading, isRecoveringPassword} : 'false'
+              }
               onPress={validate}
               customStyle={inputs.email ? style.btnEnable : style.btnDisable}
             />
@@ -183,6 +190,8 @@ const style = StyleSheet.create({
   },
   logo: {
     alignSelf: 'center',
+    height: 100,
+    width: 100,
   },
   backArrow: {
     justifyContent: 'flex-start',
