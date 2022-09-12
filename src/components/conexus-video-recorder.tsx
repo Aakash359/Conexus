@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useMemo} from 'react';
 import {
   StyleSheet,
   View,
@@ -7,19 +7,23 @@ import {
   ActivityIndicator,
   ViewStyle,
   Alert,
+  TouchableOpacity,
 } from 'react-native';
 import {ActionButton} from '../components';
-
+import Icon from 'react-native-vector-icons/Ionicons';
+import {Camera, sortDevices} from 'react-native-vision-camera';
 import {AppFonts, AppColors, AppSizes} from '../theme';
 import {VideoStore} from '../stores';
-import {Publisher, OpenTok} from 'react-native-opentok';
 import {windowDimensions} from '../common';
+import NavigationService from '../navigation/NavigationService';
 
 interface ConexusVideoRecorderProps {
   onRecordComplete?: (archiveId: string, videoUrl: string) => any;
   onRecordError?: (error: any) => any;
   onRecordStart?: () => any;
   style: any;
+  text: any;
+  recordedData: any;
   onRecordStep?: () => any;
   onErrorStep?: () => any;
   videoStore?: VideoStore;
@@ -41,138 +45,144 @@ export const ConexusVideoRecorder = (
   props: ConexusVideoRecorderProps,
   state: VideoRecorderState,
 ) => {
-  // const _publisher: Publisher;
-  const {onErrorStep, onRecordStep} = props;
-  const [currentStep, setCurrentStep] = useState('');
-  const {SessionId, SessionToken} = props;
-  const cameraRef = useRef(null);
-  const style = (): any[] => {
-    return [props.style, {backgroundColor: AppColors.black}];
-  };
+  const camera = React.useRef(null);
+  const [devices, setDevices] = useState([]);
+  const [recordingState, setRecordingState] = useState([
+    'Default',
+    'Starting',
+    'Playing',
+    'Pausing',
+    'Stop',
+  ]);
 
-  const setSessionId = (sessionId: string) => {
-    return sessionId;
-  };
-
-  const currentSteps = (): Step => {
-    return state.currentStep;
-  };
-
-  const videoRecord = async () => {
-    if (cameraRef && cameraRef.current) {
-      cameraRef.current.open({maxLength: 30}, data => {
-        console.log('captured data', data); // data.uri is the file path
-      });
-    }
-  };
-  const initStep = (nextStep: Step) => {
-    const stepState = {
-      mode: 'waiting',
-    };
-    const onRecordStep = props.onRecordStep;
-    if (onRecordStep && onRecordStep.call) {
-      onRecordStep();
-    }
-    stepState.mode = 'waiting';
-    return (
-      <>
-        <View style={{flex: 1, backgroundColor: 'red'}}>
-          <Text>{stepState.mode}</Text>
-        </View>
-      </>
-    );
-  };
-
-  const renderActivity = () => {
-    return (
-      <ActivityIndicator color={AppColors.blue} style={absolutePosition} />
-    );
-  };
-
-  const startRender = () => {
-    let footerButton = <View style={{flex: 1}} />;
-    let showCountdown = false;
-    let showQuestion = true;
-    let showPublisher = SessionId;
-    let showActivity = false;
-    const stepState = {
-      mode: 'waiting',
-    };
-    if (stepState.mode == 'waiting') {
-      showCountdown = true;
-      footerButton = (
-        <View style={recorderStyle.footer}>
-          <ActionButton
-            title="START RECORDING"
-            customTitleStyle={{fontSize: 16}}
-            onPress={() => videoRecord()}
-            customStyle={recorderStyle.btnEnable}
-          />
-        </View>
-      );
-      return footerButton;
-    }
-    if (stepState.mode === 'recording-start') {
-      showActivity = true;
-      showQuestion = false;
-      footerButton = <View />;
-      return footerButton;
-    }
-
-    if (stepState.mode === 'recording') {
-      showCountdown = true;
-      footerButton = (
-        <View style={recorderStyle.footer}>
-          <ActionButton
-            title="STOP RECORDING"
-            customTitleStyle={{fontSize: 16}}
-            //  onPress={() => recordQuestion()}
-            customStyle={recorderStyle.btnEnable}
-          />
-        </View>
-      );
-      return footerButton;
-    }
-
-    if (stepState.mode === 'recording-ending') {
-      showQuestion = false;
-      showPublisher = false;
-      showActivity = true;
-    }
-
-    if (stepState.mode === 'recording-end') {
-      showPublisher = false;
-      showQuestion = false;
-    }
-
-    return (
-      <View style={style}>
-        {showPublisher && (
-          <Publisher
-            style={recorderStyle.publisher}
-            // ref={i => (publisher = i)}
-            sessionId={SessionId}
-          />
-        )}
-        {showActivity && renderActivity()}
-
-        {footerButton}
-      </View>
-    );
-  };
-
-  const recordStep = (nextStep: Step) => {
-    return <>{(initStep(), startRender())}</>;
-  };
-
+  const [cameraFlip, setCameraFlip] = useState(false);
+  const device = useMemo(() => devices.find(d => d.position === 'front'), [
+    devices,
+  ]);
+  const [permissons, setPermissons] = useState(false);
+  const {text, recordedData} = props;
   useEffect(() => {
-    recordStep();
-  }, []);
+    console.log('recodingState===>', recordingState);
+    if (recordingState == 'Playing') {
+      setRecordingState('Playing');
+    } else {
+      setRecordingState('default');
+    }
+
+    loadDevices();
+    getPermissons();
+  }, [recordingState]);
+
+  const loadDevices = async () => {
+    try {
+      const availableCameraDevices = await Camera.getAvailableCameraDevices();
+      const sortedDevices = availableCameraDevices.sort(sortDevices);
+      setDevices(sortedDevices);
+    } catch (e) {
+      console.error('Failed to get available devices!', e);
+    }
+  };
+
+  const getPermissons = async () => {
+    const cameraPermission = await Camera.getCameraPermissionStatus();
+    const microphonePermission = await Camera.getMicrophonePermissionStatus();
+    if (
+      microphonePermission === 'authorized' &&
+      cameraPermission === 'authorized'
+    ) {
+      setPermissons(true);
+    }
+  };
+
+  const startRecodingHandler = () => {
+    camera.current.startRecording({
+      flash: 'off',
+      onRecordingFinished: (video: any) => recordedData(video),
+      onRecordingError: (error: any) => console.error(error, 'video error'),
+    });
+    setRecordingState('Playing');
+  };
+
+  const stopRecodingHandler = async () => {
+    await camera.current.stopRecording();
+    setRecordingState('Stop');
+  };
+
+  if (device == null) {
+    return null;
+  }
+
+  const flipCamera = (device: never) => {
+    if (device?.position) {
+      setCameraFlip(true);
+      console.log('jhj', cameraFlip);
+
+      return devices.find(d => d.position === 'back');
+    }
+  };
 
   return (
     <>
-      {recordStep()}
-      <View style={style} />
+      <View style={recorderStyle.headerViews}>
+        <Camera
+          ref={camera}
+          style={StyleSheet.absoluteFill}
+          device={device}
+          isActive={true}
+          video={true}
+          audio={false}
+          setIsPressingButton={true}
+        />
+        <Icon
+          style={recorderStyle.closeButton}
+          name="ios-close-circle-sharp"
+          size={27}
+          color={AppColors.blue}
+          onPress={() => NavigationService.goBack()}
+        />
+
+        <Text style={recorderStyle.text}>{text}</Text>
+        <Icon
+          style={recorderStyle.flipCamera}
+          name="ios-camera-reverse-outline"
+          size={27}
+          color={AppColors.blue}
+          onPress={() => flipCamera(device)}
+        />
+        <Text>{recordingState}</Text>
+        {recordingState == 'default' && (
+          <View style={recorderStyle.footer}>
+            <ActionButton
+              title="START RECORDING"
+              customStyle={
+                recordingState == 'default'
+                  ? recorderStyle.recordingBtn
+                  : [recorderStyle.recordingBtn, recorderStyle.recordingBtnRed]
+              }
+              customTitleStyle={{color: AppColors.white, fontSize: 15}}
+              onPress={() => startRecodingHandler()}
+            />
+          </View>
+        )}
+        {recordingState == 'Playing' && (
+          <View style={recorderStyle.footer}>
+            <ActionButton
+              title="STOP RECORDING"
+              customStyle={
+                recordingState == 'Playing'
+                  ? recorderStyle.recordingBtnRed
+                  : recorderStyle.recordingBtn
+              }
+              customTitleStyle={{color: AppColors.white, fontSize: 15}}
+              onPress={() => stopRecodingHandler()}
+            />
+          </View>
+        )}
+      </View>
+
+      {/* <TouchableOpacity onPress={() => stopRecodingHandler()}>
+        <Text style={{fontSize: 35}}>Stop Recoding</Text>
+      </TouchableOpacity> */}
     </>
   );
 };
@@ -192,14 +202,40 @@ const recorderStyle = StyleSheet.create({
   publisher: {
     ...absolutePosition,
   },
+  headerViews: {
+    flex: 1,
+  },
+  closeButton: {
+    position: 'absolute',
+    right: 12,
+    top: 12,
+  },
+  text: {
+    marginTop: 80,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    color: AppColors.white,
+    fontWeight: 'bold',
+  },
+  flipCamera: {
+    marginTop: 0,
+    right: 10,
+    alignSelf: 'flex-end',
+  },
+
   footer: {
     right: 10,
     left: 10,
     position: 'absolute',
     bottom: 20,
   },
-  btnEnable: {
+  recordingBtn: {
     alignSelf: 'center',
+    width: windowDimensions.width * 0.5,
+  },
+  recordingBtnRed: {
+    alignSelf: 'center',
+    backgroundColor: AppColors.red,
     width: windowDimensions.width * 0.5,
   },
 });

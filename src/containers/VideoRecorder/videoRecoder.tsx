@@ -1,17 +1,18 @@
-import React, {useState, useEffect, useRef} from 'react';
+'use strict';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   ActivityIndicator,
   StatusBar,
   View,
+  TouchableOpacity,
   Text,
+  Pressable,
   Alert,
 } from 'react-native';
 import {AppColors, AppSizes} from '../../theme';
-import Icon from 'react-native-vector-icons/Ionicons';
 import {VideoStore, ConversationStore} from '../stores';
-import {ConexusVideoActionButton} from '../../components';
-import {ConexusVideoRecorder} from '../../components';
+import {ConexusVideoActionButton, ConexusVideoRecorder} from '../../components';
 import variables from '../../theme';
 import InCallManager from 'react-native-incall-manager';
 import {showYesNoAlert} from '../../common/cancel-retry-alert';
@@ -19,8 +20,6 @@ import ConexusVideoPlayer from '../../components/conexus-video-player';
 import {initVideoSessionService} from '../../services/VideoCallingServices';
 import {windowDimensions} from '../../common';
 import NavigationService from '../../navigation/NavigationService';
-import OpenTok, {Publisher, Subscriber} from 'react-native-opentok';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 
 interface VideoRecorderProps {
   finishedButtonTitle?: string;
@@ -66,23 +65,14 @@ const VideoRecorder = (
   const [videoSessionData, setVideoSessionData] = useState([]);
   const videoMessageSendComplete = false;
   const propsData = props?.route?.params;
-  // const {videoMessage, conversationId, submissionId, text} = propsData;
-  // const {sessionId, sessionToken} = videoSessionData;
-  const cameraRef = useRef<Video>(null);
+  console.log('PopsData===>', propsData);
+  const {text} = propsData;
   // const onCanceled = () => {
   //   if (props.onCanceled && props.onCanceled.call) {
   //     props.onCanceled();
   //   }
   //   StatusBar.setHidden(false);
   // };
-
-  const videoRecord = async () => {
-    if (cameraRef && cameraRef.current) {
-      cameraRef.current.open({maxLength: 30}, data => {
-        console.log('captured data', data); // data.uri is the file path
-      });
-    }
-  };
 
   // const setConnected = flow(function* (isConnected: boolean) {
   //   self.status = isConnected
@@ -158,9 +148,9 @@ const VideoRecorder = (
   //       }
   // }
 
-  const setSessionId = (sessionId: string) => {
-    return sessionId;
-  };
+  // const setSessionId = (sessionId: string) => {
+  //   return sessionId;
+  // };
 
   // const connectionSetup = () => {
   //   OpenTok.on(OpenTok.events.ON_SIGNAL_RECEIVED, (e: any) => {
@@ -174,26 +164,16 @@ const VideoRecorder = (
   // };
 
   useEffect(() => {
-    // connectionSetup();
     StatusBar.setHidden(true);
     initVideoSession();
-    InCallManager.start({media: 'video'});
-    InCallManager.setKeepScreenOn(true);
-    InCallManager.setForceSpeakerphoneOn(true);
-    OpenTok.connect(sessionId, sessionToken);
   }, []);
 
-  const onRecorderError = (error, code?: string) => {
-    setShowRecorder(false);
-    setLoading(false);
-  };
-
-  // const menuButtons: ConexusVideoActionButton[] = [
-  //   {
-  //     title: 'Cancel Message',
-  //     onPress: onCanceled(),
-  //   },
-  // ];
+  const menuButtons: ConexusVideoActionButton[] = [
+    {
+      title: 'Cancel Message',
+      // onPress: onCanceled()
+    },
+  ];
 
   const activityIndicator = (
     <ActivityIndicator style={{flex: 1}} color={AppColors.blue} />
@@ -201,41 +181,20 @@ const VideoRecorder = (
 
   return (
     <>
-      <View style={styles.headerViews}>
-        <Icon
-          style={styles.closeButton}
-          name="ios-close-circle-sharp"
-          size={22}
-          onPress={() => NavigationService.goBack()}
+      {
+        <ConexusVideoRecorder
+          style={{
+            flex: 1,
+            width: AppSizes.screen.width,
+            height: AppSizes.screen.height,
+          }}
+          text={text}
+          recordedData={data => setShowRecorder(data)}
         />
-        <TouchableOpacity onPress={() => videoRecord()}>
-          <Text>Opne</Text>
-        </TouchableOpacity>
-        <VideoRecorder ref={cameraRef} />
-        {/* {!showRecorder && (
-          <ConexusVideoRecorder
-            style={{
-              flex: 1,
-              width: AppSizes.screen.width,
-              height: AppSizes.screen.height,
-            }}
-            SessionId={sessionId}
-            SessionToken={sessionToken}
-            onComplete={(result: boolean, data: object) => {
-              if (!result) {
-                onCanceled();
-              }
-            }}
-            // onRecordStart={onRecordStart}
-            // onRecordComplete={onRecordComplete}
-            // onRecordError={onRecordError}
-          />
-        )} */}
-      </View>
-
-      {/* {
+      }
+      {showRecorder && (
         <ConexusVideoPlayer
-          mediaUrl={videoUrl}
+          mediaUrl={showRecorder?.path}
           volumeLocation="top-left"
           autoPlay={false}
           pausable={true}
@@ -253,7 +212,7 @@ const VideoRecorder = (
           style={{flex: 1}}
           overlayFooterStyle={styles.overlayFooter}
         />
-      } */}
+      )}
       {/* {loading && (
         <ActivityIndicator color={AppColors.blue} style={{flex: 1}} />
       )} */}
@@ -265,10 +224,15 @@ const styles = StyleSheet.create({
   headerViews: {
     flex: 1,
   },
-  closeButton: {
-    position: 'absolute',
-    right: 12,
-    top: 12,
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: 'white',
+  },
+
+  preview: {
+    width: '100%',
+    height: 55,
   },
 });
 
