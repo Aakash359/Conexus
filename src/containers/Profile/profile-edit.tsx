@@ -101,7 +101,6 @@ const EditProfile = (props: EditProfileProps) => {
 
   const openCamera = async () => {
     // let token = userInfo.user?.authToken;
-    console.log('P===>', userInfo.user?.authToken);
     ImagePicker.openCamera({
       width: 300,
       height: 400,
@@ -306,18 +305,21 @@ const EditProfile = (props: EditProfileProps) => {
           transparent={true}
           onRequestClose={() => {
             setCameraModal(false);
-          }}>
+          }}
+        >
           <TouchableOpacity
             style={style.modalContainer}
             activeOpacity={1}
             onPress={() => {
               setCameraModal(false);
-            }}>
+            }}
+          >
             <View style={style.alertContainer}>
               <Text style={style.buttonHeader}>Select profile photo</Text>
               <TouchableOpacity
                 style={style.buttonContainer}
-                onPress={openCamera}>
+                onPress={openCamera}
+              >
                 <Icon
                   name="md-camera-outline"
                   size={30}
@@ -327,7 +329,8 @@ const EditProfile = (props: EditProfileProps) => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={style.buttonContainer}
-                onPress={openGallery}>
+                onPress={openGallery}
+              >
                 <Icon name="image-outline" size={30} color={AppColors.blue} />
                 <Text style={style.buttonText}>Select from Gallery</Text>
               </TouchableOpacity>

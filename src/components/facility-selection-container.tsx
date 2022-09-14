@@ -54,7 +54,7 @@ const FacilitySelectionContainer = (props: FacilitySelectionContainerProps) => {
     return props.facilityHeaderCaption || '';
   };
 
-  const refreshing = (): boolean => {
+  const refreshing = () => {
     return props.refreshing;
   };
 
@@ -74,7 +74,7 @@ const FacilitySelectionContainer = (props: FacilitySelectionContainerProps) => {
       return onRefresh;
     }
 
-    return function (selectedFacilityId: string) {};
+    return function(selectedFacilityId: string) {};
   };
 
   const selectedFacilityId = () => {
@@ -106,16 +106,16 @@ const FacilitySelectionContainer = (props: FacilitySelectionContainerProps) => {
         refreshControl={<ActivityIndicator color={AppColors.blue} />}
         data={[{id: '1'}]}
         // refreshing={refreshing}
-        // onRefresh={() => onRefresh(selectedFacilityId)}
-        // renderItem={({item, index}) => {
-        //   return (
-        //     <IconTitleBlock
-        //       key={item.id}
-        //       iconName={noDataIconName()}
-        //       text={noDataText()}
-        //     />
-        //   );
-        // }}
+        onRefresh={() => onRefresh(selectedFacilityId)}
+        renderItem={({item, index}) => {
+          return (
+            <IconTitleBlock
+              key={item.id}
+              iconName={noDataIconName()}
+              text={noDataText()}
+            />
+          );
+        }}
       />
     );
   };
@@ -135,26 +135,26 @@ const FacilitySelectionContainer = (props: FacilitySelectionContainerProps) => {
 
   return (
     <View style={styles.container}>
-      {showFacilitySelector() && (
+      {
         <FacilityListHeaderItem
           key={'facility-selection-header'}
           caption={facilityHeaderCaption()}
           overrideFacilities={overrideFacilities}
           facilityChosen={onFacilityChosen(selectedFacilityId)}
         />
-      )}
+      }
       {showLoading() && (
         <ActivityIndicator
           color={AppColors.blue}
           style={{flex: 1, justifyContent: 'center', alignSelf: 'center'}}
         />
       )}
-      {!showLoading &&
+      {/* {!showLoading &&
         showNewQuestionButton() &&
         showNoData() &&
-        props.children}
+        props.children} */}
       {/* {renderEmpty()} */}
-      {!showLoading && !showNoData() && props.children}
+      {/* {!showLoading && !showNoData() && props.children} */}
     </View>
   );
 };

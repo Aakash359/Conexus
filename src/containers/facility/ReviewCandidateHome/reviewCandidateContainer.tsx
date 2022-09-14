@@ -29,10 +29,10 @@ const ReviewCandidateContainer = (
   props: ReviewContainerProps,
   state: ReviewContainerState,
 ) => {
-  const mounted: boolean = false;
   const userInfo = useSelector(state => state.userReducer);
   const [facilityId, setFacilityId] = useState('');
   const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
 
   const saveToken = async () => {
@@ -41,11 +41,10 @@ const ReviewCandidateContainer = (
 
   const getToken = async () => {
     let token = await AsyncStorage.getItem('authToken');
-    console.log('Mil gya token', token);
   };
 
   useEffect(() => {
-    load(false);
+    load(true);
     saveToken();
     getToken();
     OneSignal.setAppId('901bc478-b323-4f6f-bc1f-bee60a47c811');
@@ -55,11 +54,6 @@ const ReviewCandidateContainer = (
   }, []);
 
   // const selectedFacility = () => {
-  //   // const {facilitySubmissionsStore, userStore} = this.props;
-
-  //   // if (facilitySubmissionsStore.loading) {
-  //   //   return null;
-  //   // }
 
   //   if (data) {
   //     return data.find(
@@ -81,49 +75,38 @@ const ReviewCandidateContainer = (
   //   );
   // }
 
-  // const showLoading=(): boolean =>{
-  //   const {facilitySubmissionsStore} = this.props;
+  const showLoading = (): boolean => {
+    const {facilitySubmissionsStore} = this.props;
 
-  //   if (refreshing) {
-  //     return false;
-  //   }
-  //   return facilitySubmissionsStore.loading;
-  // }
+    if (refreshing) {
+      return false;
+    }
+    return facilitySubmissionsStore.loading;
+  };
 
   const load = async (refreshing: boolean = false) => {
     if (!submissionsStorePromise) {
+      setLoading(true);
       try {
         const {data} = await facilitySubmissionsService();
-        setData(data);
-        setFacilityId(data?.[0]?.facilityId);
-        for (let facility of data) {
-          for (let position of facility.positions) {
-            const compTypes = position.comps;
-            for (var candidate of position.candidates) {
-              for (var dataItem of candidate.compData || []) {
-                const compType = compTypes.find(
-                  (i: any) => i.Id === dataItem.Id,
-                );
-                if (compType) {
-                  (dataItem.type = compType.type),
-                    (dataItem.headerTitle = compType.title);
-                  console.log(
-                    'type & headers',
-                    dataItem.type,
-                    dataItem.headerTitle,
-                  );
-                }
-              }
-            }
-          }
-        }
 
+        if (data && data.length > 0) {
+          let position = data.map((item: {positions: any}) => item.positions);
+          let facilityId = data.map(
+            (item: {facilityId: any}) => item.facilityId,
+          );
+          setFacilityId(facilityId);
+          setData(position);
+        }
+        setLoading(false);
         // Alert.alert(data.description);
       } catch (error) {
         console.log('Error', error);
+        setLoading(false);
         // Alert.alert(error?.response?.data?.error?.description);
       }
     } else {
+      setLoading(true);
       console.log(
         'ReviewContainer',
         'Joining existing submission store load',
@@ -132,39 +115,40 @@ const ReviewCandidateContainer = (
     }
   };
 
-  const renderPositionList = (data: string) => {
-    return (
-      <CandidateList
-        submissions={data}
-        selectedFacilityId={facilityId}
-        refreshing={refreshing}
-        onRefresh={() => load(true)}
-      />
-    );
-  };
+  // const renderPositionList = (data: string) => {
+  //   return (
+  //     <CandidateList
+  //       // submissions={data}
+  //       selectedFacilityId={facilityId}
+  //       refreshing={refreshing}
+  //       onRefresh={() => load(true)}
+  //     />
+  //   );
+  // };
 
   return (
     // <FacilitySelectionContainer
-    //   // showNoData={showNoData}
-    //   // showLoading={showLoading}
+    //   // showLoading={loading}
     //   noDataText="No Positions Available"
     //   facilityHeaderCaption="Showing positions for"
-    //   refreshing={refreshing}
-    //   // onRefresh={load(true)}
-    //   // onFacilityChosen={(facilityId: string) => this.forceUpdate()}
+    //   // refreshing={refreshing}
+    //   onRefresh={() => load(true)}
+    //   onFacilityChosen={(facilityId: string) => this.forceUpdate()}
     // >
-
+    //   {/* <View style={{flex: 1, backgroundColor: AppColors.baseGray}}>
+    //     {data && renderPositionList(data)}
+    //   </View> */}
     // </FacilitySelectionContainer>
     <>
       <View style={{flex: 1, backgroundColor: AppColors.baseGray}}>
-        {/* <TouchableOpacity onPress={() => handleButtonPress()}>
-          <Text style={{justifyContent: 'center', alignSelf: 'center'}}>
-            Hi
-          </Text>
-        </TouchableOpacity>
-        <RemotePushController /> */}
-
-        {data && renderPositionList(data)}
+        {data && (
+          <CandidateList
+            submissions={data}
+            selectedFacilityId={facilityId}
+            refreshing={refreshing}
+            onRefresh={() => load(true)}
+          />
+        )}
       </View>
     </>
   );

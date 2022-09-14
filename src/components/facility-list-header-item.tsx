@@ -3,8 +3,9 @@ import {Text, Alert, StyleSheet, View, TouchableOpacity} from 'react-native';
 import {AppFonts, AppColors} from '../theme';
 import {ConexusIcon} from '../components/conexus-icon';
 import {Avatar} from '../components/avatar';
-import {UserStore, UserFacilityModel} from '../stores/userStore';
+import {useDispatch} from 'react-redux';
 import NavigationService from '../navigation/NavigationService';
+import {useSelector} from '../redux/reducers/index';
 
 export interface FacilitySelectionItem {
   facilityId: string;
@@ -15,7 +16,6 @@ export interface FacilitySelectionItem {
 export interface FacilityListHeaderItemProps {
   caption: string;
   facilityChosen?: (facilityId: string) => any;
-  userStore?: UserStore;
   overrideFacilities?: FacilitySelectionItem[];
 }
 
@@ -23,14 +23,16 @@ export interface FacilityListHeaderItemState {}
 
 const FacilityListHeaderItem = (props: FacilityListHeaderItemProps) => {
   const {caption} = props;
+  const userInfo = useSelector(state => state.userReducer);
+  console.log('userInfo====>', userInfo?.user?.user?.userFacilities);
 
   const facilities = (): FacilitySelectionItem[] => {
     if (props.overrideFacilities) {
       return props.overrideFacilities;
     }
 
-    return !!props.userStore.user && !!props.userStore.user.userFacilities
-      ? props.userStore.user.userFacilities.map(
+    return !!userInfo?.user?.user && !!userInfo?.user?.user?.userFacilities
+      ? userInfo?.user?.user?.userFacilities.map(
           (i: {facilityId: any; facilityName: any; photoUrl: any}) => {
             return {
               facilityId: i.facilityId,
@@ -64,13 +66,6 @@ const FacilityListHeaderItem = (props: FacilityListHeaderItemProps) => {
     }
     return null;
   };
-
-  // constructor(
-  //   props: FacilityListHeaderItemProps,
-  //   state: FacilityListHeaderItemState,
-  // ) {
-  //   super(props, state);
-  // }
 
   // useEffect(()=>{
 

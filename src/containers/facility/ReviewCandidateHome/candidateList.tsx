@@ -13,6 +13,7 @@ export interface CandidateListProps {
 
 export const CandidateList = (props: CandidateListProps) => {
   const {submissions, onRefresh, selectedFacilityId, refreshing} = props;
+  console.log('Aakash====>', submissions);
 
   // const getFacilitySelectionItem = (
   //   facilityId: string,
@@ -42,18 +43,18 @@ export const CandidateList = (props: CandidateListProps) => {
   //   });
   // };
 
-  const getPositionsByFacilityId = (facilityId: string, submissions: any) => {
-    const facility = submissions.find(i => {
-      return i.facilityId.toString() === facilityId;
-    });
-
-    if (facility) {
-      return facility.positions || [];
-    }
-    return [];
-  };
-
-  const positions = getPositionsByFacilityId(selectedFacilityId, submissions);
+  // const getPositionsByFacilityId = (facilityId: string, submissions: any) => {
+  //   const facility = submissions.map(
+  //     (i: {facilityId: {toString: () => string}}) => {
+  //       return i.facilityId.toString() === facilityId;
+  //     },
+  //   );
+  //   console.log('posirions===>', facility);
+  //   if (facility) {
+  //     return facility.positions || [];
+  //   }
+  //   return [];
+  // };
 
   return (
     <FlatList
@@ -71,7 +72,7 @@ export const CandidateList = (props: CandidateListProps) => {
       ListFooterComponent={() => {
         return <View key="submission-list-footer" style={{height: 120}}></View>;
       }}
-      data={positions}
+      data={submissions}
     />
   );
 };

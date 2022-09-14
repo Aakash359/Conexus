@@ -21,17 +21,30 @@ export const CandidateListItem = (
   props: CandidateListItemItemProps,
   state: CandidateListItemItemState,
 ) => {
-  const posit = Object.assign({}, props.position);
-
+  const position = props?.position;
   const [showAll, setShowAll] = useState(false);
   const [comparing, setComparing] = useState(false);
-  const [position, setPosition] = useState(posit);
 
-  useEffect(() => {
-    if (position) {
-      setPosition(position);
-    }
-  });
+  const renderPositions = (item: any) => {
+    let position = item;
+    return (
+      <>
+        {position.candidates.length > 0 && (
+          <ViewHeader
+            title={position.display.title}
+            description={position.display.description}
+            first={props.first}
+            actionTextStyle={!comparing ? defaultStyle.comparing : {}}
+            actionText={comparing ? 'LIST' : 'COMPARE'}
+            onActionPress={() => setComparing(!comparing)}
+          />
+        )}
+        {comparing
+          ? renderCandidateComparingList(position)
+          : renderStandardList(position)}
+      </>
+    );
+  };
 
   const showAlls = () => {
     setShowAll(true);
@@ -49,7 +62,7 @@ export const CandidateListItem = (
     //     }
     // }))
   };
-  const renderStandardList = () => {
+  const renderStandardList = (position: any) => {
     let showAllHighlight = position.candidates.find(
       (candidate: {viewedSubmission: any}, ind: number) => {
         return ind > 2 && !candidate.viewedSubmission;
@@ -73,7 +86,7 @@ export const CandidateListItem = (
     );
   };
 
-  const renderCandidateComparingList = () => {
+  const renderCandidateComparingList = (position: any) => {
     return (
       <CandidateComparisonList
         position={position}
@@ -88,19 +101,5 @@ export const CandidateListItem = (
     },
   });
 
-  return (
-    <View key={position.needId.toString()}>
-      {position.candidates.length > 0 && (
-        <ViewHeader
-          title={position.display.title}
-          description={position.display.description}
-          first={props.first}
-          actionTextStyle={!comparing ? defaultStyle.comparing : {}}
-          actionText={comparing ? 'LIST' : 'COMPARE'}
-          onActionPress={() => setComparing(!comparing)}
-        />
-      )}
-      {comparing ? renderCandidateComparingList() : renderStandardList()}
-    </View>
-  );
+  return <View key={position.needId}>{position.map(renderPositions)}</View>;
 };

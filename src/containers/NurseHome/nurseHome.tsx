@@ -35,7 +35,6 @@ const NurseHome = (props: NurseHomeProps, state: NurseHomeState) => {
 
   const getToken = async () => {
     let token = await AsyncStorage.getItem('authToken');
-    console.log('Mil gya token', token);
   };
 
   useEffect(() => {
@@ -159,7 +158,8 @@ const NurseHome = (props: NurseHomeProps, state: NurseHomeState) => {
       style={{flex: 1}}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={() => load()} />
-      }>
+      }
+    >
       {/* {interviewableSubmissions.length === 0
         ? renderEmpty()
         : renderSubmissions()} */}

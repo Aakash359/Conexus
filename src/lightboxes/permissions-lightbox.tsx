@@ -40,7 +40,8 @@ const InfoList: React.SFC<InfoItemProps> = ({data}) => {
                   ? item.value.toString()
                   : JSON.stringify(item.value),
               )
-            }>
+            }
+          >
             <View style={{marginTop: i === 0 ? 0 : 10}}>
               <View key={`info-${i}-l`} style={{flexDirection: 'row'}}>
                 <Text style={{fontSize: 14}}>{item.label + '  '}</Text>
@@ -55,7 +56,8 @@ const InfoList: React.SFC<InfoItemProps> = ({data}) => {
                   <Text
                     key={`details-${i}-${key}-l`}
                     style={{fontSize: 8}}
-                    textBreakStrategy="simple">{`${key}: ${item.value[key]}`}</Text>
+                    textBreakStrategy="simple"
+                  >{`${key}: ${item.value[key]}`}</Text>
                 ))
               )}
             </View>
@@ -108,15 +110,15 @@ export class PermissionsLightbox extends React.Component<
       {label: 'Phone', value: DeviceInfo.getPhoneNumber()},
       {label: 'Permissions', value: permissions},
     ];
-    log.info('auth', authToken);
-    log.info('permissions', permissions);
+
     return (
       <ConexusLightbox
         closeable
         style={{padding: 0}}
         title={title}
         height={420}
-        horizontalPercent={0.9}>
+        horizontalPercent={0.9}
+      >
         <View style={styles.content}>
           {!loading && <InfoList data={items} />}
 
