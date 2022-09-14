@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
-  ViewProperties,
   Alert,
   AlertButton,
   ActivityIndicator,
@@ -10,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import ConexusVideoPlayer from '../../components/conexus-video-player';
-import {QuestionPlaybackHeader} from '../../components/question-playback-header';
+import QuestionPlaybackHeader from '../../components/question-playback-header';
 import {AppColors, AppSizes, AppFonts} from '../../theme';
 
 interface VideoPlayer {
@@ -23,28 +22,25 @@ interface VideoPlayerState {
 }
 const menuButtons: ConexusVideoActionButton[] = [];
 const VideoPlayer = (props: VideoPlayer, state: VideoPlayerState) => {
-  const [showPlayer, setShowPlayer] = useState(false);
+  const [showPlayer, setShowPlayer] = useState(true);
   const {videoUrl} = props?.route?.params;
 
-  //   componentWillMount() {
-  //     StatusBar.setHidden(true);
-  //   }
+  useEffect(() => {
+    StatusBar.setHidden(true);
+    StatusBar.setHidden(false);
+  }, []);
 
   const isVideo = (): boolean => {
-    return !!videoUrl;
+    return videoUrl;
   };
 
   const isPlayable = (): boolean => {
-    return isVideo && showPlayer;
+    return isVideo() && showPlayer;
   };
 
   const errorDisplayText = (): string => {
     return `This message is currently unavailable and can not be played.`;
   };
-
-  //   componentWillUnMount() {
-  //     StatusBar.setHidden(false);
-  //   }
 
   const onError = (error: any, code?: string) => {
     setShowPlayer(false);
@@ -88,26 +84,28 @@ const VideoPlayer = (props: VideoPlayer, state: VideoPlayerState) => {
 
   return (
     <>
-      {
-        <ConexusVideoPlayer
-          mediaUrl={videoUrl}
-          autoPlay={true}
-          pausable={true}
-          errorDisplayText={errorDisplayText()}
-          showActionsOnEnd={true}
-          menuButtons={menuButtons}
-          activityIndicator={() => {
-            return activityIndicator;
-          }}
-          actionButton={{title: 'Close', onPress: onClose}}
-          renderStoppedOverlay={renderQuestionHeader()}
-          onError={() => onError}
-          style={styles.videoPlayer}
-          overlayFooterStyle={styles.overlayFooter}
-          loadingColor={AppColors.blue}
-          volumeLocation="top-left"
-        />
-      }
+      {isPlayable() && (
+        <View style={styles.lightbox}>
+          <ConexusVideoPlayer
+            mediaUrl={videoUrl}
+            autoPlay={true}
+            pausable={true}
+            errorDisplayText={errorDisplayText()}
+            showActionsOnEnd={true}
+            menuButtons={menuButtons}
+            activityIndicator={() => {
+              return activityIndicator;
+            }}
+            actionButton={{title: 'Close', onPress: onClose}}
+            renderStoppedOverlay={renderQuestionHeader()}
+            // onError={onError()}
+            style={styles.videoPlayer}
+            overlayFooterStyle={styles.overlayFooter}
+            loadingColor={AppColors.blue}
+            volumeLocation="top-left"
+          />
+        </View>
+      )}
     </>
   );
 };

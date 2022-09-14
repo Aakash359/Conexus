@@ -10,6 +10,7 @@ import {
   Keyboard,
   Alert,
   Image,
+  SafeAreaView,
 } from 'react-native';
 import {phoneFormatter} from '../../../common/phone-formatter';
 import {initiatePhoneCallService} from '../../../services/Facility/phoneCallService';
@@ -72,8 +73,9 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [offerModalVisible, setOfferModalVisible] = useState(false);
   const [phoneCallModalVisible, setPhoneCallModalVisible] = useState(false);
-  const [contactOptionModalVisible, setContactOptionModalVisible] =
-    useState(false);
+  const [contactOptionModalVisible, setContactOptionModalVisible] = useState(
+    false,
+  );
   const [loadingSummary, setLoadingSummary] = useState(false);
   const [refreshing, setRefreshing] = useState('');
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
@@ -276,7 +278,8 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
             justifyContent: 'flex-start',
             paddingTop: 40,
             paddingBottom: 80,
-          }}>
+          }}
+        >
           <Icon name="information-circle" style={Styles.cnxNoDataIcon} />
           <Text style={Styles.cnxNoDataMessageText}>
             No Responses Available
@@ -349,7 +352,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   };
   const Summary = () => {
     return (
-      <View style={{flex: 1, backgroundColor: AppColors.baseGray}}>
+      <View style={{flexGrow: 1, backgroundColor: AppColors.baseGray}}>
         {loadingSummary && renderLoading(100)}
         <ConexusContentList
           style={styles.contentList}
@@ -360,7 +363,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   };
   const VirtualInterView = () => {
     return (
-      <View style={{flex: 1, backgroundColor: AppColors.baseGray}}>
+      <View style={{flexGrow: 1, backgroundColor: AppColors.baseGray}}>
         {renderQuestions(data || [])}
       </View>
     );
@@ -376,7 +379,8 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
           tabBarLabelStyle: {fontWeight: 'bold'},
           tabBarActiveTintColor: AppColors.blue,
           tabBarInactiveTintColor: AppColors.mediumGray,
-        }}>
+        }}
+      >
         <Tab.Screen
           name="Summary"
           component={Summary}
@@ -533,83 +537,6 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
       return type.typeId == '2';
     })[0].available || false;
 
-  const renderCandidate = () => {
-    return (
-      <View style={styles.rootView}>
-        <ScrollView
-          refreshControl={
-            <RefreshControl
-              Refreshing={refreshing}
-              onRefresh={() => refreshCandidate(true)}
-            />
-          }>
-          <View style={styles.headerViews}>
-            <Icon
-              style={styles.closeButton}
-              name="ios-close-circle-sharp"
-              size={22}
-              onPress={() => NavigationService.goBack()}
-            />
-            <Avatar
-              style={{width: 108, marginBottom: 14}}
-              size={108}
-              source={candidate.photoUrl}
-              title={candidate.photoLabel}
-            />
-            <Text style={AppFonts.bodyTextXtraLarge}>
-              {candidate.display.title}
-            </Text>
-            {renderActionHeader()}
-          </View>
-        </ScrollView>
-
-        {MyTabs()}
-
-        {
-          <View style={styles.footer}>
-            <ActionButton
-              loading={loading}
-              title="CONTACT"
-              onPress={() => {
-                setContactOptionModalVisible(true);
-              }}
-              customStyle={styles.contact}
-              customTitleStyle={{
-                fontSize: 12,
-                fontFamily: AppFonts.family.fontFamily,
-              }}
-            />
-          </View>
-        }
-        {contactOptionModalVisible && (
-          <ContactOptionModal
-            title={'Contact Options'}
-            videoCall={videoCall}
-            videoChat={videoChat}
-            onRequestClose={() => setContactOptionModalVisible(false)}
-            onDismiss={() => setContactOptionModalVisible(false)}
-            onPress={() => showPhoneCallModal()}
-            onMessage={() => openConversations()}
-            onVideMessage={() => onClickVideoMessage()}
-            onClose={() => setContactOptionModalVisible(false)}
-          />
-        )}
-        {phoneCallModalVisible && (
-          <PhoneCallModal
-            title={candidate.display.title}
-            value={phoneFormatter.format10Digit(callbackNumber)}
-            // onChangeText={onCallbackChangeText()}
-            // disabled={!validPhone}
-            onRequestClose={() => setPhoneCallModalVisible(false)}
-            onDismiss={() => setPhoneCallModalVisible(false)}
-            onPress={() => makeCall()}
-            onClose={() => setPhoneCallModalVisible(false)}
-          />
-        )}
-      </View>
-    );
-  };
-
   const renderLoading = (paddingTop: number = 0) => {
     return (
       <ActivityIndicator
@@ -619,13 +546,90 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     );
   };
 
-  return renderCandidate();
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.dataView}
+        refreshControl={
+          <RefreshControl
+            Refreshing={refreshing}
+            onRefresh={() => refreshCandidate(true)}
+          />
+        }
+      >
+        <View style={styles.headerViews}>
+          <Icon
+            style={styles.closeButton}
+            name="ios-close-circle-sharp"
+            size={22}
+            onPress={() => NavigationService.goBack()}
+          />
+          <Avatar
+            style={{width: 108, marginBottom: 14}}
+            size={108}
+            source={candidate.photoUrl}
+            title={candidate.photoLabel}
+          />
+          <Text style={AppFonts.bodyTextXtraLarge}>
+            {candidate.display.title}
+          </Text>
+          {renderActionHeader()}
+        </View>
+        {MyTabs()}
+      </ScrollView>
+
+      {
+        <View style={styles.footer}>
+          <ActionButton
+            loading={loading}
+            title="CONTACT"
+            onPress={() => {
+              setContactOptionModalVisible(true);
+            }}
+            customStyle={styles.contact}
+            customTitleStyle={{
+              fontSize: 12,
+              fontFamily: AppFonts.family.fontFamily,
+            }}
+          />
+        </View>
+      }
+      {contactOptionModalVisible && (
+        <ContactOptionModal
+          title={'Contact Options'}
+          videoCall={videoCall}
+          videoChat={videoChat}
+          onRequestClose={() => setContactOptionModalVisible(false)}
+          onDismiss={() => setContactOptionModalVisible(false)}
+          onPress={() => showPhoneCallModal()}
+          onMessage={() => openConversations()}
+          onVideMessage={() => onClickVideoMessage()}
+          onClose={() => setContactOptionModalVisible(false)}
+        />
+      )}
+      {phoneCallModalVisible && (
+        <PhoneCallModal
+          title={candidate.display.title}
+          value={phoneFormatter.format10Digit(callbackNumber)}
+          // onChangeText={onCallbackChangeText()}
+          // disabled={!validPhone}
+          onRequestClose={() => setPhoneCallModalVisible(false)}
+          onDismiss={() => setPhoneCallModalVisible(false)}
+          onPress={() => makeCall()}
+          onClose={() => setPhoneCallModalVisible(false)}
+        />
+      )}
+    </SafeAreaView>
+  );
 };
 
 const styles = StyleSheet.create({
-  rootView: {
-    flex: 1,
+  container: {
+    flexGrow: 1,
     backgroundColor: AppColors.baseGray,
+  },
+  dataView: {
+    flexGrow: 1,
   },
   image: {
     width: 25,
@@ -635,7 +639,6 @@ const styles = StyleSheet.create({
     marginTop: 5,
     alignSelf: 'center',
   },
-
   footer: {
     right: 10,
     left: 10,
@@ -646,7 +649,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: windowDimensions.width * 0.5,
   },
-
   closeButton: {
     position: 'absolute',
     right: 12,
@@ -656,7 +658,6 @@ const styles = StyleSheet.create({
     right: 32,
     color: AppColors.blue,
   },
-
   headerViews: {
     paddingTop: AppSizes.navbarHeight,
     backgroundColor: variables.white,
@@ -691,14 +692,11 @@ const headerStyle = StyleSheet.create({
   },
 
   rootView: {
-    flex: 1,
     flexDirection: 'column',
-    alignItems: 'stretch',
-    alignSelf: 'stretch',
+    alignItems: 'center',
   },
 
   actionRowView: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

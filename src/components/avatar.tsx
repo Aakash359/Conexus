@@ -80,8 +80,15 @@ export const Avatar = (props: AvatarProps) => {
   };
 
   const renderImage = () => {
-    const {source, size, style, title, facility, borderWidth, borderColor} =
-      props;
+    const {
+      source,
+      size,
+      style,
+      title,
+      facility,
+      borderWidth,
+      borderColor,
+    } = props;
 
     let imgSource: ImageURISource = facility
       ? Images.defaultFacilityAvatar

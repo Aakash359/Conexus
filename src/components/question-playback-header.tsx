@@ -4,6 +4,7 @@ import {Avatar} from './';
 import {AppFonts, AppColors, AppSizes} from '../theme';
 import {ConexusLightbox} from '../lightboxes/base-lightbox';
 import LinearGradient from 'react-native-linear-gradient';
+import NavigationService from '../navigation/NavigationService';
 
 interface QuestionPlaybackHeaderProps {
   onClose?: () => any;
@@ -37,7 +38,7 @@ const QuestionPlaybackHeader = (
   } = props;
 
   const close = () => {
-    // lightbox.closeModal();
+    NavigationService.goBack();
   };
 
   if (showAvatar || showCountdown) {
@@ -51,7 +52,8 @@ const QuestionPlaybackHeader = (
             left: 0,
             right: 0,
           }}
-          colors={['rgba(0, 0, 0, .6)', 'rgba(0, 0, 0, 0)']}></LinearGradient>
+          colors={['rgba(0, 0, 0, .6)', 'rgba(0, 0, 0, 0)']}
+        ></LinearGradient>
         <View style={[styles.questionHeader]}>
           {showAvatar && (
             <View style={styles.avatarContainer}>
@@ -77,7 +79,8 @@ const QuestionPlaybackHeader = (
               style={[
                 countdownStyle.view,
                 {position: 'absolute', right: 19, top: 21},
-              ]}>
+              ]}
+            >
               <Text style={countdownStyle.titleBg}>{countdownTitle}</Text>
               <Text style={countdownStyle.secondsLeftBg}>
                 {countdownDescription}
@@ -97,7 +100,8 @@ const QuestionPlaybackHeader = (
           style={{
             position: 'relative',
             ...{marginTop: showAvatar ? 12 : 175},
-          }}>
+          }}
+        >
           <Text style={styles.questionTextBg}>{questionText}</Text>
           <Text style={styles.questionText}>{questionText}</Text>
         </View>
@@ -183,3 +187,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
+export default QuestionPlaybackHeader;

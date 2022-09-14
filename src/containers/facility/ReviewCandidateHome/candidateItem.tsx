@@ -52,13 +52,15 @@ const CandidateItem = (props: CandidateItemProps) => {
               props.updateViewed(candidate.submissionId);
             },
           })
-        }>
+        }
+      >
         <View
           key={candidate.userId}
           style={StyleSheet.flatten([
             styles.listItem,
             !!!candidate.viewedSubmission ? styles.unviewed : {},
-          ])}>
+          ])}
+        >
           <View style={styles.itemSection}>
             <Avatar
               size={48}
@@ -103,12 +105,14 @@ const CandidateItem = (props: CandidateItemProps) => {
             styles.itemSection,
             styles.body,
             styles.showMoreBody,
-          ])}>
+          ])}
+        >
           <Text
             style={StyleSheet.flatten([
               AppFonts.bodyTextNormalTouchable,
               showAllHighlight ? styles.buttonHighlight : {},
-            ])}>
+            ])}
+          >
             Show All {candidatesCount} Candidates
           </Text>
         </View>

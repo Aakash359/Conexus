@@ -21,6 +21,7 @@ import Slider from '@react-native-community/slider';
 import IconTitleBlock from './icon-title-block';
 import {windowDimensions} from '../common/window-dimensions';
 import ScreenFooterButton from './screen-footer-button';
+import NavigationService from '../navigation/NavigationService';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -80,7 +81,13 @@ const ConexusVideoPlayer = (
   props: ConexusVideoPlayerProps,
   state: ConexusVideoPlayerState,
 ) => {
-  const {volumeLocation, mediaUrl, actionButton, showActionsOnEnd} = props;
+  const {
+    volumeLocation,
+    mediaUrl,
+    actionButton,
+    showActionsOnEnd,
+    showActionButtonWhilePlaying,
+  } = props;
   const [volume, setVolume] = useState(10);
   const [hasError, setHasError] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -89,8 +96,30 @@ const ConexusVideoPlayer = (
   const replaying: boolean = false;
 
   const videoRef = useRef<Video>(null);
-  // const progress: number = 0;
-  const player: Video = null;
+  const progress: number = 0;
+  const player: Video = Video;
+
+  const volumeListener = SystemSetting.addVolumeListener(
+    _.debounce((data: any) => {
+      const volume = isAndroid ? data['music'] : data.value;
+      setVolume(data?.value);
+    }, 200),
+  );
+
+  useEffect(() => {
+    SystemSetting.getVolume().then(volume => {
+      setVolume(volume);
+    });
+    if (Platform.OS === 'android') {
+      InCallManager.start({media: 'audio'});
+      InCallManager.setForceSpeakerphoneOn(true);
+    }
+    InCallManager.setKeepScreenOn(false);
+    InCallManager.setForceSpeakerphoneOn(null);
+    InCallManager.stop();
+
+    SystemSetting.removeVolumeListener(volumeListener);
+  }, []);
 
   const pausable = (): boolean => {
     return props.pausable;
@@ -105,7 +134,7 @@ const ConexusVideoPlayer = (
   };
 
   const isPlaying = (): boolean => {
-    return loads() && !isPauseded() && !hasErrors() && !hasEnd();
+    return !loads() && !isPauseded() && !hasErrors() && !hasEnd();
   };
 
   const hasEnd = (): boolean => {
@@ -124,7 +153,7 @@ const ConexusVideoPlayer = (
   //   return this.props.mediaUrl;
   // }
 
-  const hidePlayer = (): boolean => {
+  const hidePlayer = (mediaUrl: string): boolean => {
     return !mediaUrl || hasErrors();
   };
 
@@ -152,9 +181,9 @@ const ConexusVideoPlayer = (
     return props.errorDisplayText || `This video is currently unavailable.`;
   };
 
-  const Volume = (value: number) => {
+  const Volume = (value: any) => {
     SystemSetting.setVolume(value, {
-      playSound: false,
+      playSound: true,
       showUI: false,
       type: 'music',
     });
@@ -169,43 +198,6 @@ const ConexusVideoPlayer = (
       hasError: false,
     };
   };
-
-  // volumeListener = SystemSetting.addVolumeListener(
-  //   _.debounce(data => {
-  //     const volume = isAndroid ? data['music'] : data.value;
-  //     this.setState({volume: data.value});
-  //   }, 200),
-  // );
-
-  // constructor(
-  //   props: ConexusVideoPlayerProps,
-  //   context: ConexusVideoPlayerState,
-  // ) {
-  //   super(props, context);
-  //   this.state = {...this.defaultState};
-  // }
-
-  // componentDidMount() {
-  //   SystemSetting.getVolume().then(volume => {
-  //     this.setState({volume});
-  //   });
-  // }
-
-  // componentWillMount() {
-  //   // Force audio to play via the primary speaker
-  //   if (Platform.OS === 'android') {
-  //     InCallManager.start({media: 'audio'});
-  //     InCallManager.setForceSpeakerphoneOn(true);
-  //   }
-  // }
-
-  // componentWillUnmount() {
-  //   InCallManager.setKeepScreenOn(false);
-  //   InCallManager.setForceSpeakerphoneOn(null);
-  //   InCallManager.stop();
-
-  //   SystemSetting.removeVolumeListener(this.volumeListener);
-  // }
 
   const getVolumeStyle = (): ViewStyle => {
     const location = volumeLocation;
@@ -256,7 +248,7 @@ const ConexusVideoPlayer = (
   const getActionButton = (): ConexusVideoActionButton => {
     if (actionButton && _.isFunction(actionButton)) {
       return actionButton();
-    } else if (actionButton && !!actionButton['title']) {
+    } else if (actionButton && actionButton['title']) {
       return actionButton as ConexusVideoActionButton;
     }
 
@@ -289,8 +281,8 @@ const ConexusVideoPlayer = (
     }, 0);
   };
 
-  const onProgress = (event: {currentTime: any}) => {
-    progress = event.currentTime;
+  const onProgress = (event: any) => {
+    // progress = event.currentTime;
   };
 
   const togglePause = () => {
@@ -311,7 +303,7 @@ const ConexusVideoPlayer = (
       />
     );
 
-    if (props.activityIndicator && props.activityIndicator.call) {
+    if (props.activityIndicator && props.activityIndicator.call()) {
       indicator = props.activityIndicator();
     }
 
@@ -338,29 +330,28 @@ const ConexusVideoPlayer = (
 
     if (hasErrors()) {
       overlayHeaderText = errorDisplayText();
-      // replayButton.title = 'Retry';
-      // buttons = [replayButton, ...menuButtons.filter(i => i.showOnError)];
+      replayButton.title = 'Retry';
+      buttons = [replayButton, ...menuButtons.filter(i => i.showOnError)];
     } else if (isPauseded()) {
       // Add Play to the top of the list
       buttons = [{title: 'Play', onPress: () => togglePause()}];
 
-      // if (progress() > 0) {
-      //   buttons.push(replayButton);
-      // }
+      if (progress > 0) {
+        buttons.push(replayButton);
+      }
 
       buttons = [...buttons, ...menuButtons];
-    } else if (!loads() || isPlaying()) {
-      if (isPlaying() && props.showActionButtonWhilePlaying) {
+    } else if (!loads() || !isPlaying()) {
+      if (isPlaying()) {
         const btnDetails = getActionButton();
-        console.log('BtnDetails===>', btnDetails);
 
         if (btnDetails) {
           return (
             <View style={[styles.overlayFooter, props.overlayFooterStyle]}>
               <ActionButton
-                primary
+                customStyle={styles.btnEnable}
                 title={btnDetails.title}
-                onPress={btnDetails.onPress}
+                onPress={() => NavigationService.goBack()}
               />
             </View>
           );
@@ -382,8 +373,9 @@ const ConexusVideoPlayer = (
             hasErrors()
               ? props.overlayContentWithErrorStyle
               : props.overlayContentStyle,
-          ]}>
-          {/* {hasErrors() && (
+          ]}
+        >
+          {hasErrors() && (
             <IconTitleBlock
               textColor={AppColors.white}
               iconColor={AppColors.white}
@@ -391,17 +383,19 @@ const ConexusVideoPlayer = (
               iconName={hideErrorIcons() ? undefined : errorIconNames()}
               text={errorDisplayText()}
             />
-          )} */}
+          )}
           <View
             style={[
               styles.overlayButtons,
               hasErrors() ? styles.overlayButtonsWithError : null,
-            ]}>
+            ]}
+          >
             {buttons.map((b, i) => (
               <TouchableOpacity
                 key={'mb' + i}
                 style={styles.overlayButton}
-                onPress={() => b.onPress()}>
+                onPress={() => b.onPress()}
+              >
                 <Text style={styles.overlayButtonText}>{b.title}</Text>
               </TouchableOpacity>
             ))}
@@ -420,7 +414,7 @@ const ConexusVideoPlayer = (
     );
   };
 
-  const renderPausedOverlay = (): JSX.Element | undefined => {
+  const renderPausedOverlay = (): any => {
     if (!isPaused) {
       return null;
     }
@@ -431,11 +425,11 @@ const ConexusVideoPlayer = (
     return null;
   };
 
-  const renderPlayOverlay = (): JSX.Element | any => {
+  const renderPlayOverlay = () => {
     if (!isPaused) {
       return null;
     }
-    if (renderPlayOverlay && renderPlayOverlay.call()) {
+    if (props.renderPlayOverlay && renderPlayOverlay.call) {
       return renderPlayOverlay();
     }
     return null;
@@ -446,22 +440,23 @@ const ConexusVideoPlayer = (
       <TouchableOpacity
         disabled={!pausable() || isPauseded()}
         style={[styles.container, props.style]}
-        onPress={() => togglePause()}>
+        onPress={() => togglePause()}
+      >
         {
           <Video
             source={{uri: mediaUrl}}
             ref={videoRef}
             resizeMode={'cover'}
             rate={1.0} // 0 is paused, 1 is normal.
-            // volume={this.volume} // 0 is muted, 1 is normal.
+            volume={volume} // 0 is muted, 1 is normal.
             muted={false} // Mutes the audio entirely.
             paused={isPauseded()}
             ignoreSilentSwitch={'ignore'}
-            playWhenInactive={playWhenInactive()}
+            playWhenInactive={() => playWhenInactive()}
             onLoad={onLoad()}
             onEnd={onEnd()}
-            onError={onError()}
-            // onProgress={onProgress()}
+            // onError={onError()}
+            onProgress={() => onProgress()}
             style={[styles.video]}
           />
         }
@@ -479,35 +474,16 @@ const ConexusVideoPlayer = (
               maximumValue={1}
               minimumTrackTintColor={AppColors.blue}
               maximumTrackTintColor={AppColors.white}
-              onValueChange={value => setVolume(value)}
+              onValueChange={(value: any) => Volume(value)}
               thumbImage={require('./Images/player/volume.png')}
             />
-            {/* <Slider
-            style={{flex: 1, height: 54}}
-            value={volume}
-            onValueChange={_.debounce(value => {
-              volume = value;
-            })}
-            thumbTintColor={AppColors.blue}
-            minimumTrackTintColor={AppColors.blue}
-            maximumTrackTintColor={AppColors.white}
-            trackStyle={{height: 2}}
-            thumbStyle={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: 24,
-              height: 24,
-              borderRadius: 12,
-            }}
-            thumbImage={require('./Images/player/volume.png')}
-            /> */}
           </View>
         }
       </TouchableOpacity>
     );
   };
 
-  // if (hasError) {
+  // if (hasErrors()) {
   //   return renderActions();
   // }
 

@@ -8,7 +8,6 @@ import {
   InteractionManager,
   LayoutAnimation,
 } from 'react-native';
-// import {H3, H1, Header, Icon} from 'native-base';
 import {
   ActionButton,
   Avatar,
@@ -144,8 +143,12 @@ export class VideoCallLightbox extends React.Component<
   }
 
   initCall() {
-    let {isPublishing, isSubscribed, inCall, isAutoAnswer} =
-      this.props.videoStore;
+    let {
+      isPublishing,
+      isSubscribed,
+      inCall,
+      isAutoAnswer,
+    } = this.props.videoStore;
     let {isIncoming, answer, status} = this.state;
 
     log.info(
@@ -189,7 +192,8 @@ export class VideoCallLightbox extends React.Component<
         style={StyleSheet.flatten([
           styles.callWaitingScreen,
           !answer && {backgroundColor: 'black'},
-        ])}>
+        ])}
+      >
         <View style={styles.callHeader}>
           <View style={styles.avatarContainer}>
             <Avatar source={photo} size={94} />
@@ -238,7 +242,8 @@ export class VideoCallLightbox extends React.Component<
             marginLeft: ml,
             zIndex: didBothPartiesConnect ? 99 : 10,
           },
-        ]}>
+        ]}
+      >
         {/* <Publisher style={styles.publisher} ref={(r) => this._publisher = r} sessionId={sessionId}
                     onPublishStart={() => {
                         setIsPublishing(true)
@@ -267,14 +272,16 @@ export class VideoCallLightbox extends React.Component<
       <ConexusLightbox
         style={styles.lightbox}
         verticalPercent={1}
-        horizontalPercent={1}>
+        horizontalPercent={1}
+      >
         {isConnected && (
           <View
             style={{
               flex: 1,
               ...StyleSheet.absoluteFillObject,
               backgroundColor: 'black',
-            }}>
+            }}
+          >
             {/* <Subscriber style={styles.subscriber}
                             sessionId={sessionId}
 
@@ -291,7 +298,8 @@ export class VideoCallLightbox extends React.Component<
                   primary
                   style={styles.endCallButton}
                   title="End Call"
-                  onPress={this._disconnect.bind(this)}></ActionButton>
+                  onPress={this._disconnect.bind(this)}
+                ></ActionButton>
               </View>
             )}
           </View>
