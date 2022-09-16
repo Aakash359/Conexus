@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   Image,
+  Alert,
 } from 'react-native';
 import {ConexusIcon} from '../components/conexus-icon';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -35,26 +36,24 @@ export const ConexusIconButton = (props: ConexusIconButtonProps) => {
     iconSize,
   } = props;
 
-  const color = () => {
-    return disabled ? variables.gray : color || variables.blue;
-  };
-
   const IconSize = iconSize || 24;
   const Style = style || {};
   return (
     <TouchableOpacity
       onPress={onPress}
       disabled={disabled}
-      style={[defaultStyle.button, Style]}>
+      style={[defaultStyle.button, Style]}
+    >
       <Image style={[style]} source={imageSource} />
 
       {title && (
         <Text
-          style={StyleSheet.flatten([
-            defaultStyle.text,
-            {color: color()},
-            textStyle,
-          ])}>
+          style={[
+            disabled
+              ? [textStyle, {color: variables.gray}]
+              : [textStyle, {color: variables.blue}],
+          ]}
+        >
           {title}
         </Text>
       )}
@@ -67,16 +66,9 @@ const defaultStyle = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-
     paddingLeft: 14,
     paddingRight: 14,
     paddingTop: 8,
     paddingBottom: 8,
-  },
-
-  text: {
-    ...AppFonts.bodyTextNormal,
-
-    fontWeight: '600',
   },
 });

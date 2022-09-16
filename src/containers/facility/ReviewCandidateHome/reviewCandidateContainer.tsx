@@ -1,6 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {StyleSheet, Alert, TouchableOpacity, Text, View} from 'react-native';
+import {
+  StyleSheet,
+  Alert,
+  TouchableOpacity,
+  Text,
+  View,
+  ActivityIndicator,
+} from 'react-native';
 import {UserStore} from '../../../stores/userStore';
 // import {FacilitySubmissionsStore} from '../../../stores/facility/facility-submissions-store';
 import {useSelector} from '../../../redux/reducers/index';
@@ -84,12 +91,11 @@ const ReviewCandidateContainer = (
     return facilitySubmissionsStore.loading;
   };
 
-  const load = async (refreshing: boolean = false) => {
+  const load = async () => {
     if (!submissionsStorePromise) {
       setLoading(true);
       try {
         const {data} = await facilitySubmissionsService();
-
         if (data && data.length > 0) {
           let position = data.map((item: {positions: any}) => item.positions);
           let facilityId = data.map(
@@ -106,7 +112,7 @@ const ReviewCandidateContainer = (
         // Alert.alert(error?.response?.data?.error?.description);
       }
     } else {
-      setLoading(true);
+      setLoading(false);
       console.log(
         'ReviewContainer',
         'Joining existing submission store load',
@@ -130,12 +136,26 @@ const ReviewCandidateContainer = (
     // </FacilitySelectionContainer>
     <>
       <View style={{flex: 1, backgroundColor: AppColors.baseGray}}>
+        {loading && (
+          <ActivityIndicator
+            color={AppColors.blue}
+            style={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          />
+        )}
         {data && (
           <CandidateList
             submissions={data}
             selectedFacilityId={facilityId}
             refreshing={refreshing}
-            onRefresh={() => load(true)}
+            onRefresh={() => load(false)}
           />
         )}
       </View>

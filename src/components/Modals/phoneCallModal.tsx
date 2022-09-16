@@ -1,8 +1,8 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Modal,
-  TouchableOpacity,
+  Image,
   Text,
   StyleSheet,
   Alert,
@@ -12,13 +12,10 @@ import {
 import {AppColors, AppFonts} from '../../theme';
 import {windowDimensions} from '../../common/window-dimensions';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {useSelector} from '../../redux/reducers/index';
 import {ActionButton} from '../action-button';
-import {Avatar} from '../avatar';
 
 interface HcpPhoneCallProps {
   submissionId: string;
-  photoUrl: string;
   photoLabel?: string;
   title?: string;
   description?: string;
@@ -32,7 +29,7 @@ interface HcpPhoneCallProps {
   disabled: any;
   onChangeText: any;
   onSubmit: ({startDate: string}) => any;
-  // conversationStore: typeof ConversationStore.Type;
+  source: any;
 }
 
 interface HcpPhoneCallState {
@@ -46,7 +43,6 @@ export const PhoneCallModal = (
 ) => {
   const [loading, setLoading] = useState(false);
   const {
-    photoUrl,
     onPress,
     description,
     onClose,
@@ -55,7 +51,7 @@ export const PhoneCallModal = (
     value,
     onChangeText,
     disabled,
-    customStyle,
+    source,
     title,
     customTitleStyle,
   } = props;
@@ -66,7 +62,8 @@ export const PhoneCallModal = (
       onDismiss={onClose}
       animationType="fade"
       onRequestClose={onClose}
-      transparent={true}>
+      transparent={true}
+    >
       <View style={styles.cardStyle}>
         <View style={styles.cardItemStyle}>
           <View style={styles.wrapperView}>
@@ -84,12 +81,13 @@ export const PhoneCallModal = (
             />
           </View>
           <View style={styles.containerStart}>
-            <Avatar
+            {/* <Avatar
               style={{width: 108, marginBottom: 8}}
               size={108}
               source={photoUrl || ''}
               title={photoLabel || ''}
-            />
+            /> */}
+            <Image source={source || ''} style={styles.circleStyle} />
             <Text style={AppFonts.bodyTextXtraLargeTouchable}>{title}</Text>
             {!!description && (
               <Text style={AppFonts.bodyTextXtraSmall}>{description}</Text>
@@ -98,7 +96,8 @@ export const PhoneCallModal = (
               style={[
                 AppFonts.bodyTextNormal,
                 {textAlign: 'center', marginTop: 24},
-              ]}>
+              ]}
+            >
               Please confirm your phone number. This number will ring shortly,
               then we will connect your call.
             </Text>
@@ -106,7 +105,8 @@ export const PhoneCallModal = (
               style={[
                 AppFonts.bodyTextNormal,
                 {marginTop: 28, color: AppColors.darkBlue, fontWeight: 'bold'},
-              ]}>
+              ]}
+            >
               Callback Number
             </Text>
             <TextInput
@@ -147,6 +147,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.4)',
+  },
+  circleStyle: {
+    width: 100,
+    height: 100,
+    borderRadius: 100 / 2,
+    borderWidth: 2,
+    borderColor: AppColors.imageColor,
   },
   phoneInput: {
     alignSelf: 'center',

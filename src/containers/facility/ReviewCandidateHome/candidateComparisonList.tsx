@@ -106,6 +106,7 @@ export const CandidateComparisonList = (
   //   setShowAll(true);
   // };
   const {position} = props;
+  console.log('Positions=====>', position);
 
   const getCellWidth = (cellCount: number): number => {
     if (cellCount === 1) {
@@ -163,30 +164,18 @@ export const CandidateComparisonList = (
     );
   };
 
-  const renderCandidate = (
-    candidate: typeof CandidateModel.Type,
-    index: number,
-    count: number,
-  ) => {
+  const renderCandidate = (candidate: any, index: number, count: number) => {
     return (
       <View key={`candidate-${candidate.submissionId}-${index}`}>
         <TouchableHighlight
-          onPress={
-            () =>
-              NavigationService.navigate('HcpDetailView', {
-                submissionId: candidate.submissionId,
-                candidate,
-                onClose: () => {
-                  props.updateViewed(candidate.submissionId);
-                },
-              })
-
-            //   Actions[ScreenType.FACILITIES.HCP_DETAIL]({
-            //     submissionId: candidate.submissionId,
-            //     candidate, onClose: () => {
-            //         props.updateViewed(candidate.submissionId)
-            //     }
-            // })
+          onPress={() =>
+            NavigationService.navigate('HcpDetailView', {
+              submissionId: candidate.submissionId,
+              candidate,
+              onClose: () => {
+                props.updateViewed(candidate.submissionId);
+              },
+            })
           }
         >
           {renderCandidateCell(candidate, index, count)}

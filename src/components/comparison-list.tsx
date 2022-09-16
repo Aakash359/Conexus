@@ -64,7 +64,8 @@ export const ComparisonList = (props: ComparisonListProps) => {
       return (
         <TouchableHighlight
           underlayColor="rgba(255,255,255,.87)"
-          onPress={handleCellClick.bind(cell)}>
+          onPress={handleCellClick.bind(cell)}
+        >
           {elements()}
         </TouchableHighlight>
       );
@@ -93,7 +94,8 @@ export const ComparisonList = (props: ComparisonListProps) => {
               styles.cell,
               styles.textCell,
               lastCell && {borderRightWidth: 0},
-            ])}>
+            ])}
+          >
             {!!cell.title && (
               <Text style={titleStyle}>{(cell.title || '').toUpperCase()}</Text>
             )}
@@ -126,7 +128,8 @@ export const ComparisonList = (props: ComparisonListProps) => {
               styles.cell,
               styles.iconCell,
               lastCell && {borderRightWidth: 0},
-            ])}>
+            ])}
+          >
             {!!cell.icon && (
               <ConexusIcon
                 name={cell.icon || ''}
@@ -153,7 +156,8 @@ export const ComparisonList = (props: ComparisonListProps) => {
               styles.cell,
               styles.imageCell,
               lastCell && {borderRightWidth: 0},
-            ])}>
+            ])}
+          >
             {
               <FitImage
                 resizeMode="contain"
@@ -173,7 +177,8 @@ export const ComparisonList = (props: ComparisonListProps) => {
         <Text
           numberOfLines={1}
           lineBreakMode="clip"
-          style={[styles.headerRowText]}>
+          style={[styles.headerRowText]}
+        >
           {index > 0 ? '' : cell.headerTitle || ''}
         </Text>
       </View>

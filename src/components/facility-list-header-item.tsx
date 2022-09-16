@@ -3,7 +3,7 @@ import {Text, Alert, StyleSheet, View, TouchableOpacity} from 'react-native';
 import {AppFonts, AppColors} from '../theme';
 import {ConexusIcon} from '../components/conexus-icon';
 import {Avatar} from '../components/avatar';
-import {useDispatch} from 'react-redux';
+import Icon from 'react-native-vector-icons/Ionicons';
 import NavigationService from '../navigation/NavigationService';
 import {useSelector} from '../redux/reducers/index';
 
@@ -24,7 +24,6 @@ export interface FacilityListHeaderItemState {}
 const FacilityListHeaderItem = (props: FacilityListHeaderItemProps) => {
   const {caption} = props;
   const userInfo = useSelector(state => state.userReducer);
-  console.log('userInfo====>', userInfo?.user?.user?.userFacilities);
 
   const facilities = (): FacilitySelectionItem[] => {
     if (props.overrideFacilities) {
@@ -133,7 +132,12 @@ const FacilityListHeaderItem = (props: FacilityListHeaderItemProps) => {
         <Text style={styles.title}>{title}</Text>
       </View>
       <View style={styles.chooser}>
-        <ConexusIcon name="cn-dropdown" color={AppColors.white} size={16} />
+        <Icon
+          name="chevron-down"
+          size={25}
+          color={AppColors.white}
+          style={{alignSelf: 'center'}}
+        />
       </View>
     </TouchableOpacity>
   );

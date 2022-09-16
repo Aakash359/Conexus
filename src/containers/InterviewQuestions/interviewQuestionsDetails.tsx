@@ -10,12 +10,10 @@ import {
   Text,
 } from 'react-native';
 import {AppColors, AppSizes} from '../../theme';
-import {TabDetails} from '../../components';
 import {ViewHeader} from '../../components/view-header';
 import {showYesNoAlert} from '../../common';
 import {useSelector} from '../../redux/reducers/index';
 import Styles from '../../theme/styles';
-import SortableList from 'react-native-sortable-list';
 import {ActionButton} from '../../components/action-button';
 import {AppFonts} from '../../theme';
 import {windowDimensions} from '../../common/window-dimensions';
@@ -128,10 +126,14 @@ const InterviewQuestionDetail = (
     if (needId) {
       questions = needQuestionList || [];
     } else {
-      questions = showDefault() ? sections?.defaultQuestions : needQuestionList;
+      questions = showDefault()
+        ? sections?.defaultQuestions
+        : sections.questions;
     }
     return questions.filter((q: {[x: string]: any}) => !q['deleted']);
   };
+
+  console.log('Showablegth===>', showableQuestions.length);
 
   //   onQuestionClose() {
   //     if (!this.section && !this.props.needId) {
@@ -307,8 +309,8 @@ const InterviewQuestionDetail = (
   };
 
   const renderUnitHeader = () => {
-    let sectionData = sections ? sections : {};
-    const questionCount = needQuestionList.length;
+    const questionCount =
+      sections?.defaultQuestions.length + sections.questions.length;
     const description = `${questionCount} question${
       questionCount === 0 || questionCount > 1 ? 's' : ''
     }`;
@@ -319,7 +321,7 @@ const InterviewQuestionDetail = (
         title={
           sectionTitleOverride || props?.route?.params?.sections?.sectionTitle
         }
-        // description={description}
+        description={description}
         titleStyle={{color: AppColors.white}}
         descriptionStyle={{color: AppColors.white}}
         style={{backgroundColor: AppColors.blue, borderBottomWidth: 0}}
@@ -329,39 +331,6 @@ const InterviewQuestionDetail = (
       />
     );
   };
-
-  // const getQuestionsBadge = (questions: any, defaultQuestions: boolean) => {
-  //   const count = questions.filter(
-  //     q => q.defaultFlag === defaultQuestions,
-  //   ).length;
-  //   return count.toString();
-  // };
-
-  // const renderTabs = () => {
-  //   const tabs = [
-  //     {
-  //       id: 'default',
-  //       title: 'Default Questions',
-  //       // badge: showDefault() ? ''
-  //       //   : getQuestionsBadge(sections.defaultQuestions, true),
-  //     },
-  //     {
-  //       id: 'other',
-  //       title: 'Other Questions',
-  //       // badge: showDefault() ? getQuestionsBadge(this.section.questions, false)
-  //       //   : '',
-  //     },
-  //   ];
-
-  //   return (
-  //     <TabBar
-  //       style={styles.tabBar}
-  //       tabs={tabs}
-  //       selectedTabId={selectedTabId}
-  //       onTabSelection={() => onTabSelection(tabs)}
-  //     />
-  //   );
-  // };
 
   const DefaultQuestions = (route: any) => {
     return (
@@ -374,7 +343,8 @@ const InterviewQuestionDetail = (
             refreshing={refreshing}
             onRefresh={() => refreshSection(false)}
           />
-        }>
+        }
+      >
         {showableQuestions().length > 0 && renderSortableList(route)}
       </ScrollView>
     );
@@ -391,7 +361,8 @@ const InterviewQuestionDetail = (
               refreshing={refreshing}
               onRefresh={() => refreshSection(false)}
             />
-          }>
+          }
+        >
           {showableQuestions().length > 0 && renderSortableList(route)}
         </ScrollView>
       </View>
@@ -403,31 +374,9 @@ const InterviewQuestionDetail = (
   };
   const badge = (route: any) => {
     let screenName = route?.route?.name;
-    console.log('ScreenName===>', screenName);
-
     return (
       <>
-        {screenName == 'DefaultQuestions' ? (
-          ''
-        ) : (
-            <View
-              style={{
-                width: 20,
-                height: 20,
-                borderRadius: 20 / 2,
-                borderWidth: 0.1,
-                borderColor: AppColors.mediumGray,
-                backgroundColor: AppColors.green,
-                alignItems: 'center',
-                left: 80,
-                top: 10,
-              }}>
-              <Text
-                style={{color: AppColors.white, textAlignVertical: 'center'}}>
-                {sections?.defaultQuestions.length}
-              </Text>
-            </View>
-          ) || screenName == 'OtherQuestions' ? (
+        {screenName == 'Default Questions' ? (
           <View
             style={{
               width: 20,
@@ -439,9 +388,28 @@ const InterviewQuestionDetail = (
               alignItems: 'center',
               left: 80,
               top: 10,
-            }}>
+            }}
+          >
             <Text style={{color: AppColors.white, textAlignVertical: 'center'}}>
               {sections?.defaultQuestions.length}
+            </Text>
+          </View>
+        ) : screenName == 'Other Questions' ? (
+          <View
+            style={{
+              width: 20,
+              height: 20,
+              borderRadius: 20 / 2,
+              borderWidth: 0.1,
+              borderColor: AppColors.mediumGray,
+              backgroundColor: AppColors.green,
+              alignItems: 'center',
+              left: 80,
+              top: 10,
+            }}
+          >
+            <Text style={{color: AppColors.white, textAlignVertical: 'center'}}>
+              {sections?.questions.length}
             </Text>
           </View>
         ) : (
@@ -461,25 +429,27 @@ const InterviewQuestionDetail = (
           tabBarLabelStyle: {fontWeight: 'bold'},
           tabBarActiveTintColor: AppColors.blue,
           tabBarInactiveTintColor: AppColors.mediumGray,
-        }}>
+        }}
+      >
         <Tab.Screen
-          name="DefaultQuestions"
+          name="Default Questions"
           component={route => DefaultQuestions(route)}
           options={route => ({
             tabBarIcon: ({focused, color}) => {
               return badge(route);
             },
-            title: 'Default Questions',
+            title: route?.route?.name,
           })}
+          // options={route => console.log('Aajash--->', route?.route?.name)}
         />
         <Tab.Screen
-          name="OtherQuestions"
+          name="Other Questions"
           component={route => OtherQuestions(route)}
           options={route => ({
             tabBarIcon: ({focused, color}) => {
               return badge(route);
             },
-            title: 'Other Questions',
+            title: route?.route?.name,
           })}
         />
       </Tab.Navigator>
@@ -525,7 +495,7 @@ const InterviewQuestionDetail = (
         },
       );
     } else {
-      if (route?.route?.name == 'DefaultQuestions') {
+      if (route?.route?.name == 'Default Questions') {
         sections?.defaultQuestions.forEach(
           (question: {deleted: any}, index: string | number) => {
             if (!question.deleted) {
@@ -534,7 +504,7 @@ const InterviewQuestionDetail = (
             }
           },
         );
-      } else {
+      } else if (route?.route?.name == 'Other Questions') {
         sections?.questions.forEach(
           (question: {deleted: any}, index: string | number) => {
             if (!question.deleted) {
@@ -614,12 +584,14 @@ const InterviewQuestionDetail = (
             refreshing={refreshing}
             onRefresh={() => refreshSection(false)}
           />
-        }>
+        }
+      >
         <View
           style={StyleSheet.flatten([
             {paddingBottom: 220},
             Styles.cnxNoDataMessageContainer,
-          ])}>
+          ])}
+        >
           <Icon name="information-circle" style={Styles.cnxNoDataIcon} />
           <Text style={Styles.cnxNoDataMessageText}>
             No Questions Available
@@ -643,7 +615,8 @@ const InterviewQuestionDetail = (
         style={StyleSheet.flatten([
           {paddingBottom: 220},
           Styles.cnxNoDataMessageContainer,
-        ])}>
+        ])}
+      >
         <Icon name="information-circle" style={Styles.cnxNoDataIcon} />
         <Text style={Styles.cnxNoDataMessageText}>
           An error occurred while loading.

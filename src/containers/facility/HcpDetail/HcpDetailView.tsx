@@ -418,8 +418,9 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
           />
         </View>
 
-        <View style={headerStyle.actionRowView}>
+        <View style={headerStyle.wrapperView}>
           <ConexusIconButton
+            textStyle={styles.buttonText}
             onPress={() => setModalVisible(true)}
             style={styles.image}
             imageSource={require('../../../components/Images/add-person.png')}
@@ -427,6 +428,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
             title="Not Interested"
           />
           <ConexusIconButton
+            textStyle={styles.buttonText}
             style={
               !candidate || !candidate.conversationAllowed
                 ? [
@@ -639,11 +641,19 @@ const styles = StyleSheet.create({
   dataView: {
     flexGrow: 1,
   },
+  buttonText: {
+    ...AppFonts.bodyTextNormal,
+    width: 100,
+    marginBottom: -10,
+    marginTop: 5,
+    textAlign: 'center',
+    fontWeight: '600',
+  },
   image: {
     width: 25,
     height: 25,
     tintColor: AppColors.blue,
-    marginHorizontal: 20,
+    marginHorizontal: 30,
     marginTop: 5,
     alignSelf: 'center',
   },
@@ -671,6 +681,7 @@ const styles = StyleSheet.create({
     backgroundColor: variables.white,
     alignItems: 'center',
     borderBottomWidth: 1,
+    flex: 0.1 / 2,
     borderColor: variables.lightBlue,
     width: windowDimensions.width,
   },
@@ -706,8 +717,11 @@ const headerStyle = StyleSheet.create({
 
   actionRowView: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'center',
+    paddingBottom: 18,
+  },
+  wrapperView: {
+    flexDirection: 'row',
     paddingBottom: 18,
   },
 });

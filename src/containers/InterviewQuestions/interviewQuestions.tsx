@@ -107,6 +107,7 @@ const InterviewQuestions = (
     try {
       const {data} = await facilityQuestionsService();
       let sectionData = data.filter((i: any) => !!i);
+      console.log('Sections----->', sectionData);
       setFacility(sectionData?.[0]);
       setSection(sectionData?.[0]?.questionSections);
       setRefreshing(false);
@@ -145,16 +146,16 @@ const InterviewQuestions = (
       <TouchableOpacity
         key={`${section.sectionId}-${index}`}
         style={styles.listItem}
-        onPress={() => showSection(section)}>
+        onPress={() => showSection(section)}
+      >
         <View style={styles.listWrapperView}>
           <View style={StyleSheet.flatten([styles.itemSection, styles.body])}>
             <Text style={AppFonts.listItemTitleTouchable}>
               {item.sectionTitle}
             </Text>
             <Text
-              style={AppFonts.listItemDescription}>{`${questionCount} question${
-              questionCount > 1 ? 's' : ''
-            }`}</Text>
+              style={AppFonts.listItemDescription}
+            >{`${questionCount} question${questionCount > 1 ? 's' : ''}`}</Text>
           </View>
           <Icon
             name="arrow-right"

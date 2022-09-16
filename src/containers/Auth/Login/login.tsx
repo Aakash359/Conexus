@@ -17,10 +17,9 @@ import variables from '../../../theme';
 import {Field} from '../../../components/field';
 import {windowDimensions} from '../../../common';
 import {AppFonts, AppColors} from '../../../theme';
-import Icon from 'react-native-vector-icons/Ionicons';
-import {getConexusApiEnvironment} from '../../../redux/constants/index';
 import {useDispatch} from 'react-redux';
 import {loginRequest} from '../../../redux/actions/userAction';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 const SafeAreaView = require('react-native').SafeAreaView;
@@ -41,13 +40,22 @@ const LoginScreen = () => {
     password: '',
   });
   const dispatch = useDispatch();
-
   const handleOnchange = (text: any, input: any) => {
     setInputs((prevState: any) => ({...prevState, [input]: text}));
   };
   const handleError = (error: any, input: any) => {
     setErrors((prevState: any) => ({...prevState, [input]: error}));
   };
+
+  const saveToken = async () => {
+    await AsyncStorage.setItem('authToken', userInfo?.user?.authToken);
+  };
+
+  const getToken = async () => {
+    let token = await AsyncStorage.getItem('authToken');
+  };
+
+  useEffect(() => {}, []);
 
   const validate = () => {
     Keyboard.dismiss();
@@ -84,9 +92,11 @@ const LoginScreen = () => {
         setLoading(true);
         setTimeout(() => {
           setLoading(false);
+
           dispatch(loginRequest(data));
+          // saveToken();
+          // getToken();
         }, 1000);
-        console.log('Data====>', data);
       } catch (error) {
         setLoading(false);
         console.log('Error', error);

@@ -109,14 +109,13 @@ const ConversationContainer = (
     }, 100);
 
     const uuid = () => {
-      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
-        /[xy]/g,
-        function (c) {
-          let r = (Math.random() * 16) | 0,
-            v = c === 'x' ? r : (r & 0x3) | 0x8;
-          return v.toString(16);
-        },
-      );
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(
+        c,
+      ) {
+        let r = (Math.random() * 16) | 0,
+          v = c === 'x' ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      });
     };
 
     // const keyboardWillShow = (event: {endCoordinates: {height: number}}) => {
@@ -450,18 +449,21 @@ const ConversationContainer = (
           style.messageView,
           style.audioMessageView,
           message.sentByMe ? style.messageFromMeView : {},
-        ]}>
+        ]}
+      >
         <TouchableHighlight
           onPress={() => playAudioMessage(message)}
           style={[
             style.audioMessageWrapper,
             message.sentByMe ? style.audioMessageWrapperFromMe : {},
-          ]}>
+          ]}
+        >
           <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
             <Circle
               size={28}
               color={message.sentByMe ? AppColors.white : AppColors.blue}
-              style={{alignItems: 'center', justifyContent: 'center'}}>
+              style={{alignItems: 'center', justifyContent: 'center'}}
+            >
               <ConexusIcon
                 style={{paddingLeft: 3}}
                 name="cn-play"
@@ -473,13 +475,15 @@ const ConversationContainer = (
               style={[
                 style.audioMessageText,
                 message.sentByMe ? style.audioMessageTextFromMe : {},
-              ]}>
+              ]}
+            >
               Audio Message
             </Text>
           </View>
         </TouchableHighlight>
         <Text
-          style={[style.caption, message.sentByMe ? style.captionFrom : {}]}>
+          style={[style.caption, message.sentByMe ? style.captionFrom : {}]}
+        >
           {caption}
         </Text>
       </View>
@@ -501,18 +505,21 @@ const ConversationContainer = (
           style.messageView,
           style.videoMessageView,
           message.sentByMe ? style.messageFromMeView : {},
-        ]}>
+        ]}
+      >
         <TouchableHighlight
           onPress={() => playVideoMessage(message.tokBoxArchiveUrl, message)}
           style={[
             style.videoMessageWrapper,
             message.sentByMe ? style.videoMessageWrapperFromMe : {},
-          ]}>
+          ]}
+        >
           <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
             <Circle
               size={28}
               color={message.sentByMe ? AppColors.white : AppColors.blue}
-              style={{alignItems: 'center', justifyContent: 'center'}}>
+              style={{alignItems: 'center', justifyContent: 'center'}}
+            >
               <ConexusIcon
                 style={{paddingLeft: 3}}
                 name="cn-play"
@@ -524,13 +531,15 @@ const ConversationContainer = (
               style={[
                 style.videoMessageText,
                 message.sentByMe ? style.videoMessageTextFromMe : {},
-              ]}>
+              ]}
+            >
               Video Message {message.read ? '' : ' *'}
             </Text>
           </View>
         </TouchableHighlight>
         <Text
-          style={[style.caption, message.sentByMe ? style.captionFrom : {}]}>
+          style={[style.caption, message.sentByMe ? style.captionFrom : {}]}
+        >
           {caption}
         </Text>
       </View>
@@ -559,18 +568,21 @@ const ConversationContainer = (
           style={[
             style.textMessageTextWrapper,
             message.sentByMe ? style.textMessageTextWrapperFromMe : {},
-          ]}>
+          ]}
+        >
           <Text
             selectable
             style={[
               style.textMessageText,
               message.sentByMe ? style.textMessageTextFromMe : {},
-            ]}>
+            ]}
+          >
             {message.messageText}
           </Text>
         </View>
         <Text
-          style={[style.caption, message.sentByMe ? style.captionFrom : {}]}>
+          style={[style.caption, message.sentByMe ? style.captionFrom : {}]}
+        >
           {caption}
         </Text>
       </View>
@@ -610,7 +622,8 @@ const ConversationContainer = (
             refreshing={refreshing}
             onRefresh={() => loadMessages(true)}
           />
-        }>
+        }
+      >
         {phoneCallModalVisible && (
           <PhoneCallModal
             // title={candidate.display.title}
@@ -653,7 +666,8 @@ const ConversationContainer = (
               justifyContent: 'center',
               backgroundColor: AppColors.baseGray,
             },
-          ]}>
+          ]}
+        >
           {renderMessageScrollView()}
         </Animated.View>
       );
@@ -668,10 +682,12 @@ const ConversationContainer = (
               justifyContent: 'center',
               backgroundColor: AppColors.baseGray,
             },
-          ]}>
+          ]}
+        >
           <ActivityIndicator
             color={AppColors.blue}
-            style={{flex: 1}}></ActivityIndicator>
+            style={{flex: 1}}
+          ></ActivityIndicator>
         </Animated.View>
       );
     }
@@ -685,7 +701,8 @@ const ConversationContainer = (
             justifyContent: 'center',
             backgroundColor: AppColors.baseGray,
           },
-        ]}>
+        ]}
+      >
         {
           <View
             style={{
@@ -693,7 +710,8 @@ const ConversationContainer = (
               alignItems: 'center',
               justifyContent: 'center',
               paddingBottom: 180,
-            }}>
+            }}
+          >
             {/* {!!recipientName && ( */}
 
             <Text>This is your first conversation with</Text>
@@ -712,11 +730,11 @@ const ConversationContainer = (
     return (
       <Animated.View key="footer" style={[footerStyle.footerView]}>
         <Animated.View
-          style={[footerStyle.inputRow, {height: footerInputHeight}]}>
+          style={[footerStyle.inputRow, {height: footerInputHeight}]}
+        >
           <View style={footerStyle.inputWrapper}>
             <ConexusIconButton
               imageSource={require('../../components/Images/more.png')}
-              iconSize={16}
               color={AppColors.blue}
               onPress={() => toggleFooterActions()}
               style={footerStyle.moreButton}
@@ -738,12 +756,14 @@ const ConversationContainer = (
               footerStyle.sendButton,
               !sendEnabled && footerStyle.sendButtonDisabled,
             ])}
-            onPress={() => sendTextMessage()}>
+            onPress={() => sendTextMessage()}
+          >
             <Text
               style={[
                 footerStyle.sendButtonText,
                 !sendEnabled && footerStyle.sendButtonTextDisabled,
-              ]}>
+              ]}
+            >
               SEND
             </Text>
           </TouchableOpacity>
@@ -758,7 +778,6 @@ const ConversationContainer = (
               color={AppColors.blue}
               onPress={() => sendVideoMessage()}
               style={footerStyle.image}
-              // style={footerStyle.actionRowButton}
               textStyle={footerStyle.actionButtonText}
             />
             {
@@ -771,7 +790,6 @@ const ConversationContainer = (
                 iconSize={24}
                 color={AppColors.blue}
                 onPress={() => initVideoCall()}
-                // style={footerStyle.actionRowButton}
                 textStyle={footerStyle.actionButtonText}
               />
               // )
@@ -786,7 +804,6 @@ const ConversationContainer = (
                 iconSize={24}
                 color={AppColors.blue}
                 onPress={() => initPhoneCall()}
-                // style={footerStyle.actionRowButton}
                 textStyle={footerStyle.actionButtonText}
               />
               // )
@@ -803,7 +820,8 @@ const ConversationContainer = (
         style={{flex: 1, paddingBottom: paddingBottom}}
         // onLayout={onLayout}
         ref={animatableRef}
-        ref={animatableRef}>
+        ref={animatableRef}
+      >
         {renderMessageList()}
         {renderFooter()}
       </Animated.View>
@@ -864,7 +882,7 @@ const footerStyle = StyleSheet.create({
     tintColor: AppColors.blue,
     alignSelf: 'center',
   },
-
+  buttonText: {},
   inputRow: {
     flexDirection: 'row',
     alignItems: 'stretch',
@@ -884,16 +902,14 @@ const footerStyle = StyleSheet.create({
   },
 
   moreButton: {
-    width: 25,
-    height: 25,
-    alignItems: 'center',
-    // marginHorizontal: 25,
+    width: 28,
+    height: 28,
+    margin: 12,
     tintColor: AppColors.blue,
     alignSelf: 'center',
     borderRightWidth: 1,
     borderColor: AppColors.lightBlue,
   },
-
   input: {
     flex: 1,
     margin: 4,
@@ -901,7 +917,6 @@ const footerStyle = StyleSheet.create({
     ...AppFonts.bodyTextMedium,
     ...getInputStyle(),
   },
-
   sendButton: {
     backgroundColor: AppColors.blue,
     width: 70,
@@ -926,8 +941,8 @@ const footerStyle = StyleSheet.create({
   },
 
   actionsRow: {
-    paddingHorizontal: 8,
     flexDirection: 'row',
+    margin: 15,
     alignItems: 'stretch',
   },
 
@@ -937,7 +952,12 @@ const footerStyle = StyleSheet.create({
   },
 
   actionButtonText: {
-    ...AppFonts.bodyTextXtraSmallTouchable,
+    ...AppFonts.bodyTextNormal,
+    width: 100,
+    marginBottom: -10,
+    marginTop: 5,
+    textAlign: 'center',
+    fontWeight: '600',
   },
 });
 

@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {View, FlatList, ActivityIndicator, Text, Alert} from 'react-native';
-// import {FacilityModel} from '../../../stores';
-import {CandidateListItem} from './candidateListItem';
 import {AppColors} from '../../../theme';
+import {CandidateListItem} from './candidateListItem';
 
 export interface CandidateListProps {
   submissions: any;
@@ -13,7 +12,6 @@ export interface CandidateListProps {
 
 export const CandidateList = (props: CandidateListProps) => {
   const {submissions, onRefresh, selectedFacilityId, refreshing} = props;
-  console.log('Aakash====>', submissions);
 
   // const getFacilitySelectionItem = (
   //   facilityId: string,
@@ -59,7 +57,7 @@ export const CandidateList = (props: CandidateListProps) => {
   return (
     <FlatList
       key="position-list"
-      onRefresh={onRefresh}
+      onRefresh={() => onRefresh}
       // refreshControl={<ActivityIndicator color={AppColors.blue} />}
       refreshing={refreshing}
       renderItem={({item, index}) => (

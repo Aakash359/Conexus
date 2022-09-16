@@ -72,7 +72,8 @@ export const ContactOptionModal = (props: NotInterestedModalProps) => {
       overlayPointerEvents={'auto'}
       animationType="fade"
       onRequestClose={onClose}
-      transparent={true}>
+      transparent={true}
+    >
       <View style={styles.cardStyle}>
         <View style={styles.cardItemStyle}>
           <View style={styles.wrapperView}>
@@ -87,6 +88,7 @@ export const ContactOptionModal = (props: NotInterestedModalProps) => {
           <View style={styles.iconRow1}>
             <View style={styles.iconContainerLeft}>
               <ConexusIconButton
+                textStyle={styles.buttonText}
                 imageSource={require('../Images/phone-call.png')}
                 style={styles.image}
                 iconName="cn-phone"
@@ -96,6 +98,7 @@ export const ContactOptionModal = (props: NotInterestedModalProps) => {
             </View>
             <View style={styles.iconContainerRight}>
               <ConexusIconButton
+                textStyle={styles.buttonText}
                 style={styles.image}
                 imageSource={require('../Images/message.png')}
                 title="Message"
@@ -106,6 +109,7 @@ export const ContactOptionModal = (props: NotInterestedModalProps) => {
           <View style={styles.iconRow2}>
             <View style={styles.iconContainerLeft}>
               <ConexusIconButton
+                textStyle={[styles.buttonText]}
                 style={
                   !videoCall
                     ? [
@@ -126,6 +130,7 @@ export const ContactOptionModal = (props: NotInterestedModalProps) => {
             </View>
             <View style={styles.iconContainerRight}>
               <ConexusIconButton
+                textStyle={styles.buttonText}
                 style={
                   !videoChat
                     ? [
@@ -159,6 +164,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.4)',
   },
+  buttonText: {
+    ...AppFonts.bodyTextNormal,
+    width: 100,
+    marginBottom: -10,
+    marginTop: 5,
+    textAlign: 'center',
+    fontWeight: '600',
+  },
   image: {
     width: 35,
     height: 35,
@@ -166,7 +179,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   iconContainerRight: {
-    padding: 12,
+    padding: 25,
     borderLeftWidth: 1,
     borderColor: AppColors.lightBlue,
     width: '50%',
@@ -174,6 +187,7 @@ const styles = StyleSheet.create({
   },
   iconRow2: {
     flexDirection: 'row',
+    borderColor: AppColors.lightBlue,
     alignItems: 'center',
   },
   wrapperView: {
@@ -182,12 +196,11 @@ const styles = StyleSheet.create({
   iconRow1: {
     marginTop: 30,
     flexDirection: 'row',
-    alignItems: 'center',
     borderBottomWidth: 1,
     borderColor: AppColors.lightBlue,
   },
   iconContainerLeft: {
-    padding: 12,
+    padding: 25,
     width: '50%',
     height: '100%',
   },

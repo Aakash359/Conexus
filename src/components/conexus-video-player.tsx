@@ -13,14 +13,13 @@ import {AppColors, AppFonts, AppSizes} from '../theme/index';
 import {logger} from 'react-native-logs';
 import Video from 'react-native-video';
 import {ActionButton} from '../components';
-
+import Icon from 'react-native-vector-icons/Ionicons';
 import _ from 'lodash';
 import InCallManager from 'react-native-incall-manager';
 import SystemSetting from 'react-native-system-setting';
 import Slider from '@react-native-community/slider';
 import IconTitleBlock from './icon-title-block';
 import {windowDimensions} from '../common/window-dimensions';
-import ScreenFooterButton from './screen-footer-button';
 import NavigationService from '../navigation/NavigationService';
 
 const isAndroid = Platform.OS === 'android';
@@ -479,6 +478,13 @@ const ConexusVideoPlayer = (
             />
           </View>
         }
+        <Icon
+          style={styles.closeButton}
+          name="close-outline"
+          size={35}
+          color={AppColors.blue}
+          onPress={() => NavigationService.goBack()}
+        />
       </TouchableOpacity>
     );
   };
@@ -497,10 +503,14 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     right: 0,
-
     flex: 1,
     alignSelf: 'stretch',
     alignItems: 'stretch',
+  },
+  closeButton: {
+    top: 24,
+    right: 18,
+    alignSelf: 'flex-end',
   },
   footer: {
     right: 10,

@@ -135,20 +135,20 @@ const FacilitySelectionContainer = (props: FacilitySelectionContainerProps) => {
 
   return (
     <View style={styles.container}>
-      {
+      {showFacilitySelector() && (
         <FacilityListHeaderItem
           key={'facility-selection-header'}
           caption={facilityHeaderCaption()}
           overrideFacilities={overrideFacilities}
-          facilityChosen={onFacilityChosen(selectedFacilityId)}
+          facilityChosen={() => onFacilityChosen(selectedFacilityId)}
         />
-      }
-      {showLoading() && (
+      )}
+      {/* {showLoading() && (
         <ActivityIndicator
           color={AppColors.blue}
           style={{flex: 1, justifyContent: 'center', alignSelf: 'center'}}
         />
-      )}
+      )} */}
       {/* {!showLoading &&
         showNewQuestionButton() &&
         showNoData() &&

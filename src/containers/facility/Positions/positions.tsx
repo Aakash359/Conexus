@@ -39,7 +39,7 @@ let needsStorePromise: Promise<any>;
 
 const Positions = (props: PositionsProps, state: PositionState) => {
   const mounted: boolean = false;
-
+  const [loading, setLoading] = useState(false);
   const [expandedNeedId, setExpandedNeedId] = useState('');
   const [refreshing, setRefreshing] = useState(false);
   const [needs, setNeeds] = useState([]);
@@ -94,11 +94,12 @@ const Positions = (props: PositionsProps, state: PositionState) => {
   };
 
   const load = async (refreshing: boolean = false) => {
-    setRefreshing(refreshing);
+    setLoading(true);
     if (!needsStorePromise) {
       try {
         const {data} = await facilityNeedService();
         setNeeds(data?.[0]?.needs);
+        setLoading(true);
       } catch (error) {
         console.log('Error', error);
         if (mounted) {
@@ -125,7 +126,8 @@ const Positions = (props: PositionsProps, state: PositionState) => {
           paddingHorizontal: 6,
           alignItems: 'center',
           justifyContent: 'center',
-        }}>
+        }}
+      >
         <Text style={{...AppFonts.bodyTextXtraSmall, paddingBottom: 4}}>
           {title}
         </Text>
@@ -152,7 +154,8 @@ const Positions = (props: PositionsProps, state: PositionState) => {
     return (
       <View
         key={`need-${options.id}-details`}
-        style={[{flex: 1, marginBottom: 6, paddingBottom}]}>
+        style={[{flex: 1, marginBottom: 6, paddingBottom}]}
+      >
         <ActionButton
           customStyle={styles.editVirtualBtn}
           customTitleStyle={styles.editVirtualBtnTxt}
@@ -196,17 +199,20 @@ const Positions = (props: PositionsProps, state: PositionState) => {
     return (
       <View
         key={`need-${item.needId}`}
-        style={{flex: 1, margin: 8, paddingBottom}}>
+        style={{flex: 1, margin: 8, paddingBottom}}
+      >
         <TouchableOpacity
           onPress={() => toggleExpandedNeedId(item.needId)}
-          style={cardStyle}>
+          style={cardStyle}
+        >
           <View style={StyleSheet.flatten([styles.itemSection, styles.body])}>
             <View style={{flex: 1, alignSelf: 'stretch'}}>
               <Text
                 style={{
                   ...AppFonts.listItemTitleTouchable,
                   paddingLeft: 0,
-                }}>
+                }}
+              >
                 {item.display.title}
               </Text>
               <Text
@@ -214,7 +220,8 @@ const Positions = (props: PositionsProps, state: PositionState) => {
                   ...AppFonts.listItemDescription,
                   paddingLeft: 0,
                   paddingBottom: 8,
-                }}>
+                }}
+              >
                 {item.display.description}
               </Text>
               <View style={[styles.listItemBodyDetail]}>

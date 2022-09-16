@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {StyleSheet, View, Text, StyleProp, ViewStyle} from 'react-native';
 import {ConexusIcon} from '../components/conexus-icon';
+import Icon from 'react-native-vector-icons/Ionicons';
 import variables from '../theme';
 import FitImage from 'react-native-fit-image';
 import {AppFonts} from '../theme';
@@ -29,11 +30,11 @@ const ConexusContentList = (props: ConexusIconListProps) => {
 
   const renderIcon = (name: string, iColor: string) => {
     return (
-      <ConexusIcon
-        name={name}
-        color={iColor}
-        size={24}
+      <Icon
         style={style.contentBlockListItemIcon}
+        name="ios-close-circle-sharp"
+        size={27}
+        color={iColor}
       />
     );
   };
@@ -42,7 +43,8 @@ const ConexusContentList = (props: ConexusIconListProps) => {
     return list.map((item, index) => (
       <View
         key={`content-block-list-item-${index}`}
-        style={style.contentBlockListItem}>
+        style={style.contentBlockListItem}
+      >
         {!!item.icon && renderIcon(item.icon, item.iconColor)}
         {!!item.image && renderImage(item.image)}
         {!!item.text && renderText(item.text)}
@@ -60,7 +62,8 @@ const ConexusContentList = (props: ConexusIconListProps) => {
         style={StyleSheet.flatten([
           style.contentBlock,
           (index + 1) % 2 === 0 ? style.contentBlockEven : {},
-        ])}>
+        ])}
+      >
         <Text style={style.contentBlockTitle}>{item.title}</Text>
         {item.list && renderContentBlockList(item.list)}
       </View>

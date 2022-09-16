@@ -8,8 +8,10 @@ import {
   Text,
   View,
 } from 'react-native';
+
 import ConexusVideoPlayer from '../../components/conexus-video-player';
 import QuestionPlaybackHeader from '../../components/question-playback-header';
+import NavigationService from '../../navigation/NavigationService';
 import {AppColors, AppSizes, AppFonts} from '../../theme';
 
 interface VideoPlayer {
@@ -114,6 +116,7 @@ const styles = StyleSheet.create({
   videoPlayer: {
     flex: 1,
   },
+
   lightbox: {
     flex: 1,
     padding: 0,
