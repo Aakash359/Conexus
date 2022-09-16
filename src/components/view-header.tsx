@@ -45,10 +45,8 @@ export const ViewHeader = (props: ViewHeaderProps) => {
         </Text>
         {!!description && (
           <Text
-            style={StyleSheet.flatten([
-              AppFonts.description,
-              descriptionStyle,
-            ])}>
+            style={StyleSheet.flatten([AppFonts.description, descriptionStyle])}
+          >
             {description}
           </Text>
         )}

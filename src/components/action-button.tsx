@@ -42,7 +42,7 @@ export const ActionButton = (props: buttonProps) => {
   } = props;
   return (
     <Button
-      activeOpacity={0.2}
+      activeOpacity={0}
       onPress={onPress}
       textColor={textColor}
       loading={loading}

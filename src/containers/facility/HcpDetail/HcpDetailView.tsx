@@ -373,6 +373,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     return (
       <Tab.Navigator
         screenOptions={{
+          tabBarPressColor: AppColors.transparent,
           headerShown: true,
           tabBarShowLabel: true,
           tabBarStyle: {backgroundColor: AppColors.white},
@@ -475,12 +476,6 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     );
   };
 
-  const onCallbackChangeText = (callbackNumber: string) => {
-    setCallBackNumber({
-      callbackNumber: phoneFormatter.stripFormatting(callbackNumber),
-    });
-  };
-
   const showPhoneCallModal = () => {
     setContactOptionModalVisible(false);
     setPhoneCallModalVisible(true);
@@ -549,6 +544,8 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
+        scrollEnabled={true}
+        showsVerticalScrollIndicator={true}
         contentContainerStyle={styles.dataView}
         refreshControl={
           <RefreshControl
@@ -564,12 +561,16 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
             size={22}
             onPress={() => NavigationService.goBack()}
           />
-          <Avatar
+          <Image
+            source={{uri: candidate.photoUrl}}
+            style={styles.circleStyle}
+          />
+          {/* <Avatar
             style={{width: 108, marginBottom: 14}}
             size={108}
             source={candidate.photoUrl}
             title={candidate.photoLabel}
-          />
+          /> */}
           <Text style={AppFonts.bodyTextXtraLarge}>
             {candidate.display.title}
           </Text>
@@ -627,6 +628,13 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     backgroundColor: AppColors.baseGray,
+  },
+  circleStyle: {
+    width: 100,
+    height: 100,
+    borderRadius: 100 / 2,
+    borderWidth: 2,
+    borderColor: AppColors.imageColor,
   },
   dataView: {
     flexGrow: 1,

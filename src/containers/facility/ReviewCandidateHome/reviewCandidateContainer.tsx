@@ -115,17 +115,6 @@ const ReviewCandidateContainer = (
     }
   };
 
-  // const renderPositionList = (data: string) => {
-  //   return (
-  //     <CandidateList
-  //       // submissions={data}
-  //       selectedFacilityId={facilityId}
-  //       refreshing={refreshing}
-  //       onRefresh={() => load(true)}
-  //     />
-  //   );
-  // };
-
   return (
     // <FacilitySelectionContainer
     //   // showLoading={loading}

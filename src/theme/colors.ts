@@ -11,6 +11,7 @@ export const colors = {
   darkBlue: '#556F7B',
   blue: '#5795E6',
   green: '#36D8A3',
+  imageColor: '#40c4ff',
   red: '#ED3C3C'
 }
 

@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, View, StyleSheet, Text} from 'react-native';
-import {PositionModel, CandidateModel} from '../../../stores';
 import {ViewHeader} from '../../../components/view-header';
-
 import {CandidateComparisonList} from './candidateComparisonList';
 import CandidateItem from './candidateItem';
 

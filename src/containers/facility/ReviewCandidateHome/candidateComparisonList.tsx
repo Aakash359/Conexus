@@ -5,6 +5,7 @@ import {
   ScrollView,
   Text,
   TouchableHighlight,
+  Image,
 } from 'react-native';
 import variables, {AppColors} from '../../../theme';
 import {ScreenType} from '../../../common/constants';
@@ -43,7 +44,8 @@ export const CandidateHeaderItem = (
           submissionId: candidate.submissionId,
           candidate,
         })
-      }>
+      }
+    >
       <View
         onLayout={event => {
           setHeight(event.nativeEvent.layout.height);
@@ -53,7 +55,8 @@ export const CandidateHeaderItem = (
           styles.candidateCell,
           lastCell && {borderRightWidth: 0},
           minHeight && {height: minHeight},
-        ])}>
+        ])}
+      >
         <Avatar
           size={86}
           source={candidate.photoUrl}
@@ -70,7 +73,8 @@ export const CandidateHeaderItem = (
             bottom: 0,
             zIndex: 2,
             fontSize: 8,
-          }}>
+          }}
+        >
           {height}
         </Text>
       </View>
@@ -138,21 +142,20 @@ export const CandidateComparisonList = (
             borderBottomWidth: 5,
             borderBottomColor: AppColors.blue,
           },
-        ])}>
+        ])}
+      >
         {
-          <Avatar
-            size={86}
-            source={candidate.photoUrl}
-            title={candidate.photoLabel}
-            style={{height: 96}}
-            titleStyle={{backgroundColor: '#36D8A3'}}
+          <Image
+            source={{uri: candidate.photoUrl}}
+            style={styles.circleStyle}
           />
         }
         {!!candidate.display.title && (
           <Text
             style={styles.candidateName}
             numberOfLines={2}
-            ellipsizeMode="tail">
+            ellipsizeMode="tail"
+          >
             {candidate.display.title}
           </Text>
         )}
@@ -184,7 +187,8 @@ export const CandidateComparisonList = (
             //         props.updateViewed(candidate.submissionId)
             //     }
             // })
-          }>
+          }
+        >
           {renderCandidateCell(candidate, index, count)}
         </TouchableHighlight>
         <ComparisonList
@@ -213,16 +217,22 @@ const styles = StyleSheet.create({
     paddingTop: 18,
     paddingBottom: 36,
     backgroundColor: 'white',
-
     borderColor: variables.lightBlue,
     borderRightWidth: 1,
     borderBottomWidth: 1,
     height: 205,
   },
+  circleStyle: {
+    width: 80,
+    height: 80,
+    borderRadius: 80 / 2,
+    borderWidth: 2,
+    borderColor: AppColors.imageColor,
+  },
   candidateName: {
     opacity: 0.95,
     textAlign: 'center',
     ...AppFonts.candidateComparison.candidateTitle,
-    paddingTop: 8,
+    paddingTop: 18,
   },
 });

@@ -45,8 +45,12 @@ axios.post(`${defaultBaseUrl}/user/current/base64Photo`, data, {
 //   },
 // );
 
-export const updateProfile = (data: { imageUrl: any; firstName: any; lastName: any; title: any; phoneNumber: any; }) =>
-  axios.post(`${defaultBaseUrl}/user/current`,data );
+export const updateProfile = async(data: { imageUrl: any; firstName: any; lastName: any; title: any; phoneNumber: any; }) =>
+  axios.put(`${defaultBaseUrl}/user/current`,data,{
+   headers: {
+      Authorization: `Bearer ${ await AsyncStorage.getItem('authToken')}`,
+    },
+});
 
 export const forgotPassword = (data:{username:string}) => axios.post(`${defaultBaseUrl}/user/PasswordRequest`, data);
 

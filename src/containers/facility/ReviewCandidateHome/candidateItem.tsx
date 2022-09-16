@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, TouchableOpacity, Text, View, Alert} from 'react-native';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  View,
+  Alert,
+  Image,
+} from 'react-native';
 import {Avatar} from '../../../components/avatar';
 import variables, {AppColors} from '../../../theme';
 import {ScreenType} from '../../../common/constants';
@@ -62,10 +69,9 @@ const CandidateItem = (props: CandidateItemProps) => {
           ])}
         >
           <View style={styles.itemSection}>
-            <Avatar
-              size={48}
-              source={candidate.photoUrl}
-              style={{alignSelf: 'center', top: 3}}
+            <Image
+              source={{uri: candidate.photoUrl}}
+              style={styles.circleStyle}
             />
             <Text style={(AppFonts.listItemTitleTouchable, styles.title)}>
               {candidate.display.title}
@@ -139,6 +145,14 @@ const styles = StyleSheet.create({
     borderBottomColor: AppColors.gray,
     borderTopColor: AppColors.gray,
     borderRightColor: AppColors.gray,
+  },
+  circleStyle: {
+    width: 50,
+    height: 50,
+    borderRadius: 50 / 2,
+    borderWidth: 2,
+    top: 3.8,
+    borderColor: AppColors.imageColor,
   },
   title: {
     textAlignVertical: 'center',
