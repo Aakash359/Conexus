@@ -179,10 +179,6 @@ export const ConexusVideoRecorder = (
           </View>
         )}
       </View>
-
-      {/* <TouchableOpacity onPress={() => stopRecodingHandler()}>
-        <Text style={{fontSize: 35}}>Stop Recoding</Text>
-      </TouchableOpacity> */}
     </>
   );
 };

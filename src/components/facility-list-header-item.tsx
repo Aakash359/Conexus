@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {Text, Alert, StyleSheet, View, TouchableOpacity} from 'react-native';
+import {
+  Text,
+  Alert,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Image,
+} from 'react-native';
 import {AppFonts, AppColors} from '../theme';
 import {ConexusIcon} from '../components/conexus-icon';
 import {Avatar} from '../components/avatar';
@@ -121,12 +128,8 @@ const FacilityListHeaderItem = (props: FacilityListHeaderItemProps) => {
 
   return (
     <TouchableOpacity style={styles.root} onPress={chooseFacility}>
-      <Avatar
-        facility
-        source={imageUrl}
-        size={36}
-        borderColor={AppColors.white}
-      />
+      <Image source={imageUrl} style={styles.circleStyle} />
+
       <View style={styles.textWrapper}>
         <Text style={styles.caption}>{caption}</Text>
         <Text style={styles.title}>{title}</Text>
@@ -152,6 +155,14 @@ const styles = StyleSheet.create({
     height: 56,
     paddingVertical: 12,
     paddingHorizontal: 16,
+  },
+  circleStyle: {
+    width: 38,
+    height: 38,
+    bottom: 4,
+    borderRadius: 38 / 2,
+    borderWidth: 2,
+    borderColor: AppColors.imageColor,
   },
   icon: {
     paddingTop: 2,

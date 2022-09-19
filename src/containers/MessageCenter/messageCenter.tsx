@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   View,
   Text,
+  RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 let moment = require('moment');
 import {useSelector} from '../../redux/reducers/index';
@@ -58,12 +60,12 @@ const MessageCenter = (
     // });
   };
 
-  const showLoading = (): boolean => {
-    if (refreshing) {
-      return false;
-    }
-    return loading;
-  };
+  // const showLoading = (): boolean => {
+  //   if (refreshing) {
+  //     return false;
+  //   }
+  //   return loading;
+  // };
 
   useEffect(() => {
     load();
@@ -98,7 +100,8 @@ const MessageCenter = (
             NavigationService.navigate('ConversationContainer', {
               conversationId: conversation?.conversationId,
             })
-          }>
+          }
+        >
           <View style={itemStyles.itemSection}>
             <Avatar
               size={48}
@@ -117,7 +120,8 @@ const MessageCenter = (
                   top: 5,
                   marginLeft: 10,
                 },
-              ]}>
+              ]}
+            >
               {lastMessageDate}
             </Text>
           </View>
@@ -136,24 +140,43 @@ const MessageCenter = (
 
   const renderConversations = () => {
     return (
-      <FlatList
-        style={{flex: 1, backgroundColor: AppColors.baseGray}}
-        // onRefresh={this.load.bind(this, true)}
-        refreshing={refreshing}
-        renderItem={renderConversationItem}
-        data={conversationData}
-      />
+      <>
+        <FlatList
+          style={{flex: 1, backgroundColor: AppColors.baseGray}}
+          refreshControl={
+            <RefreshControl
+              tintColor={AppColors.blue}
+              colors={[AppColors.blue]}
+              refreshing={refreshing}
+              onRefresh={() => load(true)}
+            />
+          }
+          renderItem={renderConversationItem}
+          data={conversationData}
+        />
+        {loading && (
+          <ActivityIndicator
+            style={{
+              flex: 1,
+              backgroundColor: AppColors.baseGray,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          />
+        )}
+      </>
     );
   };
 
-  const load = async (refreshing: boolean = false) => {
+  const load = async () => {
     try {
+      setLoading(true);
       const {data} = await conversationsService();
       setConversationData(data?.[0]?.positions);
-      setRefreshing(false);
+      setLoading(false);
     } catch (error) {
       console.log(error);
-      setRefreshing(false);
+      setLoading(false);
       Alert.alert(
         'Message Center Error',
         'We are having trouble loading your conversations. Please try again.',
@@ -161,19 +184,7 @@ const MessageCenter = (
     }
   };
 
-  return (
-    <>{renderConversations()}</>
-    // <FacilitySelectionContainer
-    //   // showNoData={showNoData()}
-    //   // showLoading={showLoading()}
-    //   // noDataText="No Conversations Available"
-    //   // facilityHeaderCaption="Showing conversations for"
-    //   // refreshing={refreshing}
-    //   // onRefresh={load()}
-    //   onFacilityChosen={(facilityId: string) => forceUpdate()}>
-    //   {renderConversations()}
-    // </FacilitySelectionContainer>
-  );
+  return <>{renderConversations()}</>;
 };
 
 const itemStyles = StyleSheet.create({

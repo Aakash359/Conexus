@@ -57,7 +57,6 @@ const InterviewQuestionDetail = (
   state: InterviewQuestionDetailState,
 ) => {
   const [silentRefreshing, setSilentRefreshing] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(false);
   const [needQuestionList, setNeedQuestionList] = useState([]);
@@ -71,15 +70,13 @@ const InterviewQuestionDetail = (
   const [selectedTabId, setSelectedTabID] = useState(
     needId ? 'other' : 'default',
   );
-  const newOrder: Array<string> = [];
+
   const facilityID = userInfo?.user?.userFacilities?.[0]?.facilityId;
 
-  // const onSaved = () => {
-  //   return onSave || function () {};
-  // };
-
   useEffect(() => {
-    loadNeedQuestions();
+    if (needId) {
+      loadNeedQuestions();
+    }
   }, []);
 
   const findQuestionSection = (facilityID: string, sectionId: string): any => {
@@ -106,7 +103,6 @@ const InterviewQuestionDetail = (
     try {
       const {data} = await needQuestionsService(needId);
       let questions = _.orderBy(data, ['displayOrder'], ['asc']);
-
       setNeedQuestionList(questions);
       setRefreshing(false);
       setLoading(false);
@@ -133,14 +129,6 @@ const InterviewQuestionDetail = (
     return questions.filter((q: {[x: string]: any}) => !q['deleted']);
   };
 
-  console.log('Showablegth===>', showableQuestions.length);
-
-  //   onQuestionClose() {
-  //     if (!this.section && !this.props.needId) {
-  //       // return Actions.pop();
-  //     }
-  //   }
-
   const newQuestion = () => {
     if (refreshing || silentRefreshing) {
       return;
@@ -156,18 +144,6 @@ const InterviewQuestionDetail = (
       //         this.forceUpdate()
       //     }
     });
-
-    // Actions[ScreenType.FACILITIES.CATALOG_QUESTION]({
-    //     title: 'Add Question',
-    //     questionId: '0',
-    //     initialUnitId: this.section ? this.section.sectionId : '',
-    //     needId: this.props.needId,
-    //     onClose: this.onQuestionClose.bind(this),
-    //     onSave: () => {
-    //         this.onSave()
-    //         this.forceUpdate()
-    //     }
-    // })
   };
 
   const openQuestion = (
@@ -309,11 +285,15 @@ const InterviewQuestionDetail = (
   };
 
   const renderUnitHeader = () => {
-    const questionCount =
-      sections?.defaultQuestions.length + sections.questions.length;
+    let questionCount =
+      sections === undefined || {}
+        ? ''
+        : sections.defaultQuestions.length + sections.questions.length;
     const description = `${questionCount} question${
       questionCount === 0 || questionCount > 1 ? 's' : ''
     }`;
+    console.log('Aakash====>', questionCount);
+
     const actionText = editing ? 'FINISH' : 'EDIT';
     return (
       <ViewHeader
@@ -321,7 +301,7 @@ const InterviewQuestionDetail = (
         title={
           sectionTitleOverride || props?.route?.params?.sections?.sectionTitle
         }
-        description={description}
+        description={needId ? needQuestionList.length : description}
         titleStyle={{color: AppColors.white}}
         descriptionStyle={{color: AppColors.white}}
         style={{backgroundColor: AppColors.blue, borderBottomWidth: 0}}
@@ -636,7 +616,7 @@ const InterviewQuestionDetail = (
   return (
     <View style={{flex: 1}}>
       {renderUnitHeader()}
-      {!needId && renderTabs()}
+      {needId ? renderSortableList() : renderTabs()}
       {showableQuestions().length == 0 && renderEmptyList()}
 
       {!editing && (

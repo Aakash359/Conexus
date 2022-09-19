@@ -51,9 +51,12 @@ const ReviewCandidateContainer = (
   };
 
   useEffect(() => {
-    load(true);
     saveToken();
     getToken();
+    setTimeout(() => {
+      load(true);
+    }, 1000);
+
     OneSignal.setAppId('901bc478-b323-4f6f-bc1f-bee60a47c811');
     OneSignal.setNotificationOpenedHandler(notification => {
       console.log('OneSignal: notification opened:', notification);
@@ -103,8 +106,8 @@ const ReviewCandidateContainer = (
           );
           setFacilityId(facilityId);
           setData(position);
+          setLoading(false);
         }
-        setLoading(false);
         // Alert.alert(data.description);
       } catch (error) {
         console.log('Error', error);
@@ -122,18 +125,6 @@ const ReviewCandidateContainer = (
   };
 
   return (
-    // <FacilitySelectionContainer
-    //   // showLoading={loading}
-    //   noDataText="No Positions Available"
-    //   facilityHeaderCaption="Showing positions for"
-    //   // refreshing={refreshing}
-    //   onRefresh={() => load(true)}
-    //   onFacilityChosen={(facilityId: string) => this.forceUpdate()}
-    // >
-    //   {/* <View style={{flex: 1, backgroundColor: AppColors.baseGray}}>
-    //     {data && renderPositionList(data)}
-    //   </View> */}
-    // </FacilitySelectionContainer>
     <>
       <View style={{flex: 1, backgroundColor: AppColors.baseGray}}>
         {loading && (
@@ -155,7 +146,7 @@ const ReviewCandidateContainer = (
             submissions={data}
             selectedFacilityId={facilityId}
             refreshing={refreshing}
-            onRefresh={() => load(false)}
+            onRefresh={() => load(true)}
           />
         )}
       </View>

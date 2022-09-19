@@ -87,20 +87,9 @@ const ConversationContainer = (
   // const validPhone = phoneFormatter.isValid10DigitPhoneNumber(callbackNumber);
   const {startVideoMessage} = props;
   const params = props?.route?.params ? props?.route?.params : {};
-  const userInfo = useSelector(state => state.userReducer);
   const {conversationId, candidate} = params ? params : '';
-  console.log('Cnadidtae===>', messageList);
-
-  // const {userId, firstName, lastName, photoUrl} = candidate;
-
-  // let recipientsName = `${candidate.firstName || ''} ${
-  //   candidate.lastName || ''
-  // }`;
-  // const {submissionId} = candidate;
 
   useEffect(() => {
-    // applyMeasurements();
-
     setTimeout(() => {
       loadMessages();
       if (startVideoMessage) {
@@ -146,10 +135,12 @@ const ConversationContainer = (
   }, []);
   const loadMessages = async () => {
     try {
+      setLoading(true);
       const {data} = await loadTextMessageService(conversationId);
       Keyboard.dismiss();
       setMessageList(data?.messages);
       setRefreshing(false);
+      setLoading(false);
     } catch (error) {
       console.log(error);
       setRefreshing(false);
@@ -339,7 +330,7 @@ const ConversationContainer = (
       finishedButtonTitle: 'Send',
       videoMessage: true,
       conversationId,
-      submissionId,
+      submissionId: props?.route?.params?.candidate?.submissionId || '',
       onFinished: onVideoMessageSent(),
       // onMessageSendCallback: onMessageSend(),
     });
@@ -626,7 +617,7 @@ const ConversationContainer = (
       >
         {phoneCallModalVisible && (
           <PhoneCallModal
-            // title={candidate.display.title}
+            title={candidate.display.title}
             // value={phoneFormatter.format10Digit(callbackNumber)}
             // onChangeText={onCallbackChangeText()}
             // disabled={!validPhone}
@@ -671,8 +662,7 @@ const ConversationContainer = (
           {renderMessageScrollView()}
         </Animated.View>
       );
-    }
-    if (loading) {
+    } else if (loading) {
       return (
         <Animated.View
           style={[
@@ -712,14 +702,11 @@ const ConversationContainer = (
               paddingBottom: 180,
             }}
           >
-            {/* {!!recipientName && ( */}
-
-            <Text>This is your first conversation with</Text>
-            {/* )} */}
-            {/* {!!this.recipientName && <Text>{this.recipientName}</Text>} */}
-            {/* {!this.recipientName &&  */}
-            <Text>No Messages Available</Text>
-            {/* } */}
+            {recipientName() && (
+              <Text>This is your first conversation with</Text>
+            )}
+            {recipientName && <Text>{recipientName()}</Text>}
+            {!recipientName && <Text>No Messages Available</Text>}
           </View>
         }
       </Animated.View>
@@ -819,7 +806,6 @@ const ConversationContainer = (
       <Animated.View
         style={{flex: 1, paddingBottom: paddingBottom}}
         // onLayout={onLayout}
-        ref={animatableRef}
         ref={animatableRef}
       >
         {renderMessageList()}

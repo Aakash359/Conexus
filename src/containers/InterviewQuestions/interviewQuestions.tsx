@@ -107,7 +107,6 @@ const InterviewQuestions = (
     try {
       const {data} = await facilityQuestionsService();
       let sectionData = data.filter((i: any) => !!i);
-      console.log('Sections----->', sectionData);
       setFacility(sectionData?.[0]);
       setSection(sectionData?.[0]?.questionSections);
       setRefreshing(false);
@@ -188,7 +187,7 @@ const InterviewQuestions = (
         onRefresh={() => load(true)}
         // onFacilityChosen={(facilityId: string) => this.forceUpdate()}
         expectOverrideFacilities={true}
-        overrideFacilities={facilities()}
+        // overrideFacilities={facilities()}
         showNewQuestionButton={true}
         needId={props.needId}
       />

@@ -9,6 +9,7 @@ import {
   Platform,
   RefreshControl,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import {
   FacilityNeedsStore,
@@ -93,18 +94,19 @@ const Positions = (props: PositionsProps, state: PositionState) => {
     }
   };
 
-  const load = async (refreshing: boolean = false) => {
+  const load = async () => {
     setLoading(true);
     if (!needsStorePromise) {
       try {
         const {data} = await facilityNeedService();
         setNeeds(data?.[0]?.needs);
-        setLoading(true);
+        setLoading(false);
       } catch (error) {
         console.log('Error', error);
         if (mounted) {
-          setRefreshing(false);
+          setLoading(false);
         } else {
+          setLoading(false);
           console.log(
             'NeedContainer',
             'Not mounted so doing nothing after data loaded.',
@@ -267,6 +269,19 @@ const Positions = (props: PositionsProps, state: PositionState) => {
 
     // </FacilitySelectionContainer>
     <View style={{flex: 1, backgroundColor: AppColors.baseGray}}>
+      {loading && (
+        <ActivityIndicator
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        />
+      )}
       <FlatList
         refreshControl={
           <RefreshControl

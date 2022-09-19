@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import CustomDrawer from '../components/CustomDrawer';
 import {AppColors} from '.././theme';
@@ -198,9 +198,7 @@ const AppStack = () => {
                 style={{marginRight: 20}}
                 size={32}
                 name="menu"
-                onPress={() =>
-                  NavigationService.dispatch(DrawerActions.openDrawer())
-                }
+                onPress={drawerRef => console.log('Aakaash====>', drawerRef)}
               />
             ),
           }}
@@ -213,9 +211,10 @@ const AppStack = () => {
 const DrawerStack = () => {
   const userInfo = useSelector(state => state.userReducer);
   const userType = (userInfo?.user?.userType).toUpperCase();
+  const drawerRef = useRef(null);
   return (
     <Drawer.Navigator
-      drawerContent={props => <CustomDrawer {...props} />}
+      drawerContent={props => <CustomDrawer {...props} ref={drawerRef} />}
       screenOptions={{
         headerShown: true,
         drawerActiveBackgroundColor: AppColors.blue,
@@ -228,7 +227,8 @@ const DrawerStack = () => {
           marginLeft: 10,
           fontSize: 18,
         },
-      }}>
+      }}
+    >
       {userType === 'HCP' ? (
         <Drawer.Screen
           name="NurseHome"

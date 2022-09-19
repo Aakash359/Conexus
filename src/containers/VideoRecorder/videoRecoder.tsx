@@ -42,12 +42,6 @@ interface VideoRecorderState {
   closeable: boolean;
 }
 
-const enum VideoStatus {
-  CONNECTING = 'CONNECTING',
-  CONNECTED = 'CONNECTED',
-  DISCONNECTED = 'DISCONNECTED',
-}
-
 const VideoRecorder = (
   props: VideoRecorderProps,
   state: VideoRecorderState,

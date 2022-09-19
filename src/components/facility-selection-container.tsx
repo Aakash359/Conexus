@@ -143,18 +143,18 @@ const FacilitySelectionContainer = (props: FacilitySelectionContainerProps) => {
           facilityChosen={() => onFacilityChosen(selectedFacilityId)}
         />
       )}
-      {/* {showLoading() && (
+      {showLoading() && (
         <ActivityIndicator
           color={AppColors.blue}
           style={{flex: 1, justifyContent: 'center', alignSelf: 'center'}}
         />
-      )} */}
-      {/* {!showLoading &&
+      )}
+      {!showLoading &&
         showNewQuestionButton() &&
         showNoData() &&
-        props.children} */}
+        props.children}
       {/* {renderEmpty()} */}
-      {/* {!showLoading && !showNoData() && props.children} */}
+      {!showLoading && !showNoData() && props.children}
     </View>
   );
 };

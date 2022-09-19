@@ -346,13 +346,9 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
       console.log('Error', error);
     }
   };
-
-  const onChange = (changedDate: any) => {
-    console.log('Data', changedDate);
-  };
   const Summary = () => {
     return (
-      <View style={{flexGrow: 1, backgroundColor: AppColors.baseGray}}>
+      <View style={{flex: 1, backgroundColor: AppColors.baseGray}}>
         {loadingSummary && renderLoading(100)}
         <ConexusContentList
           style={styles.contentList}
@@ -363,7 +359,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   };
   const VirtualInterView = () => {
     return (
-      <View style={{flexGrow: 1, backgroundColor: AppColors.baseGray}}>
+      <View style={{flex: 1, backgroundColor: AppColors.baseGray}}>
         {renderQuestions(data || [])}
       </View>
     );
@@ -546,13 +542,14 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
-        scrollEnabled={true}
+        // scrollEnabled={true}
+        // nestedScrollEnabled={true}
         showsVerticalScrollIndicator={true}
         contentContainerStyle={styles.dataView}
         refreshControl={
           <RefreshControl
             Refreshing={refreshing}
-            onRefresh={() => refreshCandidate(true)}
+            // onRefresh={() => refreshCandidate(true)}
           />
         }
       >
@@ -567,12 +564,6 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
             source={{uri: candidate.photoUrl}}
             style={styles.circleStyle}
           />
-          {/* <Avatar
-            style={{width: 108, marginBottom: 14}}
-            size={108}
-            source={candidate.photoUrl}
-            title={candidate.photoLabel}
-          /> */}
           <Text style={AppFonts.bodyTextXtraLarge}>
             {candidate.display.title}
           </Text>
@@ -694,8 +685,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   contentList: {
-    marginTop: 1,
-    paddingBottom: 120,
+    flex: 1,
   },
 });
 
