@@ -45,7 +45,8 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
   const [flagValue, setFlagValue] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const propsData = props?.route?.params || {};
-
+  console.log('pr===>', propsData);
+  const {facilityId} = propsData;
   const messageTextBlur = () => {
     if (messageText && messageText.length) {
       setMessageTextError(false);
@@ -142,6 +143,8 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
       NavigationService.navigate('VideoRecorder', {
         videoUrl: '',
         text: messageText,
+        needId: propsData?.needId || '',
+        facilityId: facilityId,
         // onSave: archiveId => {
         //   this._question.setArchiveId(archiveId);
         //   this.saveQuestion(null, true);

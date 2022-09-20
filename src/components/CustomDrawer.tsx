@@ -38,12 +38,6 @@ const CustomDrawer = props => {
         {...props}
         contentContainerStyle={{marginTop: 50}}
       >
-        {/* <ConexusIcon
-          name="cn-logo"
-          size={50}
-          color={AppColors.blue}
-          style={{marginRight: 20}}
-        /> */}
         <Image
           style={styles.logo}
           source={require('../components/Images/conexus-logo.jpg')}
@@ -78,7 +72,11 @@ const CustomDrawer = props => {
               </Text>
             </View>
             <Icons
-              style={{marginTop: 15, color: AppColors.blue, marginLeft: 80}}
+              style={{
+                justifyContent: 'flex-end',
+                marginLeft: 60,
+                color: AppColors.blue,
+              }}
               name="message-square"
               size={22}
             />
@@ -103,25 +101,24 @@ const CustomDrawer = props => {
           </View>
         </TouchableOpacity>
         <View style={[styles.footerContainer, {padding: 10}]} />
-        <TouchableOpacity onPress={openProfile} style={{paddingVertical: 35}}>
+        <TouchableOpacity onPress={openProfile} style={{paddingVertical: 15}}>
           <View
-            style={{
-              flexDirection: 'row',
-              backgroundColor: 'yellow',
-            }}
+            style={{flexDirection: 'row', alignItems: 'center', bottom: 10}}
           >
-            <Text style={styles.account}>Account Preference</Text>
             <Image
-              style={[styles.image, {marginTop: -40}]}
+              style={styles.image}
               source={{
                 uri: userInfo?.user?.photoUrl,
               }}
             />
-            <Icons
-              style={{marginTop: -30, color: AppColors.blue, marginLeft: 25}}
-              name="settings"
-              size={22}
-            />
+            <View style={styles.iconWrapper}>
+              <Text style={[styles.text]}>Account Preference</Text>
+              <Icons
+                style={{color: AppColors.blue, marginLeft: 10, marginTop: 2}}
+                name="settings"
+                size={22}
+              />
+            </View>
           </View>
         </TouchableOpacity>
       </View>
@@ -136,6 +133,10 @@ const styles = StyleSheet.create({
   },
   chaoWrapper: {
     flexDirection: 'column',
+  },
+  iconWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   circle: {
     position: 'absolute',

@@ -55,20 +55,17 @@ export const ConexusVideoRecorder = (
     'Stop',
   ]);
 
-  const [cameraFlip, setCameraFlip] = useState(false);
   const device = useMemo(() => devices.find(d => d.position === 'front'), [
     devices,
   ]);
   const [permissons, setPermissons] = useState(false);
   const {text, recordedData} = props;
   useEffect(() => {
-    console.log('recodingState===>', recordingState);
     if (recordingState == 'Playing') {
       setRecordingState('Playing');
     } else {
       setRecordingState('default');
     }
-
     loadDevices();
     getPermissons();
   }, [recordingState]);
@@ -95,11 +92,15 @@ export const ConexusVideoRecorder = (
   };
 
   const startRecodingHandler = () => {
-    camera.current.startRecording({
-      flash: 'off',
-      onRecordingFinished: (video: any) => recordedData(video),
-      onRecordingError: (error: any) => console.error(error, 'video error'),
-    });
+    camera.current.startRecording(
+      {
+        flash: 'off',
+        onRecordingFinished: (video: any) => recordedData(video),
+
+        onRecordingError: (error: any) => console.error(error, 'video error'),
+      },
+      setRecordingState('Stop'),
+    );
     setRecordingState('Playing');
   };
 
@@ -108,18 +109,24 @@ export const ConexusVideoRecorder = (
     setRecordingState('Stop');
   };
 
+  const onFinished = (archiveId: string, videoUrl: string) => {
+    const {videoMessage} = this.props;
+
+    if (videoMessage && !this.videoMessageSendComplete) {
+      return this.sendVideoMessage(archiveId, videoUrl);
+    }
+
+    if (this.props.onFinished && this.props.onFinished.call) {
+      this.props.onFinished(archiveId, videoUrl);
+    }
+
+    StatusBar.setHidden(false);
+    return Actions.pop();
+  };
+
   if (device == null) {
     return null;
   }
-
-  const flipCamera = (device: never) => {
-    if (device?.position) {
-      setCameraFlip(true);
-      console.log('jhj', cameraFlip);
-
-      return devices.find(d => d.position === 'back');
-    }
-  };
 
   return (
     <>
@@ -142,14 +149,6 @@ export const ConexusVideoRecorder = (
         />
 
         <Text style={recorderStyle.text}>{text}</Text>
-        <Icon
-          style={recorderStyle.flipCamera}
-          name="ios-camera-reverse-outline"
-          size={27}
-          color={AppColors.blue}
-          onPress={() => flipCamera(device)}
-        />
-        <Text>{recordingState}</Text>
         {recordingState == 'default' && (
           <View style={recorderStyle.footer}>
             <ActionButton
@@ -175,6 +174,21 @@ export const ConexusVideoRecorder = (
               }
               customTitleStyle={{color: AppColors.white, fontSize: 15}}
               onPress={() => stopRecodingHandler()}
+            />
+          </View>
+        )}
+
+        {recordingState == 'Stop' && (
+          <View style={recorderStyle.footer}>
+            <ActionButton
+              title="SAVE"
+              customStyle={
+                recordingState == 'Playing'
+                  ? recorderStyle.recordingBtnRed
+                  : recorderStyle.recordingBtn
+              }
+              customTitleStyle={{color: AppColors.white, fontSize: 15}}
+              onPress={() => saveRecodingHandler()}
             />
           </View>
         )}

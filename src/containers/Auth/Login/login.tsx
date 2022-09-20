@@ -122,8 +122,8 @@ const LoginScreen = () => {
   };
 
   return (
-    <SafeAreaView style={[{backgroundColor: 'white'}]}>
-      <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={-190}>
+    <SafeAreaView style={style.splash}>
+      <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={-130}>
         <View style={style.content}>
           <View style={style.form}>
             <Image
@@ -137,6 +137,7 @@ const LoginScreen = () => {
                 onTextChange={(text: any) => handleOnchange(text, 'email')}
                 onFocus={() => handleError(null, 'email')}
                 error={errors.email}
+                customStyle={{fontSize: 16}}
                 returnKeyType="next"
               />
             </View>
@@ -145,6 +146,7 @@ const LoginScreen = () => {
                 placeholder="Password"
                 secureTextEntry={true}
                 error={errors.password}
+                customStyle={{fontSize: 16}}
                 onTextChange={(text: any) => handleOnchange(text, 'password')}
                 onFocus={() => handleError(null, 'password')}
                 returnKeyType="done"
@@ -163,12 +165,6 @@ const LoginScreen = () => {
             title="SIGN IN"
             onPress={validate}
           />
-          {/* <TouchableOpacity onPress={signInFn}>
-            <View style={style.btnContainer}>
-              <Text style={style.signIn}>SIGN IN</Text>
-            </View>
-          </TouchableOpacity> */}
-
           <TouchableOpacity onPress={requestAccount}>
             <Text style={style.newUser}>
               New to Conexus? Request an account now!
@@ -184,13 +180,11 @@ const style = StyleSheet.create({
   splash: {
     ...windowDimensions,
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: AppColors.white,
   },
   errorTxt: {
     fontSize: 12,
     color: AppColors.red,
-    // fontFamily: AppFonts.h3,
   },
   field: {
     marginTop: 10,

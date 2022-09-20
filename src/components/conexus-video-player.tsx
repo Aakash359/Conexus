@@ -53,7 +53,7 @@ export interface ConexusVideoPlayerProps {
   overlayContentStyle?: ViewStyle;
   overlayContentWithErrorStyle?: ViewStyle;
   overlayFooterStyle?: ViewStyle;
-
+  onSaveQuestion: any;
   showActionButtonWhilePlaying?: boolean;
   loadingColor?: string;
 
@@ -94,6 +94,7 @@ const ConexusVideoPlayer = (
   const [isPaused, setIsPaused] = useState(false);
   const replaying: boolean = false;
 
+  const {videoPath} = props;
   const videoRef = useRef<Video>(null);
   const progress: number = 0;
   const player: Video = Video;
@@ -314,6 +315,18 @@ const ConexusVideoPlayer = (
       return null;
     }
 
+    if (videoPath) {
+      return (
+        <View style={[styles.overlayFooter, props.overlayFooterStyle]}>
+          <ActionButton
+            customStyle={styles.btnEnable}
+            title={'SAVE'}
+            onPress={() => props.onSaveQuestion(videoPath)}
+          />
+        </View>
+      );
+    }
+
     if (!showActionsOnEnd && hasEnded) {
       return null;
     }
@@ -400,6 +413,7 @@ const ConexusVideoPlayer = (
             ))}
           </View>
         </View>
+
         {!actionButton && (
           <View style={styles.footer}>
             <ActionButton
@@ -459,7 +473,7 @@ const ConexusVideoPlayer = (
             style={[styles.video]}
           />
         }
-        {renderPausedOverlay()}
+        {/* {renderPausedOverlay()} */}
         {renderPlayOverlay()}
         {renderActions()}
         {renderLoading()}
@@ -478,6 +492,7 @@ const ConexusVideoPlayer = (
             />
           </View>
         }
+
         <Icon
           style={styles.closeButton}
           name="close-outline"

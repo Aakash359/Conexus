@@ -44,6 +44,8 @@ const InterviewQuestions = (
   const [section, setSection] = useState([]);
   const [facility, setFacility] = useState({});
   const [refreshing, setRefreshing] = useState(false);
+  const {facilityId} = facility;
+  console.log('facilityId====>', facilityId);
 
   useEffect(() => {
     load();
@@ -56,7 +58,7 @@ const InterviewQuestions = (
 
   const selectedFacility = () => {
     return this.props.facilityQuestionsStore.facilities.find(
-      i => i.facilityId === this.selectedFacilityId,
+      (i: {facilityId: any}) => i.facilityId === this.selectedFacilityId,
     );
   };
 
@@ -107,6 +109,8 @@ const InterviewQuestions = (
     try {
       const {data} = await facilityQuestionsService();
       let sectionData = data.filter((i: any) => !!i);
+      console.log('Aakash====>', sectionData);
+
       setFacility(sectionData?.[0]);
       setSection(sectionData?.[0]?.questionSections);
       setRefreshing(false);
@@ -171,10 +175,7 @@ const InterviewQuestions = (
     NavigationService.navigate('AddQuestion', {
       questionId: '0',
       initialUnitId: '',
-      // needId: needId,
-      onSave: () => {
-        forceUpdate();
-      },
+      facilityId: facilityId,
     });
   };
 
@@ -212,7 +213,7 @@ const InterviewQuestions = (
           title="ADD QUESTION"
           loading={loading}
           customTitleStyle={styles.title}
-          onPress={showNewQuestion}
+          onPress={(facilityId: any) => showNewQuestion(facilityId)}
           customStyle={styles.addQuestionBtn}
         />
       </View>

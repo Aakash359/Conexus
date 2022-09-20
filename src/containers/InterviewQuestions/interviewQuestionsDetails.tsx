@@ -135,14 +135,14 @@ const InterviewQuestionDetail = (
     }
     NavigationService.navigate('AddQuestion', {
       title: 'Add Question',
-      //     questionId: '0',
-      //     initialUnitId: this.section ? this.section.sectionId : '',
-      //     needId: this.props.needId,
-      //     onClose: this.onQuestionClose.bind(this),
-      //     onSave: () => {
-      //         this.onSave()
-      //         this.forceUpdate()
-      //     }
+      questionId: '0',
+      initialUnitId: sections ? sections.sectionId : '',
+      needId: needId,
+      // onClose: this.onQuestionClose.bind(this),
+      // onSave: () => {
+      //     this.onSave()
+      //     this.forceUpdate()
+      // }
     });
   };
 
@@ -625,7 +625,7 @@ const InterviewQuestionDetail = (
             title="ADD QUESTION"
             loading={loading}
             customTitleStyle={styles.title}
-            onPress={newQuestion}
+            onPress={() => newQuestion()}
             customStyle={styles.addQuestionBtn}
           />
         </View>
