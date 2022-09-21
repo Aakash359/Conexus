@@ -109,8 +109,6 @@ const InterviewQuestions = (
     try {
       const {data} = await facilityQuestionsService();
       let sectionData = data.filter((i: any) => !!i);
-      console.log('Aakash====>', sectionData);
-
       setFacility(sectionData?.[0]);
       setSection(sectionData?.[0]?.questionSections);
       setRefreshing(false);

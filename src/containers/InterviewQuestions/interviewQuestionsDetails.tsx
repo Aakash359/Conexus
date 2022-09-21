@@ -204,7 +204,6 @@ const InterviewQuestionDetail = (
       needId: string,
       facilityId: string,
     ) => {
-      console.log('Okk===>', needId, questionId, facilityId);
       setRefreshing(true);
       setLoading(true);
       try {
@@ -245,6 +244,7 @@ const InterviewQuestionDetail = (
 
   const deleteInterviewQuestion = async (questionId: string) => {
     const tryDelete = async (questionId: string) => {
+      setLoading(true);
       try {
         const interviewQuestionPayload = {
           questionId: questionId,
@@ -252,7 +252,6 @@ const InterviewQuestionDetail = (
         const {data} = await deleteInterviewQuestionsService(
           interviewQuestionPayload,
         );
-        onSaved();
         setRefreshing(false);
         setLoading(false);
         console.log('interview Question Deleted response====>', data);
@@ -292,8 +291,6 @@ const InterviewQuestionDetail = (
     const description = `${questionCount} question${
       questionCount === 0 || questionCount > 1 ? 's' : ''
     }`;
-    console.log('Aakash====>', questionCount);
-
     const actionText = editing ? 'FINISH' : 'EDIT';
     return (
       <ViewHeader
@@ -366,7 +363,7 @@ const InterviewQuestionDetail = (
               borderColor: AppColors.mediumGray,
               backgroundColor: AppColors.green,
               alignItems: 'center',
-              left: 80,
+              left: 70,
               top: 10,
             }}
           >
@@ -384,7 +381,7 @@ const InterviewQuestionDetail = (
               borderColor: AppColors.mediumGray,
               backgroundColor: AppColors.green,
               alignItems: 'center',
-              left: 80,
+              left: 70,
               top: 10,
             }}
           >
@@ -405,8 +402,13 @@ const InterviewQuestionDetail = (
         screenOptions={{
           headerShown: true,
           tabBarShowLabel: true,
-          tabBarStyle: {backgroundColor: AppColors.white},
-          tabBarLabelStyle: {fontWeight: 'bold'},
+          tabBarStyle: {backgroundColor: AppColors.white, height: 65},
+          tabBarLabelStyle: {
+            fontWeight: 'bold',
+            textTransform: 'none',
+            bottom: 18,
+          },
+          tabBarPressColor: AppColors.transparent,
           tabBarActiveTintColor: AppColors.blue,
           tabBarInactiveTintColor: AppColors.mediumGray,
         }}
@@ -420,7 +422,6 @@ const InterviewQuestionDetail = (
             },
             title: route?.route?.name,
           })}
-          // options={route => console.log('Aajash--->', route?.route?.name)}
         />
         <Tab.Screen
           name="Other Questions"

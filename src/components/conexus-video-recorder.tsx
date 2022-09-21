@@ -55,6 +55,11 @@ export const ConexusVideoRecorder = (
     'Stop',
   ]);
 
+  const getPermisson = async () => {
+    const newCameraPermission = await Camera.requestCameraPermission();
+    const newMicrophonePermission = await Camera.requestMicrophonePermission();
+  };
+
   const device = useMemo(() => devices.find(d => d.position === 'front'), [
     devices,
   ]);
@@ -67,7 +72,7 @@ export const ConexusVideoRecorder = (
       setRecordingState('default');
     }
     loadDevices();
-    getPermissons();
+    getPermisson();
   }, [recordingState]);
 
   const loadDevices = async () => {

@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Alert,
   ScrollView,
+  Image,
 } from 'react-native';
 import {AppColors, AppFonts} from '../../theme';
 import {windowDimensions} from '../../common/window-dimensions';
@@ -97,11 +98,12 @@ export const SelectUnitModal = (
 
   const callFacilityUnitListApi = async () => {
     {
+      setLoading(true);
       try {
-        setLoading(true);
         const data = await facilityUnitListService({
           facilityId: userInfo?.user?.userFacilities?.[0]?.facilityId,
         });
+        setLoading(false);
         setUnitData(data);
       } catch (error) {
         setLoading(false);
@@ -121,25 +123,16 @@ export const SelectUnitModal = (
 
   const renderItem = ({item, index}) => {
     var i: RadioListItem = item;
+
     return (
       <TouchableOpacity
         key={`${i.unitName}${index}`}
         style={styles.listItem}
-        onPress={() => selectValue(i.unitName, i.unitId)}>
-        {/* {showImages && ( */}
-        <>
-          <Avatar
-            source={i.imageUrl}
-            facility={facilityImages}
-            size={45}
-            style={styles.listItemAvatar}
-          />
-          <Text
-            style={[AppFonts.listItemTitle, [{textAlignVertical: 'center'}]]}>
-            {i.unitName}
-          </Text>
-        </>
-        {/* )} */}
+        onPress={() => selectValue(i.unitName, i.unitId)}
+      >
+        <Text style={[AppFonts.listItemTitle, [{textAlignVertical: 'center'}]]}>
+          {i.unitName}
+        </Text>
 
         {hideSelectedIcon && value === i.value && (
           <ConexusIcon
@@ -153,20 +146,24 @@ export const SelectUnitModal = (
     );
   };
 
+  const renderSeparator = () => (
+    <View
+      style={{
+        backgroundColor: AppColors.lightBlue,
+        height: 0.5,
+      }}
+    />
+  );
+
   return (
     <>
       <TouchableOpacity onPress={() => setModalVisible(true)}>
         <View style={styles.chooserField}>
-          {<Text style={styles.chooserFieldPlaceholder}>{title}</Text>}
           {unitValue && (
             <Text style={styles.chooserFieldText}>{unitValue}</Text>
           )}
           <Icon
-            style={
-              title
-                ? {color: AppColors.mediumGray, left: 230}
-                : {color: AppColors.mediumGray, left: 20}
-            }
+            style={{color: AppColors.mediumGray, marginLeft: 20}}
             name="chevron-down"
             size={22}
           />
@@ -178,11 +175,12 @@ export const SelectUnitModal = (
           overlayPointerEvents={'auto'}
           animationType="fade"
           onRequestClose={() => setModalVisible(false)}
-          transparent={true}>
+          transparent={true}
+        >
           <View style={styles.cardStyle}>
             <View style={styles.cardItemStyle}>
               <View style={styles.wrapperView}>
-                <Text style={styles.titleText}>{title}</Text>
+                <Text style={styles.titleText}>Select Unit</Text>
                 <Icon
                   style={{color: AppColors.mediumGray}}
                   name="ios-close-circle-sharp"
@@ -190,14 +188,24 @@ export const SelectUnitModal = (
                   onPress={() => setModalVisible(false)}
                 />
               </View>
-              <ScrollView contentContainerStyle={styles.content}>
-                {/* {!loading && ( */}
-                <FlatList data={unitData} renderItem={renderItem} />
-                {/* )} */}
-                {!loading && (
-                  <ActivityIndicator color={AppColors.blue} style={{flex: 1}} />
-                )}
-              </ScrollView>
+              {loading && (
+                <ActivityIndicator
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                />
+              )}
+              <FlatList
+                data={unitData}
+                renderItem={renderItem}
+                ItemSeparatorComponent={renderSeparator}
+              />
             </View>
           </View>
         </Modal>
@@ -223,6 +231,8 @@ const styles = StyleSheet.create({
   },
   chooserFieldText: {
     ...AppFonts.buttonText,
+    width: '85%',
+    alignSelf: 'center',
     color: AppColors.darkBlue,
   },
   chooserField: {
@@ -234,7 +244,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 12,
     flexDirection: 'row',
-    alignItems: 'stretch',
   },
   listItemIcon: {
     alignSelf: 'flex-end',
@@ -249,10 +258,8 @@ const styles = StyleSheet.create({
   listItem: {
     backgroundColor: AppColors.white,
     flexDirection: 'row',
-    paddingTop: 16,
+    padding: 16,
     marginRight: 80,
-    borderBottomWidth: 1,
-    borderBottomColor: AppColors.lightBlue,
   },
   listItemAvatar: {
     marginRight: 12,

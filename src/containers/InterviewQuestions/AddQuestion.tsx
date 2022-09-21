@@ -230,12 +230,10 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
   const renderUnitField = () => {
     return (
       <SelectUnitModal
-        title={unitValue ? unitValue : 'Select a unit'}
+        unitValue={unitValue ? unitValue : 'Select a unit'}
         onRequestClose={() => setModalVisible(false)}
         onClose={() => setModalVisible(false)}
-        // unitValue={unitValue}
         onSelectUnit={value => setUnitValue(value)}
-        // onClose={() => setModalVisible(false)}
       />
     );
   };
