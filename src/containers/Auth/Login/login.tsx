@@ -134,6 +134,7 @@ const LoginScreen = () => {
             <View style={style.field}>
               <Field
                 placeholder="Email Address"
+                autoCapitalize="none"
                 onTextChange={(text: any) => handleOnchange(text, 'email')}
                 onFocus={() => handleError(null, 'email')}
                 error={errors.email}
@@ -144,6 +145,7 @@ const LoginScreen = () => {
             <View style={style.field}>
               <Field
                 placeholder="Password"
+                autoCapitalize="none"
                 secureTextEntry={true}
                 error={errors.password}
                 customStyle={{fontSize: 16}}

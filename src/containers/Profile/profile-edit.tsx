@@ -49,90 +49,90 @@ const EditProfile = (props: EditProfileProps) => {
     phoneNumber: userInfo?.user?.phoneNumber || '',
   });
 
-  const openGallery = async () => {
-    ImagePicker.openPicker({
-      width: 300,
-      height: 400,
-      cropping: true,
-      includeBase64: true,
-      freeStyleCropEnabled: true,
-      mediaType: 'photo',
-      compressImageQuality: 0.8,
-      cropperToolbarWidgetColor: '#FFFFFF',
-      cropperToolbarColor: '#D3D3D3',
-    })
-      .then(async (image: any, mimeType: string = 'image/jpg') => {
-        let ext = mimeType.split('/')[1] || 'jpg';
-        if (ext === 'jpeg') {
-          ext = 'jpg';
-        }
-        const payload = {
-          base64Image: image.data,
-          fileExt: ext,
-        };
-        const data = await uploadPhoto(payload);
-        console.log('PhotoMil Gyi', data);
+  // const openGallery = async () => {
+  //   ImagePicker.openPicker({
+  //     width: 300,
+  //     height: 400,
+  //     cropping: true,
+  //     includeBase64: true,
+  //     freeStyleCropEnabled: true,
+  //     mediaType: 'photo',
+  //     compressImageQuality: 0.8,
+  //     cropperToolbarWidgetColor: '#FFFFFF',
+  //     cropperToolbarColor: '#D3D3D3',
+  //   })
+  //     .then(async (image: any, mimeType: string = 'image/jpg') => {
+  //       let ext = mimeType.split('/')[1] || 'jpg';
+  //       if (ext === 'jpeg') {
+  //         ext = 'jpg';
+  //       }
+  //       const payload = {
+  //         base64Image: image.data,
+  //         fileExt: ext,
+  //       };
+  //       const data = await uploadPhoto(payload);
+  //       console.log('PhotoMil Gyi', data);
 
-        let imageUrl = `data:${image.mime};base64,${image.data}`;
-        setImageUrl(imageUrl);
-        console.log('received base64 image', data, imageUrl);
-        setCameraModal(false);
-      })
-      .catch(error => {
-        console.log('Error====>', error);
-        showApiErrorAlert({
-          defaultTitle: error?.response?.data?.statusText,
-          defaultDescription:
-            'An unexpected error occurred while saving your profile photo. Please try again.',
-          error: error,
-          loggerTitle: EDIT_PROFILE_COMPONENT_NAME,
-          loggerName: 'selectImage',
-        });
-        setCameraModal(false);
-      });
-  };
+  //       let imageUrl = `data:${image.mime};base64,${image.data}`;
+  //       setImageUrl(imageUrl);
+  //       console.log('received base64 image', data, imageUrl);
+  //       setCameraModal(false);
+  //     })
+  //     .catch(error => {
+  //       console.log('Error====>', error);
+  //       showApiErrorAlert({
+  //         defaultTitle: error?.response?.data?.statusText,
+  //         defaultDescription:
+  //           'An unexpected error occurred while saving your profile photo. Please try again.',
+  //         error: error,
+  //         loggerTitle: EDIT_PROFILE_COMPONENT_NAME,
+  //         loggerName: 'selectImage',
+  //       });
+  //       setCameraModal(false);
+  //     });
+  // };
 
-  const openCamera = async () => {
-    // let token = userInfo.user?.authToken;
-    ImagePicker.openCamera({
-      width: 300,
-      height: 400,
-      cropping: true,
-      includeBase64: true,
-      freeStyleCropEnabled: true,
-      mediaType: 'photo',
-      compressImageQuality: 0.8,
-      cropperToolbarWidgetColor: '#FFFFFF',
-      cropperToolbarColor: '#D3D3D3',
-    })
-      .then(async (image: any, mimeType: string = 'image/jpg') => {
-        let ext = mimeType.split('/')[1] || 'jpg';
-        if (ext === 'jpeg') {
-          ext = 'jpg';
-        }
-        const payload = {
-          base64Image: image.data,
-          fileExt: ext,
-          token: userInfo.user?.authToken,
-        };
-        const data = await uploadPhoto(payload);
-        let imageUrl = `data:${image.mime};base64,${image.data}`;
-        setImageUrl(imageUrl);
-        console.log('received base64 image', data, imageUrl);
-        setCameraModal(false);
-      })
-      .catch(error => {
-        console.log('Error', error);
-        showApiErrorAlert({
-          defaultTitle: error?.response?.data?.statusText,
-          defaultDescription:
-            'An unexpected error occurred while saving your profile photo. Please try again.',
-          error: error,
-          loggerTitle: EDIT_PROFILE_COMPONENT_NAME,
-          loggerName: 'selectImage',
-        });
-      });
-  };
+  // const openCamera = async () => {
+  //   // let token = userInfo.user?.authToken;
+  //   ImagePicker.openCamera({
+  //     width: 300,
+  //     height: 400,
+  //     cropping: true,
+  //     includeBase64: true,
+  //     freeStyleCropEnabled: true,
+  //     mediaType: 'photo',
+  //     compressImageQuality: 0.8,
+  //     cropperToolbarWidgetColor: '#FFFFFF',
+  //     cropperToolbarColor: '#D3D3D3',
+  //   })
+  //     .then(async (image: any, mimeType: string = 'image/jpg') => {
+  //       let ext = mimeType.split('/')[1] || 'jpg';
+  //       if (ext === 'jpeg') {
+  //         ext = 'jpg';
+  //       }
+  //       const payload = {
+  //         base64Image: image.data,
+  //         fileExt: ext,
+  //         token: userInfo.user?.authToken,
+  //       };
+  //       const data = await uploadPhoto(payload);
+  //       let imageUrl = `data:${image.mime};base64,${image.data}`;
+  //       setImageUrl(imageUrl);
+  //       console.log('received base64 image', data, imageUrl);
+  //       setCameraModal(false);
+  //     })
+  //     .catch(error => {
+  //       console.log('Error', error);
+  //       showApiErrorAlert({
+  //         defaultTitle: error?.response?.data?.statusText,
+  //         defaultDescription:
+  //           'An unexpected error occurred while saving your profile photo. Please try again.',
+  //         error: error,
+  //         loggerTitle: EDIT_PROFILE_COMPONENT_NAME,
+  //         loggerName: 'selectImage',
+  //       });
+  //     });
+  // };
 
   const handleOnchange = (text: any, input: any) => {
     setInputs((prevState: any) => ({...prevState, [input]: text}));
@@ -314,7 +314,7 @@ const EditProfile = (props: EditProfileProps) => {
               <Text style={style.buttonHeader}>Select profile photo</Text>
               <TouchableOpacity
                 style={style.buttonContainer}
-                onPress={openCamera}
+                // onPress={openCamera}
                 activeOpacity={0.8}
               >
                 <Icon
@@ -326,7 +326,7 @@ const EditProfile = (props: EditProfileProps) => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={style.buttonContainer}
-                onPress={openGallery}
+                // onPress={openGallery}
                 activeOpacity={0.8}
               >
                 <Icon name="image-outline" size={30} color={AppColors.blue} />

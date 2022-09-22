@@ -438,15 +438,6 @@ PODS:
     - React-Core
   - RNGestureHandler (2.5.0):
     - React-Core
-  - RNImageCropPicker (0.38.0):
-    - React-Core
-    - React-RCTImage
-    - RNImageCropPicker/QBImagePickerController (= 0.38.0)
-    - TOCropViewController
-  - RNImageCropPicker/QBImagePickerController (0.38.0):
-    - React-Core
-    - React-RCTImage
-    - TOCropViewController
   - RNPermissions (3.6.1):
     - React-Core
   - RNReanimated (2.9.1):
@@ -490,7 +481,6 @@ PODS:
     - React-Core
   - SocketRocket (0.6.0)
   - SSZipArchive (2.2.3)
-  - TOCropViewController (2.6.1)
   - VisionCamera (2.14.1):
     - React
     - React-callinvoker
@@ -581,7 +571,6 @@ DEPENDENCIES:
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
-  - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -613,7 +602,6 @@ SPEC REPOS:
     - OpenSSL-Universal
     - SocketRocket
     - SSZipArchive
-    - TOCropViewController
     - YogaKit
 
 EXTERNAL SOURCES:
@@ -731,8 +719,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-device-info"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
-  RNImageCropPicker:
-    :path: "../node_modules/react-native-image-crop-picker"
   RNPermissions:
     :path: "../node_modules/react-native-permissions"
   RNReanimated:
@@ -789,7 +775,7 @@ SPEC CHECKSUMS:
   RCTSystemSetting: 5107b7350d63b3f7b42a1277d07e4e5d9df879be
   RCTTypeSafety: a04dc1339af2e1da759ccd093bf11c310dce1ef6
   React: dbd201f781b180eab148aa961683943c72f67dcf
-  React-bridging: 234a3ee2837d0c481329696991b7719a4f4526e0
+  React-bridging: b22d91629276c1c7f95f6dfbd2beb998d5cccc6e
   React-callinvoker: 6ad32eee2630dab9023de5df2a6a8cacbfc99a67
   React-Codegen: fe3423fa6f37d05e233ab0e85e34fe0b443a5654
   React-Core: 6177b1f2dd794fe202a5042d3678b2ddfcbfb7d4
@@ -826,7 +812,6 @@ SPEC CHECKSUMS:
   RNDateTimePicker: 4f1fc917f5af9d9ae4c5fc0c63a4474d61338693
   RNDeviceInfo: 1e3f62b9ec32f7754fac60bd06b8f8a27124e7f0
   RNGestureHandler: bad495418bcbd3ab47017a38d93d290ebd406f50
-  RNImageCropPicker: ffbba608264885c241cbf3a8f78eb7aeeb978241
   RNPermissions: dcdb7b99796bbeda6975a6e79ad519c41b251b1c
   RNReanimated: 2cf7451318bb9cc430abeec8d67693f9cf4e039c
   RNScreens: ee31ecdf23fe81e93c74feaa086cf173d758ab58
@@ -835,7 +820,6 @@ SPEC CHECKSUMS:
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
-  TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
   VisionCamera: cc788935bcfd2f7031d3295adedbc9786835f402
   Yoga: 7ab6e3ee4ce47d7b789d1cb520163833e515f452
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
