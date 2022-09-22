@@ -372,8 +372,10 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
           tabBarPressColor: AppColors.transparent,
           headerShown: true,
           tabBarShowLabel: true,
-          tabBarStyle: {backgroundColor: AppColors.white},
-          tabBarLabelStyle: {fontWeight: 'bold'},
+          tabBarStyle: {
+            backgroundColor: AppColors.white,
+          },
+          tabBarLabelStyle: {fontWeight: 'bold', textTransform: 'none'},
           tabBarActiveTintColor: AppColors.blue,
           tabBarInactiveTintColor: AppColors.mediumGray,
         }}
@@ -542,8 +544,6 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
-        // scrollEnabled={true}
-        // nestedScrollEnabled={true}
         showsVerticalScrollIndicator={true}
         contentContainerStyle={styles.dataView}
         refreshControl={

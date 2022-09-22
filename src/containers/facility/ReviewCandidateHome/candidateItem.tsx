@@ -51,6 +51,7 @@ const CandidateItem = (props: CandidateItemProps) => {
   const renderItem = () => {
     return (
       <TouchableOpacity
+        activeOpacity={1}
         onPress={() =>
           NavigationService.navigate('HcpDetailView', {
             submissionId: candidate.submissionId,
@@ -69,10 +70,17 @@ const CandidateItem = (props: CandidateItemProps) => {
           ])}
         >
           <View style={styles.itemSection}>
-            <Image
-              source={{uri: candidate.photoUrl}}
-              style={styles.circleStyle}
-            />
+            {candidate.photoUrl ? (
+              <Image
+                source={{uri: candidate.photoUrl}}
+                style={styles.circleStyle}
+              />
+            ) : (
+              <Image
+                source={require('../../../components/Images/bg.png')}
+                style={styles.circleStyle}
+              />
+            )}
             <Text style={(AppFonts.listItemTitleTouchable, styles.title)}>
               {candidate.display.title}
             </Text>

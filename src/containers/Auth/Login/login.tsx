@@ -152,7 +152,7 @@ const LoginScreen = () => {
                 returnKeyType="done"
               />
             </View>
-            <TouchableOpacity onPress={forgotPasswordFn}>
+            <TouchableOpacity onPress={forgotPasswordFn} activeOpacity={1}>
               <Text style={style.forgotPass}>FORGOT PASSWORD?</Text>
             </TouchableOpacity>
             {/* {this.props.deviceStore.isDebugEnabled
@@ -165,7 +165,7 @@ const LoginScreen = () => {
             title="SIGN IN"
             onPress={validate}
           />
-          <TouchableOpacity onPress={requestAccount}>
+          <TouchableOpacity onPress={requestAccount} activeOpacity={1}>
             <Text style={style.newUser}>
               New to Conexus? Request an account now!
             </Text>

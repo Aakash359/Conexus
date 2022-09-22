@@ -41,8 +41,6 @@ export const ComparisonList = (props: ComparisonListProps) => {
     const hasLink = !!cell.details;
     setModalVisible(true);
     if (hasLink) {
-      Alert.alert('Hi');
-
       // Actions[ScreenType.CONTENT_LIGHTBOX]
       // ({
       //   title: cell.headerTitle,
@@ -63,6 +61,7 @@ export const ComparisonList = (props: ComparisonListProps) => {
     if (hasLink) {
       return (
         <TouchableHighlight
+          // activeOpacity={1}
           underlayColor="rgba(255,255,255,.87)"
           onPress={handleCellClick.bind(cell)}
         >

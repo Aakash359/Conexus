@@ -443,6 +443,7 @@ const ConversationContainer = (
         ]}
       >
         <TouchableHighlight
+          activeOpacity={0.8}
           onPress={() => playAudioMessage(message)}
           style={[
             style.audioMessageWrapper,
@@ -739,6 +740,7 @@ const ConversationContainer = (
             />
           </View>
           <TouchableOpacity
+            activeOpacity={0.8}
             style={StyleSheet.flatten([
               footerStyle.sendButton,
               !sendEnabled && footerStyle.sendButtonDisabled,

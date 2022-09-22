@@ -1,10 +1,14 @@
 import React, {useState, useEffect} from 'react';
-import {Button} from 'react-native-elements';
-import {StyleSheet, Platform} from 'react-native';
+import {
+  StyleSheet,
+  Platform,
+  Text,
+  Alert,
+  TouchableOpacity,
+} from 'react-native';
 import theme from '../theme';
 import variables from '../theme';
 import {AppFonts, AppColors} from '../theme';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 
 interface buttonProps {
   title: string;
@@ -30,7 +34,6 @@ interface buttonProps {
 // const textStyleDisabled = props.textStyleDisabled|| variables.gray
 export const ActionButton = (props: buttonProps) => {
   const {
-    onPress,
     title,
     loadingColor,
     customStyle,
@@ -39,10 +42,11 @@ export const ActionButton = (props: buttonProps) => {
     loading,
     disabled,
     customTitleStyle,
+    onPress,
   } = props;
   return (
-    <Button
-      activeOpacity={0}
+    <TouchableOpacity
+      activeOpacity={0.8}
       onPress={onPress}
       textColor={textColor}
       loading={loading}
@@ -51,21 +55,38 @@ export const ActionButton = (props: buttonProps) => {
         size: 'small',
         color: loadingColor,
       }}
-      titleStyle={[styles.primaryButtonText, {...customTitleStyle}]}
-      buttonStyle={[
-        styles.btnStyle,
-        {borderColor: borderColor},
-        {...customStyle},
-      ]}
-      title={title}
-      // style={[styles.primaryButton, !!danger && styles.dangerButton, style]}
-    />
+      style={[styles.btnStyle, {borderColor: borderColor}, {...customStyle}]}
+    >
+      <Text style={[styles.primaryButtonText, {...customTitleStyle}]}>
+        {title}
+      </Text>
+    </TouchableOpacity>
+
+    // <Button
+    //   activeOpacity={0}
+    //   onPress={onPress}
+    //   textColor={textColor}
+    //   loading={loading}
+    //   disabled={disabled || loading}
+    //   loadingProps={{
+    //     size: 'small',
+    //     color: loadingColor,
+    //   }}
+    //   titleStyle={[styles.primaryButtonText, {...customTitleStyle}]}
+    //   buttonStyle={[
+    //     styles.btnStyle,
+    //     {borderColor: borderColor},
+    //     {...customStyle},
+    //   ]}
+    //   title={title}
+    // />
   );
 };
 
 const styles = StyleSheet.create({
   btnStyle: {
     backgroundColor: AppColors.blue,
+    justifyContent: 'center',
     height: 45,
     borderRadius: 28,
   },
@@ -80,7 +101,6 @@ const styles = StyleSheet.create({
     width: '100%',
     fontSize: 18,
     textAlign: 'center',
-    top: Platform.OS === 'android' ? -1 : 0,
   },
 
   secondaryButton: {

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
   Text,
+  Image,
   RefreshControl,
   ActivityIndicator,
 } from 'react-native';
@@ -94,6 +95,7 @@ const MessageCenter = (
       const listItemKey = `${conversation.conversationId}`;
       result.push(
         <TouchableOpacity
+          activeOpacity={0.8}
           key={listItemKey}
           style={itemStyles.listItem}
           onPress={() =>
@@ -103,11 +105,17 @@ const MessageCenter = (
           }
         >
           <View style={itemStyles.itemSection}>
-            <Avatar
-              size={48}
-              source={conversation.hcpPhotoUrl}
-              style={{alignSelf: 'center', top: 5}}
-            />
+            {conversation.hcpPhotoUrl ? (
+              <Image
+                source={{uri: conversation.hcpPhotoUrl}}
+                style={itemStyles.circleStyle}
+              />
+            ) : (
+              <Image
+                source={require('../../components/Images/bg.png')}
+                style={itemStyles.circleStyle}
+              />
+            )}
             <Text style={(AppFonts.listItemTitleTouchable, itemStyles.title)}>
               {conversation.display.title}
             </Text>
@@ -198,6 +206,14 @@ const itemStyles = StyleSheet.create({
     marginLeft: 5,
     flexDirection: 'row',
     marginBottom: 4,
+  },
+  circleStyle: {
+    width: 50,
+    height: 50,
+    borderRadius: 50 / 2,
+    borderWidth: 2,
+    top: 3.8,
+    borderColor: AppColors.imageColor,
   },
   title: {
     textAlignVertical: 'center',

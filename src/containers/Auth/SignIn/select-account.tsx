@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, View, Text, Image} from 'react-native';
 import NavigationService from '../../../navigation/NavigationService';
 import variables from '../../../theme';
@@ -7,8 +7,7 @@ import {windowDimensions} from '../../../common';
 import {ScreenType, StoreType} from '../../../common/constants';
 import {ConexusIcon} from '../../../components/conexus-icon';
 import {AppColors, AppFonts} from '../../../theme';
-import {Alert, TouchableOpacity} from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import {TouchableOpacity} from 'react-native';
 
 const SafeAreaView = require('react-native').SafeAreaView;
 interface SelectAccountProps {
@@ -17,38 +16,25 @@ interface SelectAccountProps {
 interface SelectAccountState {
   accountType: string;
 }
-const SelectAccount = () => {
-  // export class SelectAccount extends React.Component<
-  //   SelectAccountProps,
-  //   SelectAccountState
-  // > {
+const SelectAccount = (
+  props: SelectAccountProps,
+  state: SelectAccountState,
+) => {
+  const [accountType, setAccountType] = useState(-1);
 
-  // constructor(props: SelectAccountProps, context?: any) {
-  //   super(props, context);
-  //   this.state = {
-  //     accountType: '-1',
-  //   };
-  // }
-  // setDefaultState() {
-  //   this.setState({
-  //     accountType: '-1',
-  //   });
-  // }
   // handleChange(value: string) {
   //   this.setState({
   //     accountType: value,
   //   });
   // }
-  // componentWillMount() {
-  //   this.setDefaultState();
-  // }
+  useEffect(() => {
+    setAccountType(-1);
+  });
   const requestFacilityAccount = () => {
-    // Actions[ScreenType.REQUEST_ACCOUNT]({userType: '1'});
     NavigationService.navigate('RequestAccount', {userType: '1'});
   };
   const requestCandidateAccount = () => {
     NavigationService.navigate('RequestAccount', {userType: '0'});
-    // Actions[ScreenType.REQUEST_ACCOUNT]({userType: '0'});
   };
 
   return (
@@ -62,12 +48,18 @@ const SelectAccount = () => {
           <View style={style.picker}>
             <Text style={style.iam}>I am a...</Text>
           </View>
-          <TouchableOpacity onPress={requestFacilityAccount}>
+          <TouchableOpacity
+            onPress={requestFacilityAccount}
+            activeOpacity={0.8}
+          >
             <View style={style.btnContainer}>
               <Text style={style.facility}>FACILITY</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={requestCandidateAccount}>
+          <TouchableOpacity
+            onPress={requestCandidateAccount}
+            activeOpacity={0.8}
+          >
             <View
               style={[style.btnContainer, {backgroundColor: AppColors.blue}]}
             >

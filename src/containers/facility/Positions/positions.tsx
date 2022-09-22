@@ -343,11 +343,13 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: AppColors.white,
     height: 45,
+    paddingHorizontal: 100,
     borderRadius: 0,
     borderColor: AppColors.gray,
     borderWidth: 0.5,
   },
   editVirtualBtnTxt: {
+    marginTop: 10,
     justifyContent: 'center',
     alignSelf: 'center',
     fontSize: 20,

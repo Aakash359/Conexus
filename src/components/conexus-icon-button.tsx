@@ -40,6 +40,7 @@ export const ConexusIconButton = (props: ConexusIconButtonProps) => {
   const Style = style || {};
   return (
     <TouchableOpacity
+      activeOpacity={0.8}
       onPress={onPress}
       disabled={disabled}
       style={[defaultStyle.button, Style]}

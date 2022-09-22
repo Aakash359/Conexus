@@ -87,7 +87,7 @@ const Profile: React.FC<ProfileState> = () => {
           loading={loading}
           title="LOGOUT"
           customStyle={style.btnEnable}
-          onPress={onPressLogout}
+          onPress={() => onPressLogout()}
         />
       </View>
     </SafeAreaView>
@@ -122,6 +122,7 @@ const style = StyleSheet.create({
   },
   editEnable: {
     alignSelf: 'center',
+    justifyContent: 'center',
     backgroundColor: AppColors.white,
     height: 40,
     width: windowDimensions.width * 0.4,
@@ -130,6 +131,7 @@ const style = StyleSheet.create({
   },
   btnEnable: {
     alignSelf: 'center',
+    justifyContent: 'center',
     width: windowDimensions.width * 0.5,
   },
   footer: {

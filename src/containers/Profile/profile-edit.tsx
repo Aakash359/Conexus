@@ -11,22 +11,15 @@ import {
   Image,
   Keyboard,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import ImagePicker from 'react-native-image-crop-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {uploadPhoto, updateProfile} from '../../services/authService';
 import variables, {AppColors} from '../../theme';
-import {OrderedMap} from 'immutable';
 import {showApiErrorAlert, creatInputChangeHandler} from '../../common';
-import {UserStore} from '../../stores';
 import {windowDimensions} from '../../common';
-import {useSelector} from '../../redux/reducers/index';
-import {logger} from 'react-native-logs';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {ActionButton} from '../../components/action-button';
 import {Field} from '../../components/field';
-import {Avatar} from '../../components/avatar';
 import NavigationService from '../../navigation/NavigationService';
 
 interface EditProfileProps {
@@ -211,7 +204,10 @@ const EditProfile = (props: EditProfileProps) => {
                 />
               </View>
 
-              <TouchableOpacity onPress={() => setCameraModal(true)}>
+              <TouchableOpacity
+                onPress={() => setCameraModal(true)}
+                activeOpacity={1}
+              >
                 <Text style={style.changePhotoButton}>
                   CHOOSE PROFILE PHOTO
                 </Text>
@@ -319,6 +315,7 @@ const EditProfile = (props: EditProfileProps) => {
               <TouchableOpacity
                 style={style.buttonContainer}
                 onPress={openCamera}
+                activeOpacity={0.8}
               >
                 <Icon
                   name="md-camera-outline"
@@ -330,6 +327,7 @@ const EditProfile = (props: EditProfileProps) => {
               <TouchableOpacity
                 style={style.buttonContainer}
                 onPress={openGallery}
+                activeOpacity={0.8}
               >
                 <Icon name="image-outline" size={30} color={AppColors.blue} />
                 <Text style={style.buttonText}>Select from Gallery</Text>

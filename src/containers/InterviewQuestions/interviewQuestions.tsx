@@ -148,6 +148,7 @@ const InterviewQuestions = (
         key={`${section.sectionId}-${index}`}
         style={styles.listItem}
         onPress={() => showSection(section)}
+        activeOpacity={0.8}
       >
         <View style={styles.listWrapperView}>
           <View style={StyleSheet.flatten([styles.itemSection, styles.body])}>

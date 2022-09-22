@@ -9,81 +9,79 @@ import {
 } from 'react-native';
 import variables, {AppColors} from '../../../theme';
 import {ScreenType} from '../../../common/constants';
-import {CandidateModel} from '../../../services/facility/candidate-model';
-import {PositionModel} from '../../../services/facility/position-model';
 import {ComparisonList} from '../../../components/comparison-list';
 import {AppFonts, AppSizes} from '../../../theme';
 import {Avatar} from '../../../components/avatar';
 import NavigationService from '../../../navigation/NavigationService';
 
-export interface CandidateHeaderItemProps {
-  candidate: typeof CandidateModel.Type;
-  index: number;
-  count: number;
-  minHeight?: number;
-  sizeChanged: (size: number) => void;
-}
+// export interface CandidateHeaderItemProps {
+//   candidate: any;
+//   index: number;
+//   count: number;
+//   minHeight?: number;
+//   sizeChanged: (size: number) => void;
+// }
 
-export interface CandidateHeaderItemState {
-  height: number;
-}
+// export interface CandidateHeaderItemState {
+//   height: number;
+// }
 
-export const CandidateHeaderItem = (
-  props: CandidateHeaderItemProps,
-  state: CandidateHeaderItemState,
-) => {
-  const [height, setHeight] = useState(0);
-  const {candidate, index, count, minHeight, sizeChanged} = props;
+// export const CandidateHeaderItem = (
+//   props: CandidateHeaderItemProps,
+//   state: CandidateHeaderItemState,
+// ) => {
+//   const [height, setHeight] = useState(0);
+//   const {candidate, index, count, minHeight, sizeChanged} = props;
 
-  const lastCell = index + 1 === count;
-  return (
-    <TouchableHighlight
-      key={`candidate-${candidate.submissionId}-${index}`}
-      onPress={() =>
-        Actions[ScreenType.FACILITIES.HCP_DETAIL]({
-          submissionId: candidate.submissionId,
-          candidate,
-        })
-      }
-    >
-      <View
-        onLayout={event => {
-          setHeight(event.nativeEvent.layout.height);
-          sizeChanged(event.nativeEvent.layout.height);
-        }}
-        style={StyleSheet.flatten([
-          styles.candidateCell,
-          lastCell && {borderRightWidth: 0},
-          minHeight && {height: minHeight},
-        ])}
-      >
-        <Avatar
-          size={86}
-          source={candidate.photoUrl}
-          title={candidate.photoLabel}
-          titleStyle={{backgroundColor: '#C7D8E0'}}
-        />
-        {candidate.display.title && (
-          <Text style={styles.candidateName}>{candidate.display.title}</Text>
-        )}
-        <Text
-          style={{
-            position: 'absolute',
-            left: 0,
-            bottom: 0,
-            zIndex: 2,
-            fontSize: 8,
-          }}
-        >
-          {height}
-        </Text>
-      </View>
-    </TouchableHighlight>
-  );
-};
+//   const lastCell = index + 1 === count;
+//   return (
+//     <TouchableHighlight
+//       key={`candidate-${candidate.submissionId}-${index}`}
+//       // onPress={() =>
+//       //   Actions[ScreenType.FACILITIES.HCP_DETAIL]({
+//       //     submissionId: candidate.submissionId,
+//       //     candidate,
+//       //   })
+//       // }
+//     >
+//       <View
+//         onLayout={event => {
+//           setHeight(event.nativeEvent.layout.height);
+//           sizeChanged(event.nativeEvent.layout.height);
+//         }}
+//         style={StyleSheet.flatten([
+//           styles.candidateCell,
+//           lastCell && {borderRightWidth: 0},
+//           minHeight && {height: minHeight},
+//         ])}
+//       >
+//         <Avatar
+//           size={86}
+//           source={candidate.photoUrl}
+//           title={candidate.photoLabel}
+//           titleStyle={{backgroundColor: '#C7D8E0'}}
+//         />
+//         {candidate.display.title && (
+//           <Text style={styles.candidateName}>{candidate.display.title}</Text>
+//         )}
+//         <Text
+//           style={{
+//             position: 'absolute',
+//             left: 0,
+//             bottom: 0,
+//             zIndex: 2,
+//             fontSize: 8,
+//           }}
+//         >
+//           {height}
+//         </Text>
+//       </View>
+//     </TouchableHighlight>
+//   );
+// };
 
 interface CandidateComparisonListProps {
-  position: typeof PositionModel.Type;
+  position: any;
   updateViewed: (s: string) => any;
 }
 
@@ -106,7 +104,6 @@ export const CandidateComparisonList = (
   //   setShowAll(true);
   // };
   const {position} = props;
-  console.log('Positions=====>', position);
 
   const getCellWidth = (cellCount: number): number => {
     if (cellCount === 1) {
@@ -120,7 +117,6 @@ export const CandidateComparisonList = (
     if (cellCount === 3) {
       return AppSizes.screen.width / 3;
     }
-
     return (AppSizes.screen.width * 0.94) / 3; // First 3 items should take up all but 6% of screen width
   };
 
@@ -145,12 +141,17 @@ export const CandidateComparisonList = (
           },
         ])}
       >
-        {
+        {candidate.photoUrl ? (
           <Image
             source={{uri: candidate.photoUrl}}
             style={styles.circleStyle}
           />
-        }
+        ) : (
+          <Image
+            source={require('../../../components/Images/bg.png')}
+            style={styles.circleStyle}
+          />
+        )}
         {!!candidate.display.title && (
           <Text
             style={styles.candidateName}
@@ -168,6 +169,7 @@ export const CandidateComparisonList = (
     return (
       <View key={`candidate-${candidate.submissionId}-${index}`}>
         <TouchableHighlight
+          activeOpacity={1}
           onPress={() =>
             NavigationService.navigate('HcpDetailView', {
               submissionId: candidate.submissionId,

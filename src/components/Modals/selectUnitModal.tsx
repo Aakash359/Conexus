@@ -126,6 +126,7 @@ export const SelectUnitModal = (
 
     return (
       <TouchableOpacity
+        activeOpacity={1}
         key={`${i.unitName}${index}`}
         style={styles.listItem}
         onPress={() => selectValue(i.unitName, i.unitId)}
@@ -157,7 +158,10 @@ export const SelectUnitModal = (
 
   return (
     <>
-      <TouchableOpacity onPress={() => setModalVisible(true)}>
+      <TouchableOpacity
+        onPress={() => setModalVisible(true)}
+        activeOpacity={0.8}
+      >
         <View style={styles.chooserField}>
           {unitValue && (
             <Text style={styles.chooserFieldText}>{unitValue}</Text>

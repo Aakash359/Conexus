@@ -1,19 +1,10 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  Alert,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
 import {
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
-import Icon from 'react-native-vector-icons/Ionicons';
-import {ConexusIcon, Avatar} from '../components/conexus-icon';
-import {AppFonts, AppColors} from '.././theme';
+import {AppColors} from '.././theme';
 import Icons from 'react-native-vector-icons/Feather';
 import NavigationService from '../navigation/NavigationService';
 import {useSelector} from '../redux/reducers/index';
@@ -47,7 +38,11 @@ const CustomDrawer = props => {
         </View>
       </DrawerContentScrollView>
       <View style={styles.footerContainer}>
-        <TouchableOpacity onPress={openChouaeLea} style={{paddingVertical: 15}}>
+        <TouchableOpacity
+          onPress={openChouaeLea}
+          style={{paddingVertical: 15}}
+          activeOpacity={0.8}
+        >
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Image
               style={styles.image}
@@ -83,7 +78,11 @@ const CustomDrawer = props => {
           </View>
         </TouchableOpacity>
         <View style={[styles.footerContainer]} />
-        <TouchableOpacity onPress={openFeedback} style={{paddingVertical: 20}}>
+        <TouchableOpacity
+          onPress={openFeedback}
+          style={{paddingVertical: 20}}
+          activeOpacity={0.8}
+        >
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={styles.circle}>
               <Icons
@@ -101,7 +100,11 @@ const CustomDrawer = props => {
           </View>
         </TouchableOpacity>
         <View style={[styles.footerContainer, {padding: 10}]} />
-        <TouchableOpacity onPress={openProfile} style={{paddingVertical: 15}}>
+        <TouchableOpacity
+          onPress={openProfile}
+          style={{paddingVertical: 15}}
+          activeOpacity={0.8}
+        >
           <View
             style={{flexDirection: 'row', alignItems: 'center', bottom: 10}}
           >
