@@ -9,7 +9,7 @@ export const colors = {
   mediumGray:'#757575',
   lightBlue: '#D9DEEB',
   darkBlue: '#556F7B',
-  blue: '#5795E6',
+  blue: '#18a2e2',
   green: '#36D8A3',
   imageColor: '#40c4ff',
   red: '#ED3C3C'

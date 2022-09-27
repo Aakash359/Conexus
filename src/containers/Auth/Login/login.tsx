@@ -92,10 +92,7 @@ const LoginScreen = () => {
         setLoading(true);
         setTimeout(() => {
           setLoading(false);
-
           dispatch(loginRequest(data));
-          // saveToken();
-          // getToken();
         }, 1000);
       } catch (error) {
         setLoading(false);

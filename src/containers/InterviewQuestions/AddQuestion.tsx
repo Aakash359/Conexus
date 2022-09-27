@@ -41,12 +41,12 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
   const [loading, setLoading] = useState(false);
   const [messageText, setMessageText] = useState('');
   const [messageTextError, setMessageTextError] = useState(false);
-  const [unitValue, setUnitValue] = useState('');
+  const [unitValue, setUnitValue] = useState(props?.route?.params?.unitName);
   const [flagValue, setFlagValue] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const propsData = props?.route?.params || {};
-  console.log('pr===>', propsData);
   const {facilityId} = propsData;
+
   const messageTextBlur = () => {
     if (messageText && messageText.length) {
       setMessageTextError(false);
@@ -54,72 +54,6 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
       setMessageTextError(true);
     }
   };
-
-  // const unitType = (): typeof FacilityUnitModel.Type => {
-  //   const unitId = this._question.unitId;
-
-  //   let result = this.unitTypes.find(unitType => {
-  //     return unitType.unitId === unitId;
-  //   });
-
-  //   if (!result) {
-  //     result = this.unitTypes.find(unitType => {
-  //       return unitType.unitName === unitId;
-  //     });
-  //   }
-
-  //   return result;
-  // };
-
-  useEffect(() => {});
-
-  // onDefaultQuestionChanged(defaultFlag: boolean) {
-  //   const existingValue = this._question.defaultFlag;
-  //   this._question.setDefaultFlag(defaultFlag);
-
-  //   const onCancel = () => {
-  //     this._question.setDefaultFlag(existingValue);
-  //   };
-
-  //   if (!this._question.isNewQuestion) {
-  //     this.saveQuestion(onCancel).then(() => this.forceUpdate.bind(this));
-  //   }
-  // }
-
-  // saveQuestion(onCancel?: () => any, isNew: boolean = false) {
-  //   const {needId} = this.props;
-
-  //   return this._question.save().then(
-  //     saveResult => {
-  //       return this.props.facilityQuestionsStore.load(needId).then(() => {
-  //         log.info('New question Id', saveResult['id']);
-  //         this._question = QuestionModel.create(saveResult);
-
-  //         log.info('Before pop');
-  //         if (isNew) {
-  //           // Close the recording window
-  //           // Actions.pop()
-  //         }
-  //         log.info('After pop');
-  //         this.onSave();
-  //         log.info('After onSave');
-  //         this.forceUpdate();
-  //       });
-  //     },
-  //     error => {
-  //       log.info('Save Question Error', error);
-
-  //       showYesNoAlert({
-  //         onNo: onCancel,
-  //         onYes: this.saveQuestion.bind(this, onCancel, isNew),
-  //         yesTitle: 'Retry',
-  //         noTitle: 'Cancel',
-  //         title: 'Save Error',
-  //         message: 'An error occurred while saving.',
-  //       });
-  //     },
-  //   );
-  // }
 
   const validate = () => {
     if (!(propsData?.questionText || '').trim() && !messageText.trim()) {

@@ -285,12 +285,13 @@ const InterviewQuestionDetail = (
 
   const renderUnitHeader = () => {
     let questionCount =
-      sections === undefined || {}
-        ? ''
+      sections === undefined
+        ? needQuestionList.length
         : sections.defaultQuestions.length + sections.questions.length;
     const description = `${questionCount} question${
       questionCount === 0 || questionCount > 1 ? 's' : ''
     }`;
+
     const actionText = editing ? 'FINISH' : 'EDIT';
     return (
       <ViewHeader
@@ -298,7 +299,7 @@ const InterviewQuestionDetail = (
         title={
           sectionTitleOverride || props?.route?.params?.sections?.sectionTitle
         }
-        description={needId ? needQuestionList.length : description}
+        description={description}
         titleStyle={{color: AppColors.white}}
         descriptionStyle={{color: AppColors.white}}
         style={{backgroundColor: AppColors.blue, borderBottomWidth: 0}}
@@ -442,25 +443,6 @@ const InterviewQuestionDetail = (
     setSilentRefreshing(silent);
     loadNeedQuestions();
   };
-
-  // const onChangeOrder = (rowMap: RowMap, newOrder: string[]) => {
-  //   const newOrders: Array<string> = ([] = newOrder);
-  // };
-
-  // const onReleaseRow = (rowMap: RowMap, rowKey) => {
-  //   log.info('Row Released');
-
-  //   const currentIndex = parseInt(rowKey);
-  //   const newIndex = newOrder.findIndex(v => v === rowKey);
-
-  //   this.setState({saving: true});
-
-  //   this.showDefault
-  //     ? this.section.moveDefaultQuestion(currentIndex, newIndex)
-  //     : this.section.moveQuestion(currentIndex, newIndex);
-
-  //   this.setState({saving: false});
-  // };
 
   const renderSortableList = (route: any) => {
     const rowMap: RowMap = {};

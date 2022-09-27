@@ -99,8 +99,6 @@ const ReviewCandidateContainer = (
       setLoading(true);
       try {
         const {data} = await facilitySubmissionsService();
-        console.log('Aakash===>', data);
-
         if (data && data.length > 0) {
           let position = data.map((item: {positions: any}) => item.positions);
           let facilityId = data.map(

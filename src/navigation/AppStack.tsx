@@ -20,7 +20,6 @@ import HcpDetailView from '../containers/Facility/HcpDetail/HcpDetailView';
 import ImageGalleries from '../containers/Facility/HcpDetail/imageGallery';
 import ConversationContainer from '../containers/MessageCenter/conversation';
 import VideoRecorder from '../containers/VideoRecorder/videoRecoder';
-import {DrawerActions} from '@react-navigation/native';
 import VideoPlayer from '../containers/VideoPlayer/videoPlayer';
 import VideoCalling from '../containers/VideoCalling/calling';
 import {useSelector} from '../redux/reducers/index';
@@ -90,13 +89,9 @@ const AppStack = () => {
           name="AddQuestion"
           component={AddQuestion}
           options={({route}) => ({
-            title:
-              route?.params?.sections?.defaultQuestions.length ||
-              route?.params?.sections?.questions.length ||
-              (route?.params?.sections?.defaultQuestions.length &&
-                route?.params?.sections?.questions.length)
-                ? route?.params?.title
-                : ' Add Questions',
+            title: route?.params?.title
+              ? route?.params?.title
+              : ' Add Questions',
           })}
         />
         <Stack.Screen

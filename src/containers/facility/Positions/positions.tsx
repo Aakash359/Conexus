@@ -78,22 +78,6 @@ const Positions = (props: PositionsProps, state: PositionState) => {
     load(false);
   }, []);
 
-  const showNeedQuestions = (item: any) => {
-    NavigationService.navigate('InterviewQuestionDetail', {
-      props: props,
-      needId: item.needId,
-      sectionTitleOverride: item.display.title,
-    });
-  };
-
-  const toggleExpandedNeedId = (needId: string = '') => {
-    if (expandedNeedId === needId) {
-      setExpandedNeedId('');
-    } else {
-      setExpandedNeedId(needId);
-    }
-  };
-
   const load = async () => {
     setLoading(true);
     if (!needsStorePromise) {
@@ -117,6 +101,22 @@ const Positions = (props: PositionsProps, state: PositionState) => {
           );
         }
       }
+    }
+  };
+
+  const showNeedQuestions = (item: any) => {
+    NavigationService.navigate('InterviewQuestionDetail', {
+      props: props,
+      needId: item.needId,
+      sectionTitleOverride: item.display.title,
+    });
+  };
+
+  const toggleExpandedNeedId = (needId: string = '') => {
+    if (expandedNeedId === needId) {
+      setExpandedNeedId('');
+    } else {
+      setExpandedNeedId(needId);
     }
   };
 

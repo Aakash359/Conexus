@@ -75,6 +75,8 @@ const VideoRecorder = (
   ];
 
   const saveQuestionRecording = async (data: any) => {
+    console.log('Data--->', data);
+
     if (propsData?.needId) {
       const payload = {
         needId: needId,
