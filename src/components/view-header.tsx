@@ -92,7 +92,6 @@ const styles = StyleSheet.create({
   },
   compareText: {
     fontSize: 14,
-    bottom: 2,
     justifyContent: 'center',
     alignSelf: 'center',
     color: AppColors.blue,

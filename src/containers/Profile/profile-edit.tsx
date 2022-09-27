@@ -10,9 +10,10 @@ import {
   Modal,
   Image,
   Keyboard,
+  PermissionsAndroid,
 } from 'react-native';
 import Toast from 'react-native-toast-message';
-import ImagePicker from 'react-native-image-crop-picker';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {uploadPhoto, updateProfile} from '../../services/authService';
 import variables, {AppColors} from '../../theme';
@@ -34,105 +35,178 @@ interface EditProfileProps {
 }
 
 const SafeAreaView = require('react-native').SafeAreaView;
-export const EDIT_PROFILE_COMPONENT_NAME = 'EditProfileComponent';
 
 const EditProfile = (props: EditProfileProps) => {
   const userInfo = props.route.params;
   const [loading, setLoading] = useState(false);
+  const [imageUrl, setImageUrl] = useState(userInfo?.user?.photoUrl || '');
   const [errors, setErrors] = useState('');
   const [cameraModal, setCameraModal] = useState(false);
   const [inputs, setInputs] = useState({
-    imageUrl: userInfo?.user?.photoUrl || '',
     firstName: userInfo.user?.firstName || '',
     lastName: userInfo?.user?.lastName || '',
     title: userInfo?.user?.title || '',
     phoneNumber: userInfo?.user?.phoneNumber || '',
   });
 
-  // const openGallery = async () => {
-  //   ImagePicker.openPicker({
-  //     width: 300,
-  //     height: 400,
-  //     cropping: true,
-  //     includeBase64: true,
-  //     freeStyleCropEnabled: true,
-  //     mediaType: 'photo',
-  //     compressImageQuality: 0.8,
-  //     cropperToolbarWidgetColor: '#FFFFFF',
-  //     cropperToolbarColor: '#D3D3D3',
-  //   })
-  //     .then(async (image: any, mimeType: string = 'image/jpg') => {
-  //       let ext = mimeType.split('/')[1] || 'jpg';
-  //       if (ext === 'jpeg') {
-  //         ext = 'jpg';
-  //       }
-  //       const payload = {
-  //         base64Image: image.data,
-  //         fileExt: ext,
-  //       };
-  //       const data = await uploadPhoto(payload);
-  //       console.log('PhotoMil Gyi', data);
+  const requestCameraPermission = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          {
+            title: 'Camera Permission',
+            message: 'App needs camera permission',
+          },
+        );
+        // If CAMERA Permission is granted
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } catch (err) {
+        console.warn(err);
+        return false;
+      }
+    } else return true;
+  };
 
-  //       let imageUrl = `data:${image.mime};base64,${image.data}`;
-  //       setImageUrl(imageUrl);
-  //       console.log('received base64 image', data, imageUrl);
-  //       setCameraModal(false);
-  //     })
-  //     .catch(error => {
-  //       console.log('Error====>', error);
-  //       showApiErrorAlert({
-  //         defaultTitle: error?.response?.data?.statusText,
-  //         defaultDescription:
-  //           'An unexpected error occurred while saving your profile photo. Please try again.',
-  //         error: error,
-  //         loggerTitle: EDIT_PROFILE_COMPONENT_NAME,
-  //         loggerName: 'selectImage',
-  //       });
-  //       setCameraModal(false);
-  //     });
-  // };
+  const requestExternalWritePermission = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: 'External Storage Write Permission',
+            message: 'App needs write permission',
+          },
+        );
+        // If WRITE_EXTERNAL_STORAGE Permission is granted
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } catch (err) {
+        console.warn(err);
+        alert('Write permission err', err);
+      }
+      return false;
+    } else return true;
+  };
 
-  // const openCamera = async () => {
-  //   // let token = userInfo.user?.authToken;
-  //   ImagePicker.openCamera({
-  //     width: 300,
-  //     height: 400,
-  //     cropping: true,
-  //     includeBase64: true,
-  //     freeStyleCropEnabled: true,
-  //     mediaType: 'photo',
-  //     compressImageQuality: 0.8,
-  //     cropperToolbarWidgetColor: '#FFFFFF',
-  //     cropperToolbarColor: '#D3D3D3',
-  //   })
-  //     .then(async (image: any, mimeType: string = 'image/jpg') => {
-  //       let ext = mimeType.split('/')[1] || 'jpg';
-  //       if (ext === 'jpeg') {
-  //         ext = 'jpg';
-  //       }
-  //       const payload = {
-  //         base64Image: image.data,
-  //         fileExt: ext,
-  //         token: userInfo.user?.authToken,
-  //       };
-  //       const data = await uploadPhoto(payload);
-  //       let imageUrl = `data:${image.mime};base64,${image.data}`;
-  //       setImageUrl(imageUrl);
-  //       console.log('received base64 image', data, imageUrl);
-  //       setCameraModal(false);
-  //     })
-  //     .catch(error => {
-  //       console.log('Error', error);
-  //       showApiErrorAlert({
-  //         defaultTitle: error?.response?.data?.statusText,
-  //         defaultDescription:
-  //           'An unexpected error occurred while saving your profile photo. Please try again.',
-  //         error: error,
-  //         loggerTitle: EDIT_PROFILE_COMPONENT_NAME,
-  //         loggerName: 'selectImage',
-  //       });
-  //     });
-  // };
+  const openGallery = async (type: string) => {
+    let options = {
+      mediaType: type,
+      maxWidth: 300,
+      maxHeight: 550,
+      quality: 1,
+      includeBase64: true,
+    };
+    setLoading(true);
+    let response = await launchImageLibrary(options);
+    let ext = response?.assets?.[0]?.type.split('/')[1] || 'jpg';
+    const payload = {
+      base64Image: response?.assets?.[0]?.base64,
+      fileExt: ext,
+      // token: userInfo.user?.authToken,
+    };
+    console.log('extension = ', ext);
+    if (response.didCancel) {
+      Alert.alert('User cancelled camera picker');
+      setLoading(false);
+      setCameraModal(false);
+      return;
+    } else if (response.errorCode == 'camera_unavailable') {
+      Alert.alert('Camera not available on device');
+      setCameraModal(false);
+      setLoading(false);
+      return;
+    } else if (response.errorCode == 'permission') {
+      Alert.alert('Permission not satisfied');
+      setCameraModal(false);
+      setLoading(false);
+      return;
+    } else if (response.errorCode == 'others') {
+      Alert.alert(response.errorMessage);
+      setCameraModal(false);
+      setLoading(false);
+      return;
+    }
+    try {
+      const data = await uploadPhoto(payload);
+      setImageUrl(response?.assets?.[0]?.uri);
+      setCameraModal(false);
+      setLoading(false);
+    } catch (error) {
+      console.log('Error', error);
+      setCameraModal(false);
+      setLoading(false);
+      showApiErrorAlert({
+        defaultTitle: error?.response?.data?.statusText,
+        defaultDescription:
+          'An unexpected error occurred while saving your profile photo. Please try again.',
+        error: error,
+        loggerTitle: EDIT_PROFILE_COMPONENT_NAME,
+        loggerName: 'selectImage',
+      });
+    }
+  };
+
+  const openCamera = async type => {
+    let options = {
+      mediaType: type,
+      maxWidth: 300,
+      maxHeight: 550,
+      quality: 1,
+      videoQuality: 'low',
+      durationLimit: 30, //Video max duration in seconds
+      saveToPhotos: true,
+    };
+    let isCameraPermitted = await requestCameraPermission();
+    let isStoragePermitted = await requestExternalWritePermission();
+    if (isCameraPermitted && isStoragePermitted) {
+      let response = await launchCamera(options);
+      let ext = response?.assets?.[0]?.type.split('/')[1] || 'jpg';
+      const payload = {
+        base64Image: response?.assets?.[0]?.base64,
+        fileExt: ext,
+      };
+      console.log('extension = ', ext);
+      if (response.didCancel) {
+        Alert.alert('User cancelled camera picker');
+        setLoading(false);
+        setCameraModal(false);
+        return;
+      } else if (response.errorCode == 'camera_unavailable') {
+        Alert.alert('Camera not available on device');
+        setCameraModal(false);
+        setLoading(false);
+        return;
+      } else if (response.errorCode == 'permission') {
+        Alert.alert('Permission not satisfied');
+        setCameraModal(false);
+        setLoading(false);
+        return;
+      } else if (response.errorCode == 'others') {
+        Alert.alert(response.errorMessage);
+        setCameraModal(false);
+        setLoading(false);
+        return;
+      }
+      try {
+        const data = await uploadPhoto(payload);
+        setImageUrl(response?.assets?.[0]?.uri);
+        setCameraModal(false);
+        setLoading(false);
+      } catch (error) {
+        console.log('Error', error);
+        setCameraModal(false);
+        setLoading(false);
+        showApiErrorAlert({
+          defaultTitle: error?.response?.data?.statusText,
+          defaultDescription:
+            'An unexpected error occurred while saving your profile photo. Please try again.',
+          error: error,
+          loggerTitle: EDIT_PROFILE_COMPONENT_NAME,
+          loggerName: 'selectImage',
+        });
+      }
+    }
+  };
 
   const handleOnchange = (text: any, input: any) => {
     setInputs((prevState: any) => ({...prevState, [input]: text}));
@@ -173,7 +247,6 @@ const EditProfile = (props: EditProfileProps) => {
       title: inputs.title,
       phoneNumber: inputs.phoneNumber,
     };
-    console.log('Updated Profile===>', payload);
     try {
       setLoading(true);
       const {data} = await updateProfile(payload);
@@ -195,14 +268,23 @@ const EditProfile = (props: EditProfileProps) => {
         <KeyboardAvoidingView behavior="position" style={style.rootContainer}>
           <View style={style.detailsContainer}>
             <View style={style.avatarContainer}>
-              <View style={style.profileCircle}>
-                <Image
-                  style={style.image}
-                  source={{
-                    uri: inputs.imageUrl,
-                  }}
-                />
-              </View>
+              {imageUrl ? (
+                <View style={style.profileCircle}>
+                  <Image
+                    style={style.image}
+                    source={{
+                      uri: imageUrl,
+                    }}
+                  />
+                </View>
+              ) : (
+                <View style={style.profileCircle}>
+                  <Image
+                    style={style.image}
+                    source={require('../../components/Images/bg.png')}
+                  />
+                </View>
+              )}
 
               <TouchableOpacity
                 onPress={() => setCameraModal(true)}
@@ -314,7 +396,7 @@ const EditProfile = (props: EditProfileProps) => {
               <Text style={style.buttonHeader}>Select profile photo</Text>
               <TouchableOpacity
                 style={style.buttonContainer}
-                // onPress={openCamera}
+                onPress={() => openCamera('photo')}
                 activeOpacity={0.8}
               >
                 <Icon
@@ -326,7 +408,7 @@ const EditProfile = (props: EditProfileProps) => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={style.buttonContainer}
-                // onPress={openGallery}
+                onPress={() => openGallery('photo')}
                 activeOpacity={0.8}
               >
                 <Icon name="image-outline" size={30} color={AppColors.blue} />

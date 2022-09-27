@@ -25,17 +25,16 @@ export interface IRegisterUser {
   isFacility: boolean
 }
 
+
+
 export const signUp = (data: IRegisterUser) => axios.post(`${defaultBaseUrl}/user/newRegister`, data);
 
-export const uploadPhoto = async (data: { base64Image: any; fileExt: string}) => 
-
-axios.post(`${defaultBaseUrl}/user/current/base64Photo`, data, {
+export const uploadPhoto = async (data: { base64Image: any; fileExt: string}) => axios.post(`${defaultBaseUrl}/user/current/base64Photo`, data, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${await AsyncStorage.getItem('userToken')}`
+      Authorization: `Bearer ${await AsyncStorage.getItem('authToken')}`
     },
-  },
-);
+});
 
 // export const updateProfile = (token: any) => 
 // axios.get(`${defaultBaseUrl}/user/current`, {

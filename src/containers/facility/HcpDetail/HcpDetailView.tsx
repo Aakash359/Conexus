@@ -564,7 +564,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
             source={{uri: candidate.photoUrl}}
             style={styles.circleStyle}
           />
-          <Text style={AppFonts.bodyTextXtraLarge}>
+          <Text style={[AppFonts.bodyTextXtraLarge, {marginTop: 15}]}>
             {candidate.display.title}
           </Text>
           {renderActionHeader()}

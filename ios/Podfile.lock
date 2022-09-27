@@ -334,6 +334,8 @@ PODS:
   - React-jsinspector (0.69.1)
   - React-logger (0.69.1):
     - glog
+  - react-native-image-picker (4.10.0):
+    - React-Core
   - react-native-keep-awake (4.0.0):
     - React
   - react-native-netinfo (9.3.0):
@@ -544,6 +546,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
+  - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-keep-awake (from `../node_modules/react-native-keep-awake`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-onesignal (from `../node_modules/react-native-onesignal`)
@@ -665,6 +668,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   React-logger:
     :path: "../node_modules/react-native/ReactCommon/logger"
+  react-native-image-picker:
+    :path: "../node_modules/react-native-image-picker"
   react-native-keep-awake:
     :path: "../node_modules/react-native-keep-awake"
   react-native-netinfo:
@@ -775,7 +780,7 @@ SPEC CHECKSUMS:
   RCTSystemSetting: 5107b7350d63b3f7b42a1277d07e4e5d9df879be
   RCTTypeSafety: a04dc1339af2e1da759ccd093bf11c310dce1ef6
   React: dbd201f781b180eab148aa961683943c72f67dcf
-  React-bridging: b22d91629276c1c7f95f6dfbd2beb998d5cccc6e
+  React-bridging: 234a3ee2837d0c481329696991b7719a4f4526e0
   React-callinvoker: 6ad32eee2630dab9023de5df2a6a8cacbfc99a67
   React-Codegen: fe3423fa6f37d05e233ab0e85e34fe0b443a5654
   React-Core: 6177b1f2dd794fe202a5042d3678b2ddfcbfb7d4
@@ -785,6 +790,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 758e70947c232828a66b5ddc42d02b4d010fa26e
   React-jsinspector: 55605caf04e02f9b0e05842b786f1c12dde08f4b
   React-logger: ca970551cb7eea2fd814d0d5f6fc1a471eb53b76
+  react-native-image-picker: 4bc9ed38c8be255b515d8c88babbaf74973f91a8
   react-native-keep-awake: afad8a51dfef9fe9655a6344771be32c8596d774
   react-native-netinfo: 129bd99f607a2dc5bb096168f3e5c150fd1f1c95
   react-native-onesignal: e1f82b98767a9014d2c46f395b083330cfa29cea
