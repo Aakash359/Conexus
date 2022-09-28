@@ -125,7 +125,7 @@ const Positions = (props: PositionsProps, state: PositionState) => {
       <View
         key={`need-metric-${title}-${description}`}
         style={{
-          paddingHorizontal: 6,
+          paddingHorizontal: 15,
           alignItems: 'center',
           justifyContent: 'center',
         }}
@@ -208,7 +208,13 @@ const Positions = (props: PositionsProps, state: PositionState) => {
           style={cardStyle}
         >
           <View style={StyleSheet.flatten([styles.itemSection, styles.body])}>
-            <View style={{flex: 1, alignSelf: 'stretch'}}>
+            <View
+              style={{
+                flex: 1,
+                alignSelf: 'stretch',
+                bottom: 2,
+              }}
+            >
               <Text
                 style={{
                   ...AppFonts.listItemTitleTouchable,
@@ -288,7 +294,7 @@ const Positions = (props: PositionsProps, state: PositionState) => {
             tintColor={AppColors.blue}
             colors={[AppColors.blue]}
             refreshing={refreshing}
-            onRefresh={() => load(false)}
+            onRefresh={() => load(true)}
           />
         }
         renderItem={renderNeedSection}
@@ -314,8 +320,9 @@ const getCardShadows = () => {
 
 const cardDefaults = {
   backgroundColor: AppColors.white,
+  padding: 15,
   paddingRight: 8,
-  paddingLeft: 6,
+  paddingLeft: 18,
   borderRadius: 6,
 };
 
@@ -343,13 +350,12 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: AppColors.white,
     height: 45,
-    paddingHorizontal: 100,
+    width: '100.2%',
     borderRadius: 0,
     borderColor: AppColors.gray,
     borderWidth: 0.5,
   },
   editVirtualBtnTxt: {
-    marginTop: 10,
     justifyContent: 'center',
     alignSelf: 'center',
     fontSize: 20,

@@ -16,7 +16,7 @@ import Toast from 'react-native-toast-message';
 import variables from '../../../theme';
 import {Field} from '../../../components/field';
 import {windowDimensions} from '../../../common';
-import {AppFonts, AppColors} from '../../../theme';
+import theme, {AppFonts, AppColors} from '../../../theme';
 import {useDispatch} from 'react-redux';
 import {loginRequest} from '../../../redux/actions/userAction';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -160,6 +160,8 @@ const LoginScreen = () => {
           </View>
           <ActionButton
             textColor={variables.blue}
+            customTitleStyle={loading ? style.loadingTitle : style.title}
+            customStyle={loading ? style.loadingBtn : style.loginBtn}
             loading={loading}
             title="SIGN IN"
             onPress={validate}
@@ -181,20 +183,33 @@ const style = StyleSheet.create({
     flex: 1,
     backgroundColor: AppColors.white,
   },
-  errorTxt: {
-    fontSize: 12,
-    color: AppColors.red,
+  loadingBtn: {
+    backgroundColor: AppColors.blue,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    height: 45,
+    width: '50%',
+    borderRadius: 28,
+  },
+  loginBtn: {
+    backgroundColor: AppColors.blue,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    height: 45,
+    width: '100%',
+    borderRadius: 28,
+  },
+  loadingTitle: {
+    width: 0,
+  },
+  title: {
+    color: theme.white,
+    width: '100%',
+    fontSize: 18,
+    textAlign: 'center',
   },
   field: {
     marginTop: 10,
-  },
-  btnContainer: {
-    marginTop: 20,
-    backgroundColor: AppColors.blue,
-    borderRadius: 22,
-    justifyContent: 'center',
-    paddingHorizontal: 10,
-    height: 45,
   },
   signIn: {
     color: AppColors.white,
@@ -228,28 +243,9 @@ const style = StyleSheet.create({
     paddingLeft: variables.contentPadding * 4,
     paddingRight: variables.contentPadding * 4,
   },
-  title: {
-    marginTop: variables.contentPadding * 2,
-    marginBottom: variables.contentPadding * 2,
-    textAlign: 'center',
-    fontSize: 25,
-    fontWeight: 'bold',
-  },
+
   form: {
     justifyContent: 'space-around',
-  },
-  switch: {
-    position: 'relative',
-    top: Platform.OS === 'android' ? 3 : 0,
-  },
-  switchLabel: {
-    paddingLeft: 8,
-  },
-  switchField: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginTop: 18,
-    marginBottom: 18,
   },
 });
 

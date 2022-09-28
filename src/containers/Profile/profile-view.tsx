@@ -10,6 +10,7 @@ import {useSelector} from '../../redux/reducers/index';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {logoutRequest} from '../../redux/actions/userAction';
 import {UserModel} from '../../redux/actions/userAction';
+import theme from '../../theme';
 
 interface ProfileState {
   avatar: any;
@@ -84,9 +85,10 @@ const Profile: React.FC<ProfileState> = () => {
       <View style={style.footer}>
         <ActionButton
           textColor={variable.blue}
+          customTitleStyle={loading ? style.loadingTitle : style.title}
+          customStyle={loading ? style.loadingBtn : style.logoutBtn}
           loading={loading}
           title="LOGOUT"
-          customStyle={style.btnEnable}
           onPress={() => onPressLogout()}
         />
       </View>
@@ -101,6 +103,31 @@ const style = StyleSheet.create({
   },
   editView: {
     marginTop: 30,
+  },
+  loadingBtn: {
+    backgroundColor: AppColors.blue,
+    width: windowDimensions.width * 0.5,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    height: 45,
+    borderRadius: 28,
+  },
+  logoutBtn: {
+    width: windowDimensions.width * 0.5,
+    backgroundColor: AppColors.blue,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    height: 45,
+    borderRadius: 28,
+  },
+  loadingTitle: {
+    width: 0,
+  },
+  title: {
+    color: theme.white,
+    width: '100%',
+    fontSize: 18,
+    textAlign: 'center',
   },
   profileCircle: {
     height: 100,
@@ -128,11 +155,6 @@ const style = StyleSheet.create({
     width: windowDimensions.width * 0.4,
     borderColor: AppColors.gray,
     borderWidth: 0.5,
-  },
-  btnEnable: {
-    alignSelf: 'center',
-    justifyContent: 'center',
-    width: windowDimensions.width * 0.5,
   },
   footer: {
     right: 10,

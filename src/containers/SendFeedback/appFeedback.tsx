@@ -64,20 +64,18 @@ const SendFeedback = (props: AppFeedbackModalState) => {
 
   const renderForm = () => {
     return (
-      <View>
-        <TextInput
-          style={style.messageInput}
-          maxLength={1000}
-          rowSpan={12}
-          placeholder="Type your feedback here"
-          placeholderTextColor={AppColors.mediumGray}
-          autoFocus={false}
-          value={messageText}
-          returnKeyType="done"
-          multiline={false}
-          onChangeText={(text: any) => setMessageText(text)}
-        />
-      </View>
+      <TextInput
+        style={style.messageInput}
+        maxLength={1000}
+        rowSpan={12}
+        placeholder="Type your feedback here"
+        placeholderTextColor={AppColors.mediumGray}
+        autoFocus={false}
+        value={messageText}
+        returnKeyType="done"
+        multiline={false}
+        onChangeText={(text: any) => setMessageText(text)}
+      />
     );
   };
 

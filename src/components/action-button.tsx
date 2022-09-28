@@ -62,7 +62,18 @@ export const ActionButton = (props: buttonProps) => {
       <Text style={[styles.primaryButtonText, {...customTitleStyle}]}>
         {title}
       </Text>
-      {loading && <ActivityIndicator size="small" color={AppColors.white} />}
+      {loading && (
+        <ActivityIndicator
+          size="small"
+          color={AppColors.white}
+          style={{
+            bottom: Platform.OS === 'android' ? 20 : 10,
+            justifyContent: 'center',
+            alignSelf: 'center',
+            alignContent: 'center',
+          }}
+        />
+      )}
     </TouchableOpacity>
   );
 };

@@ -12,10 +12,8 @@ import {
 } from 'react-native';
 let moment = require('moment');
 import {useSelector} from '../../redux/reducers/index';
-import {Avatar} from '../../components/avatar';
-import {Circle} from '../../components/circle';
 import {ViewHeader} from '../../components/view-header';
-import {AppFonts, AppColors} from '../../theme';
+import variables, {AppFonts, AppColors} from '../../theme';
 import NavigationService from '../../navigation/NavigationService';
 import {conversationsService} from '../../services/MessageCenter/conversationsService';
 import FacilitySelectionContainer from '../../components/facility-selection-container';
@@ -60,13 +58,6 @@ const MessageCenter = (
     //   return position.conversations.length > 0;
     // });
   };
-
-  // const showLoading = (): boolean => {
-  //   if (refreshing) {
-  //     return false;
-  //   }
-  //   return loading;
-  // };
 
   useEffect(() => {
     load();
@@ -123,10 +114,8 @@ const MessageCenter = (
               style={[
                 {...AppFonts.bodyTextXtraSmall},
                 {
-                  marginStart: 120,
-                  textAlignVertical: 'center',
-                  top: 5,
-                  marginLeft: 10,
+                  width: '22%',
+                  alignSelf: 'center',
                 },
               ]}
             >
@@ -197,32 +186,35 @@ const MessageCenter = (
 
 const itemStyles = StyleSheet.create({
   listItem: {
-    backgroundColor: AppColors.white,
-    paddingLeft: 8,
+    backgroundColor: variables.white,
+    paddingLeft: 16,
     paddingRight: 8,
+    borderTopWidth: 0.5,
+    borderBottomColor: AppColors.gray,
+    borderTopColor: AppColors.gray,
+    borderRightColor: AppColors.gray,
   },
   itemSection: {
-    top: 5,
-    marginLeft: 5,
+    alignContent: 'center',
+    marginTop: 5,
+    bottom: -6,
     flexDirection: 'row',
-    marginBottom: 4,
   },
   circleStyle: {
     width: 50,
     height: 50,
+    alignSelf: 'center',
     borderRadius: 50 / 2,
     borderWidth: 2,
-    top: 3.8,
     borderColor: AppColors.imageColor,
   },
   title: {
-    textAlignVertical: 'center',
-    top: 3,
     fontSize: 18,
+    alignSelf: 'center',
+    width: '55%',
     color: AppColors.blue,
     marginLeft: 18,
   },
-
   wrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',

@@ -2,10 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {StyleSheet, View, Text, Image} from 'react-native';
 import NavigationService from '../../../navigation/NavigationService';
 import variables from '../../../theme';
-import {Field} from '../../../components';
 import {windowDimensions} from '../../../common';
-import {ScreenType, StoreType} from '../../../common/constants';
-import {ConexusIcon} from '../../../components/conexus-icon';
 import {AppColors, AppFonts} from '../../../theme';
 import {TouchableOpacity} from 'react-native';
 

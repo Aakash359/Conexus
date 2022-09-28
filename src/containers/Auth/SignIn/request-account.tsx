@@ -16,7 +16,7 @@ import {signUp} from '../../../services/authService';
 import variables from '../../../theme';
 import {Field} from '../../../components/field';
 import {windowDimensions} from '../../../common';
-import {AppColors, AppFonts} from '../../../theme';
+import {AppColors} from '../../../theme';
 import NavigationService from '../../../navigation/NavigationService';
 import {ActionButton} from '../../../components/action-button';
 
@@ -193,7 +193,6 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
                   autoCapitalize="none"
                   onTextChange={setEmail}
                   value={eMail}
-                  returnKeyType={'none'}
                 />
                 {error ? <Text style={style.errorTxt}>{error}</Text> : null}
               </View>

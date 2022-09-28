@@ -4,7 +4,7 @@ import {
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
-import {AppColors} from '.././theme';
+import {AppColors, AppFonts} from '.././theme';
 import Icons from 'react-native-vector-icons/Feather';
 import NavigationService from '../navigation/NavigationService';
 import {useSelector} from '../redux/reducers/index';
@@ -56,7 +56,7 @@ const CustomDrawer = props => {
                     fontSize: 8,
                     marginRight: 20,
                     color: AppColors.mediumGray,
-                    fontFamily: 'Roboto-Medium',
+                    fontFamily: AppFonts.family.fontFamily,
                   },
                 ]}
               >
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
   account: {
     fontSize: 18,
     marginTop: -30,
-    fontFamily: 'Roboto-Medium',
+    fontFamily: AppFonts.family.fontFamily,
     marginLeft: 70,
     fontWeight: 'bold',
     color: AppColors.blue,
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 18,
-    fontFamily: 'Roboto-Medium',
+    fontFamily: AppFonts.family.fontFamily,
     marginLeft: 70,
     fontWeight: 'bold',
     color: AppColors.blue,
