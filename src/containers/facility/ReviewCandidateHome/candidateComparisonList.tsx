@@ -166,6 +166,8 @@ export const CandidateComparisonList = (
   };
 
   const renderCandidate = (candidate: any, index: number, count: number) => {
+    console.log('Aakash====>', candidate?.compData);
+
     return (
       <View key={`candidate-${candidate.submissionId}-${index}`}>
         <TouchableHighlight

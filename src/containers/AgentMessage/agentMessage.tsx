@@ -8,13 +8,13 @@ import {
   TextInput,
   ToastAndroid,
   Keyboard,
+  Platform,
 } from 'react-native';
 import {ActionButton} from '../../components/action-button';
 import {useSelector} from '../../redux/reducers/index';
 import {AppColors, AppFonts} from '../../theme';
 import {windowDimensions} from '../../common/window-dimensions';
 import Toast from 'react-native-toast-message';
-import {Avatar} from '../../components/avatar';
 import {sendMessageService} from '../../services/agentMessageService';
 import NavigationService from '../../navigation/NavigationService';
 
@@ -120,17 +120,19 @@ const AgentMessage = () => {
 
   const renderForm = () => {
     return (
-      <TextInput
-        style={style.messageInput}
-        maxLength={1000}
-        rowSpan={12}
-        placeholder="Type your message"
-        placeholderTextColor={AppColors.mediumGray}
-        value={messageText}
-        returnKeyType="done"
-        multiline={false}
-        onChangeText={(text: any) => setMessageText(text)}
-      />
+      <View style={style.messageInput}>
+        <TextInput
+          style={style.textInput}
+          maxLength={1000}
+          rowSpan={12}
+          placeholder="Type your message"
+          placeholderTextColor={AppColors.mediumGray}
+          value={messageText}
+          returnKeyType="done"
+          multiline={false}
+          onChangeText={(text: any) => setMessageText(text)}
+        />
+      </View>
     );
   };
 
@@ -195,20 +197,20 @@ const style = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
   },
-
+  textInput: {
+    marginTop: Platform.OS === 'android' ? 0 : 10,
+  },
   messageInput: {
-    textAlignVertical: 'top',
+    alignSelf: 'center',
+    borderWidth: 0.8,
+    borderColor: AppColors.lightBlue,
     backgroundColor: AppColors.white,
     marginTop: 40,
-    height: 380,
+    height: 350,
     fontSize: 16,
     color: AppColors.black,
     paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: AppColors.lightBlue,
     width: '90%',
-    justifyContent: 'center',
-    alignSelf: 'center',
     borderRadius: 5,
   },
 });
