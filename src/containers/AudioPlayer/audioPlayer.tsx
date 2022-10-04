@@ -119,7 +119,8 @@ const AudioPlayer = (props: AudioPlayerProps, state: AudioPlayerState) => {
           <Avatar
             style={{width: 60, marginBottom: 8, marginTop: 20}}
             size={60}
-            source={avatarUrl}></Avatar>
+            source={avatarUrl}
+          ></Avatar>
         )}
         {!!avatarTitle && (
           <Text
@@ -127,7 +128,8 @@ const AudioPlayer = (props: AudioPlayerProps, state: AudioPlayerState) => {
               ...AppFonts.bodyTextXtraLarge,
               color: AppColors.blue,
               marginTop: 8,
-            }}>
+            }}
+          >
             {avatarTitle}
           </Text>
         )}
@@ -138,7 +140,8 @@ const AudioPlayer = (props: AudioPlayerProps, state: AudioPlayerState) => {
               color: AppColors.black,
               marginTop: 4,
               marginBottom: 10,
-            }}>
+            }}
+          >
             {avatarDescription}
           </Text>
         )}
@@ -166,7 +169,8 @@ const AudioPlayer = (props: AudioPlayerProps, state: AudioPlayerState) => {
               height: 48,
               width: 160,
               zIndex: 1,
-            }}></View>
+            }}
+          ></View>
         )}
 
         {!loading && Platform.OS === 'ios' && (

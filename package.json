@@ -28,6 +28,7 @@
     "@react-navigation/native-stack": "^6.7.0",
     "@types/redux-logger": "^3.0.9",
     "@types/stack-utils": "^2.0.1",
+    "agora-react-native-rtm": "^1.5.0",
     "appcenter": "^4.4.4",
     "appcenter-analytics": "^4.4.4",
     "appcenter-crashes": "^4.4.4",
@@ -42,6 +43,7 @@
     "postinstall-postinstall": "^2.1.0",
     "react": "^18.2.0",
     "react-native": "0.69.1",
+    "react-native-agora": "^4.0.0",
     "react-native-cached-image": "^1.4.3",
     "react-native-calendars": "^1.1284.0",
     "react-native-code-push": "^7.0.4",
@@ -59,7 +61,7 @@
     "react-native-logs": "^4.0.1",
     "react-native-onesignal": "^4.4.1",
     "react-native-opentok": "^2.1.0",
-    "react-native-pager-view": "^5.4.25",
+    "react-native-pager-view": "^6.0.0",
     "react-native-permissions": "^3.6.1",
     "react-native-push-notification": "^8.1.1",
     "react-native-reanimated": "^2.9.1",
@@ -81,8 +83,7 @@
     "redux": "^4.2.0",
     "redux-logger": "^3.0.6",
     "redux-persist": "^6.0.0",
-    "redux-thunk": "^2.4.1",
-    "rn-viewpager": "^1.2.9"
+    "redux-thunk": "^2.4.1"
   },
   "devDependencies": {
     "@babel/core": "^7.18.6",

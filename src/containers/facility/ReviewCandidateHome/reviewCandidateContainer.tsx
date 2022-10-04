@@ -40,7 +40,7 @@ const ReviewCandidateContainer = (
   const [facilityId, setFacilityId] = useState('');
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState([]);
+  const [positions, setPositions] = useState([]);
 
   const saveToken = async () => {
     await AsyncStorage.setItem('authToken', userInfo?.user?.authToken);
@@ -99,13 +99,16 @@ const ReviewCandidateContainer = (
       setLoading(true);
       try {
         const {data} = await facilitySubmissionsService();
+
         if (data && data.length > 0) {
-          let position = data.map((item: {positions: any}) => item.positions);
+          let positionData = data.map(
+            (item: {positions: any}) => item.positions,
+          );
           let facilityId = data.map(
             (item: {facilityId: any}) => item.facilityId,
           );
           setFacilityId(facilityId);
-          setData(position);
+          setPositions(positionData);
           setLoading(false);
         }
         // Alert.alert(data.description);
@@ -141,9 +144,9 @@ const ReviewCandidateContainer = (
             }}
           />
         )}
-        {data && (
+        {positions && (
           <CandidateList
-            submissions={data}
+            submissions={positions?.[0]}
             selectedFacilityId={facilityId}
             refreshing={refreshing}
             onRefresh={() => load(true)}

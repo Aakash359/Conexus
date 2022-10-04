@@ -7,14 +7,8 @@ import {
   Alert,
   Image,
 } from 'react-native';
-import {Avatar} from '../../../components/avatar';
 import variables, {AppColors} from '../../../theme';
-import {ScreenType} from '../../../common/constants';
-import {CandidateModel} from '../../../stores/facility';
 import {AppFonts} from '../../../theme';
-import {logger} from 'react-native-logs';
-import {BubbleLabel} from '../../../components/bubble-label';
-import {PositionModel} from '../../../stores/index';
 import NavigationService from '../../../navigation/NavigationService';
 
 export interface CandidateItemProps {
@@ -33,14 +27,7 @@ export interface CandidateItemState {
 }
 
 const CandidateItem = (props: CandidateItemProps) => {
-  const {
-    candidate,
-    index,
-    showAll,
-    positions,
-    candidatesCount,
-    showAllHighlight,
-  } = props;
+  const {candidate, index, showAll, candidatesCount, showAllHighlight} = props;
 
   const [subViewed, setSubViewed] = useState(false);
 
@@ -48,31 +35,33 @@ const CandidateItem = (props: CandidateItemProps) => {
     setSubViewed(props.candidate.viewedSubmission);
   });
 
-  const renderItem = () => {
+  const renderItem = (item: any) => {
     return (
       <TouchableOpacity
         activeOpacity={1}
         onPress={() =>
           NavigationService.navigate('HcpDetailView', {
-            submissionId: candidate.submissionId,
-            candidate,
+            submissionId: item.submissionId,
+            candidate: item,
             onClose: () => {
-              props.updateViewed(candidate.submissionId);
+              props.updateViewed(item.submissionId);
             },
           })
         }
       >
         <View
-          key={candidate.userId}
+          key={item.userId}
           style={StyleSheet.flatten([
             styles.listItem,
-            !!!candidate.viewedSubmission ? styles.unviewed : {},
+            !!!item.viewedSubmission ? styles.unviewed : {},
           ])}
         >
           <View style={styles.itemSection}>
-            {candidate.photoUrl ? (
+            {item.photoUrl ? (
               <Image
-                source={{uri: candidate.photoUrl}}
+                source={{
+                  uri: item.photoUrl,
+                }}
                 style={styles.circleStyle}
               />
             ) : (
@@ -82,26 +71,32 @@ const CandidateItem = (props: CandidateItemProps) => {
               />
             )}
             <Text style={(AppFonts.listItemTitleTouchable, styles.title)}>
-              {candidate.display.title}
+              {item.display.title}
             </Text>
           </View>
           <View style={StyleSheet.flatten([styles.itemSection, styles.body])}>
-            {!!candidate.display.description && (
+            {!!item.display.description && (
               <Text style={StyleSheet.flatten(AppFonts.listItemDescription)}>
-                {candidate.display.description}
+                {item.display.description}
               </Text>
             )}
           </View>
-          {!!candidate.photoLabel && (
+          {/* {!!item.photoLabel && (
             <View style={styles.itemSection}>
               <BubbleLabel
                 height={18}
-                textStyle={{fontSize: 12}}
-                style={{width: 48, borderWidth: 0, backgroundColor: '#36D8A3'}}
-                title={candidate.photoLabel}
+                textStyle={{
+                  fontSize: 12,
+                }}
+                style={{
+                  width: 48,
+                  borderWidth: 0,
+                  backgroundColor: '#36D8A3',
+                }}
+                title={item.photoLabel}
               />
             </View>
-          )}
+          )} */}
         </View>
       </TouchableOpacity>
     );
@@ -141,7 +136,7 @@ const CandidateItem = (props: CandidateItemProps) => {
     return null;
   }
 
-  return renderItem();
+  return candidate.map(renderItem);
 };
 
 const styles = StyleSheet.create({

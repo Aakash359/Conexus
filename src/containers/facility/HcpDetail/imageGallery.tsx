@@ -54,6 +54,8 @@ const ImageGalleries = (props: ImageGalleryProps, state: ImageGalleryState) => {
   const {title} = props?.route?.params;
   let displayCount = initialRenderCount || 2;
 
+  console.log('displayCount====>', props?.route);
+
   // provide the gallery the first 2 images initially so they load quickly. The candiate-detail view should have them cached.
 
   // this.state = {
@@ -166,17 +168,6 @@ const ImageGalleries = (props: ImageGalleryProps, state: ImageGalleryState) => {
           </View>
         )}
       />
-      {/* {showGallery && (
-          <Gallery
-            style={{flex: 1}}
-            images={images}
-            pageMargin={28}
-            imageComponent={renderImage}
-            errorComponent={renderError}
-            onPageSelected={onChangeImage}
-            initialPage={0}
-          />
-        )} */}
     </View>
   );
 };

@@ -74,7 +74,6 @@ const Positions = (props: PositionsProps, state: PositionState) => {
   };
 
   useEffect(() => {
-    let mounted = true;
     load(false);
   }, []);
 

@@ -11,14 +11,13 @@ import {
   RefreshControl,
   ActivityIndicator,
   TouchableHighlight,
-  Button,
   Text,
   View,
 } from 'react-native';
 import {phoneFormatter} from '../../common/phone-formatter';
 import {ConexusIcon, Circle, ActionButton} from '../../components';
 import {ConexusIconButton} from '../../components/conexus-icon-button';
-import {ScreenType, showYesNoAlert} from '../../common';
+import {showYesNoAlert} from '../../common';
 import {UserStore, VideoStore} from '../../stores';
 import {logger} from 'react-native-logs';
 import {AppFonts, AppSizes, AppColors} from '../../theme';
@@ -26,7 +25,6 @@ import {TouchableOpacity} from 'react-native';
 import {sendTextMessageService} from '../../services/MessageCenter/sendTextMessageService';
 import {loadTextMessageService} from '../../services/MessageCenter/loadTextMessageService';
 import NavigationService from '../../navigation/NavigationService';
-import {useSelector} from '../../redux/reducers/index';
 import {initVideoConferenceService} from '../../services/VideoCallingServices/videoServices';
 import {PhoneCallModal} from '../../components/Modals/phoneCallModal';
 import {initiatePhoneCallService} from '../../services/Facility/phoneCallService';
@@ -399,18 +397,18 @@ const ConversationContainer = (
   };
 
   const initVideoCall = () => {
+    NavigationService.navigate('VideoCalling');
     // let hcpUserId = messageList ? messageList.hcpUserId : userId;
     // let submissionId = messageList
     //   ? messageList.submissionId
     //   : props.submissionId;
-
-    const payload = {
-      title: '',
-      name: recipientsName || '',
-      subTitle: '',
-      photo: photoUrl || '',
-    };
-    return videoCall(payload, userId, submissionId);
+    // const payload = {
+    //   title: '',
+    //   name: recipientName || '',
+    //   subTitle: '',
+    //   photo: photoUrl || '',
+    // };
+    // return videoCall(payload, userId, submissionId);
   };
 
   const initPhoneCall = () => {

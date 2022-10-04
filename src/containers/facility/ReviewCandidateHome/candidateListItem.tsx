@@ -61,26 +61,23 @@ export const CandidateListItem = (
     // }))
   };
   const renderStandardList = (position: any) => {
+    const {candidates, index} = position;
     let showAllHighlight = position.candidates.find(
       (candidate: {viewedSubmission: any}, ind: number) => {
         return ind > 2 && !candidate.viewedSubmission;
       },
     );
-
-    return position.candidates.map(
-      (candidate: {submissionId: any}, index: number) => (
-        <CandidateItem
-          positions={position}
-          key={`${candidate.submissionId}-${index}`}
-          candidate={candidate}
-          candidatesCount={position.candidates.length}
-          index={index}
-          showAllHighlight={!!showAllHighlight}
-          showAll={showAll}
-          // onMorePress={showAlls()}
-          updateViewed={(s: string) => setViewedSubmission(s)}
-        />
-      ),
+    return (
+      <CandidateItem
+        key={`${candidates.submissionId}-${index}`}
+        candidate={candidates}
+        candidatesCount={position.candidates.length}
+        index={index}
+        showAllHighlight={!!showAllHighlight}
+        showAll={showAll}
+        onMorePress={() => showAlls()}
+        updateViewed={(s: string) => setViewedSubmission(s)}
+      />
     );
   };
 
@@ -99,5 +96,5 @@ export const CandidateListItem = (
     },
   });
 
-  return <View key={position.needId}>{position.map(renderPositions)}</View>;
+  return <View key={position.needId}>{renderPositions(position)}</View>;
 };

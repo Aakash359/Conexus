@@ -1957,6 +1957,11 @@ agent-base@6, agent-base@^6.0.0, agent-base@^6.0.2:
   dependencies:
     debug "4"
 
+agora-react-native-rtm@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/agora-react-native-rtm/-/agora-react-native-rtm-1.5.0.tgz#fe650a9a61db0c94cb804180eb4c1020da092c10"
+  integrity sha512-8LApJVTK21a6/JkOPwzkatrFrcvD/t4WUJNdc55BybBadrlSSE1yzz/1Ts/8tHVdzsX9Pya9pjMZ+UQBGovong==
+
 ajv@^6.10.0, ajv@^6.10.2, ajv@^6.12.4:
   version "6.12.6"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.12.6.tgz#baf5a62e802b07d977034586f8c3baf5adf26df4"
@@ -2947,6 +2952,14 @@ buffer@^5.5.0:
   dependencies:
     base64-js "^1.3.1"
     ieee754 "^1.1.13"
+
+buffer@^6.0.3:
+  version "6.0.3"
+  resolved "https://registry.yarnpkg.com/buffer/-/buffer-6.0.3.tgz#2ace578459cc8fbe2a70aaa8f52ee63b6a74c6c6"
+  integrity sha512-FTiCpNxtwiZZHEZbcbTIcZjERVICn9yq/pDFkTl95/AxzD1naBctN7YO68riM/gLSDY7sdrMby8hofADYuuqOA==
+  dependencies:
+    base64-js "^1.3.1"
+    ieee754 "^1.2.1"
 
 buffers@~0.1.1:
   version "0.1.1"
@@ -4893,7 +4906,7 @@ iconv-lite@^0.6.2:
   dependencies:
     safer-buffer ">= 2.1.2 < 3.0.0"
 
-ieee754@^1.1.13:
+ieee754@^1.1.13, ieee754@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.2.1.tgz#8eb7a10a63fff25d15a57b001586d177d1b0d352"
   integrity sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==
@@ -7512,6 +7525,13 @@ react-is@^16.13.0, react-is@^16.13.1, react-is@^16.7.0:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
+react-native-agora@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-agora/-/react-native-agora-4.0.0.tgz#d2b9c9071416419a2ef177074c27b64d66ca55aa"
+  integrity sha512-v3zraM1BjawgSGy3pae9LUfNcXbFiTFXgpOb1a/tI4KK7zght5KmdurKeM1eoYcJdIC/Q6G4atFdy3dxdYNQqQ==
+  dependencies:
+    buffer "^6.0.3"
+
 react-native-cached-image@^1.4.3:
   version "1.4.3"
   resolved "https://registry.yarnpkg.com/react-native-cached-image/-/react-native-cached-image-1.4.3.tgz#0942e2cd078284a1f0438de8dfe17f2b36a89752"
@@ -7683,10 +7703,10 @@ react-native-opentok@^2.1.0:
   resolved "https://registry.yarnpkg.com/react-native-opentok/-/react-native-opentok-2.1.0.tgz#e280720abb2d52fc86d917285ea8506fa39a9116"
   integrity sha512-zVzejAHFvv0QyPdJaMqDtABcCmdIgjVfc6TAa1nBobomZ8R9KWYKrcGIYxDcsl3dPwjVQR2bLfgt5CbtjDKDyg==
 
-react-native-pager-view@^5.4.25:
-  version "5.4.25"
-  resolved "https://registry.yarnpkg.com/react-native-pager-view/-/react-native-pager-view-5.4.25.tgz#cd639d5387a7f3d5581b55a33c5faa1cbc200f97"
-  integrity sha512-3drrYwaLat2fYszymZe3nHMPASJ4aJMaxiejfA1V5SK3OygYmdtmV2u5prX7TnjueJzGSyyaCYEr2JlrRt4YPg==
+react-native-pager-view@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-pager-view/-/react-native-pager-view-6.0.0.tgz#e3706da1bb7e55bcd2644d770d36c8dd14b48690"
+  integrity sha512-0qUMUmA/Lhv76F+fbCcYB+iuODH6Lp6E1EYlXw+GM3Ns3FaKFtBaVYXKQSfNhqnTUg9YEOY3HuX+ZMKBSHwNbA==
 
 react-native-permissions@^3.6.1:
   version "3.6.1"
@@ -8220,11 +8240,6 @@ rimraf@~2.6.2:
   integrity sha512-mwqeW5XsA2qAejG46gYdENaxXjx9onRNCfn7L0duuP4hCuTIi/QO7PDK07KJfp1d+izWPrzEJDcSqBa0OZQriA==
   dependencies:
     glob "^7.1.3"
-
-rn-viewpager@^1.2.9:
-  version "1.2.9"
-  resolved "https://registry.yarnpkg.com/rn-viewpager/-/rn-viewpager-1.2.9.tgz#7f06f898e23b296f3b5be7c98bd9101d94427779"
-  integrity sha512-wN4HlNhjTkrg25qBeEHTJ6TzRGtLu8SpKSZ9/mWcgWHMNr3RT06Zzrky3Tg14PPgaPp//6h02FCcAaQ83VGdgQ==
 
 run-async@^2.4.0:
   version "2.4.1"

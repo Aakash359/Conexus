@@ -23,11 +23,8 @@ import {facilitySubmissionsService} from '../../../services/Facility/facilitySub
 import {TabDetails} from '../../../components';
 import {ConexusIconButton} from '../../../components/conexus-icon-button';
 import {ActionButton} from '../../../components/action-button';
-import {Avatar} from '../../../components/avatar';
-
 import {CandidateResponseRow} from './candidate-response-row';
 import moment from 'moment';
-// import {ImageCacheManager} from 'react-native-cached-image';
 import {useSelector} from '../../../redux/reducers/index';
 import NavigationService from '../../../navigation/NavigationService';
 import {NotInterestedModal} from '../../../components/Modals/NotInterestedModal';
@@ -66,9 +63,7 @@ const preloadResumeCount = 3;
 const dateFormat = 'MM/DD/YYYY';
 
 const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
-  const [candidate, setCandidate] = useState(
-    props?.route?.params?.candidate || {},
-  );
+  const [candidate, setCandidate] = useState([]);
   const [data, setData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [offerModalVisible, setOfferModalVisible] = useState(false);
@@ -78,7 +73,6 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   );
   const [loadingSummary, setLoadingSummary] = useState(false);
   const [refreshing, setRefreshing] = useState('');
-  const [selectedTab, setSelectedTab] = useState(tabs[0]);
   const [loading, setLoading] = useState(false);
   const userInfo = useSelector(state => state.userReducer);
   const [callbackNumber, setCallBackNumber] = useState(
@@ -110,21 +104,6 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const refreshCandidate = (refreshing: boolean = false) => {
     setRefreshing(refreshing);
     setLoadingSummary(loadingSummary);
-
-    // loadCandidateBySubmissionId(submissionId).then(
-    //   (candidate: ) => {
-    //     this.setState({refreshing: false, candidate, loadingSummary: false});
-    //     this._preloadResumePages();
-    //   },
-    //   () => {
-    //     //TODO HANDLE ERROR
-    //     this.setState({
-    //       refreshing: false,
-    //       candidate: null,
-    //       loadingSummary: false,
-    //     });
-    //   },
-    // );
   };
 
   const preloadResumePages = (data: any) => {
@@ -158,9 +137,9 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     setLoadingSummary(true);
     try {
       const {data} = await candidateSubmissionsService(submissionId);
-      let questionsData = data ? data : [];
-      setData(questionsData);
-      preloadResumePages(data);
+      setCandidate(data);
+
+      // preloadResumePages(data);
       setRefreshing(false);
       setLoadingSummary(false);
     } catch (error) {
@@ -170,8 +149,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   };
 
   useEffect(() => {
-    // this.state.candidate.setViewed(candidate.submissionId);
-    loadCandidate();
+    loadCandidate(false);
 
     // if (!candidate) {
 
@@ -189,7 +167,6 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
 
   const getAnswerPlaylist = (): any => {
     const playListResponse = responses();
-
     var answers = playListResponse.map(
       (response: {
         questionId: any;
@@ -221,12 +198,11 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
 
   const showInterviewRatingsLightBox = (initialIndex = 0) => {
     const answerPlaylist = getAnswerPlaylist();
-
-    // Actions[ScreenType.ANSWER_RATINGS_LIGHTBOX]({
-    //   initialIndex,
-    //   answers: answerPlaylist,
-    //   title: this.state.candidate.display.title,
-    // });
+    NavigationService.navigate('AnswerRatings', {
+      initialIndex,
+      answers: answerPlaylist,
+      title: candidate.display.title,
+    });
   };
 
   const showAnswers = (initialIndex = 0) => {
@@ -257,17 +233,21 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
       avatarTitle,
       avatarDescription,
     };
+    NavigationService.navigate('AudioPlayer', {
+      parms,
+    });
 
     // Actions[ScreenType.AUDIO_PLAYER_LIGHTBOX](parms);
   };
 
-  const renderQuestions = (data: never[] | []) => {
-    const responses: string | readonly any[] | null | undefined = [];
-    // data.sections.forEach((section: {questions: any[]}) => {
-    //   section.questions.forEach(response => {
-    //     responses.push(response);
-    //   });
-    // });
+  const renderQuestions = (candidate: any) => {
+    const responses = [];
+
+    candidate.sections.forEach((section: {questions: any[]}) => {
+      section.questions.forEach(response => {
+        responses.push(response);
+      });
+    });
 
     if (!responses.length) {
       return (
@@ -295,20 +275,16 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
         renderItem={({item, index}) => (
           <CandidateResponseRow
             response={item}
-            onPlayResponse={showAnswers(index)}
+            onPlayResponse={() => showAnswers(index)}
           />
         )}
       />
     );
   };
 
-  const openImageGallery = (
-    data: {resumePages: {originalPdf: any}} | undefined,
-  ) => {
-    console.log('Candiddate---->', data);
-
+  const openImageGallery = (candidate: any) => {
     NavigationService.navigate('ImageGallery', {
-      images: data?.resumePages?.originalPdf,
+      // images: data?.resumePages?.originalPdf,
       title: candidate.display.title,
       // initialRenderCount: preloadResumeCount,
     });
@@ -360,7 +336,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const VirtualInterView = () => {
     return (
       <View style={{flex: 1, backgroundColor: AppColors.baseGray}}>
-        {renderQuestions(data || [])}
+        {renderQuestions(candidate || [])}
       </View>
     );
   };
@@ -398,14 +374,14 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     );
   };
 
-  const renderActionHeader = () => {
+  const renderActionHeader = (candidate: any) => {
     let date = moment(candidate.startDate).format(dateFormat);
     return (
       <View style={headerStyle.rootView}>
         <View style={StyleSheet.flatten([headerStyle.actionRowView])}>
           <ActionButton
             // disabled={candidate.resumePages.pageCount === 0}
-            onPress={() => openImageGallery()}
+            onPress={() => openImageGallery(candidate)}
             title="VIEW PROFILE"
             customTitleStyle={{
               fontSize: 10,
@@ -453,7 +429,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
             title={'Make Offer'}
             value={date}
             onMakeOffer={(result: any) => onClickMakeOffer(result)}
-            source={candidate.photoUrl}
+            source={{uri: candidate.photoUrl}}
             candidateTitle={candidate.display.title}
             onRequestClose={() => setOfferModalVisible(false)}
             onDismiss={() => setOfferModalVisible(false)}
@@ -521,16 +497,22 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     setContactOptionModalVisible(false);
   };
 
-  let communicationTypes: any = candidate.communicationTypes;
+  let communicationTypes: any =
+    Object.keys(candidate).length > 0 && candidate.communicationTypes;
+
   let videoChat =
-    communicationTypes.filter((type: {typeId: string}) => {
-      return type.typeId == '1';
-    })[0].available || false;
+    (Object.keys(candidate).length > 0 &&
+      communicationTypes.filter((type: {typeId: string}) => {
+        return type.typeId == '1';
+      })[0].available) ||
+    false;
 
   let videoCall =
-    communicationTypes.filter((type: {typeId: string}) => {
-      return type.typeId == '2';
-    })[0].available || false;
+    (Object.keys(candidate).length > 0 &&
+      communicationTypes.filter((type: {typeId: string}) => {
+        return type.typeId == '2';
+      })[0].available) ||
+    false;
 
   const renderLoading = (paddingTop: number = 0) => {
     return (
@@ -565,11 +547,11 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
             style={styles.circleStyle}
           />
           <Text style={[AppFonts.bodyTextXtraLarge, {marginTop: 15}]}>
-            {candidate.display.title}
+            {Object.keys(candidate).length > 0 && candidate.display.title}
           </Text>
-          {renderActionHeader()}
+          {Object.keys(candidate).length > 0 && renderActionHeader(candidate)}
         </View>
-        {MyTabs()}
+        {Object.keys(candidate).length > 0 && MyTabs()}
       </ScrollView>
 
       {

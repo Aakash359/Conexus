@@ -24,6 +24,7 @@ import VideoPlayer from '../containers/VideoPlayer/videoPlayer';
 import VideoCalling from '../containers/VideoCalling/calling';
 import {useSelector} from '../redux/reducers/index';
 import NurseHome from '../containers/NurseHome/nurseHome';
+import AnswerRatings from '../containers/Facility/HcpDetail/answerRating';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -157,6 +158,13 @@ const AppStack = () => {
         <Stack.Screen
           name="VideoPlayer"
           component={VideoPlayer}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="AnswerRatings"
+          component={AnswerRatings}
           options={{
             headerShown: false,
           }}

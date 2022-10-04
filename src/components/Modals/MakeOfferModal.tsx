@@ -6,6 +6,7 @@ import {
   Text,
   StyleSheet,
   Alert,
+  Image,
 } from 'react-native';
 import {AppColors, AppFonts} from '../../theme';
 import {windowDimensions} from '../../common/window-dimensions';
@@ -84,7 +85,8 @@ export const MakeOfferModal = (props: MakeOfferLightboxProps) => {
       onDismiss={onClose}
       animationType="fade"
       onRequestClose={onClose}
-      transparent={true}>
+      transparent={true}
+    >
       <View style={styles.cardStyle}>
         <View style={styles.cardItemStyle}>
           <View style={styles.wrapperView}>
@@ -104,12 +106,7 @@ export const MakeOfferModal = (props: MakeOfferLightboxProps) => {
             </View>
           </View>
           <View style={styles.containerStart}>
-            <Avatar
-              style={{width: 108, marginBottom: 8}}
-              size={108}
-              source={source}
-              title={photoLabel || ''}
-            />
+            <Image source={source} style={styles.circleStyle} />
             <Text style={AppFonts.bodyTextXtraLarge}>
               {candidateTitle || ''}
             </Text>
@@ -124,7 +121,8 @@ export const MakeOfferModal = (props: MakeOfferLightboxProps) => {
                 fontWeight: '900',
                 marginTop: 32,
                 marginBottom: 8,
-              }}>
+              }}
+            >
               Confirm Start Date
             </Text>
             <ActionButton
@@ -188,6 +186,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.4)',
+  },
+  circleStyle: {
+    width: 100,
+    height: 100,
+    borderRadius: 100 / 2,
+    borderWidth: 2,
+    borderColor: AppColors.imageColor,
   },
   date: {
     alignSelf: 'center',
