@@ -94,11 +94,10 @@ const ConexusVideoPlayer = (
   const [isPaused, setIsPaused] = useState(false);
   const replaying: boolean = false;
 
-  const {videoPath} = props;
+  const {videoPath, screenName} = props;
   const videoRef = useRef<Video>(null);
   const progress: number = 0;
   const player: Video = Video;
-
   const volumeListener = SystemSetting.addVolumeListener(
     _.debounce((data: any) => {
       const volume = isAndroid ? data['music'] : data.value;
@@ -206,9 +205,10 @@ const ConexusVideoPlayer = (
       return {
         position: 'absolute',
         zIndex: 101,
+        justifyContent: 'flex-start',
         right: 0,
         width: 150,
-        top: 0,
+        top: 5,
         padding: 10,
         flexDirection: 'row',
         backgroundColor: 'transparent',
@@ -417,9 +417,8 @@ const ConexusVideoPlayer = (
         {!actionButton && (
           <View style={styles.footer}>
             <ActionButton
-              title={actionButton.title}
               customStyle={styles.btnEnable}
-              onPress={actionButton.onPress}
+              // onPress={actionButton.onPress}
             />
           </View>
         )}
@@ -492,14 +491,15 @@ const ConexusVideoPlayer = (
             />
           </View>
         }
-
-        <Icon
-          style={styles.closeButton}
-          name="close-outline"
-          size={35}
-          color={AppColors.blue}
-          onPress={() => NavigationService.goBack()}
-        />
+        {screenName === 'AnswerRatings' ? null : (
+          <Icon
+            style={styles.closeButton}
+            name="close-outline"
+            size={35}
+            color={AppColors.blue}
+            onPress={() => NavigationService.goBack()}
+          />
+        )}
       </TouchableOpacity>
     );
   };

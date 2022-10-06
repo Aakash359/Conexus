@@ -29,8 +29,10 @@ const SafeAreaView = require('react-native').SafeAreaView;
 // Password: temp
 
 // Dev/Testing Credentials
-// Email : kbujarski@trshealthcare.com
+// 1- Email : kbujarski@trshealthcare.com
 // Password: temp
+// 2- Email : appletester@conexussolutions.com
+// Password: travel
 
 const LoginScreen = () => {
   const [loading, setLoading] = useState(false);

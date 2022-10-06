@@ -93,16 +93,6 @@ const SortableQuestionRow = (props: SortableQuestionProps) => {
     }
   };
 
-  // componentWillReceiveProps(nextProps) {
-  //   if (this.props.dragActive !== nextProps.dragActive) {
-  //     Animated.timing(this._activeAnimationValue, {
-  //       duration: 300,
-  //       easing: Easing.bounce,
-  //       toValue: Number(nextProps.dragActive),
-  //     }).start();
-  //   }
-  // }
-
   const renderPlayIcon = () => {
     if (!videoUrl) {
       return (
@@ -147,7 +137,8 @@ const SortableQuestionRow = (props: SortableQuestionProps) => {
     return (
       <TouchableOpacity
         style={[styles.iconContainer, {marginLeft: 12}]}
-        onPress={deleteQuestion}>
+        onPress={deleteQuestion}
+      >
         <Icon
           name={'close-outline'}
           color={AppColors.red}
@@ -160,7 +151,8 @@ const SortableQuestionRow = (props: SortableQuestionProps) => {
 
   return (
     <Animated.View
-      style={[styles.question, _style, {marginBottom: marginBottom || 0}]}>
+      style={[styles.question, _style, {marginBottom: marginBottom || 0}]}
+    >
       {renderIcon()}
       {editing && (
         <View style={styles.questionDetailsButton}>
@@ -173,7 +165,8 @@ const SortableQuestionRow = (props: SortableQuestionProps) => {
       {!editing && (
         <TouchableOpacity
           style={styles.questionDetailsButton}
-          onPress={editing ? null : openQuestion}>
+          onPress={editing ? null : openQuestion}
+        >
           <Text style={styles.questionText}>
             {text}
             {_style.marginBottom}

@@ -1,8 +1,9 @@
 import React from 'react';
 import {StyleSheet, View, TouchableOpacity, Text} from 'react-native';
 import {AppFonts, AppColors} from '../../../theme';
-import {Circle, ConexusIcon} from '../../../components';
-
+import {Circle} from '../../../components';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import Icons from 'react-native-vector-icons/Ionicons';
 export interface CandidateResponseRowProps {
   response: any;
   onPlayResponse: () => any;
@@ -26,21 +27,22 @@ export const CandidateResponseRow = (props: CandidateResponseRowProps) => {
       <Circle
         size={24}
         color={rating === 1 ? AppColors.green : AppColors.red}
-        style={styles.ratingCircle}>
+        style={styles.ratingCircle}
+      >
         {rating === 1 && (
-          <ConexusIcon
+          <Icons
             style={styles.ratingIcon}
-            name={'cn-thumbs-up'}
-            color={AppColors.white}
+            name="thumbs-up"
             size={10}
+            color={AppColors.white}
           />
         )}
         {rating === -1 && (
-          <ConexusIcon
+          <Icons
             style={styles.ratingIcon}
-            name={'cn-thumbs-down'}
-            color={AppColors.white}
+            name="thumbs-down"
             size={10}
+            color={AppColors.white}
           />
         )}
       </Circle>
@@ -49,14 +51,12 @@ export const CandidateResponseRow = (props: CandidateResponseRowProps) => {
 
   const renderPlayIcon = () => {
     return (
-      <Circle size={46} color={AppColors.white} style={styles.circle}>
-        <ConexusIcon
-          style={styles.playIcon}
-          name={'cn-play'}
-          color={AppColors.blue}
-          size={24}
-        />
-      </Circle>
+      <Icons
+        style={styles.circle}
+        name={'play-circle-outline'}
+        color={AppColors.blue}
+        size={50}
+      />
     );
   };
 
@@ -102,9 +102,11 @@ const styles = StyleSheet.create({
   },
 
   circle: {
-    borderWidth: 1,
-    borderColor: AppColors.lightBlue,
-    margin: 9,
+    width: 50,
+    height: 50,
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignSelf: 'center',
   },
 
   playIcon: {
@@ -116,8 +118,8 @@ const styles = StyleSheet.create({
   },
   ratingCircle: {
     position: 'absolute',
-    bottom: 4,
-    right: 4,
+    bottom: -2,
+    right: -3,
     borderWidth: 2,
     borderColor: AppColors.white,
   },

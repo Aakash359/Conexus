@@ -44,43 +44,19 @@ interface ImageGalleryState {
 
 const ImageGalleries = (props: ImageGalleryProps, state: ImageGalleryState) => {
   const [index, setIndex] = useState(0);
-  // const [images, setImages] = useState(props?.route?.params?.images || '');
-  const [allImages, setAllImages] = useState('');
+  let displayCount = props?.route?.params?.initialRenderCount || 2;
+  const images = props?.route?.params?.images;
+
+  const [image, setImages] = useState(images.slice(0, displayCount));
   const [showGallery, setShowGallery] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const openGallery = () => setIsOpen(true);
   const closeGallery = () => setIsOpen(false);
-  const {initialRenderCount} = props;
   const {title} = props?.route?.params;
-  let displayCount = initialRenderCount || 2;
 
-  console.log('displayCount====>', props?.route);
+  console.log('displayCount====>', props);
 
-  // provide the gallery the first 2 images initially so they load quickly. The candiate-detail view should have them cached.
-
-  // this.state = {
-  //   index: 0,
-  //   images: images.slice(0, displayCount),
-  //   allImages: images,
-  //   showGallery: false,
-  // };
-
-  //   InteractionManager.runAfterInteractions(() => setShowGallery(true));
-
-  //     this.delayLoadCachedImages(displayCount + 1, images);
-  //   }
-
-  //   delayLoadCachedImages(displayCount: number, allImages: any[]) {
-  //     setTimeout(() => {
-  //       this.setState({images: allImages.slice(0, displayCount)});
-
-  //       if (displayCount < allImages.length) {
-  //         this.delayLoadCachedImages(displayCount + 1, allImages);
-  //       }
-  //     }, 1000);
-  //   }
-
-  const images = [
+  const Images = [
     'https://placeimg.com/640/640/nature',
     'https://placeimg.com/640/640/people',
     'https://placeimg.com/640/640/animals',
@@ -97,7 +73,13 @@ const ImageGalleries = (props: ImageGalleryProps, state: ImageGalleryState) => {
           justifyContent: 'center',
         }}
       >
-        <Text style={{color: 'black', fontSize: 15, fontStyle: 'italic'}}>
+        <Text
+          style={{
+            color: 'black',
+            fontSize: 15,
+            fontStyle: 'italic',
+          }}
+        >
           This image cannot be displayed...
         </Text>
       </View>
@@ -141,17 +123,22 @@ const ImageGalleries = (props: ImageGalleryProps, state: ImageGalleryState) => {
       <ImageSlider
         loopBothSides
         autoPlayWithInterval={3000}
-        images={images}
+        images={Images}
         customSlide={({index, item, width}) => (
           <>
             <View key={index} style={[style, style.customSlide]}>
-              <Image source={{uri: item}} style={style.customImage} />
+              <Image
+                source={{
+                  uri: item,
+                }}
+                style={style.customImage}
+              />
             </View>
           </>
         )}
         customButtons={(position: number, move: (arg0: number) => void) => (
           <View style={style.buttons}>
-            {images.map((image, index) => {
+            {Images.map((image, index) => {
               return (
                 <TouchableHighlight
                   key={index}

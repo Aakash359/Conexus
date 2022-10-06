@@ -11,16 +11,13 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+
 import {AppFonts, AppColors, AppSizes} from '../../../theme';
-// import {ConexusIcon} from '../components';
-import {
-  ConexusVideoPlayer,
-  ConexusVideoActionButton,
-  Circle,
-} from '../components';
+import {ConexusVideoActionButton, Circle} from '../../../components';
 import LinearGradient from 'react-native-linear-gradient';
 import PagerView from 'react-native-pager-view';
 import NavigationService from '../../../navigation/NavigationService';
+import ConexusVideoPlayer from '../../../components/conexus-video-player';
 
 export interface AnswerRatingItem {
   id: string;
@@ -79,249 +76,238 @@ const AnswerRatings = (
   );
   const [switchingQuestions, setSwitchingQuestions] = useState(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
-
+  const propsData = props?.route?.params;
+  const {answers, initialIndex} = propsData;
   const {title} = props;
-  console.log('props====>', currentAnswerIndex);
+  const screenName = props?.route?.name;
+  console.log();
 
-  //   useEffect(() => {
-  //     // setTimeout(() => {
-  //     //   if (IndicatorViewPager) {
-  //     //     IndicatorViewPager.setPage(currentAnswerIndexes);
-  //     //   }
-  //     // }, 100);
-  //     StatusBar.setHidden(true);
-  //     StatusBar.setHidden(false);
-  //   }, []);
+  useEffect(() => {
+    StatusBar.setHidden(true);
+    StatusBar.setHidden(false);
+  }, []);
 
   //   const currentAnswerIndexes = (): number => {
   //     return currentAnswerIndex;
   //   };
 
-  //   const currentAnswer = (): AnswerRatingItem => {
-  //     return props.answers[currentAnswerIndex];
-  //   };
+  const currentAnswer = (): AnswerRatingItem => {
+    return answers[currentAnswerIndex];
+  };
 
-  //   const isLastAnswer = (): boolean => {
-  //     return !!!props.answers[currentAnswerIndex + 1];
-  //   };
+  const isLastAnswer = (): boolean => {
+    return !!!answers[currentAnswerIndex + 1];
+  };
 
-  //   const switchingQuestions = (): boolean => {
-  //     return switchingQuestions;
-  //   };
+  // const switchingQuestions = (): boolean => {
+  //   return switchingQuestions;
+  // };
 
-  //   const videoLoaded = (): boolean => {
-  //     return videoLoaded;
-  //   };
+  // const videoLoaded = (): boolean => {
+  //   return videoLoaded;
+  // };
 
   const count = (): number => {
-    return props.answers.length;
+    return answers.length;
   };
 
   const subheaderTitle = (): string => {
-    return `Response ${currentAnswerIndex + 1} of ${count}`;
+    return `Response ${currentAnswerIndex + 1} of ${count()}`;
   };
 
-  //   const setCurrentAnswer = (index: number) => {
-  //     if (settingCurrent) {
-  //       return;
-  //     }
+  const setCurrentAnswer = (index: number) => {
+    if (settingCurrent) {
+      return;
+    }
 
-  //     try {
-  //       settingCurrent = true;
+    try {
+      settingCurrent = true;
 
-  //       if (IndicatorViewPager) {
-  //         IndicatorViewPager.setPage(index);
-  //       }
-  //       setCurrentAnswer(index);
-  //       settingCurrent = false;
-  //     } catch (error) {
-  //       console.log('SetCurrentAnswer Error', error);
-  //       settingCurrent = false;
-  //     }
-  //   };
+      if (IndicatorViewPager) {
+        IndicatorViewPager.setPage(index);
+      }
+      setCurrentAnswer(index);
+      settingCurrent = false;
+    } catch (error) {
+      console.log('SetCurrentAnswer Error', error);
+      settingCurrent = false;
+    }
+  };
 
-  //   const rateAndGoNext = (rating: -1 | 0 | 1) => {
-  //     console.log('Setting Rating', rating);
-  //     setVideoLoaded(false);
-  //     setSwitchingQuestions(true);
-  //     currentAnswer.rating = rating;
+  const rateAndGoNext = (rating: -1 | 0 | 1) => {
+    console.log('Setting Rating', rating);
+    setVideoLoaded(false);
+    setSwitchingQuestions(true);
+    currentAnswer().rating = rating;
+    currentAnswer()
+      .saveResponse(currentAnswer().id, currentAnswer().rating)
+      .then(() => {
+        console.log('Ha yahna Aa raha hai');
 
-  //     // this.currentAnswer
-  //     //   .saveResponse(this.currentAnswer.id, this.currentAnswer.rating)
-  //     //   .then(() => {
-  //     //     this.setState({switchingQuestions: false}, () => {
-  //     //       this.goNext();
-  //     //     });
-  //     //   })
-  //     //   .catch(error => {
-  //     //     Alert.alert(
-  //     //       'Rating Error',
-  //     //       'An error occurred while saving your rating. Please try again.',
-  //     //     );
-  //     //     this.setState({switchingQuestions: false});
-  //     //   });
-  //   };
+        setSwitchingQuestions(false);
+        goNext();
+      })
+      .catch(error => {
+        Alert.alert(
+          'Rating Error',
+          'An error occurred while saving your rating. Please try again.',
+        );
+        console.log('Error', error);
+        setSwitchingQuestions(false);
+      });
+  };
 
-  //   const goNext = () => {
-  //     if (isLastAnswer()) {
-  //       console.log('Last Answer, closing');
-  //       NavigationService.goBack();
-  //     } else {
-  //       log.info('Going next answer');
-  //       setCurrentAnswer(currentAnswerIndex + 1);
-  //     }
-  //   };
+  const goNext = () => {
+    Alert.alert('hi');
+    if (isLastAnswer()) {
+      console.log('Last Answer, closing');
+      NavigationService.goBack();
+    } else {
+      console.log('Going next answer');
+      setCurrentAnswer(currentAnswerIndex + 1);
+    }
+  };
 
-  //   const onVideoLoad = () => {
-  //     setVideoLoaded(true);
-  //   };
+  const onVideoLoad = () => {
+    setVideoLoaded(true);
+  };
 
-  //   const onError = (error, code?: string) => {
-  //     setShowPlayer(false);
+  const onError = (error, code?: string) => {
+    setShowPlayer(false);
 
-  //     //TODO: Might handle this better with a retry and cancel
-  //     setTimeout(() => {
-  //       const buttons: AlertButton[] = [
-  //         {
-  //           text: 'Retry',
-  //           onPress: () => {
-  //             setShowPlayer(true);
-  //           },
-  //         },
-  //         {text: 'Cancel', onPress: onCancel()},
-  //       ];
+    //TODO: Might handle this better with a retry and cancel
+    setTimeout(() => {
+      const buttons: AlertButton[] = [
+        {
+          text: 'Retry',
+          onPress: () => {
+            setShowPlayer(true);
+          },
+        },
+        {text: 'Cancel', onPress: onCancel()},
+      ];
 
-  //       Alert.alert(
-  //         `We're Sorry`,
-  //         `An error occurred while playing this video.${
-  //           code ? ` (${code})` : ''
-  //         }`,
-  //         buttons,
-  //       );
-  //     }, 0);
-  //   };
+      Alert.alert(
+        `We're Sorry`,
+        `An error occurred while playing this video.${
+          code ? ` (${code})` : ''
+        }`,
+        buttons,
+      );
+    }, 0);
+  };
 
-  //   const onClose = () => {
-  //     StatusBar.setHidden(false);
-  //     NavigationService.goBack();
-  //   };
+  const onClose = () => {
+    StatusBar.setHidden(false);
+    NavigationService.goBack();
+  };
 
-  //   const onCancel = () => {
-  //     setShowPlayer(true);
-  //     setSwitchingQuestions(false);
-  //     if (isLastAnswer()) {
-  //       console.log('Last Answer, closing');
-  //       NavigationService.goBack();
-  //     } else {
-  //       log.info('Going next answer');
-  //       goNext();
-  //     }
-  //   };
+  const onCancel = () => {
+    setShowPlayer(true);
+    setSwitchingQuestions(false);
+    if (isLastAnswer()) {
+      console.log('Last Answer, closing');
+      NavigationService.goBack();
+    } else {
+      console.log('Going next answer');
+      goNext();
+    }
+  };
 
-  //   const renderAnswer = (answer: AnswerRatingItem, index: number) => {
-  //     return (
-  //       <View key={index.toString()} style={styles.answerCard}>
-  //         {currentAnswerIndex === index && (
-  //           <ConexusVideoPlayer
-  //             mediaUrl={answer.videoUrl || answer.audioUrl}
-  //             autoPlay={true}
-  //             pausable={true}
-  //             showActionsOnEnd={true}
-  //             volumeLocation={'top-right'}
-  //             hideErrorIcon={true}
-  //             errorDisplayText="This response is currently unavailable."
-  //             menuButtons={this.menuButtons}
-  //             onLoad={this.onVideoLoad.bind(this)}
-  //             overlayContentWithErrorStyle={{
-  //               justifyContent: 'flex-start',
-  //               paddingTop: 80,
-  //               marginBottom: 0,
-  //             }}
-  //             overlayContentStyle={{
-  //               justifyContent: 'flex-start',
-  //               paddingTop: 180,
-  //               marginBottom: 0,
-  //             }}
-  //             overlayFooterStyle={styles.overlayFooter}
-  //           />
-  //         )}
-  //         <View style={styles.questionBox}>
-  //           <Text style={styles.questionBg}>{answer.questionText}</Text>
-  //           <Text style={styles.question}>{answer.questionText}</Text>
-  //         </View>
-  //         <View style={[styles.footer]}>
-  //           <View style={styles.actions}>
-  //             <TouchableOpacity
-  //               onPress={() => this.rateAndGoNext(-1)}
-  //               style={styles.rateDown}
-  //             >
-  //               <Circle
-  //                 size={80}
-  //                 color={
-  //                   answer.rating === 1 || answer.rating === 0
-  //                     ? 'transparent'
-  //                     : AppColors.red
-  //                 }
-  //                 style={[styles.actionCircle]}
-  //               >
-  //                 <ConexusIcon
-  //                   name="cn-thumbs-down"
-  //                   size={40}
-  //                   color={AppColors.white}
-  //                 />
-  //               </Circle>
-  //             </TouchableOpacity>
-  //             <TouchableOpacity
-  //               onPress={() => this.rateAndGoNext(1)}
-  //               style={styles.rateUp}
-  //             >
-  //               <Circle
-  //                 size={80}
-  //                 color={
-  //                   answer.rating === -1 || answer.rating === 0
-  //                     ? 'transparent'
-  //                     : AppColors.green
-  //                 }
-  //                 style={[styles.actionCircle]}
-  //               >
-  //                 <ConexusIcon
-  //                   name="cn-thumbs-up"
-  //                   size={40}
-  //                   color={AppColors.white}
-  //                 />
-  //               </Circle>
-  //             </TouchableOpacity>
-  //           </View>
-  //         </View>
-  //       </View>
-  //     );
-  //   };
+  const renderAnswer = (answer: AnswerRatingItem, index: number) => {
+    return (
+      <View key={index.toString()} style={styles.answerCard}>
+        {currentAnswerIndex === index && (
+          <ConexusVideoPlayer
+            mediaUrl={answer.videoUrl || answer.audioUrl}
+            screenName={screenName}
+            autoPlay={true}
+            pausable={true}
+            showActionsOnEnd={true}
+            volumeLocation={'top-right'}
+            hideErrorIcon={true}
+            errorDisplayText="This response is currently unavailable."
+            menuButtons={menuButtons}
+            onLoad={() => onVideoLoad()}
+            overlayContentStyle={{
+              justifyContent: 'flex-start',
+              paddingTop: 180,
+              marginBottom: 0,
+            }}
+            overlayFooterStyle={styles.overlayFooter}
+          />
+        )}
+        <View style={styles.questionBox}>
+          <Text style={styles.questionBg}>{answer.questionText}</Text>
+          <Text style={styles.question}>{answer.questionText}</Text>
+        </View>
+        <View style={[styles.footer]}>
+          <View style={styles.actions}>
+            <TouchableOpacity
+              onPress={() => rateAndGoNext(-1)}
+              style={styles.rateDown}
+            >
+              <Circle
+                size={80}
+                color={
+                  answer.rating === 1 || answer.rating === 0
+                    ? 'transparent'
+                    : AppColors.red
+                }
+                style={[styles.actionCircle]}
+              >
+                <Icon name="thumbs-down" size={40} color={AppColors.white} />
+              </Circle>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => rateAndGoNext(1)}
+              style={styles.rateUp}
+            >
+              <Circle
+                size={80}
+                color={
+                  answer.rating === -1 || answer.rating === 0
+                    ? 'transparent'
+                    : AppColors.green
+                }
+                style={[styles.actionCircle]}
+              >
+                <Icon name="thumbs-up" size={40} color={AppColors.white} />
+              </Circle>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    );
+  };
 
-  //   const activityIndicator = (
-  //     <ActivityIndicator style={{flex: 1}} color={AppColors.white} />
-  //   );
+  const activityIndicator = (
+    <ActivityIndicator style={{flex: 1}} color={AppColors.white} />
+  );
 
   return (
-    // <ConexusLightbox
-    //   title={title}
-    //   adjustForTopTab
-    //   headerStyle={{backgroundColor: AppColors.white}}
-    //   headerTextStyle={{color: AppColors.blue}}
-    //   verticalPercent={1}
-    //   horizontalPercent={1}
-    //   closeable
-    //   style={styles.lightbox}
-    // >
-    <View style={styles.header}>
-      <Icon
-        style={styles.closeButton}
-        name="close-outline"
-        size={35}
-        color={AppColors.blue}
-        onPress={() => NavigationService.goBack()}
-      />
-      <View style={styles.modalSubheader}></View>
-    </View>
+    <>
+      <View style={styles.header}>
+        <Icon
+          style={styles.closeButton}
+          name="close-outline"
+          size={35}
+          color={AppColors.blue}
+          onPress={() => NavigationService.goBack()}
+        />
+        <View style={styles.modalSubheader}>
+          <Text style={styles.modalSubheaderText}>{subheaderTitle()}</Text>
+        </View>
+      </View>
+      <PagerView
+        style={styles.pager}
+        initialPage={initialIndex}
+        orientation="horizontal"
+        scrollEnabled
+      >
+        {answers.map((answer, index) => renderAnswer(answer, index))}
+      </PagerView>
+    </>
   );
 };
 
@@ -334,10 +320,11 @@ const styles = StyleSheet.create({
 
   header: {
     height: 35,
-    backgroundColor: AppColors.gray,
+    backgroundColor: AppColors.baseGray,
   },
   pager: {
     flex: 1,
+    marginTop: 20,
   },
   closeButton: {
     position: 'absolute',
@@ -351,8 +338,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     top: 35,
+    height: 20,
     paddingLeft: 18,
-    paddingBottom: 30,
     paddingRight: 18,
   },
   modalSubheaderText: {

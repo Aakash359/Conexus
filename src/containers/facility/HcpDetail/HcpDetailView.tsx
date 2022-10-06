@@ -36,6 +36,7 @@ import {candidateSubmissionsService} from '../../../services/candidateSubmissioS
 import {notInterestedService} from '../../../services/notInterestedService';
 import {makeOfferService} from '../../../services/makeOfferService';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import {saveFeedbackResponseApi} from '../../../services/saveFeedbackResponseService';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -138,8 +139,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     try {
       const {data} = await candidateSubmissionsService(submissionId);
       setCandidate(data);
-
-      // preloadResumePages(data);
+      preloadResumePages(data);
       setRefreshing(false);
       setLoadingSummary(false);
     } catch (error) {
@@ -150,18 +150,19 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
 
   useEffect(() => {
     loadCandidate(false);
+    if (props.onClose && props.onClose().call) {
+      props.onClose();
+    }
 
     // if (!candidate) {
-
-    // }
-    // else if (
+    // } else if (
     //   !candidate.resumePages.pageCount ||
     //   !candidate.submissionSummary ||
     //   !candidate.submissionSummary.length
     // ) {
     //   setCandidate(candidate);
     //   setRefreshing(true);
-    //   //  refreshCandidate();
+    //   refreshCandidate();
     // }
   }, []);
 
@@ -182,13 +183,18 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
           questionText: response.questionText,
           rating: response.feedbackResponse as -1 | 0 | 1,
           saveResponse: (questionId: string, rating: -1 | 0 | 1) => {
-            return this.state.candidate
-              .saveFeedbackResponse(questionId, rating)
-              .then(() => {
-                return new Promise((resolve, reject) => {
-                  this.forceUpdate(resolve);
-                });
+            const payload = {
+              questionId,
+              rating,
+              submissionId,
+            };
+            return saveFeedbackResponseApi(payload).then(() => {
+              return new Promise((resolve, reject) => {
+                console.log('resolve', resolve);
+
+                // forceUpdate(resolve);
               });
+            });
           },
         };
       },
@@ -236,8 +242,6 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     NavigationService.navigate('AudioPlayer', {
       parms,
     });
-
-    // Actions[ScreenType.AUDIO_PLAYER_LIGHTBOX](parms);
   };
 
   const renderQuestions = (candidate: any) => {
@@ -271,6 +275,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     return (
       <FlatList
         style={{paddingBottom: 220}}
+        contentContainerStyle={{paddingBottom: -200}}
         data={responses}
         renderItem={({item, index}) => (
           <CandidateResponseRow
@@ -284,9 +289,9 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
 
   const openImageGallery = (candidate: any) => {
     NavigationService.navigate('ImageGallery', {
-      // images: data?.resumePages?.originalPdf,
+      images: candidate.resumePages?.originalPdf,
       title: candidate.display.title,
-      // initialRenderCount: preloadResumeCount,
+      initialRenderCount: preloadResumeCount,
     });
   };
 
