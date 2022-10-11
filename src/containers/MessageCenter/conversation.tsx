@@ -15,11 +15,12 @@ import {
   View,
 } from 'react-native';
 import {phoneFormatter} from '../../common/phone-formatter';
-import {ConexusIcon, Circle, ActionButton} from '../../components';
+import {Circle} from '../../components';
 import {ConexusIconButton} from '../../components/conexus-icon-button';
 import {showYesNoAlert} from '../../common';
 import {UserStore, VideoStore} from '../../stores';
 import {logger} from 'react-native-logs';
+import Icon from 'react-native-vector-icons/Ionicons';
 import {AppFonts, AppSizes, AppColors} from '../../theme';
 import {TouchableOpacity} from 'react-native';
 import {sendTextMessageService} from '../../services/MessageCenter/sendTextMessageService';
@@ -449,18 +450,12 @@ const ConversationContainer = (
           ]}
         >
           <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-            <Circle
-              size={28}
-              color={message.sentByMe ? AppColors.white : AppColors.blue}
+            <Icon
               style={{alignItems: 'center', justifyContent: 'center'}}
-            >
-              <ConexusIcon
-                style={{paddingLeft: 3}}
-                name="cn-play"
-                size={18}
-                color={message.sentByMe ? AppColors.blue : AppColors.white}
-              />
-            </Circle>
+              name={'play-circle-outline'}
+              color={message.sentByMe ? AppColors.blue : AppColors.red}
+              size={28}
+            />
             <Text
               style={[
                 style.audioMessageText,
@@ -505,18 +500,12 @@ const ConversationContainer = (
           ]}
         >
           <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-            <Circle
-              size={28}
-              color={message.sentByMe ? AppColors.white : AppColors.blue}
+            <Icon
               style={{alignItems: 'center', justifyContent: 'center'}}
-            >
-              <ConexusIcon
-                style={{paddingLeft: 3}}
-                name="cn-play"
-                size={18}
-                color={message.sentByMe ? AppColors.blue : AppColors.white}
-              />
-            </Circle>
+              name={'play-circle-outline'}
+              color={message.sentByMe ? AppColors.blue : AppColors.red}
+              size={28}
+            />
             <Text
               style={[
                 style.videoMessageText,
@@ -1026,9 +1015,7 @@ const style = StyleSheet.create({
     ...AppFonts.bodyTextMedium,
     paddingLeft: 8,
   },
-  messageUnred: {
-    color: AppColors.red,
-  },
+
   videoMessageTextFromMe: {
     ...AppFonts.bodyTextMedium,
     alignSelf: 'flex-end',

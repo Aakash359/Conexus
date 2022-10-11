@@ -10,11 +10,9 @@ export declare type ApiEnvironment = 'dev' | 'prod'
 // const defaultEnvironment = deviceStore.isDebugEnabled ? 'dev' : 'prod' /// TEMPORARILY DISABLED 'prod'
 // const defaultBaseUrl = deviceStore.isDebugEnabled ? devUrl : productionUrl /// TEMPORARILY DISABLED 'prod'
 
-const defaultEnvironment =  'dev' /// TEMPORARILY DISABLED 'prod'
-export const defaultBaseUrl = devUrl  /// TEMPORARILY DISABLED 'prod'
+export const defaultBaseUrl = productionUrl // devUrl  //productionUrl
 
-let currentEnvironment: ApiEnvironment = defaultEnvironment
-log.info(`Setting API BaseURL to ${currentEnvironment}`)
+
 
 export let rest = axios.create({
   baseURL: defaultBaseUrl,
@@ -24,25 +22,6 @@ export let rest = axios.create({
   }
 })
 
-export const setConexusApiEnvironment = (env: ApiEnvironment) => {
-  codePush.getUpdateMetadata().then((details) => {
-    if (details.deploymentKey === 'UXrzeFYjiGySFOm2mOfuU8pm08Cfaa10473a-eea0-4543-a44c-79c6482beade' || details.deploymentKey === 'OCHtsMWbGSdmM6XRfKhCB5SYFy1saa10473a-eea0-4543-a44c-79c6482beade')
-      env = 'dev'
-  })
-  if (env === 'dev') {
-    console.log('setting to dev environment')
-    rest.defaults.baseURL = devUrl
-    currentEnvironment = 'dev'
-  } else {
-    console.log('setting to production environment')
-    rest.defaults.baseURL = productionUrl
-    currentEnvironment = 'prod'
-  }
-}
-
-export const getConexusApiEnvironment = () => {
-  return currentEnvironment
-}
 
 
 

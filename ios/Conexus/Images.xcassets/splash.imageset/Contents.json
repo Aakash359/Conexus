@@ -1,21 +1,33 @@
 {
-    "images" : [
-      {
-        "filename" : "splash.png",
-        "idiom" : "universal",
-        "scale" : "1x"
-      },
-      {
-        "idiom" : "universal",
-        "scale" : "2x"
-      },
-      {
-        "idiom" : "universal",
-        "scale" : "3x"
-      }
-    ],
-    "info" : {
-      "author" : "xcode",
-      "version" : 1
+  "images" : [
+    {
+      "filename" : "splash.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "iphoneplus_splash.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "iphone6_splash.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    },
+    {
+      "filename" : "ipad_splash.png",
+      "idiom" : "ipad",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "ipadpro1_splash.png",
+      "idiom" : "ipad",
+      "scale" : "2x"
     }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
   }
+}

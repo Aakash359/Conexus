@@ -57,7 +57,7 @@ const ReviewCandidateContainer = (
       load(true);
     }, 1000);
 
-    OneSignal.setAppId('901bc478-b323-4f6f-bc1f-bee60a47c811');
+    OneSignal.setAppId('e1de43b0-7a53-48e2-bf45-3a501f8bbf94');
     OneSignal.setNotificationOpenedHandler(notification => {
       console.log('OneSignal: notification opened:', notification);
     });
