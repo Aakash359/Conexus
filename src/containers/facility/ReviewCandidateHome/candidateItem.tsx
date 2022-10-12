@@ -81,22 +81,6 @@ const CandidateItem = (props: CandidateItemProps) => {
               </Text>
             )}
           </View>
-          {/* {!!item.photoLabel && (
-            <View style={styles.itemSection}>
-              <BubbleLabel
-                height={18}
-                textStyle={{
-                  fontSize: 12,
-                }}
-                style={{
-                  width: 48,
-                  borderWidth: 0,
-                  backgroundColor: '#36D8A3',
-                }}
-                title={item.photoLabel}
-              />
-            </View>
-          )} */}
         </View>
       </TouchableOpacity>
     );

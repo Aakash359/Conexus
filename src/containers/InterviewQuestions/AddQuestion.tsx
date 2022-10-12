@@ -101,10 +101,7 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
         />
 
         <TouchableOpacity
-        // onPress={this.onDefaultQuestionChanged.bind(
-        //   this,
-        //   !this._question.defaultFlag,
-        // )}
+        // onPress={() => onDefaultQuestionChanged(_question.defaultFlag)}
         >
           <Text style={styles.switchLabel}>
             Default question for this unit.
@@ -125,9 +122,9 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
           </Text>
         )}
 
-        <View style={styles.form}>
+        <View style={styles.messageInput}>
           <TextInput
-            style={[styles.questionInput]}
+            style={styles.questionInput}
             maxLength={1000}
             autoCapitalize="sentences"
             rowSpan={4}
@@ -163,12 +160,14 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
 
   const renderUnitField = () => {
     return (
-      <SelectUnitModal
-        unitValue={unitValue ? unitValue : 'Select a unit'}
-        onRequestClose={() => setModalVisible(false)}
-        onClose={() => setModalVisible(false)}
-        onSelectUnit={value => setUnitValue(value)}
-      />
+      <View style={{marginTop: 10}}>
+        <SelectUnitModal
+          unitValue={unitValue ? unitValue : 'Select a unit'}
+          onRequestClose={() => setModalVisible(false)}
+          onClose={() => setModalVisible(false)}
+          onSelectUnit={value => setUnitValue(value)}
+        />
+      </View>
     );
   };
 
@@ -237,11 +236,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
   },
-  listItem: {
-    backgroundColor: AppColors.white,
-    borderBottomWidth: 1,
-    borderBottomColor: AppColors.lightBlue,
-  },
   btnEnable: {
     alignSelf: 'center',
     width: windowDimensions.width * 0.6,
@@ -253,20 +247,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     textAlign: 'center',
   },
-  headerTitle: {
-    ...AppFonts.title,
-    paddingLeft: 18,
-    paddingRight: 18,
-  },
-  headerDescription: {
-    ...AppFonts.description,
-    paddingLeft: 18,
-    paddingRight: 18,
-  },
-  form: {
-    paddingTop: 18,
-    paddingBottom: 18,
-    paddingHorizontal: 20,
+  messageInput: {
+    alignSelf: 'center',
+    borderWidth: 0.8,
+    borderColor: AppColors.lightBlue,
+    backgroundColor: AppColors.white,
+    marginTop: 40,
+    height: 150,
+    fontSize: 16,
+    color: AppColors.black,
+    paddingHorizontal: 10,
+    width: '90%',
+    borderRadius: 5,
   },
   switch: {
     position: 'relative',
@@ -277,10 +269,6 @@ const styles = StyleSheet.create({
     top: 3.5,
     opacity: 0.75,
   },
-  switchLabelEnabled: {
-    paddingLeft: 8,
-    opacity: 1,
-  },
   defaultQuestionField: {
     flexDirection: 'row',
     marginLeft: 20,
@@ -288,18 +276,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   questionInput: {
-    textAlignVertical: 'top',
-    backgroundColor: AppColors.white,
-    height: 130,
-    fontSize: 14,
-    color: AppColors.mediumGray,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: AppColors.lightBlue,
-    width: '100%',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    borderRadius: 5,
+    marginTop: Platform.OS === 'android' ? 0 : 10,
   },
   readonlyQuestionInputContainer: {
     backgroundColor: AppColors.white,
@@ -316,9 +293,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: AppColors.gray,
     textAlign: 'center',
-  },
-  chooserFieldIcon: {
-    alignSelf: 'flex-end',
   },
 });
 

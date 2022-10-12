@@ -104,15 +104,6 @@ const AppStack = () => {
                 ? 'Interview Questions'
                 : route?.params?.sections?.sectionTitle,
           })}
-
-          // options={{
-
-          //   headerTitleStyle: {
-          //     color: AppColors.black,
-          //     fontWeight: 'bold',
-          //     fontSize: 22,
-          //   },
-          // }}
         />
         <Stack.Screen
           name="HcpDetailView"

@@ -58,6 +58,7 @@ const InterviewQuestionDetail = (
 ) => {
   const [silentRefreshing, setSilentRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [sections, setSections] = useState(props?.route?.params?.sections);
   const [editing, setEditing] = useState(false);
   const [needQuestionList, setNeedQuestionList] = useState([]);
   const [loadingError, setLoadingError] = useState([]);
@@ -65,7 +66,7 @@ const InterviewQuestionDetail = (
   const userInfo = useSelector(state => state.userReducer);
   const propsData = [props?.route?.params] ? [props?.route?.params] : {};
   const {needId, sectionTitleOverride, questionSectionId} = propsData?.[0];
-  const {sectionFacilityID, sections, onSave} = propsData?.[0] || {};
+  const {sectionFacilityID, onSave} = propsData?.[0] || {};
   const {facilityId} = sectionFacilityID ? sectionFacilityID : {};
   const [selectedTabId, setSelectedTabID] = useState(
     needId ? 'other' : 'default',
@@ -118,7 +119,6 @@ const InterviewQuestionDetail = (
       return [];
     }
     let questions = [];
-
     if (needId) {
       questions = needQuestionList || [];
     } else {
@@ -138,11 +138,6 @@ const InterviewQuestionDetail = (
       questionId: '0',
       initialUnitId: sections ? sections.sectionId : '',
       needId: needId,
-      // onClose: this.onQuestionClose.bind(this),
-      // onSave: () => {
-      //     this.onSave()
-      //     this.forceUpdate()
-      // }
     });
   };
 
@@ -170,8 +165,6 @@ const InterviewQuestionDetail = (
       questionUnitId: questionUnitId,
       sections: sections ? sections : {},
       questionDefaultFlag: questionDefaultFlag,
-
-      // onClose: this.onQuestionClose.bind(this),
     });
   };
 
@@ -213,6 +206,8 @@ const InterviewQuestionDetail = (
           needId: needId,
           deleted: true,
         };
+        console.log('NeedPayload', needPayload);
+
         const {data} = await deleteNeedInterviewQuestionsService(needPayload);
         setRefreshing(false);
         loadNeedQuestions();
@@ -291,7 +286,6 @@ const InterviewQuestionDetail = (
     const description = `${questionCount} question${
       questionCount === 0 || questionCount > 1 ? 's' : ''
     }`;
-
     const actionText = editing ? 'FINISH' : 'EDIT';
     return (
       <ViewHeader
@@ -341,7 +335,7 @@ const InterviewQuestionDetail = (
             />
           }
         >
-          {showableQuestions().length > 0 && renderSortableList(route)}
+          {renderSortableList(route)}
         </ScrollView>
       </View>
     );
@@ -364,11 +358,17 @@ const InterviewQuestionDetail = (
               borderColor: AppColors.mediumGray,
               backgroundColor: AppColors.green,
               alignItems: 'center',
-              left: 70,
+              left: 75,
               top: 10,
             }}
           >
-            <Text style={{color: AppColors.white, textAlignVertical: 'center'}}>
+            <Text
+              style={{
+                color: AppColors.white,
+                textAlignVertical: 'center',
+                top: 1,
+              }}
+            >
               {sections?.defaultQuestions.length}
             </Text>
           </View>
@@ -386,7 +386,13 @@ const InterviewQuestionDetail = (
               top: 10,
             }}
           >
-            <Text style={{color: AppColors.white, textAlignVertical: 'center'}}>
+            <Text
+              style={{
+                color: AppColors.white,
+                textAlignVertical: 'center',
+                top: 1,
+              }}
+            >
               {sections?.questions.length}
             </Text>
           </View>
@@ -539,7 +545,7 @@ const InterviewQuestionDetail = (
   const renderEmptyList = () => {
     return (
       <ScrollView
-        style={{flex: 1, backgroundColor: AppColors.baseGray}}
+        style={{backgroundColor: AppColors.baseGray}}
         refreshControl={
           <RefreshControl
             tintColor={AppColors.blue}
@@ -549,12 +555,7 @@ const InterviewQuestionDetail = (
           />
         }
       >
-        <View
-          style={StyleSheet.flatten([
-            {paddingBottom: 220},
-            Styles.cnxNoDataMessageContainer,
-          ])}
-        >
+        <View style={{alignItems: 'center', marginBottom: 50}}>
           <Icon name="information-circle" style={Styles.cnxNoDataIcon} />
           <Text style={Styles.cnxNoDataMessageText}>
             No Questions Available
@@ -600,7 +601,7 @@ const InterviewQuestionDetail = (
     <View style={{flex: 1}}>
       {renderUnitHeader()}
       {needId ? renderSortableList() : renderTabs()}
-      {showableQuestions().length == 0 && renderEmptyList()}
+      {/* {showableQuestions().length == 0 && renderEmptyList()} */}
 
       {!editing && (
         <View style={styles.footer}>

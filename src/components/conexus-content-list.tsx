@@ -84,8 +84,8 @@ const style = StyleSheet.create({
 
   contentBlock: {
     backgroundColor: variables.baseGray,
-    padding: blockPadding,
-    paddingBottom: blockPadding / 2,
+    padding: 10,
+    paddingBottom: 10 / 2,
   },
 
   contentBlockEven: {

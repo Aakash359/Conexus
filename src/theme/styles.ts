@@ -29,11 +29,7 @@ const styles = StyleSheet.create({
         elevation: 1
     },
     cnxNoDataMessageContainer: {
-        flex: 1,
         alignItems: 'center',
-        justifyContent: 'flex-start',
-        paddingTop: 80,
-        paddingBottom: 80
     },
     cnxNoDataMessageText: {
         color: variables.darkBlue

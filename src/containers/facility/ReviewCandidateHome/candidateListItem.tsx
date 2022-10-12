@@ -67,9 +67,10 @@ export const CandidateListItem = (
         return ind > 2 && !candidate.viewedSubmission;
       },
     );
+
     return (
       <CandidateItem
-        key={`${candidates.submissionId}-${index}`}
+        key={candidates.submissionId}
         candidate={candidates}
         candidatesCount={position.candidates.length}
         index={index}

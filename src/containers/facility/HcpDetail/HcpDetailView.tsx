@@ -73,7 +73,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     false,
   );
   const [loadingSummary, setLoadingSummary] = useState(false);
-  const [refreshing, setRefreshing] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
   const userInfo = useSelector(state => state.userReducer);
   const [callbackNumber, setCallBackNumber] = useState(
@@ -103,8 +103,9 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   };
 
   const refreshCandidate = (refreshing: boolean = false) => {
-    setRefreshing(refreshing);
-    setLoadingSummary(loadingSummary);
+    setRefreshing(false);
+    loadCandidate();
+    setLoadingSummary(false);
   };
 
   const preloadResumePages = (data: any) => {
@@ -535,8 +536,10 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
         contentContainerStyle={styles.dataView}
         refreshControl={
           <RefreshControl
-            Refreshing={refreshing}
-            // onRefresh={() => refreshCandidate(true)}
+            tintColor={AppColors.blue}
+            colors={[AppColors.blue]}
+            refreshing={refreshing}
+            onRefresh={() => loadCandidate(true)}
           />
         }
       >
