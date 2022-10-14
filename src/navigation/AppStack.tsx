@@ -239,7 +239,7 @@ const DrawerStack = () => {
           options={{
             headerShown: false,
           }}
-        />
+        ></Drawer.Screen>
       )}
 
       <Drawer.Screen

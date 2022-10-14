@@ -49,9 +49,6 @@ const AudioPlayer = (props: AudioPlayerProps, state: AudioPlayerState) => {
 
   const {audioUrl, avatarUrl, style, avatarTitle, avatarDescription} = props;
 
-  //   const volume = (): number => {
-  //     return state.volume;
-  //   };
   const volume = (value: number) => {
     SystemSetting.setVolume(value);
     setVolume(value);

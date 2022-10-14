@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, createRef} from 'react';
 import {
   StyleSheet,
   ScrollView,
@@ -11,6 +11,7 @@ import {
   Alert,
   Image,
   SafeAreaView,
+  TouchableOpacity,
 } from 'react-native';
 import {phoneFormatter} from '../../../common/phone-formatter';
 import {initiatePhoneCallService} from '../../../services/Facility/phoneCallService';
@@ -37,6 +38,7 @@ import {notInterestedService} from '../../../services/notInterestedService';
 import {makeOfferService} from '../../../services/makeOfferService';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {saveFeedbackResponseApi} from '../../../services/saveFeedbackResponseService';
+import Tabs from '../../../components/customTab';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -45,6 +47,7 @@ interface HcpDetailProps {
   candidate?: any;
   onClose?: () => any;
   screen: any;
+  navigation: any;
 }
 
 interface HcpDetailState {
@@ -54,12 +57,6 @@ interface HcpDetailState {
   selectedTab?: TabDetails;
 }
 
-const tabs = [
-  {id: 'summary', title: 'Summary'},
-  {id: 'interviews', title: 'Virtual Interviews'},
-];
-
-// const imageCacheManager = ImageCacheManager();
 const preloadResumeCount = 3;
 const dateFormat = 'MM/DD/YYYY';
 
@@ -82,7 +79,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const [calling, setCalling] = useState(false);
   const submissionId = props?.route?.params?.submissionId;
   const validPhone = phoneFormatter.isValid10DigitPhoneNumber(callbackNumber);
-  const {onMessageSendCallback} = props;
+  const {onMessageSendCallback, navigation} = props;
 
   const responses = (): any => {
     if (!candidate) {
@@ -529,6 +526,23 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     );
   };
 
+  const PROFILETAB = [
+    {
+      name: 'Summary',
+      key: 'summary',
+      component: Summary,
+      ref: createRef(),
+      idx: 0,
+    },
+    {
+      name: 'VirtualInterView',
+      key: 'virtualInterView',
+      component: VirtualInterView,
+      ref: createRef(),
+      idx: 1,
+    },
+  ];
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -544,12 +558,14 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
         }
       >
         <View style={styles.headerViews}>
-          <Icon
+          <TouchableOpacity
+            activeOpacity={0.8}
             style={styles.closeButton}
-            name="ios-close-circle-sharp"
-            size={22}
             onPress={() => NavigationService.goBack()}
-          />
+          >
+            <Icon name="ios-close-circle-sharp" size={22} />
+          </TouchableOpacity>
+
           <Image
             source={{uri: candidate.photoUrl}}
             style={styles.circleStyle}
@@ -559,7 +575,14 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
           </Text>
           {Object.keys(candidate).length > 0 && renderActionHeader(candidate)}
         </View>
-        {Object.keys(candidate).length > 0 && MyTabs()}
+        <View style={{marginTop: 5}}>
+          {Object.keys(candidate).length > 0 && (
+            <Tabs
+              data={PROFILETAB.map(_ => ({..._}))}
+              navigation={navigation}
+            />
+          )}
+        </View>
       </ScrollView>
 
       {

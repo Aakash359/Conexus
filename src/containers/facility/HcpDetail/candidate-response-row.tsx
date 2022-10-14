@@ -12,10 +12,6 @@ export interface CandidateResponseRowProps {
 export const CandidateResponseRow = (props: CandidateResponseRowProps) => {
   const {onPlayResponse, response} = props;
 
-  const openResponse = () => {
-    //Actions[ScreenType.FACILITIES.QUESTION_DETAIL_EDIT]({ question });
-  };
-
   const playResponse = () => {
     if (onPlayResponse && !!onPlayResponse.call) {
       onPlayResponse();

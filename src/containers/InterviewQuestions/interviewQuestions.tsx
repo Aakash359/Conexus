@@ -7,6 +7,8 @@ import {
   RefreshControl,
   Alert,
   Image,
+  ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import {AppColors, AppFonts, AppSizes} from '../../theme';
 import {ScreenType, showYesNoAlert, windowDimensions} from '../../common';
@@ -16,6 +18,7 @@ import {
   FacilityModel,
 } from '../../stores/facility/';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
+import Icons from 'react-native-vector-icons/Ionicons';
 import {ActionButton} from '../../components/action-button';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import NavigationService from '../../navigation/NavigationService';
@@ -50,16 +53,11 @@ const InterviewQuestions = (
   };
 
   const load = async (refreshing: boolean = false) => {
-    if (refreshing) {
-      setRefreshing(true);
-    } else {
-      setRefreshing(false);
-    }
     try {
+      setRefreshing(true);
       const {data} = await facilityQuestionsService();
       let sectionData = data.filter((i: any) => !!i);
       const facilityData = sectionData.map((i: any) => i);
-
       setSection(facilityData);
       setRefreshing(false);
     } catch (error) {
@@ -137,58 +135,113 @@ const InterviewQuestions = (
     );
   };
 
+  const renderEmptyList = () => {
+    return (
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          marginTop: 250,
+          backgroundColor: AppColors.baseGray,
+        }}
+        refreshControl={
+          <RefreshControl
+            tintColor={AppColors.blue}
+            colors={[AppColors.blue]}
+            refreshing={refreshing}
+            onRefresh={() => load(true)}
+          />
+        }
+      >
+        <View
+          style={{
+            alignItems: 'center',
+          }}
+        >
+          <Icons name="information-circle" style={styles.cnxNoDataIcon} />
+          <Text style={styles.cnxNoDataMessageText}>
+            No Interview Questions Available
+          </Text>
+        </View>
+        <View style={styles.footer}>
+          <ActionButton
+            title="ADD QUESTION"
+            loading={loading}
+            customTitleStyle={styles.title}
+            onPress={i => showNewQuestion(i)}
+            customStyle={styles.addQuestionBtn}
+          />
+        </View>
+      </ScrollView>
+    );
+  };
+
   return (
     <>
-      {section.map(i => (
-        <>
-          <TouchableOpacity
-            style={styles.root}
-            activeOpacity={0.8}
-            onPress={() => setModalVisible(true)}
-          >
-            <Image source={{uri: i.facPhotoUrl}} style={styles.circleStyle} />
+      {section.length > 0
+        ? section.map(i => (
+            <>
+              <TouchableOpacity
+                style={styles.root}
+                activeOpacity={0.8}
+                onPress={() => setModalVisible(true)}
+              >
+                <Image
+                  source={{uri: i.facPhotoUrl}}
+                  style={styles.circleStyle}
+                />
 
-            <View style={styles.textWrapper}>
-              <Text style={styles.caption}>showing question for</Text>
-              <Text style={styles.title}>{i.facilityName}</Text>
-            </View>
-            <View style={styles.chooser}>
-              <Icon
-                name="arrow-down"
-                size={18}
-                color={AppColors.white}
-                style={{alignSelf: 'center'}}
+                <View style={styles.textWrapper}>
+                  <Text style={styles.caption}>showing question for</Text>
+                  <Text style={styles.title}>{i.facilityName}</Text>
+                </View>
+                <View style={styles.chooser}>
+                  <Icon
+                    name="arrow-down"
+                    size={18}
+                    color={AppColors.white}
+                    style={{alignSelf: 'center'}}
+                  />
+                </View>
+              </TouchableOpacity>
+
+              <FlatList
+                style={styles.list}
+                refreshControl={
+                  <RefreshControl
+                    tintColor={AppColors.blue}
+                    colors={[AppColors.blue]}
+                    refreshing={refreshing}
+                    onRefresh={() => load(true)}
+                  />
+                }
+                ListFooterComponent={() => {
+                  return <View key="spacer" style={{height: 120}} />;
+                }}
+                renderItem={renderSection}
+                data={i.questionSections}
               />
-            </View>
-          </TouchableOpacity>
-          <FlatList
-            style={styles.list}
-            refreshControl={
-              <RefreshControl
-                tintColor={AppColors.blue}
-                colors={[AppColors.blue]}
-                refreshing={refreshing}
-                onRefresh={() => load(true)}
-              />
-            }
-            ListFooterComponent={() => {
-              return <View key="spacer" style={{height: 120}} />;
-            }}
-            renderItem={renderSection}
-            data={i.questionSections}
-          />
-          {modalVisible && chooseFacility(i)}
-          <View style={styles.footer}>
-            <ActionButton
-              title="ADD QUESTION"
-              loading={loading}
-              customTitleStyle={styles.title}
-              onPress={i => showNewQuestion(i)}
-              customStyle={styles.addQuestionBtn}
-            />
-          </View>
-        </>
-      ))}
+              {refreshing && (
+                <ActivityIndicator
+                  style={{
+                    flex: 1,
+                    backgroundColor: AppColors.red,
+                    justifyContent: 'center',
+                  }}
+                />
+              )}
+              {modalVisible && chooseFacility(i)}
+              <View style={styles.footer}>
+                <ActionButton
+                  title="ADD QUESTION"
+                  loading={loading}
+                  customTitleStyle={styles.title}
+                  onPress={i => showNewQuestion(i)}
+                  customStyle={styles.addQuestionBtn}
+                />
+              </View>
+            </>
+          ))
+        : renderEmptyList()}
     </>
   );
 };
@@ -199,6 +252,9 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: AppColors.baseGray,
     width: AppSizes.screen.width,
+  },
+  cnxNoDataMessageText: {
+    color: AppColors.darkBlue,
   },
   root: {
     backgroundColor: AppColors.blue,
@@ -267,7 +323,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: AppColors.lightBlue,
   },
-
+  cnxNoDataIcon: {
+    fontSize: 64,
+    color: AppColors.blue,
+  },
   body: {
     flexDirection: 'column',
     alignItems: 'flex-start',

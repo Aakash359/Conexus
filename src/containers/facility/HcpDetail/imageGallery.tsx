@@ -10,6 +10,7 @@ import {
   RecursiveArray,
   RegisteredStyle,
   ViewStyle,
+  TouchableOpacity,
 } from 'react-native';
 import variables, {AppColors} from '../../../theme';
 import ImageSlider from 'react-native-image-slider';
@@ -19,6 +20,7 @@ import {AppFonts} from '../../../theme';
 import {CachedImage} from 'react-native-cached-image';
 import Icon from 'react-native-vector-icons/Ionicons';
 import NavigationService from '../../../navigation/NavigationService';
+import {Platform} from 'react-native';
 
 interface ImageGalleryProps {
   images: Array<string>;
@@ -100,18 +102,19 @@ const ImageGalleries = (props: ImageGalleryProps, state: ImageGalleryState) => {
         flex: 1,
         flexDirection: 'column',
         alignItems: 'stretch',
+        marginTop: Platform.OS === 'ios' ? 20 : 0,
         backgroundColor: variables.baseGray,
       }}
     >
       <ModalHeader
         title={title}
         right={() => (
-          <Icon
-            name="close-outline"
-            size={30}
-            color={AppColors.blue}
+          <TouchableOpacity
+            activeOpacity={0.8}
             onPress={() => NavigationService.goBack()}
-          />
+          >
+            <Icon name="close-outline" size={30} color={AppColors.blue} />
+          </TouchableOpacity>
         )}
       />
       <View style={style.modalSubheader}>

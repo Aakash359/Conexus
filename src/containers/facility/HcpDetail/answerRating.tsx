@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  ViewProperties,
   Alert,
   AlertButton,
   ActivityIndicator,
@@ -14,10 +13,10 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 import {AppFonts, AppColors, AppSizes} from '../../../theme';
 import {ConexusVideoActionButton, Circle} from '../../../components';
-import LinearGradient from 'react-native-linear-gradient';
 import PagerView from 'react-native-pager-view';
 import NavigationService from '../../../navigation/NavigationService';
 import ConexusVideoPlayer from '../../../components/conexus-video-player';
+import {Platform} from 'react-native';
 
 export interface AnswerRatingItem {
   id: string;
@@ -158,7 +157,6 @@ const AnswerRatings = (
   };
 
   const goNext = () => {
-    Alert.alert('hi');
     if (isLastAnswer()) {
       console.log('Last Answer, closing');
       NavigationService.goBack();
@@ -288,13 +286,14 @@ const AnswerRatings = (
   return (
     <>
       <View style={styles.header}>
-        <Icon
+        <TouchableOpacity
+          activeOpacity={0.8}
           style={styles.closeButton}
-          name="close-outline"
-          size={35}
-          color={AppColors.blue}
           onPress={() => NavigationService.goBack()}
-        />
+        >
+          <Icon name="close-outline" size={35} color={AppColors.blue} />
+        </TouchableOpacity>
+
         <View style={styles.modalSubheader}>
           <Text style={styles.modalSubheaderText}>{subheaderTitle()}</Text>
         </View>
@@ -320,6 +319,7 @@ const styles = StyleSheet.create({
 
   header: {
     height: 35,
+    marginTop: Platform.OS === 'ios' ? 50 : 0,
     backgroundColor: AppColors.baseGray,
   },
   pager: {

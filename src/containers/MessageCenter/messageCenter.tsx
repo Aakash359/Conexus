@@ -138,6 +138,15 @@ const MessageCenter = (
   const renderConversations = () => {
     return (
       <>
+        {loading && (
+          <ActivityIndicator
+            style={{
+              flex: 1,
+              backgroundColor: AppColors.baseGray,
+              alignItems: 'center',
+            }}
+          />
+        )}
         <FlatList
           style={{flex: 1, backgroundColor: AppColors.baseGray}}
           refreshControl={
@@ -151,16 +160,6 @@ const MessageCenter = (
           renderItem={renderConversationItem}
           data={conversationData}
         />
-        {loading && (
-          <ActivityIndicator
-            style={{
-              flex: 1,
-              backgroundColor: AppColors.baseGray,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          />
-        )}
       </>
     );
   };
