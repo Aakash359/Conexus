@@ -1,7 +1,8 @@
-import React, {useRef} from 'react';
+import React from 'react';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import CustomDrawer from '../components/CustomDrawer';
 import {AppColors} from '.././theme';
+import {DrawerActions} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import MessageCenter from '../containers/MessageCenter/messageCenter';
 import NavigationService, {navigationRef} from './NavigationService';
@@ -14,6 +15,7 @@ import EditProfile from '../containers/Profile/profile-edit';
 import InterviewQuestions from '../containers/InterviewQuestions/interviewQuestions';
 import {windowDimensions} from '../common/window-dimensions';
 import Icons from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/Feather';
 import InterviewQuestionDetail from '../containers/InterviewQuestions/interviewQuestionsDetails';
 import AddQuestion from '../containers/InterviewQuestions/AddQuestion';
 import HcpDetailView from '../containers/Facility/HcpDetail/HcpDetailView';
@@ -180,35 +182,43 @@ const AppStack = () => {
             },
           }}
         />
-        <Stack.Screen
-          name="MessageCenter"
-          component={MessageCenter}
-          options={{
-            headerShown: true,
-            title: 'MessageCenter',
-            headerLeft: () => (
-              <Icons
-                color={AppColors.black}
-                style={{marginRight: 20}}
-                size={32}
-                name="menu"
-                onPress={drawerRef => console.log('Aakaash====>', drawerRef)}
-              />
-            ),
-          }}
-        />
       </Stack.Navigator>
     </NavigationContainer>
+  );
+};
+
+const MessageStack = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="MessageCenter"
+        component={MessageCenter}
+        options={{
+          headerShown: true,
+          title: 'Message Center',
+          headerLeft: () => (
+            <Icons
+              color={AppColors.black}
+              style={{marginLeft: -10, top: 1}}
+              size={32}
+              name="menu-outline"
+              onPress={() =>
+                NavigationService.dispatch(DrawerActions.openDrawer())
+              }
+            />
+          ),
+        }}
+      />
+    </Stack.Navigator>
   );
 };
 
 const DrawerStack = () => {
   const userInfo = useSelector(state => state.userReducer);
   const userType = (userInfo?.user?.userType).toUpperCase();
-  const drawerRef = useRef(null);
   return (
     <Drawer.Navigator
-      drawerContent={props => <CustomDrawer {...props} ref={drawerRef} />}
+      drawerContent={props => <CustomDrawer {...props} />}
       screenOptions={{
         headerShown: true,
         drawerActiveBackgroundColor: AppColors.blue,
@@ -239,7 +249,7 @@ const DrawerStack = () => {
           options={{
             headerShown: false,
           }}
-        ></Drawer.Screen>
+        />
       )}
 
       <Drawer.Screen
@@ -255,9 +265,26 @@ const DrawerStack = () => {
               onPress={() => NavigationService.navigate('MessageCenter')}
             />
           ),
+          headerLeft: () => (
+            <Icon
+              color={AppColors.black}
+              style={{marginLeft: 10}}
+              size={26}
+              name="menu"
+              onPress={() =>
+                NavigationService.dispatch(DrawerActions.openDrawer())
+              }
+            />
+          ),
         }}
       />
-      <Drawer.Screen name="Message Center" component={MessageCenter} />
+      <Drawer.Screen
+        name="Message Center"
+        component={MessageStack}
+        options={{
+          headerShown: false,
+        }}
+      />
     </Drawer.Navigator>
   );
 };

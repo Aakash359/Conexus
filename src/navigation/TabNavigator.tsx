@@ -21,7 +21,8 @@ const TabNavigator = () => {
         tabBarLabelStyle: {fontWeight: 'bold', fontSize: 10},
         tabBarActiveTintColor: AppColors.blue,
         tabBarInactiveTintColor: AppColors.mediumGray,
-      }}>
+      }}
+    >
       <Tab.Screen
         name="Review"
         component={ReviewCandidateContainer}

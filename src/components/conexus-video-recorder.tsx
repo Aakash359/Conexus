@@ -1,18 +1,9 @@
-import React, {useState, useEffect, useRef, useMemo} from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  FlexAlignType,
-  ActivityIndicator,
-  ViewStyle,
-  Alert,
-  TouchableOpacity,
-} from 'react-native';
+import React, {useState, useEffect, useMemo} from 'react';
+import {StyleSheet, View, Text, FlexAlignType} from 'react-native';
 import {ActionButton} from '../components';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Camera, sortDevices} from 'react-native-vision-camera';
-import {AppFonts, AppColors, AppSizes} from '../theme';
+import {AppColors, AppSizes} from '../theme';
 import {VideoStore} from '../stores';
 import {windowDimensions} from '../common';
 import NavigationService from '../navigation/NavigationService';
