@@ -20,8 +20,6 @@ import variables from '../../../theme';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Styles from '../../../theme/styles';
 import {AppFonts, AppSizes, AppColors} from '../../../theme';
-import {facilitySubmissionsService} from '../../../services/Facility/facilitySubmissionsService';
-import {TabDetails} from '../../../components';
 import {ConexusIconButton} from '../../../components/conexus-icon-button';
 import {ActionButton} from '../../../components/action-button';
 import {CandidateResponseRow} from './candidate-response-row';
@@ -36,11 +34,8 @@ import {PhoneCallModal} from '../../../components/Modals/phoneCallModal';
 import {candidateSubmissionsService} from '../../../services/candidateSubmissioService';
 import {notInterestedService} from '../../../services/notInterestedService';
 import {makeOfferService} from '../../../services/makeOfferService';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {saveFeedbackResponseApi} from '../../../services/saveFeedbackResponseService';
 import Tabs from '../../../components/customTab';
-
-const Tab = createMaterialTopTabNavigator();
 
 interface HcpDetailProps {
   submissionId: string;
@@ -54,7 +49,6 @@ interface HcpDetailState {
   refreshing: boolean;
   loadingSummary: boolean;
   candidate?: any;
-  selectedTab?: TabDetails;
 }
 
 const preloadResumeCount = 3;
@@ -62,7 +56,6 @@ const dateFormat = 'MM/DD/YYYY';
 
 const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const [candidate, setCandidate] = useState([]);
-  const [data, setData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [offerModalVisible, setOfferModalVisible] = useState(false);
   const [phoneCallModalVisible, setPhoneCallModalVisible] = useState(false);
@@ -74,7 +67,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const [loading, setLoading] = useState(false);
   const userInfo = useSelector(state => state.userReducer);
   const [callbackNumber, setCallBackNumber] = useState(
-    userInfo?.user?.phoneNumber,
+    userInfo?.user?.phoneNumber || '',
   );
   const [calling, setCalling] = useState(false);
   const submissionId = props?.route?.params?.submissionId;
@@ -151,17 +144,6 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     if (props.onClose && props.onClose().call) {
       props.onClose();
     }
-
-    // if (!candidate) {
-    // } else if (
-    //   !candidate.resumePages.pageCount ||
-    //   !candidate.submissionSummary ||
-    //   !candidate.submissionSummary.length
-    // ) {
-    //   setCandidate(candidate);
-    //   setRefreshing(true);
-    //   refreshCandidate();
-    // }
   }, []);
 
   const getAnswerPlaylist = (): any => {
@@ -189,8 +171,6 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
             return saveFeedbackResponseApi(payload).then(() => {
               return new Promise((resolve, reject) => {
                 console.log('resolve', resolve);
-
-                // forceUpdate(resolve);
               });
             });
           },
@@ -272,8 +252,8 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
 
     return (
       <FlatList
-        style={{paddingBottom: 220}}
-        contentContainerStyle={{paddingBottom: -200}}
+        scrollEnabled={false}
+        contentContainerStyle={{marginTop: 40}}
         data={responses}
         renderItem={({item, index}) => (
           <CandidateResponseRow
@@ -327,7 +307,9 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   };
   const Summary = () => {
     return (
-      <View style={{flex: 1, backgroundColor: AppColors.baseGray}}>
+      <View
+        style={{flex: 1, backgroundColor: AppColors.baseGray, marginTop: 40}}
+      >
         {loadingSummary && renderLoading(100)}
         <ConexusContentList
           style={styles.contentList}
@@ -338,42 +320,11 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   };
   const VirtualInterView = () => {
     return (
-      <View style={{flex: 1, backgroundColor: AppColors.baseGray}}>
+      <View
+        style={{flex: 1, backgroundColor: AppColors.baseGray, marginTop: 15}}
+      >
         {renderQuestions(candidate || [])}
       </View>
-    );
-  };
-
-  const MyTabs = () => {
-    return (
-      <Tab.Navigator
-        screenOptions={{
-          tabBarPressColor: AppColors.transparent,
-          headerShown: true,
-          tabBarShowLabel: true,
-          tabBarStyle: {
-            backgroundColor: AppColors.white,
-          },
-          tabBarLabelStyle: {fontWeight: 'bold', textTransform: 'none'},
-          tabBarActiveTintColor: AppColors.blue,
-          tabBarInactiveTintColor: AppColors.mediumGray,
-        }}
-      >
-        <Tab.Screen
-          name="Summary"
-          component={Summary}
-          options={{
-            title: 'Summary',
-          }}
-        />
-        <Tab.Screen
-          name="Virtual InterView"
-          component={VirtualInterView}
-          options={{
-            title: 'Virtual Interview',
-          }}
-        />
-      </Tab.Navigator>
     );
   };
 
@@ -543,6 +494,10 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     },
   ];
 
+  const onCallbackChangeText = (callbackNumber: any) => {
+    setCallBackNumber(phoneFormatter.stripFormatting(callbackNumber));
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -585,7 +540,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
         </View>
       </ScrollView>
 
-      {
+      {candidate && candidate?.conversationAllowed && (
         <View style={styles.footer}>
           <ActionButton
             loading={loading}
@@ -600,7 +555,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
             }}
           />
         </View>
-      }
+      )}
       {contactOptionModalVisible && (
         <ContactOptionModal
           title={'Contact Options'}
@@ -617,11 +572,12 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
       {phoneCallModalVisible && (
         <PhoneCallModal
           title={candidate.display.title}
+          source={{uri: candidate.photoUrl}}
           value={phoneFormatter.format10Digit(callbackNumber)}
-          // onChangeText={onCallbackChangeText()}
-          // disabled={!validPhone}
-          onRequestClose={() => setPhoneCallModalVisible(false)}
-          onDismiss={() => setPhoneCallModalVisible(false)}
+          onChangeText={(text: any) => onCallbackChangeText(text)}
+          disabled={!validPhone}
+          onRequestClose={() => console.log('Ok')}
+          onDismiss={() => console.log('Ok')}
           onPress={() => makeCall()}
           onClose={() => setPhoneCallModalVisible(false)}
         />
@@ -685,7 +641,6 @@ const styles = StyleSheet.create({
     backgroundColor: variables.white,
     alignItems: 'center',
     borderBottomWidth: 1,
-    flex: 0.1 / 2,
     borderColor: variables.lightBlue,
     width: windowDimensions.width,
   },

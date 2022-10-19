@@ -87,7 +87,7 @@ const ForgotPassword = () => {
     <SafeAreaView style={[{flex: 1, backgroundColor: AppColors.baseGray}]}>
       <ScrollView
         contentContainerStyle={style.rootContainer}
-        keyboardShouldPersistTaps="always"
+        keyboardShouldPersistTaps="handled"
       >
         <KeyboardAvoidingView behavior="position" style={style.rootContainer}>
           <View

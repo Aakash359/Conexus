@@ -46,14 +46,12 @@ export const PhoneCallModal = (
     onPress,
     description,
     onClose,
-    photoLabel,
     visible,
     value,
     onChangeText,
     disabled,
     source,
     title,
-    customTitleStyle,
   } = props;
 
   return (
@@ -81,14 +79,12 @@ export const PhoneCallModal = (
             />
           </View>
           <View style={styles.containerStart}>
-            {/* <Avatar
-              style={{width: 108, marginBottom: 8}}
-              size={108}
-              source={photoUrl || ''}
-              title={photoLabel || ''}
-            /> */}
             <Image source={source || ''} style={styles.circleStyle} />
-            <Text style={AppFonts.bodyTextXtraLargeTouchable}>{title}</Text>
+            <Text
+              style={[AppFonts.bodyTextXtraLargeTouchable, [{marginTop: 14}]]}
+            >
+              {title}
+            </Text>
             {!!description && (
               <Text style={AppFonts.bodyTextXtraSmall}>{description}</Text>
             )}
@@ -109,15 +105,16 @@ export const PhoneCallModal = (
             >
               Callback Number
             </Text>
-            <TextInput
-              underlineColorAndroid={'transparent'}
-              keyboardType="numeric"
-              value={value}
-              onChangeText={onChangeText}
-              placeholder="XXX-XXX-XXXX"
-              maxLength={12}
-              style={styles.phoneInput}
-            />
+            <View style={styles.phoneInput}>
+              <TextInput
+                style={styles.input}
+                keyboardType="numeric"
+                value={value}
+                onChangeText={text => onChangeText(text)}
+                placeholder="XXX-XXX-XXXX"
+                maxLength={12}
+              />
+            </View>
           </View>
 
           <View style={styles.containerEnd}>
@@ -162,10 +159,15 @@ const styles = StyleSheet.create({
     borderColor: AppColors.gray,
     justifyContent: 'center',
     width: windowDimensions.width * 0.6,
-    marginTop: 4,
+    height: 40,
+    marginTop: 10,
     textAlign: 'center',
     color: AppColors.darkBlue,
     ...AppFonts.bodyTextXtraLarge,
+  },
+  input: {
+    textAlign: 'center',
+    color: AppColors.darkBlue,
   },
   date: {
     alignSelf: 'center',

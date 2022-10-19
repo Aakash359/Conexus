@@ -15,7 +15,6 @@ import {
   View,
 } from 'react-native';
 import {phoneFormatter} from '../../common/phone-formatter';
-import {Circle} from '../../components';
 import {ConexusIconButton} from '../../components/conexus-icon-button';
 import {showYesNoAlert} from '../../common';
 import {UserStore, VideoStore} from '../../stores';
@@ -73,17 +72,17 @@ const ConversationContainer = (
   const footerInputHeight = new Animated.Value(inputMinHeight);
   const footerInputTargetValue = inputMinHeight;
   const scrollRef = React.createRef<ScrollView>();
-  const scrollViewRef = useRef();
   const [calling, setCalling] = useState(false);
   const animatableRef = useRef(new Animated.Value(0.0)).current;
   const [messageList, setMessageList] = useState([]);
   const [sendEnabled, setSendEnabled] = useState(false);
   const [showFooterActions, setShowFooterActions] = useState(false);
+  const [callbackNumber, setCallBackNumber] = useState('');
   const [messageText, setMessageTexts] = useState('');
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [phoneCallModalVisible, setPhoneCallModalVisible] = useState(false);
-  // const validPhone = phoneFormatter.isValid10DigitPhoneNumber(callbackNumber);
+  const validPhone = phoneFormatter.isValid10DigitPhoneNumber(callbackNumber);
   const {startVideoMessage} = props;
   const params = props?.route?.params ? props?.route?.params : {};
   const {conversationId, candidate} = params ? params : '';
@@ -528,6 +527,7 @@ const ConversationContainer = (
   const renderTextMessageView = (message: any, index: number) => {
     const time = moment(message.messageTimestamp).format('M/D/YYYY h:mm a');
     const caption = `${message.senderFirstName} ${message.senderLastName}, ${time}`;
+    console.log('Okkk===>', messageList);
 
     return (
       <View
@@ -537,11 +537,6 @@ const ConversationContainer = (
           style.textMessageView,
           message.sentByMe ? style.messageFromMeView : {},
         ]}
-        // style={[
-        //   style.messageView,
-        //   style.textMessageView,
-        //   message.sentByMe ? style.messageFromMeView : {},
-        // ]}
       >
         <View
           style={[
@@ -588,6 +583,10 @@ const ConversationContainer = (
     }
   };
 
+  const onCallbackChangeText = (callbackNumber: any) => {
+    setCallBackNumber(phoneFormatter.stripFormatting(callbackNumber));
+  };
+
   const renderMessageScrollView = () => {
     return (
       <ScrollView
@@ -605,13 +604,22 @@ const ConversationContainer = (
       >
         {phoneCallModalVisible && (
           <PhoneCallModal
-            title={candidate.display.title}
-            // value={phoneFormatter.format10Digit(callbackNumber)}
-            // onChangeText={onCallbackChangeText()}
-            // disabled={!validPhone}
+            source={{
+              uri: candidate
+                ? candidate.photoUrl
+                : props?.route?.params?.conversation?.hcpPhotoUrl,
+            }}
+            onPress={() => makeCall()}
+            title={
+              candidate
+                ? candidate.display.title
+                : props?.route?.params?.conversation?.display?.title
+            }
+            value={phoneFormatter.format10Digit(callbackNumber)}
+            onChangeText={(text: any) => onCallbackChangeText(text)}
+            disabled={!validPhone}
             onRequestClose={() => setPhoneCallModalVisible(false)}
             onDismiss={() => setPhoneCallModalVisible(false)}
-            onPress={() => makeCall()}
             onClose={() => setPhoneCallModalVisible(false)}
           />
         )}

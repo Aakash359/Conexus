@@ -139,7 +139,7 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
 
   return (
     <SafeAreaView style={[{flex: 1, backgroundColor: AppColors.white}]}>
-      <ScrollView keyboardShouldPersistTaps="always">
+      <ScrollView keyboardShouldPersistTaps="handled">
         <KeyboardAvoidingView behavior="position" style={style.rootContainer}>
           <View style={style.content}>
             <View style={style.form}>

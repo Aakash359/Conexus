@@ -264,7 +264,7 @@ const EditProfile = (props: EditProfileProps) => {
 
   return (
     <SafeAreaView style={style.container}>
-      <ScrollView keyboardShouldPersistTaps="always">
+      <ScrollView keyboardShouldPersistTaps="handled">
         <KeyboardAvoidingView behavior="position" style={style.rootContainer}>
           <View style={style.detailsContainer}>
             <View style={style.avatarContainer}>

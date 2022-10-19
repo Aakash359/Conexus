@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import {DrawerActions} from '@react-navigation/native';
 import Icons from 'react-native-vector-icons/Ionicons';
 import {AppColors, AppFonts} from '.././theme';
-
+import {TouchableOpacity} from 'react-native';
 import NavigationService from './NavigationService';
 import Positions from '../containers/Facility/Positions/positions';
 import ReviewCandidateContainer from '../containers/Facility/ReviewCandidateHome/reviewCandidateContainer';
@@ -36,24 +36,32 @@ const TabNavigator = () => {
           ),
           title: 'Review Candidate',
           headerRight: () => (
-            <Icons
-              color={AppColors.blue}
-              style={{marginRight: 20}}
-              size={26}
-              name="chatbubble-outline"
+            <TouchableOpacity
+              activeOpacity={0.8}
               onPress={() => NavigationService.navigate('MessageCenter')}
-            />
+            >
+              <Icons
+                color={AppColors.blue}
+                style={{marginRight: 20}}
+                size={26}
+                name="chatbubble-outline"
+              />
+            </TouchableOpacity>
           ),
           headerLeft: () => (
-            <Icon
-              color={AppColors.black}
-              style={{marginLeft: 10}}
-              size={26}
-              name="menu"
+            <TouchableOpacity
+              activeOpacity={0.8}
               onPress={() =>
                 NavigationService.dispatch(DrawerActions.openDrawer())
               }
-            />
+            >
+              <Icon
+                color={AppColors.black}
+                style={{marginLeft: 10}}
+                size={26}
+                name="menu"
+              />
+            </TouchableOpacity>
           ),
         }}
       />
@@ -70,24 +78,32 @@ const TabNavigator = () => {
           ),
           title: 'Positions',
           headerLeft: () => (
-            <Icon
-              color={AppColors.black}
-              style={{marginLeft: 10}}
-              size={26}
-              name="menu"
+            <TouchableOpacity
+              activeOpacity={0.8}
               onPress={() =>
                 NavigationService.dispatch(DrawerActions.openDrawer())
               }
-            />
+            >
+              <Icon
+                color={AppColors.black}
+                style={{marginLeft: 10}}
+                size={26}
+                name="menu"
+              />
+            </TouchableOpacity>
           ),
           headerRight: () => (
-            <Icons
-              color={AppColors.blue}
-              style={{marginRight: 20}}
-              size={26}
-              name="chatbubble-outline"
+            <TouchableOpacity
+              activeOpacity={0.8}
               onPress={() => NavigationService.navigate('MessageCenter')}
-            />
+            >
+              <Icons
+                color={AppColors.blue}
+                style={{marginRight: 20}}
+                size={26}
+                name="chatbubble-outline"
+              />
+            </TouchableOpacity>
           ),
         }}
       />

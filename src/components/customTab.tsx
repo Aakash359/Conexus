@@ -27,18 +27,10 @@ const Tabs = props => {
   const scrollX = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef();
 
-  //   useEffect(() => {
-  //     if (props.route && props.route.params && props.route.params.parentTab) {
-  //       if (props.route.params.parentTab == 'faqs') {
-  //       } else if (props.route.params.parentTab == 'supportTicket') {
-  //         onItemPress(1);
-  //       }
-  //     }
-  //   }, []);
-
   const OneTab = forwardRef(({item, onItemPress}, ref) => {
     return (
       <TouchableOpacity
+        activeOpacity={0.8}
         onPress={onItemPress}
         style={activetab == item.key ? styles.activeTab : styles.inActiveTab}
       >
@@ -73,8 +65,8 @@ const Tabs = props => {
             justifyContent: 'space-evenly',
             flex: 1,
             flexDirection: 'row',
-            borderBottomColor: 'grey',
-            borderBottomWidth: 1,
+            borderBottomColor: AppColors.baseGray,
+            borderBottomWidth: 0.8,
           }}
         >
           {data.map((item, index) => {
@@ -154,24 +146,12 @@ export default Tabs;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-    borderBottomColor: AppColors.white,
-    borderBottomWidth: 1,
-  },
-
-  tabContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#fff',
-    width: '100%',
   },
   activeTab: {
     backgroundColor: '#fff',
-    paddingVertical: 12,
+    paddingVertical: 18,
     width: '50%',
     borderBottomColor: AppColors.blue,
     borderBottomWidth: 3,
@@ -181,18 +161,16 @@ const styles = StyleSheet.create({
     borderBottomColor: AppColors.white,
     borderBottomWidth: 3,
     width: '50%',
-    paddingVertical: 12,
+    paddingVertical: 18,
   },
   activeTabText: {
     alignSelf: 'center',
     color: AppColors.blue,
-    // fontFamily: Dimension.CustomRegularFont,
     fontSize: 14,
   },
   inActiveTabText: {
     alignSelf: 'center',
     color: AppColors.mediumGray,
-    // fontFamily: Dimension.CustomRegularFont,
     fontSize: 14,
   },
 });

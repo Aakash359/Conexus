@@ -9,6 +9,7 @@ import {
   Keyboard,
   TouchableOpacity,
   Image,
+  ScrollView,
 } from 'react-native';
 import NavigationService from '../../../navigation/NavigationService';
 import {ActionButton} from '../../../components/action-button';
@@ -122,59 +123,61 @@ const LoginScreen = () => {
 
   return (
     <SafeAreaView style={style.splash}>
-      <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={-130}>
-        <View style={style.content}>
-          <View style={style.form}>
-            <Image
-              style={style.logo}
-              source={require('../../../components/Images/conexus-logo.jpg')}
-            />
-            <Text style={style.title}>Sign-In</Text>
-            <View style={style.field}>
-              <Field
-                placeholder="Email Address"
-                autoCapitalize="none"
-                onTextChange={(text: any) => handleOnchange(text, 'email')}
-                onFocus={() => handleError(null, 'email')}
-                error={errors.email}
-                customStyle={{fontSize: 16}}
-                returnKeyType="next"
+      <ScrollView keyboardShouldPersistTaps="handled">
+        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={-130}>
+          <View style={style.content}>
+            <View style={style.form}>
+              <Image
+                style={style.logo}
+                source={require('../../../components/Images/conexus-logo.jpg')}
               />
-            </View>
-            <View style={style.field}>
-              <Field
-                placeholder="Password"
-                autoCapitalize="none"
-                secureTextEntry={true}
-                error={errors.password}
-                customStyle={{fontSize: 16}}
-                onTextChange={(text: any) => handleOnchange(text, 'password')}
-                onFocus={() => handleError(null, 'password')}
-                returnKeyType="done"
-              />
-            </View>
-            <TouchableOpacity onPress={forgotPasswordFn} activeOpacity={1}>
-              <Text style={style.forgotPass}>FORGOT PASSWORD?</Text>
-            </TouchableOpacity>
-            {/* {this.props.deviceStore.isDebugEnabled
+              <Text style={style.title}>Sign-In</Text>
+              <View style={style.field}>
+                <Field
+                  placeholder="Email Address"
+                  autoCapitalize="none"
+                  onTextChange={(text: any) => handleOnchange(text, 'email')}
+                  onFocus={() => handleError(null, 'email')}
+                  error={errors.email}
+                  customStyle={{fontSize: 16}}
+                  returnKeyType="next"
+                />
+              </View>
+              <View style={style.field}>
+                <Field
+                  placeholder="Password"
+                  autoCapitalize="none"
+                  secureTextEntry={true}
+                  error={errors.password}
+                  customStyle={{fontSize: 16}}
+                  onTextChange={(text: any) => handleOnchange(text, 'password')}
+                  onFocus={() => handleError(null, 'password')}
+                  returnKeyType="done"
+                />
+              </View>
+              <TouchableOpacity onPress={forgotPasswordFn} activeOpacity={1}>
+                <Text style={style.forgotPass}>FORGOT PASSWORD?</Text>
+              </TouchableOpacity>
+              {/* {this.props.deviceStore.isDebugEnabled
               ? this.renderEnvironentToggle()
               : null} */}
+            </View>
+            <ActionButton
+              textColor={variables.blue}
+              customTitleStyle={loading ? style.loadingTitle : style.title}
+              customStyle={loading ? style.loadingBtn : style.loginBtn}
+              loading={loading}
+              title="SIGN IN"
+              onPress={validate}
+            />
+            <TouchableOpacity onPress={requestAccount} activeOpacity={1}>
+              <Text style={style.newUser}>
+                New to Conexus? Request an account now!
+              </Text>
+            </TouchableOpacity>
           </View>
-          <ActionButton
-            textColor={variables.blue}
-            customTitleStyle={loading ? style.loadingTitle : style.title}
-            customStyle={loading ? style.loadingBtn : style.loginBtn}
-            loading={loading}
-            title="SIGN IN"
-            onPress={validate}
-          />
-          <TouchableOpacity onPress={requestAccount} activeOpacity={1}>
-            <Text style={style.newUser}>
-              New to Conexus? Request an account now!
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </ScrollView>
     </SafeAreaView>
   );
 };

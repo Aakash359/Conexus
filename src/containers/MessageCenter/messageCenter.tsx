@@ -92,6 +92,7 @@ const MessageCenter = (
           onPress={() =>
             NavigationService.navigate('ConversationContainer', {
               conversationId: conversation?.conversationId,
+              conversation,
             })
           }
         >

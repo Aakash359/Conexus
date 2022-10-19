@@ -2,6 +2,7 @@ import React from 'react';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import CustomDrawer from '../components/CustomDrawer';
 import {AppColors} from '.././theme';
+import {TouchableOpacity} from 'react-native';
 import {DrawerActions} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import MessageCenter from '../containers/MessageCenter/messageCenter';
@@ -197,15 +198,19 @@ const MessageStack = () => {
           headerShown: true,
           title: 'Message Center',
           headerLeft: () => (
-            <Icons
-              color={AppColors.black}
-              style={{marginLeft: -10, top: 1}}
-              size={32}
-              name="menu-outline"
+            <TouchableOpacity
+              activeOpacity={0.8}
               onPress={() =>
                 NavigationService.dispatch(DrawerActions.openDrawer())
               }
-            />
+            >
+              <Icons
+                color={AppColors.black}
+                style={{marginLeft: -10, top: 1}}
+                size={32}
+                name="menu-outline"
+              />
+            </TouchableOpacity>
           ),
         }}
       />
@@ -257,13 +262,17 @@ const DrawerStack = () => {
         component={InterviewQuestions}
         options={{
           headerRight: () => (
-            <Icons
-              color={AppColors.blue}
-              style={{marginRight: 20}}
-              size={26}
-              name="chatbubble-outline"
+            <TouchableOpacity
+              activeOpacity={0.8}
               onPress={() => NavigationService.navigate('MessageCenter')}
-            />
+            >
+              <Icons
+                color={AppColors.blue}
+                style={{marginRight: 20}}
+                size={26}
+                name="chatbubble-outline"
+              />
+            </TouchableOpacity>
           ),
           headerLeft: () => (
             <Icon
