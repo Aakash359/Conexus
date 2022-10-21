@@ -5,10 +5,6 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import variables from '../theme';
 import FitImage from 'react-native-fit-image';
 import {AppFonts} from '../theme';
-import {
-  ContentListModel,
-  ContentListItemModel,
-} from '../stores/content-list-model';
 
 interface ConexusIconListProps {
   styles?: StyleProp<ViewStyle>;
@@ -39,7 +35,7 @@ const ConexusContentList = (props: ConexusIconListProps) => {
     );
   };
 
-  const renderContentBlockList = (list: typeof ContentListItemModel.Type[]) => {
+  const renderContentBlockList = (list: any) => {
     return list.map((item, index) => (
       <View
         key={`content-block-list-item-${index}`}
@@ -52,10 +48,7 @@ const ConexusContentList = (props: ConexusIconListProps) => {
     ));
   };
 
-  const renderContentBlock = (
-    item: typeof ContentListModel.Type,
-    index: number,
-  ) => {
+  const renderContentBlock = (item: any, index: number) => {
     return (
       <View
         key={`content-block-${index}`}

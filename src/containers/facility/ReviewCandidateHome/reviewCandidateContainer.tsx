@@ -1,28 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  StyleSheet,
-  Alert,
-  TouchableOpacity,
-  Text,
-  View,
-  ActivityIndicator,
-} from 'react-native';
+import {View, ActivityIndicator} from 'react-native';
 import {UserStore} from '../../../stores/userStore';
-// import {FacilitySubmissionsStore} from '../../../stores/facility/facility-submissions-store';
 import {useSelector} from '../../../redux/reducers/index';
-// import {FacilityModel} from '../../stores/facility/facility-model';
-import FacilitySelectionContainer from '../../../components/facility-selection-container';
 import NavigationService from '../../../navigation/NavigationService';
 import PushNotification from 'react-native-push-notification';
 import {facilitySubmissionsService} from '../../../services/Facility/facilitySubmissionsService';
 import {AppColors} from '../../../theme';
 import {CandidateList} from './candidateList';
 import OneSignal from 'react-native-onesignal';
-
-import RemotePushController from '../../../services/remoteNotificationService';
 interface ReviewContainerProps {
-  // facilitySubmissionsStore: typeof FacilitySubmissionsStore.Type;
   userStore: UserStore;
   forceRefresh?: boolean;
 }
@@ -99,7 +86,20 @@ const ReviewCandidateContainer = (
       setLoading(true);
       try {
         const {data} = await facilitySubmissionsService();
-
+        for (var facility of data) {
+          for (var position of facility.positions) {
+            const compTypes = position.comps;
+            for (var candidate of position.candidates) {
+              for (var dataItem of candidate.compData || []) {
+                const compType = compTypes.find(i => i.Id === dataItem.Id);
+                if (compType) {
+                  (dataItem.type = compType.type),
+                    (dataItem.headerTitle = compType.title);
+                }
+              }
+            }
+          }
+        }
         if (data && data.length > 0) {
           let positionData = data.map(
             (item: {positions: any}) => item.positions,

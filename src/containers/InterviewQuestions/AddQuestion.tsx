@@ -12,16 +12,9 @@ import {
   Keyboard,
 } from 'react-native';
 import {AppFonts, AppColors} from '../../theme';
-import {ScreenType} from '../../common/constants';
-import {
-  QuestionModel,
-  FacilityQuestionsStore,
-  FacilityUnitModel,
-  loadFacilityUnits,
-} from '../../stores/facility';
+import {FacilityQuestionsStore} from '../../stores/facility';
 import {UserStore, VideoStore} from '../../stores';
 import {ActionButton} from '../../components/action-button';
-import Icon from 'react-native-vector-icons/Ionicons';
 import {showYesNoAlert, windowDimensions} from '../../common';
 import {SelectUnitModal} from '../../components/Modals/selectUnitModal';
 import NavigationService from '../../navigation/NavigationService';

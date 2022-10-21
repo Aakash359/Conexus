@@ -3,41 +3,41 @@ import {
   StyleSheet,
   View,
   Text,
-  TouchableHighlight,
+  TouchableOpacity,
   Platform,
   Alert,
 } from 'react-native';
 import FitImage from 'react-native-fit-image';
-import {ComparisonDataModel} from '../stores/comparison-data-model';
-// import { Actions } from 'react-native-router-flux'
 import {ScreenType} from '../common/constants';
 import {AppFonts, AppColors} from '../theme';
-import {ConexusContentList} from '../components';
-import {ConexusIcon} from '../components/conexus-icon';
+import Icon from 'react-native-vector-icons/Ionicons';
 import NavigationService from '../navigation/NavigationService';
 import {ReviewCandidateContentModal} from './Modals/ReviewCandidateContentModal';
+import ConexusContentList from './conexus-content-list';
 
 export interface ComparisonListProps {
   index: number;
   count: number;
   cellWidth: number;
-  data: Array<typeof ComparisonDataModel.Type>;
+  data: any;
 }
 
 export const ComparisonList = (props: ComparisonListProps) => {
   const [modalVisible, setModalVisible] = useState(false);
   const {index, count, data, cellWidth} = props;
 
-  const renderContentListCellInLightbox = (cell: any) => {
-    return <ConexusContentList style={{flex: 1}} data={cell.details} />;
+  const renderContentList = (cell: any) => {
+    if (cell.details && cell.details.length > 0 && cell.details != undefined) {
+      return <ConexusContentList style={{flex: 1}} data={cell.details} />;
+    }
   };
 
-  const renderCellImageInLightbox = (cell: typeof ComparisonDataModel.Type) => {
+  const renderCellImageInLightbox = (cell: any) => {
     const source = {uri: cell.imageUrl};
     return <FitImage resizeMode="contain" source={source} />;
   };
 
-  const handleCellClick = (cell: typeof ComparisonDataModel.Type) => {
+  const handleCellClick = (cell: any) => {
     const hasLink = !!cell.details;
     setModalVisible(true);
     if (hasLink) {
@@ -57,20 +57,42 @@ export const ComparisonList = (props: ComparisonListProps) => {
   };
 
   const wrapCell = (cell: any, elements: () => any) => {
-    const hasLink = !!cell.details || !!cell.imageUrl;
+    const hasLink = cell.details || cell.imageUrl;
     if (hasLink) {
       return (
-        <TouchableHighlight
-          // activeOpacity={1}
+        <TouchableOpacity
+          activeOpacity={0.8}
           underlayColor="rgba(255,255,255,.87)"
           onPress={handleCellClick.bind(cell)}
         >
           {elements()}
-        </TouchableHighlight>
+          {modalVisible && (
+            <ReviewCandidateContentModal
+              title={cell.headerTitle}
+              renderContent={() => renderContentList(cell)}
+              onRequestClose={() => setModalVisible(false)}
+              onDismiss={() => setModalVisible(false)}
+              onClose={() => setModalVisible(false)}
+            />
+          )}
+        </TouchableOpacity>
       );
     }
 
-    return <View>{elements()}</View>;
+    return (
+      <View>
+        {elements()}
+        {modalVisible && (
+          <ReviewCandidateContentModal
+            title={cell.headerTitle}
+            renderContent={() => renderContentList(cell)}
+            onRequestClose={() => setModalVisible(false)}
+            onDismiss={() => setModalVisible(false)}
+            onClose={() => setModalVisible(false)}
+          />
+        )}
+      </View>
+    );
   };
 
   const renderTextCell = (cell: any) => {
@@ -83,7 +105,6 @@ export const ComparisonList = (props: ComparisonListProps) => {
     const titleStyle = hasLink
       ? styles.textCellTitleTouchable
       : styles.textCellTitle;
-
     return (
       <View key={index}>
         {renderHeader(cell)}
@@ -103,14 +124,6 @@ export const ComparisonList = (props: ComparisonListProps) => {
             )}
           </View>
         ))}
-        {modalVisible && (
-          <ReviewCandidateContentModal
-            title={'Requested Time Off'}
-            onRequestClose={() => setModalVisible(false)}
-            onDismiss={() => setModalVisible(false)}
-            onClose={() => setModalVisible(false)}
-          />
-        )}
       </View>
     );
   };
@@ -130,14 +143,28 @@ export const ComparisonList = (props: ComparisonListProps) => {
             ])}
           >
             {!!cell.icon && (
-              <ConexusIcon
-                name={cell.icon || ''}
-                size={26}
+              <Icon
                 color={cell.iconColor || AppColors.blue}
+                size={26}
+                name="checkmark-circle"
               />
             )}
           </View>
         ))}
+      </View>
+    );
+  };
+
+  const renderHeader = (cell: any) => {
+    return (
+      <View style={[styles.headerRow, {width: cellWidth}]}>
+        <Text
+          numberOfLines={1}
+          lineBreakMode="clip"
+          style={[styles.headerRowText]}
+        >
+          {index > 0 ? '' : cell.headerTitle || ''}
+        </Text>
       </View>
     );
   };
@@ -166,20 +193,6 @@ export const ComparisonList = (props: ComparisonListProps) => {
             }
           </View>
         ))}
-      </View>
-    );
-  };
-
-  const renderHeader = (cell: any) => {
-    return (
-      <View style={[styles.headerRow, {width: cellWidth}]}>
-        <Text
-          numberOfLines={1}
-          lineBreakMode="clip"
-          style={[styles.headerRowText]}
-        >
-          {index > 0 ? '' : cell.headerTitle || ''}
-        </Text>
       </View>
     );
   };

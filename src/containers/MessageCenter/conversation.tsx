@@ -448,12 +448,21 @@ const ConversationContainer = (
             message.sentByMe ? style.audioMessageWrapperFromMe : {},
           ]}
         >
-          <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}
+          >
             <Icon
-              style={{alignItems: 'center', justifyContent: 'center'}}
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
               name={'play-circle-outline'}
-              color={message.sentByMe ? AppColors.blue : AppColors.red}
-              size={28}
+              color={message.sentByMe ? AppColors.white : AppColors.red}
+              size={25}
             />
             <Text
               style={[
@@ -500,9 +509,12 @@ const ConversationContainer = (
         >
           <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
             <Icon
-              style={{alignItems: 'center', justifyContent: 'center'}}
+              style={{
+                alignSelf: 'center',
+                justifyContent: 'center',
+              }}
               name={'play-circle-outline'}
-              color={message.sentByMe ? AppColors.blue : AppColors.red}
+              color={message.sentByMe ? AppColors.white : AppColors.blue}
               size={28}
             />
             <Text
@@ -650,6 +662,7 @@ const ConversationContainer = (
             {
               flex: 1,
               alignItems: 'stretch',
+              marginBottom: '24%',
               justifyContent: 'center',
               backgroundColor: AppColors.baseGray,
             },
@@ -670,10 +683,7 @@ const ConversationContainer = (
             },
           ]}
         >
-          <ActivityIndicator
-            color={AppColors.blue}
-            style={{flex: 1}}
-          ></ActivityIndicator>
+          <ActivityIndicator color={AppColors.blue} style={{flex: 1}} />
         </Animated.View>
       );
     }
@@ -1015,6 +1025,18 @@ const style = StyleSheet.create({
     ...getMessageShadows(),
   },
   videoMessageWrapperFromMe: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    maxHeight: AppSizes.screen.width * 0.1,
+    maxWidth: AppSizes.screen.width * 0.5,
+    minWidth: AppSizes.screen.width * 0.5,
+    padding: 8,
+    paddingHorizontal: 10,
+    paddingTop: Platform.OS === 'android' ? 8 : 8,
+    borderRadius: 6,
+    backgroundColor: AppColors.white,
+    ...getMessageShadows(),
     alignItems: 'flex-end',
     backgroundColor: AppColors.blue,
   },
@@ -1028,7 +1050,6 @@ const style = StyleSheet.create({
     ...AppFonts.bodyTextMedium,
     alignSelf: 'flex-end',
     color: AppColors.white,
-    paddingBottom: 4,
   },
 
   audioMessageView: {},
@@ -1039,6 +1060,7 @@ const style = StyleSheet.create({
     alignItems: 'center',
     maxWidth: AppSizes.screen.width * 0.5,
     minWidth: AppSizes.screen.width * 0.5,
+    maxHeight: AppSizes.screen.width * 0.1,
     padding: 8,
     paddingHorizontal: 10,
     paddingTop: Platform.OS === 'android' ? 8 : 8,
@@ -1055,12 +1077,15 @@ const style = StyleSheet.create({
   audioMessageText: {
     ...AppFonts.bodyTextMedium,
     paddingLeft: 8,
+    alignContent: 'center',
+    textAlignVertical: 'center',
   },
   audioMessageTextFromMe: {
     ...AppFonts.bodyTextMedium,
     alignSelf: 'flex-end',
     color: AppColors.white,
-    paddingBottom: 4,
+    alignContent: 'center',
+    textAlignVertical: 'center',
   },
 });
 

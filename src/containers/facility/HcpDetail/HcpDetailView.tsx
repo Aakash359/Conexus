@@ -518,7 +518,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
             style={styles.closeButton}
             onPress={() => NavigationService.goBack()}
           >
-            <Icon name="ios-close-circle-sharp" size={22} />
+            <Icon name="close-outline" size={40} color={AppColors.blue} />
           </TouchableOpacity>
 
           <Image

@@ -8,77 +8,9 @@ import {
   Image,
 } from 'react-native';
 import variables, {AppColors} from '../../../theme';
-import {ScreenType} from '../../../common/constants';
 import {ComparisonList} from '../../../components/comparison-list';
 import {AppFonts, AppSizes} from '../../../theme';
-import {Avatar} from '../../../components/avatar';
 import NavigationService from '../../../navigation/NavigationService';
-
-// export interface CandidateHeaderItemProps {
-//   candidate: any;
-//   index: number;
-//   count: number;
-//   minHeight?: number;
-//   sizeChanged: (size: number) => void;
-// }
-
-// export interface CandidateHeaderItemState {
-//   height: number;
-// }
-
-// export const CandidateHeaderItem = (
-//   props: CandidateHeaderItemProps,
-//   state: CandidateHeaderItemState,
-// ) => {
-//   const [height, setHeight] = useState(0);
-//   const {candidate, index, count, minHeight, sizeChanged} = props;
-
-//   const lastCell = index + 1 === count;
-//   return (
-//     <TouchableHighlight
-//       key={`candidate-${candidate.submissionId}-${index}`}
-//       // onPress={() =>
-//       //   Actions[ScreenType.FACILITIES.HCP_DETAIL]({
-//       //     submissionId: candidate.submissionId,
-//       //     candidate,
-//       //   })
-//       // }
-//     >
-//       <View
-//         onLayout={event => {
-//           setHeight(event.nativeEvent.layout.height);
-//           sizeChanged(event.nativeEvent.layout.height);
-//         }}
-//         style={StyleSheet.flatten([
-//           styles.candidateCell,
-//           lastCell && {borderRightWidth: 0},
-//           minHeight && {height: minHeight},
-//         ])}
-//       >
-//         <Avatar
-//           size={86}
-//           source={candidate.photoUrl}
-//           title={candidate.photoLabel}
-//           titleStyle={{backgroundColor: '#C7D8E0'}}
-//         />
-//         {candidate.display.title && (
-//           <Text style={styles.candidateName}>{candidate.display.title}</Text>
-//         )}
-//         <Text
-//           style={{
-//             position: 'absolute',
-//             left: 0,
-//             bottom: 0,
-//             zIndex: 2,
-//             fontSize: 8,
-//           }}
-//         >
-//           {height}
-//         </Text>
-//       </View>
-//     </TouchableHighlight>
-//   );
-// };
 
 interface CandidateComparisonListProps {
   position: any;
@@ -95,14 +27,6 @@ export const CandidateComparisonList = (
   props: CandidateComparisonListProps,
   state: CandidateComparisonListState,
 ) => {
-  const {updateViewed} = props;
-  const [showAll, setShowAll] = useState(false);
-  const [minHeight, setMinHeight] = useState(0);
-  const [comparing, setComparing] = useState(false);
-
-  // const showAll = () => {
-  //   setShowAll(true);
-  // };
   const {position} = props;
 
   const getCellWidth = (cellCount: number): number => {

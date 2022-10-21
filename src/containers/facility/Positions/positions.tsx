@@ -11,24 +11,15 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import {
-  FacilityNeedsStore,
-  FacilityNeedsModel,
-  NeedSummaryModel,
-  NeedDetailModel,
-  UserStore,
-} from '../../../stores';
+import {FacilityNeedsStore, UserStore} from '../../../stores';
 import {AppColors, AppFonts} from '../../../theme';
 import {ViewHeader} from '../../../components/view-header';
-import FacilitySelectionContainer from '../../../components/facility-selection-container';
 import {facilityNeedService} from '../../../services/Facility/facilityNeedService';
 import {ActionButton} from '../../../components/action-button';
-import {windowDimensions} from '../../../common/window-dimensions';
 import NavigationService from '../../../navigation/NavigationService';
 
 export interface PositionsProps {
   facilityNeedsStore: typeof FacilityNeedsStore.Type;
-  userStore: UserStore;
 }
 
 export interface PositionState {

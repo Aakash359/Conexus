@@ -27,15 +27,7 @@ interface SelectUnitModalProps {
 }
 
 export const ReviewCandidateContentModal = (props: SelectUnitModalProps) => {
-  const {
-    visible,
-    title,
-    onClose,
-    renderContent,
-    customStyle,
-    disabled,
-    customTitleStyle,
-  } = props;
+  const {visible, title, onClose, renderContent} = props;
 
   return (
     <Modal
@@ -44,21 +36,17 @@ export const ReviewCandidateContentModal = (props: SelectUnitModalProps) => {
       overlayPointerEvents={'auto'}
       animationType="fade"
       onRequestClose={onClose}
-      transparent={true}>
+      transparent={true}
+    >
       <View style={styles.cardStyle}>
         <View style={styles.cardItemStyle}>
           <View style={styles.wrapperView}>
             <Text style={styles.titleText}>{title}</Text>
-            <Icon
-              style={{color: AppColors.mediumGray}}
-              name="ios-close-circle-sharp"
-              size={22}
-              onPress={onClose}
-            />
-            <View style={styles.content}>
-              {renderContent && renderContent()}
-            </View>
+            <TouchableOpacity activeOpacity={0.8} onPress={onClose}>
+              <Icon name="close-outline" size={40} color={AppColors.blue} />
+            </TouchableOpacity>
           </View>
+          <View style={styles.content}>{renderContent && renderContent()}</View>
         </View>
       </View>
     </Modal>
@@ -74,16 +62,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.4)',
   },
   content: {
-    flex: 1,
-    flexDirection: 'column',
-    marginTop: 18,
-    alignSelf: 'stretch',
-    alignItems: 'stretch',
-    padding: 20,
+    marginTop: 50,
   },
   wrapperView: {
     flexDirection: 'row',
-    marginTop: 20,
+    alignItems: 'center',
+    marginTop: 10,
   },
   cardItemStyle: {
     width: windowDimensions.width * 0.9,
@@ -91,7 +75,6 @@ const styles = StyleSheet.create({
     backgroundColor: AppColors.white,
     borderRadius: 8,
     paddingTop: 15,
-
     alignItems: 'center',
     overflow: 'hidden',
   },
@@ -99,7 +82,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: AppColors.mediumGray,
     width: '80%',
-    marginLeft: 35,
     textAlign: 'center',
   },
 });
