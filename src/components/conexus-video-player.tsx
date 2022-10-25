@@ -479,7 +479,11 @@ const ConexusVideoPlayer = (
         {
           <View style={getVolumeStyle()}>
             <Slider
-              style={{flex: 1, height: 54}}
+              style={{
+                flex: 1,
+                height: 54,
+                top: Platform.OS === 'ios' ? 18 : 0,
+              }}
               minimumValue={0}
               value={volume}
               thumbTintColor={AppColors.blue}
@@ -523,7 +527,7 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
   },
   closeButton: {
-    top: 24,
+    top: Platform.OS === 'ios' ? 38 : 24,
     right: 18,
     alignSelf: 'flex-end',
   },

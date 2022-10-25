@@ -8,15 +8,15 @@ import {
   ActivityIndicator,
   Platform,
 } from 'react-native';
-import Slider from 'react-native-slider';
-import {AppColors, AppFonts, AppSizes} from '../theme';
-import {ConexusIconButton, Avatar} from '../components';
-import {ConexusLightbox} from '../lightboxes';
+import Slider from '@react-native-community/slider';
+import {AppColors, AppFonts, AppSizes} from '../../theme';
+import {ConexusIconButton, Avatar} from '../../components';
+import Icon from 'react-native-vector-icons/Ionicons';
 import SystemSetting from 'react-native-system-setting';
+import NavigationService from '../../navigation/NavigationService';
 // import { Actions } from 'react-native-router-flux'
 // import Video from 'react-native-video'
-import {logger} from 'react-native-logs';
-const log = logger.createLogger();
+
 interface AudioPlayerProps extends ViewProperties {
   audioUrl: string;
   avatarUrl?: string;
@@ -49,14 +49,18 @@ const AudioPlayer = (props: AudioPlayerProps, state: AudioPlayerState) => {
 
   const {audioUrl, avatarUrl, style, avatarTitle, avatarDescription} = props;
 
-  const volume = (value: number) => {
-    SystemSetting.setVolume(value);
+  const Volume = (value: any) => {
+    SystemSetting.setVolume(value, {
+      playSound: true,
+      showUI: false,
+      type: 'music',
+    });
     setVolume(value);
   };
 
-  const seekerValue = (): number => {
-    return state.seekerValue;
-  };
+  // const seekerValue = (): number => {
+  //   return state.seekerValue;
+  // };
 
   //   const seekerValues(value: number) {
   //     this.setState({seekerValue: value});
@@ -110,14 +114,21 @@ const AudioPlayer = (props: AudioPlayerProps, state: AudioPlayerState) => {
   };
 
   return (
-    <ConexusLightbox hideHeader closeable height={300} horizontalPercent={0.8}>
+    <>
+      <Icon
+        style={styles.closeButton}
+        name="close-outline"
+        size={35}
+        color={AppColors.blue}
+        onPress={() => NavigationService.goBack()}
+      />
       <View style={[style, styles.container]}>
         {!!avatarUrl && (
           <Avatar
             style={{width: 60, marginBottom: 8, marginTop: 20}}
             size={60}
             source={avatarUrl}
-          ></Avatar>
+          />
         )}
         {!!avatarTitle && (
           <Text
@@ -174,12 +185,10 @@ const AudioPlayer = (props: AudioPlayerProps, state: AudioPlayerState) => {
           <Slider
             style={{marginTop: 12, marginBottom: 12, height: 48, width: 160}}
             value={volume}
-            onValueChange={value => {
-              volume = value;
-            }}
+            onValueChange={(value: any) => Volume(value)}
             thumbTintColor={AppColors.blue}
             minimumTrackTintColor={AppColors.blue}
-            maximumTrackTintColor={AppColors.baseGray}
+            maximumTrackTintColor={AppColors.blue}
             trackStyle={{height: 2}}
             thumbStyle={{
               alignItems: 'center',
@@ -187,7 +196,7 @@ const AudioPlayer = (props: AudioPlayerProps, state: AudioPlayerState) => {
               width: 20,
               height: 20,
             }}
-            thumbImage={require('../components/Images/player/volume.png')}
+            thumbImage={require('../../components/Images/player/volume.png')}
           />
         )}
 
@@ -208,7 +217,9 @@ const AudioPlayer = (props: AudioPlayerProps, state: AudioPlayerState) => {
                         source={{ uri: this.props.audioUrl }}
                     /> */}
       </View>
-    </ConexusLightbox>
+    </>
+
+    // </ConexusLightbox>
   );
 };
 
@@ -218,9 +229,13 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,.8)',
+    backgroundColor: AppColors.baseGray,
     padding: 20,
   },
-
+  closeButton: {
+    top: 0,
+  },
   playerCard: {},
 });
+
+export default AudioPlayer;

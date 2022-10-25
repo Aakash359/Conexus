@@ -24,6 +24,7 @@ import ImageGalleries from '../containers/Facility/HcpDetail/imageGallery';
 import ConversationContainer from '../containers/MessageCenter/conversation';
 import VideoRecorder from '../containers/VideoRecorder/videoRecoder';
 import VideoPlayer from '../containers/VideoPlayer/videoPlayer';
+import AudioPlayer from '../containers/AudioPlayer/audioPlayer';
 import VideoCalling from '../containers/VideoCalling/calling';
 import {useSelector} from '../redux/reducers/index';
 import NurseHome from '../containers/NurseHome/nurseHome';
@@ -143,15 +144,15 @@ const AppStack = () => {
           })}
         />
         <Stack.Screen
-          name="VideoRecorder"
-          component={VideoRecorder}
+          name="VideoPlayer"
+          component={VideoPlayer}
           options={{
             headerShown: false,
           }}
         />
         <Stack.Screen
-          name="VideoPlayer"
-          component={VideoPlayer}
+          name="AudioPlayer"
+          component={AudioPlayer}
           options={{
             headerShown: false,
           }}
@@ -212,6 +213,13 @@ const MessageStack = () => {
               />
             </TouchableOpacity>
           ),
+        }}
+      />
+      <Stack.Screen
+        name="AudioPlayer"
+        component={AudioPlayer}
+        options={{
+          headerShown: true,
         }}
       />
     </Stack.Navigator>

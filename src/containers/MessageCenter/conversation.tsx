@@ -6,7 +6,6 @@ import {
   Platform,
   TextInput,
   Keyboard,
-  EmitterSubscription,
   Animated,
   RefreshControl,
   ActivityIndicator,
@@ -67,8 +66,7 @@ const ConversationContainer = (
 ) => {
   const contentHeight: number = 0;
   const currentKeyboardHeight = 0;
-  const paddingBottom = new Animated.Value(0);
-  const footerActionOpacity = new Animated.Value(0).cu;
+  const footerActionOpacity = new Animated.Value(0);
   const footerInputHeight = new Animated.Value(inputMinHeight);
   const footerInputTargetValue = inputMinHeight;
   const scrollRef = React.createRef<ScrollView>();
@@ -94,42 +92,6 @@ const ConversationContainer = (
         sendVideoMessage();
       }
     }, 100);
-
-    const uuid = () => {
-      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(
-        c,
-      ) {
-        let r = (Math.random() * 16) | 0,
-          v = c === 'x' ? r : (r & 0x3) | 0x8;
-        return v.toString(16);
-      });
-    };
-
-    // const keyboardWillShow = (event: {endCoordinates: {height: number}}) => {
-    //   console.log('Evenet====>', event);
-
-    //   if (Platform.OS === 'android') {
-    //     crrentKueyboardHeight = event.endCoordinates.height + 56;
-    //     applyMeasurements();
-    //   } else {
-    //     currentKeyboardHeight = event.endCoordinates.height;
-    //     applyMeasurements();
-    //   }
-    //   // setTimeout(() => {
-    //   //   if (scrollView) {
-    //   //     this.scrollView.scrollToEnd();
-    //   //   }
-    //   // }, 400);
-    // };
-
-    // const keyboardWillShowSubscription: EmitterSubscription =
-    //   Keyboard.addListener('keyboardWillShow', keyboardWillShow());
-    // const keyboardWillHideSubscription: EmitterSubscription =
-    //   Keyboard.addListener('keyboardWillShow', keyboardWillShow());
-    // return () => {
-    //   keyboardWillShowSubscription.remove();
-    //   keyboardWillHideSubscription.remove();
-    // };
   }, []);
   const loadMessages = async () => {
     try {
@@ -151,7 +113,6 @@ const ConversationContainer = (
   };
   // const conversationId =
 
-  // this.paddingBottom = new Animated.Value(0);
   // this.applyMeasurements();
 
   const hcpUserId = (): string => {
@@ -185,14 +146,13 @@ const ConversationContainer = (
   const submissionIdFun = (): string => {
     return messageList ? messageList.submissionId : props.submissionId;
   };
-
+  const paddingBottom = new Animated.Value(0);
   const applyMeasurements = () => {
     const footerActionsOpacity = showFooterActions ? 1 : 0;
     const duration = 100;
-    let paddingBottom = currentKeyboardHeight;
 
     if (AppSizes.isIPhoneX) {
-      paddingBottom -= AppSizes.iPhoneXFooterSize;
+      currentKeyboardHeight -= AppSizes.iPhoneXFooterSize;
     }
 
     Animated.parallel([
@@ -260,18 +220,18 @@ const ConversationContainer = (
     // this.applyMeasurements();
   };
 
-  // const onLayout = () => {
-  //   if (!view:any) return;
-  //   view._component.measureInWindow((winX, winY, winWidth, winHeight) => {
-  //     contentHeight = winHeight;
-  //     applyMeasurements();
-  //   });
-  // };
+  const onLayout = () => {
+    // if (!view:any) return;
+    // view._component.measureInWindow((winX, winY, winWidth, winHeight) => {
+    //   contentHeight = winHeight;
+    //   applyMeasurements();
+    // });
+  };
 
   const removeRead = (message: any) => {
     log.info(message);
     log.info('Read it');
-    message.updateReadState(true);
+    // message.updateReadState(true);
   };
 
   const playVideoMessage = (videoUrl: string, message: any) => {
@@ -301,16 +261,13 @@ const ConversationContainer = (
   };
 
   const toggleFooterActions = () => {
-    // setTimeout(() => {
-    //   if (scrollView && !showFooterActions) {
-    //     scrollView.scrollToEnd();
-    //   }
-    // }, 200);
+    setTimeout(() => {
+      if (scrollRef.current && !showFooterActions) {
+        scrollRef.current.scrollToEnd({animated: true});
+      }
+    }, 200);
     setShowFooterActions(!showFooterActions);
-    // this.setState(
-    //   {showFooterActions: !showFooterActions},
-    //   this.applyMeasurements.bind(this),
-    // );
+    applyMeasurements();
   };
 
   const onVideoMessageSent = (archiveId: string, videoUrl: string) => {
@@ -539,7 +496,6 @@ const ConversationContainer = (
   const renderTextMessageView = (message: any, index: number) => {
     const time = moment(message.messageTimestamp).format('M/D/YYYY h:mm a');
     const caption = `${message.senderFirstName} ${message.senderLastName}, ${time}`;
-    console.log('Okkk===>', messageList);
 
     return (
       <View
@@ -812,7 +768,7 @@ const ConversationContainer = (
     <SafeAreaView style={[{flex: 1, backgroundColor: 'white'}]}>
       <Animated.View
         style={{flex: 1, paddingBottom: paddingBottom}}
-        // onLayout={onLayout}
+        onLayout={onLayout()}
         ref={animatableRef}
       >
         {renderMessageList()}

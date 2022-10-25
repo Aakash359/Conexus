@@ -217,9 +217,9 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
       avatarTitle,
       avatarDescription,
     };
-    NavigationService.navigate('AudioPlayer', {
-      parms,
-    });
+    // NavigationService.navigate('AudioPlayer', {
+    //   parms,
+    // });
   };
 
   const renderQuestions = (candidate: any) => {
