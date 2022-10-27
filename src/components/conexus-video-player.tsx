@@ -92,12 +92,12 @@ const ConexusVideoPlayer = (
   const [loaded, setLoaded] = useState(false);
   const [hasEnded, setHasEnded] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const replaying: boolean = false;
+  let replaying: boolean = false;
 
   const {videoPath, screenName} = props;
   const videoRef = useRef<Video>(null);
-  const progress: number = 0;
-  const player: Video = Video;
+  let progress: number = 0;
+  let player: Video = Video;
   const volumeListener = SystemSetting.addVolumeListener(
     _.debounce((data: any) => {
       const volume = isAndroid ? data['music'] : data.value;
@@ -161,7 +161,7 @@ const ConexusVideoPlayer = (
   };
 
   const replayTitle = (): string => {
-    return props.replayTitle || 'Replay';
+    return props.replayTitle || 'REPLAY';
   };
 
   // get hideErrors(): boolean {
@@ -232,16 +232,17 @@ const ConexusVideoPlayer = (
       return;
     }
     try {
-      const replaying: boolean = false;
+      replaying = true;
       const loads = loaded; // Preserve this value
       setIsPaused(true);
       if (player) {
-        console.log('Replay');
-        player.seek(0);
-        setLoaded(defaultState, loaded);
+        console.log('Palyer', isPaused);
+        // player.seek(0);
+
+        setLoaded(defaultState, loads);
       }
     } finally {
-      replaying;
+      replaying = false;
     }
   };
 
@@ -282,7 +283,7 @@ const ConexusVideoPlayer = (
   };
 
   const onProgress = (event: any) => {
-    // progress = event.currentTime;
+    progress = event.currentTime;
   };
 
   const togglePause = () => {
@@ -335,26 +336,23 @@ const ConexusVideoPlayer = (
     let overlayHeaderText = '';
 
     const replayButton = {
-      title: replayTitle,
+      title: replayTitle(),
       onPress: () => replay(),
     };
     const menuButtons = props.menuButtons || [];
 
     if (hasErrors()) {
       overlayHeaderText = errorDisplayText();
-      replayButton.title = 'Retry';
+      replayButton.title = 'RETRY';
       buttons = [replayButton, ...menuButtons.filter(i => i.showOnError)];
     } else if (isPauseded()) {
-      // Add Play to the top of the list
-      buttons = [{title: 'Play', onPress: () => togglePause()}];
-
-      if (progress > 0) {
+      buttons = [{title: 'PLAY', onPress: () => togglePause()}];
+      if (progress == 0) {
         buttons.push(replayButton);
       }
-
       buttons = [...buttons, ...menuButtons];
     } else if (!loads() || !isPlaying()) {
-      if (isPlaying()) {
+      if (!isPlaying()) {
         const btnDetails = getActionButton();
 
         if (btnDetails) {
@@ -414,11 +412,12 @@ const ConexusVideoPlayer = (
           </View>
         </View>
 
-        {!actionButton && (
+        {actionButton && (
           <View style={styles.footer}>
             <ActionButton
+              title={actionButton.title}
               customStyle={styles.btnEnable}
-              // onPress={actionButton.onPress}
+              onPress={() => NavigationService.goBack()}
             />
           </View>
         )}
@@ -465,10 +464,10 @@ const ConexusVideoPlayer = (
             paused={isPauseded()}
             ignoreSilentSwitch={'ignore'}
             playWhenInactive={() => playWhenInactive()}
-            onLoad={onLoad()}
+            onLoad={() => onLoad()}
             onEnd={onEnd()}
             // onError={onError()}
-            onProgress={() => onProgress()}
+            onProgress={(event: any) => onProgress(event)}
             style={[styles.video]}
           />
         }
@@ -493,17 +492,17 @@ const ConexusVideoPlayer = (
               onValueChange={(value: any) => Volume(value)}
               thumbImage={require('./Images/player/volume.png')}
             />
+            {screenName === 'AnswerRatings' ? null : (
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={styles.closeButton}
+                onPress={() => NavigationService.goBack()}
+              >
+                <Icon name="close-outline" size={35} color={AppColors.blue} />
+              </TouchableOpacity>
+            )}
           </View>
         }
-        {screenName === 'AnswerRatings' ? null : (
-          <Icon
-            style={styles.closeButton}
-            name="close-outline"
-            size={35}
-            color={AppColors.blue}
-            onPress={() => NavigationService.goBack()}
-          />
-        )}
       </TouchableOpacity>
     );
   };
@@ -527,9 +526,8 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
   },
   closeButton: {
-    top: Platform.OS === 'ios' ? 38 : 24,
-    right: 18,
-    alignSelf: 'flex-end',
+    top: Platform.OS === 'ios' ? 30 : 24,
+    left: 230,
   },
   footer: {
     right: 10,
@@ -593,6 +591,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: AppColors.white,
     height: 46,
+    borderRadius: 30,
     width: 190,
     marginBottom: 18,
     justifyContent: 'center',
@@ -602,7 +601,8 @@ const styles = StyleSheet.create({
     ...AppFonts.buttonText,
     color: AppColors.white,
     flex: 1,
-    textAlign: 'center',
+    alignSelf: 'center',
+    top: 15,
   },
 });
 

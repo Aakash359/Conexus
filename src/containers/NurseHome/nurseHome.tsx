@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import Styles from '../../theme/styles';
 import {ScreenType} from '../../common/constants';
-import {NurseSubmissionsStore} from '../../stores';
+import {useSelector} from '../../redux/reducers/index';
 import {showYesNoAlert} from '../../common/cancel-retry-alert';
 import {AppFonts, AppColors, AppSizes} from '../../theme';
 import {SubmissionCardList} from './submission-card-list';
@@ -28,6 +28,7 @@ interface NurseHomeState {
 const NurseHome = (props: NurseHomeProps, state: NurseHomeState) => {
   const [refreshing, setRefreshing] = useState(false);
   const [nurseData, setNurseData] = useState(false);
+  const userInfo = useSelector(state => state.userReducer);
 
   const saveToken = async () => {
     await AsyncStorage.setItem('authToken', userInfo?.user?.authToken);
@@ -35,10 +36,13 @@ const NurseHome = (props: NurseHomeProps, state: NurseHomeState) => {
 
   const getToken = async () => {
     let token = await AsyncStorage.getItem('authToken');
+    console.log('Token======>', token);
   };
 
   useEffect(() => {
     load();
+    saveToken();
+    getToken();
   }, []);
 
   const load = async () => {

@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
   Text,
-  Button,
   StyleSheet,
   View,
   FlatList,
@@ -11,16 +10,12 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import {FacilityNeedsStore, UserStore} from '../../../stores';
+import {FacilityNeedsStore} from '../../../stores';
 import {AppColors, AppFonts} from '../../../theme';
 import {ViewHeader} from '../../../components/view-header';
 import {facilityNeedService} from '../../../services/Facility/facilityNeedService';
 import {ActionButton} from '../../../components/action-button';
 import NavigationService from '../../../navigation/NavigationService';
-
-export interface PositionsProps {
-  facilityNeedsStore: typeof FacilityNeedsStore.Type;
-}
 
 export interface PositionState {
   refreshing: boolean;
@@ -29,12 +24,13 @@ export interface PositionState {
 
 let needsStorePromise: Promise<any>;
 
-const Positions = (props: PositionsProps, state: PositionState) => {
+const Positions = (state: PositionState) => {
   const mounted: boolean = false;
   const [loading, setLoading] = useState(false);
   const [expandedNeedId, setExpandedNeedId] = useState('');
   const [refreshing, setRefreshing] = useState(false);
   const [needs, setNeeds] = useState([]);
+
   const selectedFacility = (): any => {
     const {facilityNeedsStore, userStore} = this.props;
 

@@ -1013,7 +1013,6 @@ const config = {
     "fontPref": {
       "prefix": "cn-",
       "metadata": {
-        // "fontFamily": "icomoon",
         "majorVersion": 1,
         "minorVersion": 0
       },

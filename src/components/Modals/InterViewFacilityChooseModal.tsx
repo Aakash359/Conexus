@@ -111,12 +111,13 @@ export const InterViewFacilityChooseModal = (
           <View style={styles.cardItemStyle}>
             <View style={styles.wrapperView}>
               <Text style={styles.titleText}>Choose a Facility</Text>
-              <Icon
-                style={{color: AppColors.mediumGray}}
-                name="ios-close-circle-sharp"
-                size={22}
-                onPress={onClose}
-              />
+              <TouchableOpacity activeOpacity={0.8} onPress={onClose}>
+                <Icon
+                  style={{color: AppColors.mediumGray}}
+                  name="ios-close-circle-sharp"
+                  size={22}
+                />
+              </TouchableOpacity>
             </View>
             {loading && (
               <ActivityIndicator
@@ -149,12 +150,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.4)',
   },
   text: {
-    textAlignVertical: 'center',
+    alignSelf: 'center',
   },
   wrapper: {
     flexDirection: 'row',
     marginRight: 30,
-    marginTop: 20,
+    marginTop: 22,
     alignSelf: 'center',
   },
   content: {
