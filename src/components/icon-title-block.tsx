@@ -1,11 +1,11 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {ConexusIcon} from '../components/conexus-icon';
 import {AppColors} from '../theme';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 interface IconTitleBlockProps {
   text: string;
-  iconName?: string;
+  iconNames?: string;
   textColor?: string;
   iconColor?: string;
 }
@@ -22,17 +22,13 @@ const IconTitleBlock = (props: IconTitleBlockProps) => {
   };
 
   const iconName = (): string => {
-    return props.iconName;
+    return props.iconNames;
   };
 
   return (
     <View style={[style.container]}>
       {!!iconName && (
-        <ConexusIcon
-          size={64}
-          name={iconName}
-          style={[style.icon, {color: iconColor}]}
-        />
+        <Icon name={'information-circle'} size={64} style={[style.icon]} />
       )}
       <Text style={[style.text, {color: textColor}]}>{text}</Text>
     </View>

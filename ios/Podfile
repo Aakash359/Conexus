@@ -40,9 +40,10 @@ target 'Conexus' do
   # you should disable the next line.
   use_flipper!()
   
-  target 'OneSignalNotificationServiceExtension' do
-  pod 'OneSignalXCFramework', '>= 3.0', '< 4.0'
-  end
+  # target 'OneSignalNotificationServiceExtension' do
+
+  # pod 'OneSignalXCFramework', '>= 3.0', '< 4.0'
+  # end
   post_install do |installer|
     react_native_post_install(installer)
     __apply_Xcode_12_5_M1_post_install_workaround(installer)

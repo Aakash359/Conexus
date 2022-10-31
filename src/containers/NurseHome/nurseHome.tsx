@@ -10,14 +10,14 @@ import {
   Alert,
 } from 'react-native';
 import Styles from '../../theme/styles';
-import {ScreenType} from '../../common/constants';
+import Icon from 'react-native-vector-icons/Ionicons';
 import {useSelector} from '../../redux/reducers/index';
 import {showYesNoAlert} from '../../common/cancel-retry-alert';
 import {AppFonts, AppColors, AppSizes} from '../../theme';
-import {SubmissionCardList} from './submission-card-list';
-import {PastSubmissionsTabList} from './past-submissions-tab-list';
 import {nurseDataLoadService} from '../../services/Nurse/nurseDataLoadService';
 import {facilitySubmissionsService} from '../../services/Facility/facilitySubmissionsService';
+import SubmissionCardList from './submission-card-list';
+import PastSubmissionsTabList from './past-submissions-tab-list';
 
 interface NurseHomeProps {}
 
@@ -27,16 +27,15 @@ interface NurseHomeState {
 
 const NurseHome = (props: NurseHomeProps, state: NurseHomeState) => {
   const [refreshing, setRefreshing] = useState(false);
-  const [nurseData, setNurseData] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [nurseData, setNurseData] = useState([]);
   const userInfo = useSelector(state => state.userReducer);
-
   const saveToken = async () => {
     await AsyncStorage.setItem('authToken', userInfo?.user?.authToken);
   };
 
   const getToken = async () => {
     let token = await AsyncStorage.getItem('authToken');
-    console.log('Token======>', token);
   };
 
   useEffect(() => {
@@ -45,12 +44,25 @@ const NurseHome = (props: NurseHomeProps, state: NurseHomeState) => {
     getToken();
   }, []);
 
+  const availableInterviews = (data: any) => {
+    return data.filter((i: any) => {
+      return (
+        i.interviewStatus === 'Avaliable' || i.interviewStatus === 'Available'
+      );
+    });
+  };
+
+  const interviewableSubmissions = availableInterviews;
   const load = async () => {
+    setIsLoading(true);
     try {
       const {data} = await nurseDataLoadService();
+      setIsLoading(false);
+      setNurseData(data);
+      availableInterviews(data);
     } catch (error) {
       console.log('Error', error);
-      console.log(error);
+      setIsLoading(false);
       setRefreshing(false);
       Alert.alert(
         'Message Center Error',
@@ -60,102 +72,69 @@ const NurseHome = (props: NurseHomeProps, state: NurseHomeState) => {
     }
   };
 
-  // startVirtualInterview(submissionId: string) {
-  //   Actions[ScreenType.NURSES.INTERVIEW]({submissionId});
-  // }
+  const startVirtualInterview = (submissionId: string) => {
+    // Actions[ScreenType.NURSES.INTERVIEW]({submissionId});
+  };
 
-  // const renderLoading = () => {
-  //   return (
-  //     <View key="loading" style={styles.screen}>
-  //       <ActivityIndicator
-  //         color={AppColors.blue}
-  //         style={StyleSheet.flatten([
-  //           {
-  //             width: AppSizes.screen.width,
-  //             height: AppSizes.screen.height - 200,
-  //           },
-  //         ])}
-  //       />
-  //     </View>
-  //   );
-  // };
+  const renderLoading = () => {
+    return (
+      <View key="loading" style={styles.screen}>
+        <ActivityIndicator
+          color={AppColors.blue}
+          style={StyleSheet.flatten([
+            {
+              width: AppSizes.screen.width,
+              height: AppSizes.screen.height - 200,
+            },
+          ])}
+        />
+      </View>
+    );
+  };
 
-  // const handleSubmissionAction = (submissionId: string, actionType: string) => {
-  //   setTimeout(() => {
-  //     switch (actionType.toLowerCase()) {
-  //       case 'schedule':
-  //         showYesNoAlert({
-  //           title: 'Still In Development',
-  //           yesTitle: 'Try Interview Instead',
-  //           noTitle: 'OK',
-  //           onYes: () => {
-  //             this.startVirtualInterview(submissionId);
-  //           },
-  //         });
+  const handleSubmissionAction = (submissionId: string, actionType: string) => {
+    // setTimeout(() => {
+    //   switch (actionType.toLowerCase()) {
+    //     case 'schedule':
+    //       showYesNoAlert({
+    //         title: 'Still In Development',
+    //         yesTitle: 'Try Interview Instead',
+    //         noTitle: 'OK',
+    //         onYes: () => {
+    //           startVirtualInterview(submissionId);
+    //         },
+    //       });
+    //       break;
+    //     case 'startvi':
+    //       startVirtualInterview(submissionId);
+    //       break;
+    //   }
+    // }, 0);
+  };
 
-  //         break;
-  //       case 'startvi':
-  //         this.startVirtualInterview(submissionId);
-  //         break;
-  //     }
-  //   }, 0);
-  // };
+  const renderSubmissions = () => {
+    return (
+      <View key="submissions" style={{flex: 1}}>
+        <Text style={styles.introTitle}>
+          You are a candidate for {interviewableSubmissions.length} positions
+        </Text>
+        <SubmissionCardList
+          submissions={nurseData}
+          onSubmissionAction={() => handleSubmissionAction()}
+        />
+        <PastSubmissionsTabList nurseHomeData={nurseData} />
+      </View>
+    );
+  };
 
-  // const renderSubmissions = () => {
-  //   const {nurseSubmissionsStore} = this.props;
-  //   const interviewableSubmissions = nurseSubmissionsStore.availableInterviews; //.filter(i => i.questionCount > 0)
-
-  //   return (
-  //     <View key="submissions" style={{flex: 1}}>
-  //       <Text style={styles.introTitle}>
-  //         You are a candidate for {interviewableSubmissions.length} positions
-  //       </Text>
-  //       <SubmissionCardList
-  //         submissions={interviewableSubmissions}
-  //         onSubmissionAction={this.handleSubmissionAction.bind(this)}
-  //       />
-  //       <PastSubmissionsTabList nurseSubmissionsStore={nurseSubmissionsStore} />
-  //     </View>
-  //   );
-  // };
-
-  // const renderEmpty = () => {
-  //   return (
-  //     <View>
-  //       <View
-  //         key="empty"
-  //         style={StyleSheet.flatten([
-  //           styles.screen,
-  //           Styles.cnxNoDataMessageContainer,
-  //         ])}>
-  //         {/* <Icon name="information-circle" style={Styles.cnxNoDataIcon} /> */}
-  //         <Text style={Styles.cnxNoDataMessageText}>No current interviews</Text>
-  //       </View>
-  //       <PastSubmissionsTabList nurseSubmissionsStore={nurseSubmissionsStore} />
-  //     </View>
-  //   );
-  // };
-
-  // load(refreshing: boolean = true) {
-  //   this.setState({refreshing: refreshing});
-
-  //   this.props.nurseSubmissionsStore.load().then(
-  //     () => {
-  //       this.setState({refreshing: false});
-  //     },
-  //     error => {
-  //       log.info(error);
-  //       this.setState({refreshing: false});
-  //     },
-  //   );
-  // }
-
-  // if (
-  //   nurseSubmissionsStore.isLoadingSubmissions &&
-  //   nurseSubmissionsStore.submissions.length === 0
-  // ) {
-  //   return this._renderLoading();
-  // }
+  const renderEmpty = () => {
+    return (
+      <View key="empty" style={styles.center}>
+        <Icon name="information-circle" style={Styles.cnxNoDataIcon} />
+        <Text style={Styles.cnxNoDataMessageText}>No current interviews</Text>
+      </View>
+    );
+  };
 
   return (
     <ScrollView
@@ -164,9 +143,15 @@ const NurseHome = (props: NurseHomeProps, state: NurseHomeState) => {
         <RefreshControl refreshing={refreshing} onRefresh={() => load()} />
       }
     >
-      {/* {interviewableSubmissions.length === 0
-        ? renderEmpty()
-        : renderSubmissions()} */}
+      {isLoading ? (
+        renderLoading()
+      ) : (
+        <>
+          {interviewableSubmissions.length === 0
+            ? renderEmpty()
+            : renderSubmissions()}
+        </>
+      )}
     </ScrollView>
   );
 };
@@ -177,7 +162,10 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     width: AppSizes.screen.width,
   },
-
+  center: {
+    alignItems: 'center',
+    marginTop: 300,
+  },
   introTitle: {
     ...AppFonts.bodyTextMedium,
     marginVertical: 20,
