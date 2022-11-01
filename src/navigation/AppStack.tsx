@@ -28,6 +28,7 @@ import VideoCalling from '../containers/VideoCalling/calling';
 import {useSelector} from '../redux/reducers/index';
 import NurseHome from '../containers/NurseHome/nurseHome';
 import AnswerRatings from '../containers/Facility/HcpDetail/answerRating';
+import NurseInterview from '../containers/NurseHome/interviews/nurse-interview';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -176,6 +177,19 @@ const AppStack = () => {
           options={{
             headerShown: true,
             title: 'InterviewQuestions',
+            headerTitleStyle: {
+              color: AppColors.black,
+              fontWeight: 'bold',
+              fontSize: 22,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="NurseInterview"
+          component={NurseInterview}
+          options={{
+            headerShown: true,
+            title: 'Nurse Interview',
             headerTitleStyle: {
               color: AppColors.black,
               fontWeight: 'bold',

@@ -18,6 +18,7 @@ import {nurseDataLoadService} from '../../services/Nurse/nurseDataLoadService';
 import {facilitySubmissionsService} from '../../services/Facility/facilitySubmissionsService';
 import SubmissionCardList from './submission-card-list';
 import PastSubmissionsTabList from './past-submissions-tab-list';
+import NavigationService from '../../navigation/NavigationService';
 
 interface NurseHomeProps {}
 
@@ -73,7 +74,7 @@ const NurseHome = (props: NurseHomeProps, state: NurseHomeState) => {
   };
 
   const startVirtualInterview = (submissionId: string) => {
-    // Actions[ScreenType.NURSES.INTERVIEW]({submissionId});
+    NavigationService.navigate('NurseInterview', {submissionId, nurseData});
   };
 
   const renderLoading = () => {
@@ -93,23 +94,23 @@ const NurseHome = (props: NurseHomeProps, state: NurseHomeState) => {
   };
 
   const handleSubmissionAction = (submissionId: string, actionType: string) => {
-    // setTimeout(() => {
-    //   switch (actionType.toLowerCase()) {
-    //     case 'schedule':
-    //       showYesNoAlert({
-    //         title: 'Still In Development',
-    //         yesTitle: 'Try Interview Instead',
-    //         noTitle: 'OK',
-    //         onYes: () => {
-    //           startVirtualInterview(submissionId);
-    //         },
-    //       });
-    //       break;
-    //     case 'startvi':
-    //       startVirtualInterview(submissionId);
-    //       break;
-    //   }
-    // }, 0);
+    setTimeout(() => {
+      switch (actionType.toLowerCase()) {
+        case 'schedule':
+          showYesNoAlert({
+            title: 'Still In Development',
+            yesTitle: 'Try Interview Instead',
+            noTitle: 'OK',
+            onYes: () => {
+              startVirtualInterview(submissionId);
+            },
+          });
+          break;
+        case 'startvi':
+          startVirtualInterview(submissionId);
+          break;
+      }
+    }, 0);
   };
 
   const renderSubmissions = () => {
@@ -120,7 +121,9 @@ const NurseHome = (props: NurseHomeProps, state: NurseHomeState) => {
         </Text>
         <SubmissionCardList
           submissions={nurseData}
-          onSubmissionAction={() => handleSubmissionAction()}
+          onSubmissionAction={(submissionId: any, actionType: any) =>
+            handleSubmissionAction(submissionId, actionType)
+          }
         />
         <PastSubmissionsTabList nurseHomeData={nurseData} />
       </View>

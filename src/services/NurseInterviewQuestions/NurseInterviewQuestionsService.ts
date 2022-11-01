@@ -3,9 +3,9 @@ import axios from 'axios';
 import { defaultBaseUrl } from '../../redux/constants'
 
 
-export const facilityQuestionsService = async() => axios.get(`${defaultBaseUrl}/facility/listInterviewQuestions`,{
+export const nurseInterviewQuestionService = async(submissionId: any) => 
+axios.get(`${defaultBaseUrl}/hcp/interviewquestions/${submissionId}`,{
    headers: {
       Authorization: `Bearer ${ await AsyncStorage.getItem('authToken')}`,
     },
 });
-

@@ -141,8 +141,6 @@ const AnswerRatings = (
     currentAnswer()
       .saveResponse(currentAnswer().id, currentAnswer().rating)
       .then(() => {
-        console.log('Ha yahna Aa raha hai');
-
         setSwitchingQuestions(false);
         goNext();
       })

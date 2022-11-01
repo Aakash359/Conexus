@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -8,12 +8,11 @@ import {
   StatusBar,
   Platform,
 } from 'react-native';
-
-// import { Actions } from 'react-native-router-flux'
 import {
   ConexusIconButton,
   ScreenFooterButton,
   Circle,
+  ActionButton,
 } from '../../../components';
 import {ConexusLightbox} from '../../../lightboxes';
 import {
@@ -27,10 +26,12 @@ import {InterviewComplete} from './components/interview-complete';
 import {QuestionAnswerRecorder} from './components/question-answer-recorder';
 import {logger} from 'react-native-logs';
 import InCallManager from 'react-native-incall-manager';
+import {nurseInterviewQuestionService} from '../../../services/NurseInterviewQuestions/NurseInterviewQuestionsService';
+import {windowDimensions} from '../../../common';
 const log = logger.createLogger();
+
 export interface NurseInterviewProps {
   submissionId: string;
-  nurseSubmissionsStore: typeof NurseSubmissionsStore.Type;
   onClose?: () => any;
 }
 
@@ -43,116 +44,77 @@ export interface NurseInterviewState {
   showIntro: boolean;
 }
 
-export class NurseInterview extends React.Component<
-  NurseInterviewProps,
-  NurseInterviewState
-> {
-  private questionStore: typeof InterviewQuestionStore.Type =
-    InterviewQuestionStore.create({});
-  private submission: typeof NurseSubmissionModel.Type;
+const NurseInterview = (
+  props: NurseInterviewProps,
+  state: NurseInterviewState,
+) => {
+  const [closeable, setCloseable] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [introDisplayed, setIntroDisplayed] = useState(false);
+  const [questionIndex, setQuestionIndex] = useState(-1);
+  const [interviewComplete, setInterviewComplete] = useState(false);
+  const [nurseQuestions, setNurseQuestions] = useState([]);
+  const [showIntro, setShowIntro] = useState(false);
+  const {submissionId, nurseData} = props?.route?.params;
 
-  get currentQuestion(): typeof InterviewQuestionModel.Type {
-    const {questionIndex, interviewComplete} = this.state;
-
+  const currentQuestion = (): any => {
     if (questionIndex < 0 || interviewComplete) {
       return null;
     }
+    return nurseQuestions[questionIndex];
+  };
 
-    return this.questionStore.questions[questionIndex];
-  }
+  const questionCount = (): number => {
+    return nurseQuestions.length;
+  };
 
-  get questionCount(): number {
-    return this.questionStore.questions.length;
-  }
-
-  get maxThinkSeconds(): number {
-    if (this.questionStore.questions.length) {
-      return this.questionStore.questions[0].maxThinkSeconds;
+  const maxThinkSeconds = (): number => {
+    if (nurseQuestions.length) {
+      // return nurseQuestions.questions[0].maxThinkSeconds;
     }
 
     return 0;
-  }
+  };
 
-  get maxAnswerLengthSeconds(): number {
-    if (this.questionStore.questions.length) {
-      return this.questionStore.questions[0].maxAnswerLengthSeconds;
+  const maxAnswerLengthSeconds = (): number => {
+    if (nurseQuestions.length) {
+      return nurseQuestions[0].maxAnswerLengthSeconds;
     }
 
     return 0;
-  }
+  };
 
-  constructor(props, state) {
-    super(props, state);
+  useEffect(() => {
+    loadQuestions();
 
-    this.state = {
-      loading: false,
-      closeable: false,
-      introDisplayed: false,
-      questionIndex: -1,
-      interviewComplete: false,
-      showIntro: false,
-    };
-  }
+    // this.submission = nurseSubmissionsStore.availableInterviews.find(
+    //   i => i.submissionId === submissionId,
+    // );
+    // StatusBar.setHidden(true);
+    // InCallManager.setKeepScreenOn(true);
 
-  componentDidMount() {
-    this.loadQuestions();
-  }
+    //   this.props.nurseSubmissionsStore.load().then(
+    //   () => {
+    //     StatusBar.setHidden(false);
+    //   },
+    //   error => {
+    //     StatusBar.setHidden(false);
+    //     log.info('NurseSubmissionStore Error', error);
+    //   },
+    // );
 
-  componentWillMount() {
-    const {submissionId, nurseSubmissionsStore} = this.props;
-    this.submission = nurseSubmissionsStore.availableInterviews.find(
-      i => i.submissionId === submissionId,
-    );
-    StatusBar.setHidden(true);
-    InCallManager.setKeepScreenOn(true);
-  }
+    // if (this.props.onClose && this.props.onClose.call) {
+    //   this.props.onClose();
+    // }
+    // InCallManager.setKeepScreenOn(false);
+  }, []);
 
-  componentWillUnmount() {
-    this.props.nurseSubmissionsStore.load().then(
-      () => {
-        StatusBar.setHidden(false);
-      },
-      error => {
-        StatusBar.setHidden(false);
-        log.info('NurseSubmissionStore Error', error);
-      },
-    );
-
-    if (this.props.onClose && this.props.onClose.call) {
-      this.props.onClose();
-    }
-    InCallManager.setKeepScreenOn(false);
-  }
-
-  loadQuestions() {
-    this.setState({loading: true});
-
-    this.questionStore.load(this.submission.submissionId).then(
-      () => {
-        this.setState({loading: false}, this.goNextStep.bind(this));
-      },
-      error => {
-        log.info(error);
-        this.setState({loading: false});
-        Alert.alert(
-          'Error',
-          'An error occurred while loading the interview. Please try again.',
-        );
-        // Actions.pop()
-      },
-    );
-  }
-
-  goNextStep() {
-    const {questionIndex, introDisplayed, interviewComplete} = this.state;
+  const goNextStep = () => {
     const nextState = {questionIndex: questionIndex + 1, closeable: false};
 
-    log.info('nurse-interview: goNextStep');
-
     // No Questions -- Should never happen.  Previous screen should protect
-    if (this.questionCount === 0) {
-      Alert.alert('No Questions Available');
-      // Actions.pop()
+    if (questionCount() === 0) {
+      // Alert.alert('No Questions Available');
     }
 
     // Before First Question
@@ -163,67 +125,97 @@ export class NurseInterview extends React.Component<
       }
 
       if (!introDisplayed) {
-        this.setState({showIntro: true});
+        setShowIntro(true);
         return;
       }
 
       // GoTo first question
-      this.setState(nextState);
+      // this.setState(nextState);
       return;
     }
 
     // On Last Question
     if (questionIndex == this.questionCount - 1) {
-      this.setState({interviewComplete: true, questionIndex});
+      setInterviewComplete(true);
+      setQuestionIndex(questionIndex);
+      // this.setState({interviewComplete: true, questionIndex});
       return;
     }
 
     // On Question
     // for one cycle set question index = -1. This will force the question answer recorder to
     // re-init instead of the existing instance being used.
-    this.setState({questionIndex: -1}, () => {
-      this.setState(nextState);
-    });
+    setQuestionIndex(-1);
+
+    // this.setState({questionIndex: -1}, () => {
+    //   this.setState(nextState);
+    // });
 
     return;
-  }
+  };
 
-  onAnswerError(error) {
-    // Add any additional error handling here based on the error
-    // The control display an error page
-  }
-
-  onAnswerComplete(archiveId) {
-    log.info('Answer complete, calling save', archiveId);
-    this.currentQuestion
-      .saveVideoAnswer(this.submission.submissionId, archiveId)
-      .then(() => {
-        // Do nothing, recorder will display break
-      })
-      .catch(error => {
-        log.info('SAVE ANSWER ERROR', error);
-        this.goNextStep();
+  const loadQuestions = async () => {
+    setIsLoading(true);
+    try {
+      const {data} = await nurseInterviewQuestionService(submissionId);
+      let nurseData = data.map((i: any) => {
+        return setNurseQuestions(i.questions);
       });
-  }
+      goNextStep();
+      setIsLoading(false);
+    } catch (error) {
+      console.log('Error', error);
+      setIsLoading(false);
+      Alert.alert(
+        'Error',
+        'An error occurred while loading the interview questions. Please try again.',
+      );
+    }
+  };
 
-  renderLoading() {
-    return (
-      <View style={{flex: 1}}>
-        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-          <ActivityIndicator color={AppColors.blue} />
-        </View>
-      </View>
-    );
-  }
+  // const onAnswerError=(error)=> {
+  //   // Add any additional error handling here based on the error
+  //   // The control display an error page
+  // }
 
-  renderHeader() {
-    const {questionIndex, closeable} = this.state;
-    const questionCount = this.questionStore.questions.length;
+  // const onAnswerComplete=(archiveId) {
+  //   this.currentQuestion
+  //     .saveVideoAnswer(this.submission.submissionId, archiveId)
+  //     .then(() => {
+  //       // Do nothing, recorder will display break
+  //     })
+  //     .catch(error => {
+  //       log.info('SAVE ANSWER ERROR', error);
+  //       this.goNextStep();
+  //     });
+  // }
+
+  // const renderLoading=()=> {
+  //   return (
+  //     <View style={{flex: 1}}>
+  //       <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+  //         <ActivityIndicator color={AppColors.blue} />
+  //       </View>
+  //     </View>
+  //   );
+  // }
+
+  const submission = (item: any) => {
+    return item;
+  };
+
+  const renderHeader = (nurseData: any) => {
+    // Alert.alert('hi');
+    nurseData.map(submission);
+
+    let jnj = submission();
+    console.log('nkk====>', jnj);
+    const questionCount = nurseQuestions.length;
 
     return (
       <View>
         <View style={styles.header}>
-          <Text style={styles.headerText}>{this.submission.facilityName}</Text>
+          {/* <Text style={styles.headerText}>{this.submission.facilityName}</Text> */}
           {closeable && (
             <ConexusIconButton
               style={styles.icon}
@@ -236,20 +228,21 @@ export class NurseInterview extends React.Component<
         <View style={styles.modalSubheader}>
           <View style={{flexDirection: 'row', alignItems: 'stretch'}}>
             <Text style={styles.modalSubheaderText}>
-              {this.submission.position.display.title}
+              hi
+              {/* {submission.position.display.title} */}
             </Text>
-            {questionIndex > -1 && (
+            {/* {questionIndex > -1 && (
               <Text style={styles.stepText}>
                 {questionIndex + 1} of {questionCount}
               </Text>
-            )}
+            )} */}
           </View>
         </View>
       </View>
     );
-  }
+  };
 
-  renderIntro() {
+  const renderIntro = () => {
     return (
       <View
         style={{
@@ -260,10 +253,11 @@ export class NurseInterview extends React.Component<
           right: 0,
           bottom: 0,
           top: 0,
-        }}>
+        }}
+      >
         <Text style={introStyle.headerIntro}>
-          You have {this.questionCount} virtual interview question
-          {this.questionCount != 1 ? 's' : ''} to answer.
+          You have {questionCount()} virtual interview question
+          {questionCount() != 1 ? 's' : ''} to answer.
         </Text>
         <Text style={introStyle.header}>Here's how it will work:</Text>
 
@@ -281,8 +275,8 @@ export class NurseInterview extends React.Component<
         </Circle>
         <Text style={introStyle.stepHeader}>COUNTDOWN</Text>
         <Text style={introStyle.stepBody}>
-          You will be given a {this.maxThinkSeconds} second countdown to allow
-          you time to think about your answer.
+          You will be given a {maxThinkSeconds()} second countdown to allow you
+          time to think about your answer.
         </Text>
 
         <Circle size={28} color={AppColors.blue} style={introStyle.circle}>
@@ -290,44 +284,32 @@ export class NurseInterview extends React.Component<
         </Circle>
         <Text style={introStyle.stepHeader}>RECORD RESPONSE</Text>
         <Text style={introStyle.stepBody}>
-          Record a video response of no more than {this.maxAnswerLengthSeconds}{' '}
-          second{this.maxAnswerLengthSeconds != 1 ? 's' : ''} before moving to
-          the next question.
+          Record a video response of no more than {maxAnswerLengthSeconds()}{' '}
+          second{maxAnswerLengthSeconds() != 1 ? 's' : ''} before moving to the
+          next question.
         </Text>
-
-        <ScreenFooterButton
-          title="START INTERVIEW"
-          onPress={() =>
-            this.setState(
-              {showIntro: false, introDisplayed: true},
-              this.goNextStep.bind(this),
-            )
-          }
-        />
+        <View style={introStyle.footer}>
+          <ActionButton
+            title="START INTERVIEW"
+            customStyle={introStyle.btnEnable}
+            style={{marginTop: 40}}
+            // onPress={()=>setShowIntro({introDisplayed:true,goNextStep()})}
+          />
+        </View>
       </View>
     );
-  }
+  };
 
-  _renderInterview() {
-    let {questionIndex, interviewComplete, introDisplayed, loading} =
-      this.state;
-    const lastQuestion = this.questionCount <= questionIndex + 1;
-    log.info('Last Question: ' + lastQuestion);
-
+  const renderInterview = () => {
+    const lastQuestion = questionCount() <= questionIndex + 1;
     return (
-      <ConexusLightbox
-        hideHeader
-        horizontalPercent={1}
-        verticalPercent={1}
-        style={styles.container}>
-        {loading && this.renderLoading()}
-
-        {!loading && !introDisplayed && this.renderIntro()}
-
-        {introDisplayed && !interviewComplete && this.renderHeader()}
-        {introDisplayed && !interviewComplete && !!this.currentQuestion && (
+      <>
+        {!isLoading && !introDisplayed && renderIntro()}
+        {!isLoading && !introDisplayed && renderHeader(nurseData)}
+        {introDisplayed && !interviewComplete && currentQuestion() && (
           <View style={styles.contentContainer}>
-            <QuestionAnswerRecorder
+            <Text>hidnckdnk</Text>
+            {/* <QuestionAnswerRecorder
               style={{flex: 1}}
               questionUrl={this.currentQuestion.questionUrl}
               questionText={this.currentQuestion.questionText}
@@ -350,26 +332,36 @@ export class NurseInterview extends React.Component<
               }}
               onAnswerComplete={this.onAnswerComplete.bind(this)}
               onAnswerError={this.onAnswerError.bind(this)}
-            />
+            /> */}
           </View>
         )}
-        {introDisplayed && interviewComplete && (
-          <View style={{flex: 1}}>
-            <InterviewComplete submission={this.submission} />
-          </View>
-        )}
-      </ConexusLightbox>
+      </>
+      // <ConexusLightbox
+      //   hideHeader
+      //   horizontalPercent={1}
+      //   verticalPercent={1}
+      //   style={styles.container}>
+      //   {loading && this.renderLoading()}
+
+      //   {!loading && !introDisplayed && this.renderIntro()}
+
+      //   {introDisplayed && !interviewComplete && this.renderHeader()}
+
+      //   {introDisplayed && interviewComplete && (
+      //     <View style={{flex: 1}}>
+      //       <InterviewComplete submission={this.submission} />
+      //     </View>
+      //   )}
+      // </ConexusLightbox>
     );
+  };
+
+  if (nurseData) {
+    return renderInterview();
   }
 
-  render() {
-    if (this.submission) {
-      return this._renderInterview();
-    }
-
-    return <View />;
-  }
-}
+  return <View />;
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -436,7 +428,14 @@ const introStyle = StyleSheet.create({
     color: AppColors.blue,
     fontWeight: '700',
   },
-
+  btnEnable: {
+    alignSelf: 'center',
+    width: windowDimensions.width * 0.5,
+  },
+  footer: {
+    justifyContent: 'flex-end',
+    marginTop: 250,
+  },
   circle: {
     marginTop: 28,
     backgroundColor: AppColors.blue,
@@ -466,3 +465,5 @@ const introStyle = StyleSheet.create({
     paddingHorizontal: 30,
   },
 });
+
+export default NurseInterview;
