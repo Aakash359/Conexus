@@ -68,6 +68,7 @@ const SubmissionCardList = (props: SubmissionCardListProps) => {
                       onSubmissionAction(
                         submission.submissionId,
                         submission.actionType,
+                        {submission: submission},
                       )
                     }
                   />

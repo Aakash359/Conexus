@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, createRef} from 'react';
 import {
   StyleSheet,
   View,
@@ -27,47 +27,81 @@ interface PastSubmissionsTabListState {
 const completedTabId = 'completed';
 const closedTabId = 'closed';
 
-const tabs = [
-  {id: completedTabId, title: 'Completed'},
-  {id: closedTabId, title: 'Closed'},
-];
-
 const PastSubmissionsTabList = (
   props: PastSubmissionsTabListProps,
   state: PastSubmissionsTabListState,
 ) => {
   const [loading, setLoading] = useState(false);
-  const [selectedTab, setSelectedTab] = useState(tabs[0]);
-  const {style, nurseHomeData, navigation} = props;
+  const {style, submissionData, navigation} = props;
+  console.log('nurseHomeData====>', submissionData);
+
+  const VirtualInterView = () => {
+    return (
+      <View
+      // style={{flex: 1, backgroundColor: AppColors.baseGray, marginTop: 40}}
+      >
+        {/* {loadingSummary && renderLoading(100)}
+         <ConexusContentList
+           style={styles.contentList}
+           data={candidate.submissionSummary}
+         /> */}
+      </View>
+    );
+  };
+
+  const Summary = () => {
+    return (
+      <View
+      // style={{flex: 1, backgroundColor: AppColors.baseGray, marginTop: 40}}
+      >
+        {/* {loadingSummary && renderLoading(100)}
+         <ConexusContentList
+           style={styles.contentList}
+           data={candidate.submissionSummary}
+         /> */}
+      </View>
+    );
+  };
+
+  const NURSE_TAB = [
+    {
+      name: 'Completed',
+      key: 'completed',
+      component: Summary,
+      ref: createRef(),
+      idx: 0,
+    },
+    {
+      name: 'Closed',
+      key: 'closed',
+      component: VirtualInterView,
+      ref: createRef(),
+      idx: 1,
+    },
+  ];
 
   const renderTabs = (completedLength: number, closedLength: number) => {
-    if (!tabs.filter(i => i.id === selectedTab.id)) {
-      selectedTab = tabs[0];
-      setSelectedTab(selectedTab);
-    }
-
-    if (selectedTab) {
-      return null;
+    // if (!tabs.filter(i => i.id === selectedTab.id)) {
+    //   selectedTab = tabs[0];
+    //   setSelectedTab(selectedTab);
+    // }
+    return (
       <Tabs
         style={styles.tabBar}
-        selectedTabId={selectedTab.id}
-        data={tabs}
+        data={NURSE_TAB.map(_ => ({..._}))}
         navigation={navigation}
-        onTabSelection={tab => this.setState({selectedTab: tab})}
-      />;
-    }
-    return {};
+      />
+    );
   };
 
   const renderSubmissions = (completed: any, closed: any) => {
-    let submissions: any;
     let showTopBorder = true;
-
-    submissions = selectedTab.id === completedTabId ? completed : closed;
+    const tab = NURSE_TAB.map((i: any) => i.key);
+    // submissions = selectedTab.id === completedTabId ? completed : closed;
     showTopBorder = false;
 
     const noDataMessage =
-      selectedTab.id === completedTabId
+      tab?.[0] == 'completed'
         ? 'You have not completed any interviews.'
         : 'You have no closed interviews.';
     return (
@@ -77,15 +111,15 @@ const PastSubmissionsTabList = (
           showTopBorder ? styles.blueBorderTop : {},
         ]}
       >
-        {!submissions.length && (
+        {!submissionData.length && (
           <IconTitleBlock
             style={styles.emptyBlock}
             color={AppColors.blue}
             text={noDataMessage}
           />
         )}
-        {submissions.length &&
-          submissions.map((item: any, index: number) => (
+        {submissionData.length &&
+          submissionData.map((item: any, index: number) => (
             <>
               <View
                 key={item.submissionId.toString() + index}
@@ -115,7 +149,7 @@ const PastSubmissionsTabList = (
   };
 
   const completedInterviews = () => {
-    return nurseHomeData.filter((i: any) => {
+    return submissionData.filter((i: any) => {
       return (
         i.interviewStatus === 'Completed' || i.interviewStatus === 'Complete'
       );
@@ -123,7 +157,7 @@ const PastSubmissionsTabList = (
   };
 
   const closedInterviews = () => {
-    return nurseHomeData.filter((i: any) => {
+    return submissionData.filter((i: any) => {
       return i.interviewStatus === 'Closed';
     });
   };

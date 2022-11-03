@@ -31,34 +31,34 @@ const Positions = (state: PositionState) => {
   const [refreshing, setRefreshing] = useState(false);
   const [needs, setNeeds] = useState([]);
 
-  const selectedFacility = (): any => {
-    const {facilityNeedsStore, userStore} = this.props;
+  // const selectedFacility = (): any => {
+  //   const {facilityNeedsStore, userStore} = this.props;
 
-    if (facilityNeedsStore.loading) {
-      return null;
-    }
+  //   if (facilityNeedsStore.loading) {
+  //     return null;
+  //   }
 
-    if (userStore.selectedFacilityId) {
-      return facilityNeedsStore.facilities.find(
-        (i: {facilityId: any}) => i.facilityId === userStore.selectedFacilityId,
-      );
-    }
+  //   if (userStore.selectedFacilityId) {
+  //     return facilityNeedsStore.facilities.find(
+  //       (i: {facilityId: any}) => i.facilityId === userStore.selectedFacilityId,
+  //     );
+  //   }
 
-    return null;
-  };
+  //   return null;
+  // };
 
-  const showNoData = (): boolean => {
-    const {facilityNeedsStore} = this.props;
-    if (this.state.refreshing || facilityNeedsStore.loading) {
-      return false;
-    }
+  // const showNoData = (): boolean => {
+  //   const {facilityNeedsStore} = this.props;
+  //   if (this.state.refreshing || facilityNeedsStore.loading) {
+  //     return false;
+  //   }
 
-    return (
-      !this.selectedFacility ||
-      facilityNeedsStore.loading ||
-      this.selectedFacility.needs.length === 0
-    );
-  };
+  //   return (
+  //     !this.selectedFacility ||
+  //     facilityNeedsStore.loading ||
+  //     this.selectedFacility.needs.length === 0
+  //   );
+  // };
 
   useEffect(() => {
     load(false);
@@ -92,7 +92,6 @@ const Positions = (state: PositionState) => {
 
   const showNeedQuestions = (item: any) => {
     NavigationService.navigate('InterviewQuestionDetail', {
-      props: props,
       needId: item.needId,
       sectionTitleOverride: item.display.title,
     });

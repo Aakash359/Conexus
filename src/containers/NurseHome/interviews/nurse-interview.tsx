@@ -8,27 +8,14 @@ import {
   StatusBar,
   Platform,
 } from 'react-native';
-import {
-  ConexusIconButton,
-  ScreenFooterButton,
-  Circle,
-  ActionButton,
-} from '../../../components';
-import {ConexusLightbox} from '../../../lightboxes';
-import {
-  InterviewQuestionStore,
-  NurseSubmissionsStore,
-  NurseSubmissionModel,
-  InterviewQuestionModel,
-} from '../../../stores';
+import {ConexusIconButton, Circle, ActionButton} from '../../../components';
 import {AppColors, AppFonts} from '../../../theme';
-import {InterviewComplete} from './components/interview-complete';
-import {QuestionAnswerRecorder} from './components/question-answer-recorder';
-import {logger} from 'react-native-logs';
 import InCallManager from 'react-native-incall-manager';
 import {nurseInterviewQuestionService} from '../../../services/NurseInterviewQuestions/NurseInterviewQuestionsService';
 import {windowDimensions} from '../../../common';
-const log = logger.createLogger();
+import InterviewComplete from './components/interview-complete';
+import NavigationService from '../../../navigation/NavigationService';
+import QuestionAnswerRecorder from './components/question-answer-recorder';
 
 export interface NurseInterviewProps {
   submissionId: string;
@@ -70,7 +57,7 @@ const NurseInterview = (
 
   const maxThinkSeconds = (): number => {
     if (nurseQuestions.length) {
-      // return nurseQuestions.questions[0].maxThinkSeconds;
+      return nurseQuestions[0].maxThinkSeconds;
     }
 
     return 0;
@@ -90,8 +77,8 @@ const NurseInterview = (
     // this.submission = nurseSubmissionsStore.availableInterviews.find(
     //   i => i.submissionId === submissionId,
     // );
-    // StatusBar.setHidden(true);
-    // InCallManager.setKeepScreenOn(true);
+    StatusBar.setHidden(true);
+    InCallManager.setKeepScreenOn(true);
 
     //   this.props.nurseSubmissionsStore.load().then(
     //   () => {
@@ -106,21 +93,16 @@ const NurseInterview = (
     // if (this.props.onClose && this.props.onClose.call) {
     //   this.props.onClose();
     // }
-    // InCallManager.setKeepScreenOn(false);
+    InCallManager.setKeepScreenOn(false);
   }, []);
 
   const goNextStep = () => {
     const nextState = {questionIndex: questionIndex + 1, closeable: false};
-
-    // No Questions -- Should never happen.  Previous screen should protect
     if (questionCount() === 0) {
       // Alert.alert('No Questions Available');
     }
-
-    // Before First Question
     if (questionIndex === -1) {
       if (interviewComplete) {
-        // Do nothing, stay on current step
         return;
       }
 
@@ -128,23 +110,14 @@ const NurseInterview = (
         setShowIntro(true);
         return;
       }
-
-      // GoTo first question
       // this.setState(nextState);
       return;
     }
-
-    // On Last Question
-    if (questionIndex == this.questionCount - 1) {
+    if (questionIndex == questionCount() - 1) {
       setInterviewComplete(true);
       setQuestionIndex(questionIndex);
-      // this.setState({interviewComplete: true, questionIndex});
       return;
     }
-
-    // On Question
-    // for one cycle set question index = -1. This will force the question answer recorder to
-    // re-init instead of the existing instance being used.
     setQuestionIndex(-1);
 
     // this.setState({questionIndex: -1}, () => {
@@ -173,69 +146,59 @@ const NurseInterview = (
     }
   };
 
-  // const onAnswerError=(error)=> {
-  //   // Add any additional error handling here based on the error
-  //   // The control display an error page
-  // }
-
-  // const onAnswerComplete=(archiveId) {
-  //   this.currentQuestion
-  //     .saveVideoAnswer(this.submission.submissionId, archiveId)
-  //     .then(() => {
-  //       // Do nothing, recorder will display break
-  //     })
-  //     .catch(error => {
-  //       log.info('SAVE ANSWER ERROR', error);
-  //       this.goNextStep();
-  //     });
-  // }
-
-  // const renderLoading=()=> {
-  //   return (
-  //     <View style={{flex: 1}}>
-  //       <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-  //         <ActivityIndicator color={AppColors.blue} />
-  //       </View>
-  //     </View>
-  //   );
-  // }
-
-  const submission = (item: any) => {
-    return item;
+  const onAnswerError = (error: any) => {
+    // Add any additional error handling here based on the error
+    // The control display an error page
   };
 
-  const renderHeader = (nurseData: any) => {
-    // Alert.alert('hi');
-    nurseData.map(submission);
+  const onAnswerComplete = (archiveId: string) => {
+    // this.currentQuestion
+    //   .saveVideoAnswer(this.submission.submissionId, archiveId)
+    //   .then(() => {
+    //     // Do nothing, recorder will display break
+    //   })
+    //   .catch(error => {
+    //     log.info('SAVE ANSWER ERROR', error);
+    //     this.goNextStep();
+    //   });
+  };
 
-    let jnj = submission();
-    console.log('nkk====>', jnj);
+  const renderLoading = () => {
+    return (
+      <View style={{flex: 1}}>
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <ActivityIndicator color={AppColors.blue} />
+        </View>
+      </View>
+    );
+  };
+
+  const renderHeader = (submission: any) => {
     const questionCount = nurseQuestions.length;
 
     return (
       <View>
         <View style={styles.header}>
-          {/* <Text style={styles.headerText}>{this.submission.facilityName}</Text> */}
+          <Text style={styles.headerText}>{submission.facilityName}</Text>
           {closeable && (
             <ConexusIconButton
               style={styles.icon}
               iconName="cn-x"
               iconSize={16}
-              // onPress={() => { Actions.pop() }}
+              onPress={() => NavigationService.goBack()}
             />
           )}
         </View>
         <View style={styles.modalSubheader}>
           <View style={{flexDirection: 'row', alignItems: 'stretch'}}>
             <Text style={styles.modalSubheaderText}>
-              hi
-              {/* {submission.position.display.title} */}
+              {submission.position.display.title}
             </Text>
-            {/* {questionIndex > -1 && (
+            {questionIndex > -1 && (
               <Text style={styles.stepText}>
                 {questionIndex + 1} of {questionCount}
               </Text>
-            )} */}
+            )}
           </View>
         </View>
       </View>
@@ -293,7 +256,9 @@ const NurseInterview = (
             title="START INTERVIEW"
             customStyle={introStyle.btnEnable}
             style={{marginTop: 40}}
-            // onPress={()=>setShowIntro({introDisplayed:true,goNextStep()})}
+            onPress={() => {
+              setShowIntro(false), setIntroDisplayed(false), goNextStep();
+            }}
           />
         </View>
       </View>
@@ -304,55 +269,47 @@ const NurseInterview = (
     const lastQuestion = questionCount() <= questionIndex + 1;
     return (
       <>
+        {isLoading && renderLoading()}
         {!isLoading && !introDisplayed && renderIntro()}
-        {!isLoading && !introDisplayed && renderHeader(nurseData)}
+        {introDisplayed &&
+          !interviewComplete &&
+          renderHeader(props?.route?.params?.paramsData?.submission)}
         {introDisplayed && !interviewComplete && currentQuestion() && (
           <View style={styles.contentContainer}>
-            <Text>hidnckdnk</Text>
-            {/* <QuestionAnswerRecorder
+            <QuestionAnswerRecorder
               style={{flex: 1}}
-              questionUrl={this.currentQuestion.questionUrl}
-              questionText={this.currentQuestion.questionText}
+              questionUrl={currentQuestion().questionUrl}
+              questionText={currentQuestion().questionText}
               createdByName={
-                this.currentQuestion.createdByFirstName +
+                currentQuestion().createdByFirstName +
                 ' ' +
-                this.currentQuestion.createdByLastName
+                currentQuestion().createdByLastName
               }
-              createdByTitle={this.currentQuestion.createdByTitle}
+              createdByTitle={currentQuestion().createdByTitle}
               createdByUrl={''}
               hideBreak={lastQuestion}
-              thinkSeconds={this.currentQuestion.maxThinkSeconds}
-              answerLengthSeconds={this.currentQuestion.maxAnswerLengthSeconds}
-              onPlayStep={() => this.setState({closeable: false})}
-              onAnswerStep={() => this.setState({closeable: false})}
-              onBreakStep={() => this.setState({closeable: true})}
-              onErrorStep={() => this.setState({closeable: true})}
+              thinkSeconds={currentQuestion().maxThinkSeconds}
+              answerLengthSeconds={currentQuestion().maxAnswerLengthSeconds}
+              onPlayStep={() => setCloseable(false)}
+              onAnswerStep={() => setCloseable(false)}
+              onBreakStep={() => setCloseable(false)}
+              onErrorStep={() => setCloseable(false)}
               onComplete={(result, data) => {
-                this.goNextStep();
+                goNextStep();
               }}
-              onAnswerComplete={this.onAnswerComplete.bind(this)}
-              onAnswerError={this.onAnswerError.bind(this)}
-            /> */}
+              onAnswerComplete={onAnswerComplete()}
+              onAnswerError={onAnswerError()}
+            />
+          </View>
+        )}
+        {introDisplayed && interviewComplete && (
+          <View style={{flex: 1}}>
+            <InterviewComplete
+              submission={props?.route?.params?.paramsData?.submission}
+            />
           </View>
         )}
       </>
-      // <ConexusLightbox
-      //   hideHeader
-      //   horizontalPercent={1}
-      //   verticalPercent={1}
-      //   style={styles.container}>
-      //   {loading && this.renderLoading()}
-
-      //   {!loading && !introDisplayed && this.renderIntro()}
-
-      //   {introDisplayed && !interviewComplete && this.renderHeader()}
-
-      //   {introDisplayed && interviewComplete && (
-      //     <View style={{flex: 1}}>
-      //       <InterviewComplete submission={this.submission} />
-      //     </View>
-      //   )}
-      // </ConexusLightbox>
     );
   };
 

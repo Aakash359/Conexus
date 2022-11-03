@@ -73,8 +73,12 @@ const NurseHome = (props: NurseHomeProps, state: NurseHomeState) => {
     }
   };
 
-  const startVirtualInterview = (submissionId: string) => {
-    NavigationService.navigate('NurseInterview', {submissionId, nurseData});
+  const startVirtualInterview = (submissionId: string, paramsData: any) => {
+    NavigationService.navigate('NurseInterview', {
+      submissionId,
+      nurseData,
+      paramsData,
+    });
   };
 
   const renderLoading = () => {
@@ -93,7 +97,11 @@ const NurseHome = (props: NurseHomeProps, state: NurseHomeState) => {
     );
   };
 
-  const handleSubmissionAction = (submissionId: string, actionType: string) => {
+  const handleSubmissionAction = (
+    submissionId: string,
+    actionType: string,
+    paramsData: any,
+  ) => {
     setTimeout(() => {
       switch (actionType.toLowerCase()) {
         case 'schedule':
@@ -102,12 +110,12 @@ const NurseHome = (props: NurseHomeProps, state: NurseHomeState) => {
             yesTitle: 'Try Interview Instead',
             noTitle: 'OK',
             onYes: () => {
-              startVirtualInterview(submissionId);
+              startVirtualInterview(submissionId, paramsData);
             },
           });
           break;
         case 'startvi':
-          startVirtualInterview(submissionId);
+          startVirtualInterview(submissionId, paramsData);
           break;
       }
     }, 0);
@@ -121,11 +129,13 @@ const NurseHome = (props: NurseHomeProps, state: NurseHomeState) => {
         </Text>
         <SubmissionCardList
           submissions={nurseData}
-          onSubmissionAction={(submissionId: any, actionType: any) =>
-            handleSubmissionAction(submissionId, actionType)
-          }
+          onSubmissionAction={(
+            submissionId: any,
+            actionType: any,
+            paramsData: any,
+          ) => handleSubmissionAction(submissionId, actionType, paramsData)}
         />
-        <PastSubmissionsTabList nurseHomeData={nurseData} />
+        <PastSubmissionsTabList submissionData={nurseData} />
       </View>
     );
   };
