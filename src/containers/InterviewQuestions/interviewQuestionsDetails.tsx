@@ -203,12 +203,12 @@ const InterviewQuestionDetail = (
         const needPayload = {
           facilityId: facilityId,
           id: questionId,
-          needId: needId,
           deleted: true,
         };
-        console.log('NeedPayload', needPayload);
-
-        const {data} = await deleteNeedInterviewQuestionsService(needPayload);
+        const {data} = await deleteNeedInterviewQuestionsService(
+          needPayload,
+          needId,
+        );
         setRefreshing(false);
         loadNeedQuestions();
         setLoading(false);

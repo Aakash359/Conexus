@@ -32,38 +32,48 @@ export const ComparisonList = (props: ComparisonListProps) => {
     }
   };
 
-  const renderCellImageInLightbox = (cell: any) => {
+  const renderCellImage = (cell: any) => {
     const source = {uri: cell.imageUrl};
     return <FitImage resizeMode="contain" source={source} />;
   };
 
   const handleCellClick = (cell: any) => {
-    const hasLink = !!cell.details;
+    const hasLink = cell.details;
     setModalVisible(true);
     if (hasLink) {
-      // Actions[ScreenType.CONTENT_LIGHTBOX]
-      // ({
-      //   title: cell.headerTitle,
-      //   renderContent: renderContentListCellInLightbox.bind(this, cell),
-      // });
+      {
+        modalVisible && (
+          <ReviewCandidateContentModal
+            title={cell.headerTitle}
+            renderContent={() => renderContentList(cell)}
+            onRequestClose={() => setModalVisible(false)}
+            onDismiss={() => setModalVisible(false)}
+            onClose={() => setModalVisible(false)}
+          />
+        );
+      }
     }
 
-    if (!!cell.imageUrl) {
-      Actions[ScreenType.CONTENT_LIGHTBOX]({
-        title: cell.headerTitle,
-        renderContent: this._renderCellImageInLightbox.bind(this, cell),
-      });
+    if (cell.imageUrl) {
+      <ReviewCandidateContentModal
+        title={cell.headerTitle}
+        renderContent={() => renderCellImage(cell)}
+        onRequestClose={() => setModalVisible(false)}
+        onDismiss={() => setModalVisible(false)}
+        onClose={() => setModalVisible(false)}
+      />;
     }
   };
 
   const wrapCell = (cell: any, elements: () => any) => {
     const hasLink = cell.details || cell.imageUrl;
+
     if (hasLink) {
       return (
         <TouchableOpacity
           activeOpacity={0.8}
           underlayColor="rgba(255,255,255,.87)"
-          onPress={handleCellClick.bind(cell)}
+          onPress={() => handleCellClick(cell)}
         >
           {elements()}
           {modalVisible && (
@@ -79,20 +89,7 @@ export const ComparisonList = (props: ComparisonListProps) => {
       );
     }
 
-    return (
-      <View>
-        {elements()}
-        {modalVisible && (
-          <ReviewCandidateContentModal
-            title={cell.headerTitle}
-            renderContent={() => renderContentList(cell)}
-            onRequestClose={() => setModalVisible(false)}
-            onDismiss={() => setModalVisible(false)}
-            onClose={() => setModalVisible(false)}
-          />
-        )}
-      </View>
-    );
+    return <View>{elements()}</View>;
   };
 
   const renderTextCell = (cell: any) => {
