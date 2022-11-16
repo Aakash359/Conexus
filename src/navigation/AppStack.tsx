@@ -29,6 +29,7 @@ import {useSelector} from '../redux/reducers/index';
 import NurseHome from '../containers/NurseHome/nurseHome';
 import AnswerRatings from '../containers/Facility/HcpDetail/answerRating';
 import NurseInterview from '../containers/NurseHome/interviews/nurse-interview';
+import VideoRecorder from '../containers/VideoRecorder/videoRecoder';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -177,6 +178,19 @@ const AppStack = () => {
           options={{
             headerShown: true,
             title: 'InterviewQuestions',
+            headerTitleStyle: {
+              color: AppColors.black,
+              fontWeight: 'bold',
+              fontSize: 22,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="VideoRecorder"
+          component={VideoRecorder}
+          options={{
+            headerShown: false,
+            title: 'VideoRecorder',
             headerTitleStyle: {
               color: AppColors.black,
               fontWeight: 'bold',

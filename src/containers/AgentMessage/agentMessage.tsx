@@ -129,7 +129,7 @@ const AgentMessage = () => {
           placeholderTextColor={AppColors.mediumGray}
           value={messageText}
           returnKeyType="done"
-          multiline={false}
+          multiline={true}
           onChangeText={(text: any) => setMessageText(text)}
         />
       </View>

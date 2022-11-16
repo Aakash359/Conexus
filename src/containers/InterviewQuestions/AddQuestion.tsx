@@ -32,6 +32,7 @@ export interface CatalogQuestionContainerProps {
 
 const AddQuestion = (props: CatalogQuestionContainerProps) => {
   const [loading, setLoading] = useState(false);
+  const [keyboardStatus, setKeyboardStatus] = useState(undefined);
   const [messageText, setMessageText] = useState('');
   const [messageTextError, setMessageTextError] = useState(false);
   const [unitValue, setUnitValue] = useState(props?.route?.params?.unitName);
@@ -47,6 +48,20 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
       setMessageTextError(true);
     }
   };
+
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardStatus('Keyboard Shown');
+    });
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardStatus('Keyboard Hidden');
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
 
   const validate = () => {
     if (!(propsData?.questionText || '').trim() && !messageText.trim()) {
@@ -127,9 +142,10 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
             value={propsData ? propsData?.questionText : messageText}
             showError={messageTextError}
             returnKeyType="done"
+            onSubmitEditing={Keyboard.dismiss}
             onBlur={messageTextBlur}
             errorMessage={'Invalid Message please type a message to send.'}
-            multiline={false}
+            multiline={true}
             onChangeText={(text: any) => {
               setMessageText(text);
             }}

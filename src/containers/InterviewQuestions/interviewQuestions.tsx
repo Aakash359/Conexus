@@ -140,7 +140,6 @@ const InterviewQuestions = (
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,
-          marginTop: 250,
           backgroundColor: AppColors.baseGray,
         }}
         refreshControl={
@@ -155,6 +154,7 @@ const InterviewQuestions = (
         <View
           style={{
             alignItems: 'center',
+            marginTop: 250,
           }}
         >
           <Icons name="information-circle" style={styles.cnxNoDataIcon} />

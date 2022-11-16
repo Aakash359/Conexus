@@ -75,7 +75,7 @@ const SendFeedback = (props: AppFeedbackModalState) => {
           autoFocus={false}
           value={messageText}
           returnKeyType="done"
-          multiline={false}
+          multiline={true}
           onChangeText={(text: any) => setMessageText(text)}
         />
       </View>
