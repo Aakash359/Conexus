@@ -144,7 +144,9 @@ export const ConexusVideoRecorder = (
           onPress={() => NavigationService.goBack()}
         />
 
-        <Text style={recorderStyle.text}>{text}</Text>
+        <Text numberOfLines={0} style={recorderStyle.text}>
+          {text}
+        </Text>
         {recordingState == 'default' && (
           <View style={recorderStyle.footer}>
             <ActionButton
@@ -218,6 +220,7 @@ const recorderStyle = StyleSheet.create({
   },
   text: {
     marginTop: 80,
+    paddingHorizontal: 20,
     justifyContent: 'center',
     alignSelf: 'center',
     color: AppColors.white,

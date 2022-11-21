@@ -116,11 +116,11 @@ const InterviewQuestions = (
     );
   };
 
-  const showNewQuestion = (i: any) => {
+  const showNewQuestion = () => {
     NavigationService.navigate('AddQuestion', {
       questionId: '0',
-      initialUnitId: '',
-      // facilityId: facilityId,
+      unitId: section ? section.sectionId : '',
+      needId: props.needId ? props.needId : '',
     });
   };
 
@@ -135,7 +135,7 @@ const InterviewQuestions = (
     );
   };
 
-  const renderEmptyList = () => {
+  const renderEmptyList = (section: any) => {
     return (
       <ScrollView
         contentContainerStyle={{
@@ -167,7 +167,7 @@ const InterviewQuestions = (
             title="ADD QUESTION"
             loading={loading}
             customTitleStyle={styles.title}
-            onPress={i => showNewQuestion(i)}
+            onPress={() => showNewQuestion()}
             customStyle={styles.addQuestionBtn}
           />
         </View>
@@ -224,7 +224,6 @@ const InterviewQuestions = (
                 <ActivityIndicator
                   style={{
                     flex: 1,
-                    backgroundColor: AppColors.red,
                     justifyContent: 'center',
                   }}
                 />
@@ -235,13 +234,13 @@ const InterviewQuestions = (
                   title="ADD QUESTION"
                   loading={loading}
                   customTitleStyle={styles.title}
-                  onPress={i => showNewQuestion(i)}
+                  onPress={(section: any) => showNewQuestion(section)}
                   customStyle={styles.addQuestionBtn}
                 />
               </View>
             </>
           ))
-        : renderEmptyList()}
+        : renderEmptyList(section)}
     </>
   );
 };

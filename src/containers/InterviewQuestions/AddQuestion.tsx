@@ -10,6 +10,7 @@ import {
   TextInput,
   Alert,
   Keyboard,
+  ScrollView,
 } from 'react-native';
 import {AppFonts, AppColors} from '../../theme';
 import {FacilityQuestionsStore} from '../../stores/facility';
@@ -39,7 +40,7 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
   const [flagValue, setFlagValue] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const propsData = props?.route?.params || {};
-  const {facilityId} = propsData;
+  const {facilityId, initialUnitId} = propsData;
 
   const messageTextBlur = () => {
     if (messageText && messageText.length) {
@@ -83,14 +84,13 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
     if (validate()) {
       Keyboard.dismiss();
       NavigationService.navigate('VideoRecorder', {
-        videoUrl: '',
+        tokBoxArchiveUrl: '',
         text: messageText,
         needId: propsData?.needId || '',
-        facilityId: facilityId,
-        // onSave: archiveId => {
-        //   this._question.setArchiveId(archiveId);
-        //   this.saveQuestion(null, true);
-        // },
+        unitId: initialUnitId ? initialUnitId : '',
+        facilityId: facilityId ? facilityId : '',
+        unitName: unitValue,
+        flagValue: flagValue,
       });
     }
   };
@@ -108,9 +108,7 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
           onValueChange={flag => setFlagValue(flag)}
         />
 
-        <TouchableOpacity
-        // onPress={() => onDefaultQuestionChanged(_question.defaultFlag)}
-        >
+        <TouchableOpacity>
           <Text style={styles.switchLabel}>
             Default question for this unit.
           </Text>
@@ -182,7 +180,7 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
 
   const renderQuestionContainer = () => {
     return (
-      <View style={styles.rootContainer}>
+      <ScrollView style={styles.rootContainer}>
         {renderEditableHeader()}
         {renderUnitField()}
         {/* {this._question.isNewQuestion
@@ -208,14 +206,14 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
               customTitleStyle={{fontSize: 16}}
               onPress={() =>
                 NavigationService.navigate('VideoPlayer', {
-                  videoUrl: propsData?.questionHasUrl || '',
+                  tokBoxArchiveUrl: propsData?.questionHasUrl || '',
                 })
               }
               customStyle={styles.btnEnable}
             />
           </View>
         )}
-      </View>
+      </ScrollView>
     );
   };
 
@@ -240,10 +238,12 @@ const styles = StyleSheet.create({
     backgroundColor: AppColors.baseGray,
   },
   footer: {
-    right: 10,
-    left: 10,
-    position: 'absolute',
-    bottom: 20,
+    justifyContent: 'flex-end',
+    marginTop: 350,
+    // right: 10,
+    // left: 10,
+    // position: 'absolute',
+    // top: 20,
   },
   btnEnable: {
     alignSelf: 'center',
@@ -274,6 +274,7 @@ const styles = StyleSheet.create({
     top: Platform.OS === 'android' ? 0 : 0,
   },
   switchLabel: {
+    marginTop: 4,
     paddingLeft: 8,
     top: 3.5,
     opacity: 0.75,

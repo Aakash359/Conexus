@@ -54,14 +54,21 @@ const VideoRecorder = (
 
   const [showRecorder, setShowRecorder] = useState(false);
   const [showPlayer, setShowPlayer] = useState(false);
-  const [archiveId, setArchiveId] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
   const [loading, setLoading] = useState(true);
   const [closeable, setCloseable] = useState(true);
   const [videoSessionData, setVideoSessionData] = useState([]);
   const videoMessageSendComplete = false;
   const propsData = props?.route?.params;
-  const {text, facilityId, needId} = propsData;
+  const {
+    text,
+    facilityId,
+    needId,
+    unitId,
+    unitName,
+    flagValue,
+    tokBoxArchiveUrl,
+  } = propsData;
 
   useEffect(() => {
     StatusBar.setHidden(true);
@@ -75,19 +82,33 @@ const VideoRecorder = (
   ];
 
   const saveQuestionRecording = async (data: any) => {
-    console.log('Data--->', data);
+    console.log('videoURL===>', data);
 
     if (propsData?.needId) {
       const payload = {
-        needId: needId,
-        videoUrl: data,
+        facilityId: facilityId ? facilityId : '',
+        text: text,
+        unitId: unitId ? unitId : '',
+        unitName: unitName,
+        defaultFlag: flagValue,
+        tokBoxArchiveUrl: data,
+        maxAnswerLengthSeconds: '30',
+        maxThinkSeconds: '30',
+        mediaDurationSeconds: '12',
+        needQuestion: false,
+        displayOrder: 1,
+        deleted: false,
       };
+      console.log('====================================');
+      console.log('payload1====>', payload);
+      console.log('====================================');
       try {
         const {result} = await updateNeedQuestionListService(payload);
+        console.log('result1====>', result);
         NavigationService.goBack();
+        // NavigationService.navigate('InterviewQuestionDetail');
       } catch (error) {
         console.log('Error', error);
-        NavigationService.goBack();
         Alert.alert(
           `We're Sorry`,
           'An error occurred to update the need questions list.',
@@ -95,15 +116,30 @@ const VideoRecorder = (
       }
     } else {
       const payload = {
-        facilityId: facilityId,
-        videoUrl: data,
+        facilityId: '1353',
+        text: text,
+        unitId: unitId ? unitId : '',
+        unitName: unitName,
+        defaultFlag: flagValue,
+        // tokBoxArchiveId: '83508fdc-f93b-4e54-8121-be76a22b7580',
+        tokBoxArchiveUrl: data,
+        maxAnswerLengthSeconds: '30',
+        maxThinkSeconds: '30',
+        mediaDurationSeconds: '12',
+        needQuestion: false,
+        displayOrder: 1,
+        deleted: false,
       };
+      console.log('====================================');
+      console.log('data2====>', payload);
+      console.log('====================================');
       try {
         const {result} = await updateQuestionListService(payload);
+        console.log('result2====>', result);
+        // NavigationService.navigate('InterviewQuestionDetail');
         NavigationService.goBack();
       } catch (error) {
         console.log('Error', error);
-        NavigationService.goBack();
         Alert.alert(
           `We're Sorry`,
           'An error occurred to update the questions list.',
