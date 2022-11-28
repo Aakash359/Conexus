@@ -22,6 +22,7 @@ import {windowDimensions} from '../../common';
 import {ActionButton} from '../../components/action-button';
 import {Field} from '../../components/field';
 import NavigationService from '../../navigation/NavigationService';
+import {getProfileService} from '../../services/Profile/getProfileService';
 
 interface EditProfileProps {
   firstName: string;
@@ -39,14 +40,14 @@ const SafeAreaView = require('react-native').SafeAreaView;
 const EditProfile = (props: EditProfileProps) => {
   const userInfo = props.route.params;
   const [loading, setLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState(userInfo?.user?.photoUrl || '');
+  const [imageUrl, setImageUrl] = useState(userInfo?.photoUrl || '');
   const [errors, setErrors] = useState('');
   const [cameraModal, setCameraModal] = useState(false);
   const [inputs, setInputs] = useState({
-    firstName: userInfo.user?.firstName || '',
-    lastName: userInfo?.user?.lastName || '',
-    title: userInfo?.user?.title || '',
-    phoneNumber: userInfo?.user?.phoneNumber || '',
+    firstName: userInfo?.firstName,
+    lastName: userInfo?.lastName || '',
+    title: userInfo.title || '',
+    phoneNumber: userInfo?.phoneNumber || '',
   });
 
   const requestCameraPermission = async () => {
@@ -104,7 +105,7 @@ const EditProfile = (props: EditProfileProps) => {
       fileExt: ext,
       // token: userInfo.user?.authToken,
     };
-    console.log('extension = ', ext);
+    console.log('image payload', payload);
     if (response.didCancel) {
       Alert.alert('User cancelled camera picker');
       setLoading(false);
@@ -128,6 +129,7 @@ const EditProfile = (props: EditProfileProps) => {
     }
     try {
       const data = await uploadPhoto(payload);
+      console.log('image payload', data);
       setImageUrl(response?.assets?.[0]?.uri);
       setCameraModal(false);
       setLoading(false);
@@ -146,26 +148,26 @@ const EditProfile = (props: EditProfileProps) => {
     }
   };
 
-  const openCamera = async type => {
+  const openCamera = async (type: any) => {
     let options = {
       mediaType: type,
       maxWidth: 300,
       maxHeight: 550,
       quality: 1,
-      videoQuality: 'low',
-      durationLimit: 30, //Video max duration in seconds
-      saveToPhotos: true,
+      includeBase64: true,
     };
     let isCameraPermitted = await requestCameraPermission();
     let isStoragePermitted = await requestExternalWritePermission();
     if (isCameraPermitted && isStoragePermitted) {
       let response = await launchCamera(options);
+      console.log('camera picture data====>', response);
+
       let ext = response?.assets?.[0]?.type.split('/')[1] || 'jpg';
       const payload = {
         base64Image: response?.assets?.[0]?.base64,
         fileExt: ext,
       };
-      console.log('extension = ', ext);
+      console.log('image payload', payload);
       if (response.didCancel) {
         Alert.alert('User cancelled camera picker');
         setLoading(false);
@@ -189,6 +191,7 @@ const EditProfile = (props: EditProfileProps) => {
       }
       try {
         const data = await uploadPhoto(payload);
+        console.log('image payload', data);
         setImageUrl(response?.assets?.[0]?.uri);
         setCameraModal(false);
         setLoading(false);
@@ -241,6 +244,7 @@ const EditProfile = (props: EditProfileProps) => {
 
   const saveProfile = async () => {
     const payload = {
+      userId: userInfo?.userId,
       imageUrl: inputs.imageUrl,
       firstName: inputs.firstName,
       lastName: inputs.lastName,
@@ -299,7 +303,7 @@ const EditProfile = (props: EditProfileProps) => {
             <View style={style.top} />
             <Field
               placeholder="First Name"
-              autoCapitalize="none"
+              autoCapitalize="words"
               returnKeyType="done"
               value={inputs.firstName}
               onTextChange={(text: any) => handleOnchange(text, 'firstName')}
@@ -315,7 +319,7 @@ const EditProfile = (props: EditProfileProps) => {
             <View style={style.top} />
             <Field
               placeholder="Last Name"
-              autoCapitalize="none"
+              autoCapitalize="words"
               returnKeyType="done"
               value={inputs.lastName}
               onTextChange={(text: any) => handleOnchange(text, 'lastName')}
@@ -331,7 +335,7 @@ const EditProfile = (props: EditProfileProps) => {
             <View style={style.top} />
             <Field
               placeholder="Title"
-              autoCapitalize="none"
+              autoCapitalize="words"
               returnKeyType="done"
               value={inputs.title}
               onTextChange={(text: any) => handleOnchange(text, 'title')}
@@ -350,6 +354,7 @@ const EditProfile = (props: EditProfileProps) => {
               autoCapitalize="none"
               keyboardType={'number-pad'}
               returnKeyType="done"
+              maxLength={15}
               value={inputs.phoneNumber}
               onTextChange={(text: any) => handleOnchange(text, 'phoneNumber')}
               onFocus={() => handleError(null, 'phoneNumber')}
@@ -364,7 +369,7 @@ const EditProfile = (props: EditProfileProps) => {
             <View style={style.footer}>
               <ActionButton
                 loading={loading}
-                title="Save"
+                title="SAVE"
                 customStyle={style.btnEnable}
                 style={{marginTop: 40}}
                 onPress={validate}

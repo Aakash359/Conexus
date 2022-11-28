@@ -91,7 +91,8 @@ const styles = StyleSheet.create({
     ...getRowShadows(),
   },
   compareText: {
-    fontSize: 14,
+    fontSize: 12,
+    fontWeight: 'bold',
     justifyContent: 'center',
     alignSelf: 'center',
     color: AppColors.blue,

@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Text, StyleSheet, Image, View, Alert, ToastAndroid} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {windowDimensions} from '../../common';
+import {useNavigation} from '@react-navigation/native';
 import Styles from '../../theme/styles';
 import NavigationService from '../../navigation/NavigationService';
 import variable, {AppColors} from '../../theme';
@@ -11,6 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {logoutRequest} from '../../redux/actions/userAction';
 import {UserModel} from '../../redux/actions/userAction';
 import theme from '../../theme';
+import {getProfileService} from '../../services/Profile/getProfileService';
 
 interface ProfileState {
   avatar: any;
@@ -21,21 +23,32 @@ const SafeAreaView = require('react-native').SafeAreaView;
 
 const Profile: React.FC<ProfileState> = () => {
   const [loading, setLoading] = useState(false);
-  const userInfo = useSelector(state => state.userReducer);
+  const navigation = useNavigation();
+  const [profileData, setProfileData] = useState({});
   const dispatch = useDispatch();
 
-  const renderTitle = () => {
-    const userInfo = useSelector(state => state.userReducer);
-    if (userInfo) {
-      if (userInfo?.user?.title) {
-        return (
-          <Text style={[Styles.cnxProfileViewSubtitleText, style.subTitleText]}>
-            {userInfo?.user?.title}
-          </Text>
-        );
-      }
+  useEffect(() => {
+    navigation.addListener('focus', () => {
+      getProfile();
+    });
+  }, []);
+
+  const getProfile = async () => {
+    try {
+      const {data} = await getProfileService();
+      setProfileData(data);
+    } catch (error) {
+      console.log('Error', error);
     }
-    return <View />;
+  };
+
+  const renderTitle = () => {
+    if (profileData != {})
+      return (
+        <Text style={[Styles.cnxProfileViewSubtitleText, style.subTitleText]}>
+          {profileData?.title}
+        </Text>
+      );
   };
 
   const onPressLogout = async () => {
@@ -51,8 +64,8 @@ const Profile: React.FC<ProfileState> = () => {
     }, 1500);
   };
 
-  const openEditProfile = (userInfo: {error: any; user: UserModel}) => {
-    NavigationService.navigate('EditProfile', userInfo);
+  const openEditProfile = (profileData: {error: any; user: any}) => {
+    NavigationService.navigate('EditProfile', profileData);
   };
 
   return (
@@ -62,14 +75,14 @@ const Profile: React.FC<ProfileState> = () => {
           <Image
             style={style.image}
             source={{
-              uri: userInfo?.user?.photoUrl,
+              uri: profileData.photoUrl,
             }}
           />
         </View>
       </View>
       <View style={style.detailsContainer}>
         <Text style={[Styles.cnxProfileViewTitleText, style.titleText]}>
-          {userInfo?.user?.firstName} {userInfo?.user?.lastName}
+          {profileData?.firstName} {profileData?.lastName}
         </Text>
         {renderTitle()}
         <View style={style.editView}>
@@ -77,7 +90,7 @@ const Profile: React.FC<ProfileState> = () => {
             title="EDIT"
             customStyle={style.editEnable}
             customTitleStyle={{color: AppColors.blue, fontSize: 15}}
-            onPress={() => openEditProfile(userInfo)}
+            onPress={() => openEditProfile(profileData)}
           />
         </View>
       </View>

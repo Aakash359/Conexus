@@ -36,15 +36,7 @@ export const uploadPhoto = async (data: { base64Image: any; fileExt: string}) =>
     },
 });
 
-// export const updateProfile = (token: any) => 
-// axios.get(`${defaultBaseUrl}/user/current`, {
-//    headers: {
-//       'Content-Type': 'application/json',
-//       Authorization: `Bearer ${await AsyncStorage.getItem('userToken')}`}
-//   },
-// );
-
-export const updateProfile = async(data: { imageUrl: any; firstName: any; lastName: any; title: any; phoneNumber: any; }) =>
+export const updateProfile = async(data: { userId: any; imageUrl: any; firstName: any; lastName: any; title: any; phoneNumber: any; }) =>
   axios.put(`${defaultBaseUrl}/user/current`,data,{
    headers: {
       Authorization: `Bearer ${ await AsyncStorage.getItem('authToken')}`,

@@ -20,6 +20,7 @@ import {windowDimensions} from '../../common/window-dimensions';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {needQuestionsService} from '../../services/InterviewQuestions/needQuestionsService';
 import _ from 'lodash';
+import {facilityQuestionsService} from '../../services/InterviewQuestions/facilityQuestionsService';
 import SortableQuestionRow from './sortable-question-row';
 import NavigationService from '../../navigation/NavigationService';
 import {
@@ -58,7 +59,7 @@ const InterviewQuestionDetail = (
 ) => {
   const [silentRefreshing, setSilentRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [sections, setSections] = useState(props?.route?.params?.sections);
+  const [sections, setSection] = useState(props?.route?.params?.sections || {});
   const [editing, setEditing] = useState(false);
   const [needQuestionList, setNeedQuestionList] = useState([]);
   const [loadingError, setLoadingError] = useState([]);
@@ -71,13 +72,13 @@ const InterviewQuestionDetail = (
   const [selectedTabId, setSelectedTabID] = useState(
     needId ? 'other' : 'default',
   );
-
+  const {questions, defaultQuestions} = sections;
   const facilityID = userInfo?.user?.userFacilities?.[0]?.facilityId;
-
   useEffect(() => {
     if (needId) {
       loadNeedQuestions();
     }
+    load();
   }, []);
 
   const findQuestionSection = (facilityID: string, sectionId: string): any => {
@@ -96,6 +97,28 @@ const InterviewQuestionDetail = (
       return needQuestionList;
     }
     return findQuestionSection(questionSectionId, facilityID);
+  };
+
+  const load = async (refreshing: boolean = false) => {
+    try {
+      setRefreshing(true);
+      const {data} = await facilityQuestionsService();
+      let sectionData = data.filter((i: any) => !!i);
+      sectionData.map((item: any) => {
+        return item.questionSections.map((i: any) => setSection(i));
+      });
+      setRefreshing(false);
+    } catch (error) {
+      console.log('Error', error);
+      setRefreshing(false);
+      showYesNoAlert({
+        title: `We're Sorry`,
+        message: 'An error occurred while loading available questions.',
+        onYes: () => load(refreshing),
+        yesTitle: 'Retry',
+        noTitle: 'Canel',
+      });
+    }
   };
 
   const loadNeedQuestions = async (refreshing: boolean = false) => {
@@ -118,15 +141,15 @@ const InterviewQuestionDetail = (
     if (!section) {
       return [];
     }
-    let questions = [];
+    let question = [];
     if (needId) {
-      questions = needQuestionList || [];
+      question = needQuestionList || [];
     } else {
-      questions = showDefault()
-        ? sections?.defaultQuestions
-        : sections.questions;
+      const {questions, defaultQuestions} = sections;
+
+      question = showDefault() ? defaultQuestions : questions;
     }
-    return questions.filter((q: {[x: string]: any}) => !q['deleted']);
+    return question.filter((q: {[x: string]: any}) => !q['deleted']);
   };
 
   const newQuestion = () => {
@@ -212,7 +235,6 @@ const InterviewQuestionDetail = (
         setRefreshing(false);
         loadNeedQuestions();
         setLoading(false);
-        console.log('interview Question Deleted response====>', data);
       } catch (error) {
         console.log('Load questions error', error);
         setRefreshing(false);
@@ -248,6 +270,7 @@ const InterviewQuestionDetail = (
           interviewQuestionPayload,
         );
         setRefreshing(false);
+        load();
         setLoading(false);
         console.log('interview Question Deleted response====>', data);
       } catch (error) {
@@ -286,7 +309,7 @@ const InterviewQuestionDetail = (
     const description = `${questionCount} question${
       questionCount === 0 || questionCount > 1 ? 's' : ''
     }`;
-    const actionText = editing ? 'FINISH' : 'EDIT';
+    const actionText = editing ? 'FINISHED' : 'EDIT';
     return (
       <ViewHeader
         first
@@ -317,7 +340,7 @@ const InterviewQuestionDetail = (
           />
         }
       >
-        {showableQuestions().length > 0 && renderSortableList(route)}
+        {showableQuestions && renderSortableList(route)}
       </ScrollView>
     );
   };
@@ -369,7 +392,7 @@ const InterviewQuestionDetail = (
                 top: 1,
               }}
             >
-              {sections?.defaultQuestions.length}
+              {defaultQuestions.length}
             </Text>
           </View>
         ) : screenName == 'Other Questions' ? (
@@ -393,7 +416,7 @@ const InterviewQuestionDetail = (
                 top: 1,
               }}
             >
-              {sections?.questions.length}
+              {questions.length}
             </Text>
           </View>
         ) : (
@@ -601,7 +624,7 @@ const InterviewQuestionDetail = (
     <View style={{flex: 1}}>
       {renderUnitHeader()}
       {needId ? renderSortableList() : renderTabs()}
-      {/* {showableQuestions().length == 0 && renderEmptyList()} */}
+      {showableQuestions().length > 0 && renderEmptyList()}
 
       {!editing && (
         <View style={styles.footer}>
