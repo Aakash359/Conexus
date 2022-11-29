@@ -303,12 +303,13 @@ const InterviewQuestionDetail = (
 
   const renderUnitHeader = () => {
     let questionCount =
-      sections === undefined
+      sections === undefined || {}
         ? needQuestionList.length
         : sections.defaultQuestions.length + sections.questions.length;
     const description = `${questionCount} question${
       questionCount === 0 || questionCount > 1 ? 's' : ''
     }`;
+
     const actionText = editing ? 'FINISHED' : 'EDIT';
     return (
       <ViewHeader
