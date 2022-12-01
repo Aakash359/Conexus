@@ -66,7 +66,7 @@ const InterviewQuestionDetail = (
   const [refreshing, setRefreshing] = useState(false);
   const userInfo = useSelector(state => state.userReducer);
   const propsData = [props?.route?.params] ? [props?.route?.params] : {};
-  const {needId, sectionTitleOverride, questionSectionId} = propsData?.[0];
+  const {needId, sectionTitle, questionSectionId} = propsData?.[0];
   const {sectionFacilityID, onSave} = propsData?.[0] || {};
   const {facilityId} = sectionFacilityID ? sectionFacilityID : {};
   const [selectedTabId, setSelectedTabID] = useState(
@@ -306,17 +306,15 @@ const InterviewQuestionDetail = (
       sections === undefined || {}
         ? needQuestionList.length
         : sections.defaultQuestions.length + sections.questions.length;
+
     const description = `${questionCount} question${
       questionCount === 0 || questionCount > 1 ? 's' : ''
     }`;
-
     const actionText = editing ? 'FINISHED' : 'EDIT';
     return (
       <ViewHeader
         first
-        title={
-          sectionTitleOverride || props?.route?.params?.sections?.sectionTitle
-        }
+        title={sectionTitle || props?.route?.params?.sections?.sectionTitle}
         description={description}
         titleStyle={{color: AppColors.white}}
         descriptionStyle={{color: AppColors.white}}
@@ -620,12 +618,13 @@ const InterviewQuestionDetail = (
   if (loadingError) {
     renderLoadingErrorContainer();
   }
+  console.log('ok====>', showableQuestions.length);
 
   return (
     <View style={{flex: 1}}>
       {renderUnitHeader()}
       {needId ? renderSortableList() : renderTabs()}
-      {showableQuestions().length > 0 && renderEmptyList()}
+      {showableQuestions().length == 0 && renderEmptyList()}
 
       {!editing && (
         <View style={styles.footer}>

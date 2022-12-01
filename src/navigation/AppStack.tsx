@@ -105,7 +105,7 @@ const AppStack = () => {
           component={InterviewQuestionDetail}
           options={({route}) => ({
             title:
-              route?.params?.props?.route?.name == 'Positions'
+              route?.params?.title == 'Interview Questions'
                 ? 'Interview Questions'
                 : route?.params?.sections?.sectionTitle,
           })}

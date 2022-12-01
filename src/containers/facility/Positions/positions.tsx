@@ -93,7 +93,8 @@ const Positions = (state: PositionState) => {
   const showNeedQuestions = (item: any) => {
     NavigationService.navigate('InterviewQuestionDetail', {
       needId: item.needId,
-      sectionTitleOverride: item.display.title,
+      sectionTitle: item.display.title,
+      title: 'Interview Questions',
     });
   };
 
