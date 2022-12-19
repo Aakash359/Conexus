@@ -10,7 +10,7 @@ const productionUrl = 'https://app.centrafi.net/conexus/api'
 // const defaultEnvironment = deviceStore.isDebugEnabled ? 'dev' : 'prod' /// TEMPORARILY DISABLED 'prod'
 // const defaultBaseUrl = deviceStore.isDebugEnabled ? devUrl : productionUrl /// TEMPORARILY DISABLED 'prod'
 
-export const defaultBaseUrl = productionUrl // devUrl  //productionUrl
+export const defaultBaseUrl = devUrl // devUrl  //productionUrl
 
 
 

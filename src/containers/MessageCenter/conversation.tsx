@@ -21,12 +21,14 @@ import {logger} from 'react-native-logs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {AppFonts, AppSizes, AppColors} from '../../theme';
 import {TouchableOpacity} from 'react-native';
-import {sendTextMessageService} from '../../services/MessageCenter/sendTextMessageService';
-import {loadTextMessageService} from '../../services/MessageCenter/loadTextMessageService';
 import NavigationService from '../../navigation/NavigationService';
-import {initVideoConferenceService} from '../../services/VideoCallingServices/videoServices';
 import {PhoneCallModal} from '../../components/Modals/phoneCallModal';
-import {initiatePhoneCallService} from '../../services/Facility/phoneCallService';
+import {
+  initiatePhoneCallService,
+  initVideoConferenceService,
+  loadTextMessageService,
+  sendTextMessageService,
+} from '../../services/ApiServices';
 
 let moment = require('moment');
 const SafeAreaView = require('react-native').SafeAreaView;

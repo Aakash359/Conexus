@@ -10,8 +10,6 @@ import {
 import {AppColors} from '../../theme';
 import {windowDimensions} from '../../common/window-dimensions';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {useSelector} from '../../redux/reducers/index';
-import {facilityUnitListService} from '../../services/facilityUnitListService';
 
 interface SelectUnitModalProps {
   title: string;

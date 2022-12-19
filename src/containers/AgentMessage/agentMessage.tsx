@@ -14,9 +14,8 @@ import {ActionButton} from '../../components/action-button';
 import {useSelector} from '../../redux/reducers/index';
 import {AppColors, AppFonts} from '../../theme';
 import {windowDimensions} from '../../common/window-dimensions';
-import Toast from 'react-native-toast-message';
-import {sendMessageService} from '../../services/agentMessageService';
 import NavigationService from '../../navigation/NavigationService';
+import {sendMessageService} from '../../services/ApiServices';
 
 const SafeAreaView = require('react-native').SafeAreaView;
 

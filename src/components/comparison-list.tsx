@@ -8,10 +8,8 @@ import {
   Alert,
 } from 'react-native';
 import FitImage from 'react-native-fit-image';
-import {ScreenType} from '../common/constants';
 import {AppFonts, AppColors} from '../theme';
 import Icon from 'react-native-vector-icons/Ionicons';
-import NavigationService from '../navigation/NavigationService';
 import {ReviewCandidateContentModal} from './Modals/ReviewCandidateContentModal';
 import ConexusContentList from './conexus-content-list';
 

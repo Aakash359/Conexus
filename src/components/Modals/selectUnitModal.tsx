@@ -15,9 +15,8 @@ import {AppColors, AppFonts} from '../../theme';
 import {windowDimensions} from '../../common/window-dimensions';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useSelector} from '../../redux/reducers/index';
-import {facilityUnitListService} from '../../services/facilityUnitListService';
-import {Avatar} from '../avatar';
 import {ConexusIcon} from '../conexus-icon';
+import {facilityUnitListService} from '../../services/ApiServices';
 
 interface SelectUnitModalProps {
   title: string;

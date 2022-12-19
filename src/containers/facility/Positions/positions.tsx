@@ -10,12 +10,11 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import {FacilityNeedsStore} from '../../../stores';
 import {AppColors, AppFonts} from '../../../theme';
 import {ViewHeader} from '../../../components/view-header';
-import {facilityNeedService} from '../../../services/Facility/facilityNeedService';
 import {ActionButton} from '../../../components/action-button';
 import NavigationService from '../../../navigation/NavigationService';
+import {facilityNeedService} from '../../../services/ApiServices';
 
 export interface PositionState {
   refreshing: boolean;

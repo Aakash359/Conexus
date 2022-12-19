@@ -18,16 +18,17 @@ import {ActionButton} from '../../components/action-button';
 import {AppFonts} from '../../theme';
 import {windowDimensions} from '../../common/window-dimensions';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {needQuestionsService} from '../../services/InterviewQuestions/needQuestionsService';
 import _ from 'lodash';
-import {facilityQuestionsService} from '../../services/InterviewQuestions/facilityQuestionsService';
 import SortableQuestionRow from './sortable-question-row';
 import NavigationService from '../../navigation/NavigationService';
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import {useIsFocused} from '@react-navigation/native';
 import {
   deleteInterviewQuestionsService,
   deleteNeedInterviewQuestionsService,
-} from '../../services/InterviewQuestions';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+  facilityQuestionsService,
+  needQuestionsService,
+} from '../../services/ApiServices';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -69,9 +70,7 @@ const InterviewQuestionDetail = (
   const {needId, sectionTitle, questionSectionId} = propsData?.[0];
   const {sectionFacilityID, onSave} = propsData?.[0] || {};
   const {facilityId} = sectionFacilityID ? sectionFacilityID : {};
-  const [selectedTabId, setSelectedTabID] = useState(
-    needId ? 'other' : 'default',
-  );
+  const [selectedTabId, setSelectedTabID] = useState('Default Questions');
   const {questions, defaultQuestions} = sections;
   const facilityID = userInfo?.user?.userFacilities?.[0]?.facilityId;
   useEffect(() => {
@@ -146,7 +145,6 @@ const InterviewQuestionDetail = (
       question = needQuestionList || [];
     } else {
       const {questions, defaultQuestions} = sections;
-
       question = showDefault() ? defaultQuestions : questions;
     }
     return question.filter((q: {[x: string]: any}) => !q['deleted']);
@@ -364,7 +362,9 @@ const InterviewQuestionDetail = (
   };
 
   const showDefault = () => {
-    return selectedTabId === 'default';
+    if (selectedTabId) {
+      return selectedTabId;
+    }
   };
   const badge = (route: any) => {
     let screenName = route?.route?.name;
@@ -618,13 +618,12 @@ const InterviewQuestionDetail = (
   if (loadingError) {
     renderLoadingErrorContainer();
   }
-  console.log('ok====>', showableQuestions.length);
 
   return (
     <View style={{flex: 1}}>
       {renderUnitHeader()}
       {needId ? renderSortableList() : renderTabs()}
-      {showableQuestions().length == 0 && renderEmptyList()}
+      {/* {showableQuestions().length == 0 && renderEmptyList()} */}
 
       {!editing && (
         <View style={styles.footer}>
@@ -646,7 +645,7 @@ const styles = StyleSheet.create({
     height: 62,
     borderTopWidth: 0,
     borderBottomWidth: 1,
-    borderBottomColor: AppColors.lightBlue,
+    // borderBottomColor: AppColors.lightBlue,
     backgroundColor: AppColors.white,
   },
   footer: {

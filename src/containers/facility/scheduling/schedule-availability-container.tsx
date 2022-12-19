@@ -55,11 +55,11 @@ export class ScheduleAvailabilityContainer extends React.Component<
   ScheduleAvailabilityContainerState
 > {
   get onSave() {
-    return this.props.onSave || function () {};
+    return this.props.onSave || function() {};
   }
 
   get onClose() {
-    return this.props.onClose || function () {};
+    return this.props.onClose || function() {};
   }
 
   get canGoNext() {

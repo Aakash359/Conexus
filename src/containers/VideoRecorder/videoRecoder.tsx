@@ -1,27 +1,15 @@
 'use strict';
 import React, {useState, useEffect} from 'react';
-import {
-  StyleSheet,
-  ActivityIndicator,
-  StatusBar,
-  View,
-  TouchableOpacity,
-  Text,
-  Pressable,
-  Alert,
-} from 'react-native';
+import {StyleSheet, ActivityIndicator, StatusBar, Alert} from 'react-native';
 import {AppColors, AppSizes} from '../../theme';
-import {VideoStore, ConversationStore} from '../stores';
+import {VideoStore} from '../stores';
 import {ConexusVideoActionButton, ConexusVideoRecorder} from '../../components';
-import variables from '../../theme';
-import InCallManager from 'react-native-incall-manager';
-import {showYesNoAlert} from '../../common/cancel-retry-alert';
 import ConexusVideoPlayer from '../../components/conexus-video-player';
-import {initVideoSessionService} from '../../services/VideoCallingServices';
-import {windowDimensions} from '../../common';
 import NavigationService from '../../navigation/NavigationService';
-import {updateNeedQuestionListService} from '../../services/VideoRecording/updateNeedQuestionListService';
-import {updateQuestionListService} from '../../services/VideoRecording/updateQuestionListService';
+import {
+  updateNeedQuestionListService,
+  updateQuestionListService,
+} from '../../services/ApiServices';
 
 interface VideoRecorderProps {
   finishedButtonTitle?: string;
@@ -99,12 +87,8 @@ const VideoRecorder = (
         displayOrder: 1,
         deleted: false,
       };
-      console.log('====================================');
-      console.log('payload1====>', payload);
-      console.log('====================================');
       try {
         const {result} = await updateNeedQuestionListService(payload);
-        console.log('result1====>', result);
         NavigationService.goBack();
         // NavigationService.navigate('InterviewQuestionDetail');
       } catch (error) {
@@ -130,12 +114,8 @@ const VideoRecorder = (
         displayOrder: 1,
         deleted: false,
       };
-      console.log('====================================');
-      console.log('data2====>', payload);
-      console.log('====================================');
       try {
         const {result} = await updateQuestionListService(payload);
-        console.log('result2====>', result);
         // NavigationService.navigate('InterviewQuestionDetail');
         NavigationService.goBack();
       } catch (error) {

@@ -15,8 +15,7 @@ import {useSelector} from '../../redux/reducers/index';
 import {ViewHeader} from '../../components/view-header';
 import variables, {AppFonts, AppColors} from '../../theme';
 import NavigationService from '../../navigation/NavigationService';
-import {conversationsService} from '../../services/MessageCenter/conversationsService';
-import FacilitySelectionContainer from '../../components/facility-selection-container';
+import {conversationsService} from '../../services/ApiServices';
 
 interface MessageCenterProps {}
 
@@ -168,7 +167,7 @@ const MessageCenter = (
   const load = async () => {
     try {
       setLoading(true);
-      const {data} = await conversationsService();
+      // const {data} = await conversationsService();
       setConversationData(data?.[0]?.positions);
       setLoading(false);
     } catch (error) {

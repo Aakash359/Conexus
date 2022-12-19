@@ -1,9 +1,8 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   ScrollView,
   KeyboardAvoidingView,
-  Button,
   Text,
   View,
   TouchableOpacity,
@@ -14,13 +13,12 @@ import {
 import variables from '../../../theme';
 import {Field} from '../../../components/field';
 import {windowDimensions} from '../../../common';
-import Toast from 'react-native-toast-message';
 import Styles from '../../../theme/styles';
-import {forgotPassword} from '../../../services/authService';
 import {AppColors, AppFonts} from '../../../theme';
 import NavigationService from '../../../navigation/NavigationService';
 import {ActionButton} from '../../../components/action-button';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {forgotPassword} from '../../../services/ApiServices';
 
 interface ForgotPasswordProps {
   username?: string;

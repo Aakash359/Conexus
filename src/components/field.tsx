@@ -46,7 +46,8 @@ export const Field = (props: TextFieldProps) => {
         style={[
           styles.container,
           {borderColor: isFocused ? AppColors.gray : AppColors.lightBlue},
-        ]}>
+        ]}
+      >
         <TextInput
           placeholder={placeholder}
           value={value}

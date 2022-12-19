@@ -2,7 +2,6 @@ import React from 'react';
 import {StyleSheet, View, TouchableOpacity, Text} from 'react-native';
 import {AppFonts, AppColors} from '../../../theme';
 import {Circle} from '../../../components';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 import Icons from 'react-native-vector-icons/Ionicons';
 export interface CandidateResponseRowProps {
   response: any;
@@ -82,7 +81,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
     borderRadius: 6,
     borderBottomWidth: 1,
-    borderBottomColor: AppColors.lightBlue,
+    // borderBottomColor: AppColors.lightBlue,
   },
 
   text: {

@@ -11,11 +11,11 @@ import {
 import {ConexusIconButton, Circle, ActionButton} from '../../../components';
 import {AppColors, AppFonts} from '../../../theme';
 import InCallManager from 'react-native-incall-manager';
-import {nurseInterviewQuestionService} from '../../../services/NurseInterviewQuestions/NurseInterviewQuestionsService';
 import {windowDimensions} from '../../../common';
 import InterviewComplete from './components/interview-complete';
 import NavigationService from '../../../navigation/NavigationService';
 import QuestionAnswerRecorder from './components/question-answer-recorder';
+import {nurseInterviewQuestionService} from '../../../services/ApiServices';
 
 export interface NurseInterviewProps {
   submissionId: string;

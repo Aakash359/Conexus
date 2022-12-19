@@ -22,8 +22,8 @@ import Icons from 'react-native-vector-icons/Ionicons';
 import {ActionButton} from '../../components/action-button';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import NavigationService from '../../navigation/NavigationService';
-import {facilityQuestionsService} from '../../services/InterviewQuestions/facilityQuestionsService';
 import {InterViewFacilityChooseModal} from '../../components/Modals/InterViewFacilityChooseModal';
+import {facilityQuestionsService} from '../../services/ApiServices';
 
 export interface InterviewQuestionsProps {
   needId?: string;
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
   listItem: {
     backgroundColor: AppColors.white,
     borderBottomWidth: 1,
-    borderBottomColor: AppColors.lightBlue,
+    // borderBottomColor: AppColors.lightBlue,
   },
   cnxNoDataIcon: {
     fontSize: 64,

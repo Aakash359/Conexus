@@ -12,9 +12,8 @@ import {ActionButton} from '../../components/action-button';
 import {useSelector} from '../../redux/reducers/index';
 import {AppColors} from '../../theme';
 import {windowDimensions} from '../../common/window-dimensions';
-import Toast from 'react-native-toast-message';
-import {appFeedbackService} from '../../services/sendFeedbackService';
 import NavigationService from '../../navigation/NavigationService';
+import {appFeedbackService} from '../../services/ApiServices';
 
 interface AppFeedbackModalState {
   messageText: string;

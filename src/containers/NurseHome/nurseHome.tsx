@@ -14,11 +14,10 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {useSelector} from '../../redux/reducers/index';
 import {showYesNoAlert} from '../../common/cancel-retry-alert';
 import {AppFonts, AppColors, AppSizes} from '../../theme';
-import {nurseDataLoadService} from '../../services/Nurse/nurseDataLoadService';
-import {facilitySubmissionsService} from '../../services/Facility/facilitySubmissionsService';
 import SubmissionCardList from './submission-card-list';
 import PastSubmissionsTabList from './past-submissions-tab-list';
 import NavigationService from '../../navigation/NavigationService';
+import {nurseDataLoadService} from '../../services/ApiServices';
 
 interface NurseHomeProps {}
 

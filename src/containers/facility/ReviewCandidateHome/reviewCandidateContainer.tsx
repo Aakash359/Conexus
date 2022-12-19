@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {View, ActivityIndicator} from 'react-native';
+import {View, ActivityIndicator, Alert} from 'react-native';
 import {UserStore} from '../../../stores/userStore';
 import {useSelector} from '../../../redux/reducers/index';
 import NavigationService from '../../../navigation/NavigationService';
 import PushNotification from 'react-native-push-notification';
-import {facilitySubmissionsService} from '../../../services/Facility/facilitySubmissionsService';
 import {AppColors} from '../../../theme';
 import {CandidateList} from './candidateList';
 import OneSignal from 'react-native-onesignal';
+import {facilitySubmissionsService} from '../../../services/ApiServices';
 interface ReviewContainerProps {
   userStore: UserStore;
   forceRefresh?: boolean;
@@ -35,6 +35,7 @@ const ReviewCandidateContainer = (
 
   const getToken = async () => {
     let token = await AsyncStorage.getItem('authToken');
+    console.log('TokenRefreshData===>', token);
   };
 
   useEffect(() => {
@@ -42,7 +43,7 @@ const ReviewCandidateContainer = (
     getToken();
     setTimeout(() => {
       load(true);
-    }, 1000);
+    }, 2000);
 
     OneSignal.setAppId('e1de43b0-7a53-48e2-bf45-3a501f8bbf94');
     OneSignal.setNotificationOpenedHandler(notification => {
@@ -114,6 +115,7 @@ const ReviewCandidateContainer = (
         // Alert.alert(data.description);
       } catch (error) {
         console.log('Error', error);
+        refreshToken();
         setLoading(false);
         // Alert.alert(error?.response?.data?.error?.description);
       }

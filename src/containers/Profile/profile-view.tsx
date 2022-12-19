@@ -7,12 +7,10 @@ import Styles from '../../theme/styles';
 import NavigationService from '../../navigation/NavigationService';
 import variable, {AppColors} from '../../theme';
 import {ActionButton} from '../../components/action-button';
-import {useSelector} from '../../redux/reducers/index';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {logoutRequest} from '../../redux/actions/userAction';
-import {UserModel} from '../../redux/actions/userAction';
 import theme from '../../theme';
-import {getProfileService} from '../../services/Profile/getProfileService';
+import {getProfileService} from '../../services/ApiServices';
 
 interface ProfileState {
   avatar: any;

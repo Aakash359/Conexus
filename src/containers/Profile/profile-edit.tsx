@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {
   Text,
   StyleSheet,
@@ -12,17 +12,15 @@ import {
   Keyboard,
   PermissionsAndroid,
 } from 'react-native';
-import Toast from 'react-native-toast-message';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {uploadPhoto, updateProfile} from '../../services/authService';
 import variables, {AppColors} from '../../theme';
-import {showApiErrorAlert, creatInputChangeHandler} from '../../common';
+import {showApiErrorAlert} from '../../common';
 import {windowDimensions} from '../../common';
 import {ActionButton} from '../../components/action-button';
 import {Field} from '../../components/field';
 import NavigationService from '../../navigation/NavigationService';
-import {getProfileService} from '../../services/Profile/getProfileService';
+import {updateProfile, uploadPhoto} from '../../services/ApiServices';
 
 interface EditProfileProps {
   firstName: string;

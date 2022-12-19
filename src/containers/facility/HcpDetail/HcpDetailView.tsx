@@ -14,7 +14,6 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {phoneFormatter} from '../../../common/phone-formatter';
-import {initiatePhoneCallService} from '../../../services/Facility/phoneCallService';
 import {windowDimensions} from '../../../common';
 import variables from '../../../theme';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -31,11 +30,14 @@ import {MakeOfferModal} from '../../../components/Modals/MakeOfferModal';
 import {ContactOptionModal} from '../../../components/Modals/ContactOptionModal';
 import ConexusContentList from '../../../components/conexus-content-list';
 import {PhoneCallModal} from '../../../components/Modals/phoneCallModal';
-import {candidateSubmissionsService} from '../../../services/candidateSubmissioService';
-import {notInterestedService} from '../../../services/notInterestedService';
-import {makeOfferService} from '../../../services/makeOfferService';
-import {saveFeedbackResponseApi} from '../../../services/saveFeedbackResponseService';
 import Tabs from '../../../components/customTab';
+import {
+  candidateSubmissionsService,
+  initiatePhoneCallService,
+  makeOfferService,
+  notInterestedService,
+  saveFeedbackResponseApi,
+} from '../../../services/ApiServices';
 
 interface HcpDetailProps {
   submissionId: string;

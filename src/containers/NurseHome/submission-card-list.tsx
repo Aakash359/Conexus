@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     height: 80,
     paddingTop: 15,
     backgroundColor: '#FFF',
-    borderTopColor: AppColors.lightBlue,
+    // borderTopColor: AppColors.lightBlue,
     borderTopWidth: 1,
   },
 });

@@ -11,14 +11,13 @@ import {
   Image,
 } from 'react-native';
 import Toast from 'react-native-toast-message';
-import Icon from 'react-native-vector-icons/Ionicons';
-import {signUp} from '../../../services/authService';
 import variables from '../../../theme';
 import {Field} from '../../../components/field';
 import {windowDimensions} from '../../../common';
 import {AppColors} from '../../../theme';
 import NavigationService from '../../../navigation/NavigationService';
 import {ActionButton} from '../../../components/action-button';
+import {signUp} from '../../../services/ApiServices';
 
 const SafeAreaView = require('react-native').SafeAreaView;
 const eMailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
