@@ -14,8 +14,6 @@ import {ConexusIconButton, Avatar} from '../../components';
 import Icon from 'react-native-vector-icons/Ionicons';
 import SystemSetting from 'react-native-system-setting';
 import NavigationService from '../../navigation/NavigationService';
-// import { Actions } from 'react-native-router-flux'
-// import Video from 'react-native-video'
 
 interface AudioPlayerProps extends ViewProperties {
   audioUrl: string;
@@ -57,14 +55,6 @@ const AudioPlayer = (props: AudioPlayerProps, state: AudioPlayerState) => {
     });
     setVolume(value);
   };
-
-  // const seekerValue = (): number => {
-  //   return state.seekerValue;
-  // };
-
-  //   const seekerValues(value: number) {
-  //     this.setState({seekerValue: value});
-  //   }
 
   const volumeListener = SystemSetting.addVolumeListener(data => {
     setVolume(data.value);

@@ -82,11 +82,20 @@ const ReviewCandidateContainer = (
     return facilitySubmissionsStore.loading;
   };
 
+  const logOutFromApp = async () => {
+    Alert.alert(
+      'Your app has been logged out due to session expire so you have to login again',
+    );
+    await AsyncStorage.removeItem('authToken');
+    NavigationService.navigate('LoginScreen');
+  };
+
   const load = async () => {
     if (!submissionsStorePromise) {
       setLoading(true);
       try {
         const {data} = await facilitySubmissionsService();
+
         for (var facility of data) {
           for (var position of facility.positions) {
             const compTypes = position.comps;
@@ -112,12 +121,14 @@ const ReviewCandidateContainer = (
           setPositions(positionData);
           setLoading(false);
         }
-        // Alert.alert(data.description);
       } catch (error) {
-        console.log('Error', error);
-        refreshToken();
+        if (
+          error?.response?.data?.message &&
+          error?.response?.data?.invalidConexusToken == true
+        )
+          global.message = error?.response?.data?.invalidConexusToken;
+        // logOutFromApp();
         setLoading(false);
-        // Alert.alert(error?.response?.data?.error?.description);
       }
     } else {
       setLoading(false);

@@ -645,7 +645,7 @@ const styles = StyleSheet.create({
     height: 62,
     borderTopWidth: 0,
     borderBottomWidth: 1,
-    // borderBottomColor: AppColors.lightBlue,
+    borderBottomColor: AppColors.lightBlue,
     backgroundColor: AppColors.white,
   },
   footer: {

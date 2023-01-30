@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
   listItem: {
     backgroundColor: AppColors.white,
     borderBottomWidth: 1,
-    // borderBottomColor: AppColors.lightBlue,
+    borderBottomColor: AppColors.lightBlue,
   },
   cnxNoDataIcon: {
     fontSize: 64,

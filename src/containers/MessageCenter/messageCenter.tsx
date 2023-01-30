@@ -167,7 +167,7 @@ const MessageCenter = (
   const load = async () => {
     try {
       setLoading(true);
-      // const {data} = await conversationsService();
+      const {data} = await conversationsService();
       setConversationData(data?.[0]?.positions);
       setLoading(false);
     } catch (error) {

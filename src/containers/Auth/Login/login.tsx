@@ -15,7 +15,7 @@ import NavigationService from '../../../navigation/NavigationService';
 import {ActionButton} from '../../../components/action-button';
 import Toast from 'react-native-toast-message';
 import variables from '../../../theme';
-import {Field} from '../../../components/field';
+import {Field, Passwordfield} from '../../../components/field';
 import {windowDimensions} from '../../../common';
 import theme, {AppFonts, AppColors} from '../../../theme';
 import {useDispatch} from 'react-redux';
@@ -37,6 +37,7 @@ const SafeAreaView = require('react-native').SafeAreaView;
 
 const LoginScreen = () => {
   const [loading, setLoading] = useState(false);
+  const [hidePassword, setHidePassword] = useState(true);
   const [errors, setErrors] = useState('');
   const [inputs, setInputs] = useState({
     email: '',
@@ -48,6 +49,9 @@ const LoginScreen = () => {
   };
   const handleError = (error: any, input: any) => {
     setErrors((prevState: any) => ({...prevState, [input]: error}));
+  };
+  const setPasswordVisibility = () => {
+    setHidePassword(!hidePassword);
   };
 
   const saveToken = async () => {
@@ -144,12 +148,13 @@ const LoginScreen = () => {
                 />
               </View>
               <View style={style.field}>
-                <Field
+                <Passwordfield
                   placeholder="Password"
                   autoCapitalize="none"
-                  secureTextEntry={true}
                   error={errors.password}
                   customStyle={{fontSize: 16}}
+                  onSubmit={setPasswordVisibility}
+                  hidePassword={hidePassword}
                   onTextChange={(text: any) => handleOnchange(text, 'password')}
                   onFocus={() => handleError(null, 'password')}
                   returnKeyType="done"
