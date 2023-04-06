@@ -54,6 +54,9 @@ interface HcpDetailState {
 }
 
 const preloadResumeCount = 3;
+// const imageCacheManager = ImageCacheManager();
+// console.log('ChachManager====>', imageCacheManager);
+
 const dateFormat = 'MM/DD/YYYY';
 
 const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
@@ -106,6 +109,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
 
     if (data) {
       while (i < preloadResumeCount && i < data.resumePages.pageCount) {
+        console.log('PdfData===>', data.resumePages.pageCount);
         promises.push(
           new Promise((resolve, reject) => {
             console.log(

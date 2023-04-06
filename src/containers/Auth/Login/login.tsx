@@ -70,11 +70,10 @@ const LoginScreen = () => {
     if (!inputs.email) {
       handleError('Please enter email', 'email');
       isValid = false;
+    } else if (!inputs.email.match(emailRegex)) {
+      handleError('Please enter a valid email', 'email');
+      isValid = false;
     }
-    // else if (!inputs.email.match(emailRegex)) {
-    //   handleError('Please enter a valid email', 'email');
-    //   isValid = false;
-    // }// code commented for temporary purpose uncomment this after getting valid email
     if (!inputs.password) {
       handleError('Please input password', 'password');
       isValid = false;

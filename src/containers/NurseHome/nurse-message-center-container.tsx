@@ -61,7 +61,8 @@ export class NurseMessageCenterContainer extends React.Component<
           <Avatar size={48} source={conversation.facPhotoUrl} />
         </Left>
         <Body
-          style={StyleSheet.flatten([itemStyles.itemSection, itemStyles.body])}>
+          style={StyleSheet.flatten([itemStyles.itemSection, itemStyles.body])}
+        >
           <Text style={AppFonts.listItemTitleTouchable}>
             {conversation.display.title}
           </Text>
@@ -81,7 +82,6 @@ export class NurseMessageCenterContainer extends React.Component<
   _loadConversations(refreshing: boolean = false) {
     const {conversationStore} = this.props;
     this.setState({refreshing, loading: !refreshing});
-
     conversationStore
       .load()
       .then(() => {

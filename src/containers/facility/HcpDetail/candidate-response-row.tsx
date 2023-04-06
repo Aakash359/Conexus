@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
     borderRadius: 6,
     borderBottomWidth: 1,
-    // borderBottomColor: AppColors.lightBlue,
+    borderBottomColor: AppColors.lightBlue,
   },
 
   text: {

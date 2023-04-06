@@ -238,10 +238,8 @@ const styles = StyleSheet.create({
     backgroundColor: AppColors.baseGray,
   },
   footer: {
-    justifyContent: 'flex-end',
-    marginTop: 350,
-    // right: 10,
-    // left: 10,
+    marginTop: Platform.OS === 'android' ? 280 : 430,
+    justifyContent: 'center',
     // position: 'absolute',
     // top: 20,
   },
@@ -274,7 +272,6 @@ const styles = StyleSheet.create({
     top: Platform.OS === 'android' ? 0 : 0,
   },
   switchLabel: {
-    marginTop: 4,
     paddingLeft: 8,
     top: 3.5,
     opacity: 0.75,
