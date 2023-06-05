@@ -11,7 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {logoutRequest} from '../../redux/actions/userAction';
 import theme from '../../theme';
 import {getProfileService} from '../../services/ApiServices';
-
+import ConnectyCube from 'react-native-connectycube';
 interface ProfileState {
   avatar: any;
   authToken: string;
@@ -51,6 +51,25 @@ const Profile: React.FC<ProfileState> = () => {
 
   const onPressLogout = async () => {
     setLoading(true);
+    const sessionToken = await AsyncStorage.getItem('sessionToken');
+    const profile = await AsyncStorage.getItem('profile');
+    // console.log('Ok====>', profile, sessionToken);
+
+    // ConnectyCube.destroySession(sessionToken.toString())
+    //   .then((session: any) => {
+    //     console.log('sesion destroyed', session);
+    //   })
+    //   .catch((error: any) => {
+    //     console.log('login error', error);
+    //   });
+    // ConnectyCube.users
+    //   .delete(JSON.parse(profile))
+    //   .then((result: any) => {
+    //     console.log('user deleted', result);
+    //   })
+    //   .catch((error: any) => {
+    //     console.log('error', error);
+    //   });
     await AsyncStorage.removeItem('authToken');
     const payload = {
       authToken: '',

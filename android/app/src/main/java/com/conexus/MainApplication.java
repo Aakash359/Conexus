@@ -18,7 +18,7 @@ import com.microsoft.codepush.react.CodePush;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.brentvatne.react.ReactVideoPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;  // <--- Import Package
-
+import com.codegulp.invokeapp.RNInvokeApp;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -37,7 +37,7 @@ public class MainApplication extends Application implements ReactApplication {
           List<ReactPackage> packages = new PackageList(this).getPackages();
           new SplashScreenReactPackage(); // SplashScreen Snippets
           new ReactNativePushNotificationPackage();
- 
+          RNInvokeApp.sendEvent();
           
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());

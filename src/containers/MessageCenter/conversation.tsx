@@ -30,6 +30,8 @@ import {
   sendTextMessageService,
 } from '../../services/ApiServices';
 
+import {useNavigation} from '@react-navigation/native';
+
 let moment = require('moment');
 const SafeAreaView = require('react-native').SafeAreaView;
 
@@ -86,7 +88,7 @@ const ConversationContainer = (
   const {startVideoMessage} = props;
   const params = props?.route?.params ? props?.route?.params : {};
   const {conversationId, candidate} = params ? params : '';
-
+  const navigation = useNavigation();
   useEffect(() => {
     setTimeout(() => {
       loadMessages();

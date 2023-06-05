@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import CustomDrawer from '../components/CustomDrawer';
 import {AppColors} from '.././theme';
@@ -20,6 +20,8 @@ import Icon from 'react-native-vector-icons/Feather';
 import InterviewQuestionDetail from '../containers/InterviewQuestions/interviewQuestionsDetails';
 import AddQuestion from '../containers/InterviewQuestions/AddQuestion';
 import HcpDetailView from '../containers/Facility/HcpDetail/hcpDetailView';
+import Home from '../containers/Facility/HcpDetail/home';
+import Callpage from '../containers/Facility/HcpDetail/callpage';
 import ImageGalleries from '../containers/Facility/HcpDetail/imageGallery';
 import ConversationContainer from '../containers/MessageCenter/conversation';
 import VideoPlayer from '../containers/VideoPlayer/videoPlayer';
@@ -30,24 +32,9 @@ import NurseHome from '../containers/NurseHome/nurseHome';
 import AnswerRatings from '../containers/Facility/HcpDetail/answerRating';
 import NurseInterview from '../containers/NurseHome/interviews/nurse-interview';
 import VideoRecorder from '../containers/VideoRecorder/videoRecoder';
-import LoginScreen from '../containers/Auth/Login/login';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
-const OtherStack = createNativeStackNavigator();
-
-// const AuthNavigator = () => {
-//   return (
-//     <OtherStack.Navigator screenOptions={{headerShown: true}}>
-//       <Stack.Screen
-//         name="Login"
-//         component={LoginScreen}
-//         options={{headerShown: false}}
-//       />
-//     </OtherStack.Navigator>
-//   );
-// };
 
 const AppStack = () => {
   return (
@@ -137,6 +124,32 @@ const AppStack = () => {
             },
           }}
         />
+
+        <Stack.Screen
+          name="Home"
+          component={Home}
+          options={{
+            headerShown: false,
+            headerTitleStyle: {
+              color: AppColors.black,
+              fontWeight: 'bold',
+              fontSize: 22,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Callpage"
+          component={Callpage}
+          options={{
+            headerShown: false,
+            headerTitleStyle: {
+              color: AppColors.black,
+              fontWeight: 'bold',
+              fontSize: 22,
+            },
+          }}
+        />
+
         <Stack.Screen
           name="ImageGallery"
           component={ImageGalleries}

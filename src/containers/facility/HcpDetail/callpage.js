@@ -1,0 +1,189 @@
+import React, {useState, useEffect, useLayoutEffect} from 'react';
+import {
+  SafeAreaView,
+  StatusBar,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import ConnectyCube from 'react-native-connectycube';
+import {useSelector} from 'react-redux';
+
+import CallService from '../../../services/connectycubeServices/call-service';
+import PushNotificationsService from '../../../services/connectycubeServices/pushnotifications-service';
+import AuthService from '../../../services/connectycubeServices/auth-service';
+import {getUserById, showToast, isCurrentRoute} from '../../../common/utils';
+import {store} from '../../../redux/store';
+import {setCurrentUser} from '../../../redux/actions/currentUser';
+
+export default function callpage({route, navigation}) {
+  const opponents = route.params.userId;
+  // const [selectedOpponents, setSelectedOpponents] = useState([]);
+
+  // const callSession = useSelector(store => store.activeCall.session);
+  // const isIcoming = useSelector(store => store.activeCall.isIcoming);
+  // const isEarlyAccepted = useSelector(
+  //   store => store.activeCall.isEarlyAccepted,
+  // );
+  // const currentUser = useSelector(store => store.currentUser);
+
+  // useEffect(() => {
+  //   if (isIcoming && !isEarlyAccepted) {
+  //     const isAlreadyOnIncomingCallScreen = isCurrentRoute(
+  //       navigation,
+  //       'IncomingCallScreen',
+  //     );
+  //     const isAlreadyOnVideoScreenScreen = isCurrentRoute(
+  //       navigation,
+  //       'VideoScreen',
+  //     );
+  //     if (!isAlreadyOnIncomingCallScreen && !isAlreadyOnVideoScreenScreen) {
+  //       // incoming call
+  //       navigation.push('IncomingCallScreen', {});
+  //     }
+  //   }
+  // }, [callSession, isIcoming, isEarlyAccepted]);
+
+  // useEffect(() => {
+  //   if (isEarlyAccepted) {
+  //     navigation.push('VideoScreen', {});
+  //   }
+  // }, [isEarlyAccepted]);
+
+  // const selectUser = opponent => {
+  //   setSelectedOpponents([...selectedOpponents, opponent]);
+  // };
+
+  // const unselectUser = opponent => {
+  //   setSelectedOpponents(selectedOpponents.filter(op => op.id !== opponent.id));
+  // };
+
+  // const logout = async () => {
+  //   await AuthService.logout();
+  //   PushNotificationsService.deleteSubscription();
+
+  //   store.dispatch(setCurrentUser(null));
+
+  //   navigation.popToTop();
+  // };
+
+  const startAudioCall = async () => {
+    await startCall(ConnectyCube.videochat.CallType.AUDIO);
+  };
+
+  const startVideoCall = async () => {
+    console.log('Calling===>', ConnectyCube.videochat.CallType.VIDEO);
+    await startCall(ConnectyCube.videochat.CallType.VIDEO);
+  };
+
+  const startCall = async callType => {
+    if (selectedOpponents.length === 0) {
+      showToast('Please select at least one user');
+      return;
+    }
+
+    const selectedOpponentsIds = selectedOpponents.map(op => op.id);
+
+    ConnectyCube.videochat.CallType.AUDIO;
+
+    // 1. initiate a call
+    //
+    const callSession = await CallService.startCall(
+      selectedOpponentsIds,
+      callType,
+    );
+
+    // 2. send push notitification to opponents
+    //
+    const pushParams = {
+      message: `Incoming call from ${currentUser.full_name}`,
+      ios_voip: 1,
+      handle: currentUser.full_name,
+      initiatorId: callSession.initiatorID,
+      opponentsIds: selectedOpponentsIds.join(','),
+      uuid: callSession.ID,
+      callType:
+        callType === ConnectyCube.videochat.CallType.VIDEO ? 'video' : 'audio',
+    };
+    PushNotificationsService.sendPushNotification(
+      selectedOpponentsIds,
+      pushParams,
+    );
+
+    navigation.push('VideoScreen', {});
+  };
+
+  return (
+    <SafeAreaView style={{flex: 1, backgroundColor: 'black'}}>
+      <StatusBar backgroundColor="black" barStyle="light-content" />
+      <View style={styles.container}>
+        <Text style={styles.title}>Select users to start a call</Text>
+
+        <TouchableOpacity
+          key={opponents.userId}
+          style={styles.userLabel()}
+          onPress={() => onPress(opponents)}
+        >
+          <Text style={styles.userName}>{opponents.full_name}</Text>
+          {/* <MaterialIcon name={type} size={20} color="white" /> */}
+        </TouchableOpacity>
+
+        <View style={styles.startCallButtonsContainer}>
+          <TouchableOpacity
+            style={[styles.buttonStartCall]}
+            onPress={() => startAudioCall()}
+          >
+            <MaterialIcon name={'call'} size={32} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.buttonStartCall]}
+            onPress={() => startVideoCall()}
+          >
+            <MaterialIcon name={'videocam'} size={32} color="white" />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    ...StyleSheet.absoluteFill,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  startCallButtonsContainer: {
+    flexDirection: 'row',
+  },
+  title: {
+    fontSize: 20,
+    color: '#1198d4',
+    padding: 20,
+  },
+  userLabel: backgroundColor => ({
+    backgroundColor,
+    width: 150,
+    height: 50,
+    borderRadius: 25,
+    paddingHorizontal: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    margin: 5,
+  }),
+  userName: {color: 'white', fontSize: 20},
+  buttonStartCall: {
+    height: 50,
+    width: 50,
+    borderRadius: 25,
+    marginHorizontal: 25,
+    marginTop: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'green',
+  },
+});

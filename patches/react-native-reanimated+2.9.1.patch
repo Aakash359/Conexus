@@ -1,0 +1,38 @@
+diff --git a/node_modules/react-native-reanimated/android/build.gradle b/node_modules/react-native-reanimated/android/build.gradle
+index dfb79c8..5879039 100644
+--- a/node_modules/react-native-reanimated/android/build.gradle
++++ b/node_modules/react-native-reanimated/android/build.gradle
+@@ -131,26 +131,26 @@ abstract class replaceSoTask extends DefaultTask {
+ }
+ 
+ def detectAAR(minor, engine) {
+-    def rnMinorVersionCopy = Integer.parseInt(minor)
+-    def aar = file("react-native-reanimated-${rnMinorVersionCopy}-${engine}.aar")
++    def rnMinorVersion = Integer.parseInt(minor)
++    def aar = file("react-native-reanimated-${rnMinorVersion}-${engine}.aar")
+ 
+     if (aar.exists()) {
+         println "AAR for react-native-reanimated has been found\n$aar"
+         return aar
+     } else {
+-        while (!aar.exists() && rnMinorVersionCopy >= 63) {
+-            rnMinorVersionCopy -= 1
+-            aar = file("react-native-reanimated-${rnMinorVersionCopy}-${engine}.aar")
++        while (!aar.exists() && rnMinorVersion >= 63) {
++            rnMinorVersion -= 1
++            aar = file("react-native-reanimated-${rnMinorVersion}-${engine}.aar")
+         }
+ 
+-        if (rnMinorVersionCopy < 63) {
++        if (rnMinorVersion < 63) {
+             println "No AAR for react-native-reanimated found. Attempting to build from source."
+         } else { // aar exists, but was build for lower react-native version
+             println "\n\n\n"
+             println "****************************************************************************************"
+             println "\n\n\n"
+             println "WARNING reanimated - no version-specific reanimated AAR for react-native version $minor found."
+-            println "Falling back to AAR for react-native version $rnMinorVersionCopy."
++            println "Falling back to AAR for react-native version $rnMinorVersion."
+             println "The react-native JSI interface is not ABI-safe yet, this may result in crashes."
+             println "Please post a pull request to implement support for react-native version $minor to the reanimated repo."
+             println "Thanks!"

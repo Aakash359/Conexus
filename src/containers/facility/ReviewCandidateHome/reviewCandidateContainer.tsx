@@ -35,7 +35,6 @@ const ReviewCandidateContainer = (
 
   const getToken = async () => {
     let token = await AsyncStorage.getItem('authToken');
-    console.log('TokenRefreshData===>', token);
   };
 
   useEffect(() => {

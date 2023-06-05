@@ -56,8 +56,6 @@ const ImageGalleries = (props: ImageGalleryProps, state: ImageGalleryState) => {
   const closeGallery = () => setIsOpen(false);
   const {title} = props?.route?.params;
 
-  console.log('displayCount====>', props);
-
   const Images = [
     'https://placeimg.com/640/640/nature',
     'https://placeimg.com/640/640/people',

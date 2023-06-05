@@ -32,6 +32,13 @@ const SafeAreaView = require('react-native').SafeAreaView;
 // Dev/Testing Credentials
 // 1- Email : kbujarski@trshealthcare.com
 // Password: temp
+
+// 1- Email : dorothy_drones@armc.net
+// Password: temp
+
+// 1- Email : leanne.weyrick@gmail.com
+// Password: temp
+
 // 2- Email : appletester@conexussolutions.com
 // Password: travel
 

@@ -31,6 +31,10 @@ import {ContactOptionModal} from '../../../components/Modals/ContactOptionModal'
 import ConexusContentList from '../../../components/conexus-content-list';
 import {PhoneCallModal} from '../../../components/Modals/phoneCallModal';
 import Tabs from '../../../components/customTab';
+import CallService from '../../../services/connectycubeServices/call-service';
+import PushNotificationsService from '../../../services/connectycubeServices/pushnotifications-service';
+import PermissionsService from '../../../services/connectycubeServices/permissions-service';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   candidateSubmissionsService,
   initiatePhoneCallService,
@@ -77,6 +81,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const [calling, setCalling] = useState(false);
   const submissionId = props?.route?.params?.submissionId;
   const validPhone = phoneFormatter.isValid10DigitPhoneNumber(callbackNumber);
+
   const {onMessageSendCallback, navigation} = props;
 
   const responses = (): any => {
@@ -109,7 +114,6 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
 
     if (data) {
       while (i < preloadResumeCount && i < data.resumePages.pageCount) {
-        console.log('PdfData===>', data.resumePages.pageCount);
         promises.push(
           new Promise((resolve, reject) => {
             console.log(
@@ -145,8 +149,15 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     }
   };
 
-  useEffect(() => {
+  // const loadUserData = async () => {
+  //   const userData = await AsyncStorage.getItem('userData');
+  //   console.log('call ho raha hai ye', JSON.parse(userData).id);
+  // };
+
+  useEffect(async () => {
     loadCandidate(false);
+    // loadUserData();
+
     if (props.onClose && props.onClose().call) {
       props.onClose();
     }
@@ -412,30 +423,40 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     );
   };
 
-  const showPhoneCallModal = () => {
+  const showPhoneCallModal = async () => {
+    // const userData = await AsyncStorage.getItem('userData');
+
+    // NavigationService.navigate('Callpage');
+
     setContactOptionModalVisible(false);
     setPhoneCallModalVisible(true);
   };
 
-  const makeCall = async () => {
-    setCalling(true);
-    Keyboard.dismiss();
-    try {
-      setLoading(true);
-      const {data} = await initiatePhoneCallService({
-        conversationId: '',
-        submissionId: submissionId,
-        callbackNumber: callbackNumber,
-        messageTypeId: '2',
-      });
-      console.log('response', data);
-      setPhoneCallModalVisible(false);
-      setLoading(false);
-    } catch (error) {
-      setPhoneCallModalVisible(false);
-      setLoading(false);
-      console.log('Error', error);
-    }
+  const makeCall = (candidate: any) => {
+    CallService.init();
+    // console.log('CallService====>', CallService);
+
+    // PushNotificationsService.init();
+    // PermissionsService.checkAndRequestDrawOverlaysPermission();
+    NavigationService.push('Callpage', candidate);
+    // setCalling(true);
+    // Keyboard.dismiss();
+    // try {
+    //   setLoading(true);
+    //   const {data} = await initiatePhoneCallService({
+    //     conversationId: '',
+    //     submissionId: submissionId,
+    //     callbackNumber: callbackNumber,
+    //     messageTypeId: '2',
+    //   });
+    //   console.log('response', data);
+    //   setPhoneCallModalVisible(false);
+    //   setLoading(false);
+    // } catch (error) {
+    //   setPhoneCallModalVisible(false);
+    //   setLoading(false);
+    //   console.log('Error', error);
+    // }
   };
 
   const openConversations = () => {
@@ -584,7 +605,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
           disabled={!validPhone}
           onRequestClose={() => console.log('Ok')}
           onDismiss={() => console.log('Ok')}
-          onPress={() => makeCall()}
+          onPress={() => makeCall(candidate)}
           onClose={() => setPhoneCallModalVisible(false)}
         />
       )}
