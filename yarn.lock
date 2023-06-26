@@ -8375,7 +8375,7 @@ react-native-video@^5.2.0:
     prop-types "^15.7.2"
     shaka-player "^2.5.9"
 
-react-native-webrtc@^111.0.0:
+react-native-webrtc@^111.0.0, react-native-webrtc@^111.0.1:
   version "111.0.1"
   resolved "https://registry.yarnpkg.com/react-native-webrtc/-/react-native-webrtc-111.0.1.tgz#049a28e803e1259c07aca12f7e0b6bc69166d3ff"
   integrity sha512-yMRmLFtKRDXaK5b/s92+ArsMElEEjZnGW2cE+GqTHxLka0Kj0qq/sgNS2sMTuJuZRhW4oT6ryMLwTYzIrGM1lQ==

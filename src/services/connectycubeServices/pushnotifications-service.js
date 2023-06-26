@@ -168,7 +168,6 @@ class PushNotificationsService {
     const {AppRegistry} = require('react-native');
 
     // https://reactnative.dev/docs/headless-js-android
-    //
     AppRegistry.registerHeadlessTask('JSNotifyWhenKilledTask', () => {
       return async notificationBundle => {
         console.log(

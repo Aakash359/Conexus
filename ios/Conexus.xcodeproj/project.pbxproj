@@ -583,6 +583,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 8LYM5A984J;
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Conexus/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Conexus;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";

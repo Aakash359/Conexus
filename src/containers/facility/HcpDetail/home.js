@@ -28,25 +28,12 @@ const Home = () => {
     });
 
     // Android: for accepting calls in background you should provide access to show System Alerts from the background
-    PermissionsService.checkAndRequestDrawOverlaysPermission();
   }, []);
 
   const login = async user => {
     setIsLogging(true);
-    // console.log('user===>', CallService.init());
 
     store.dispatch(setCurrentUser(user));
-
-    // CallService.init();
-    // PushNotificationsService.init();
-
-    // setIsLogging(false);
-
-    const opponents = users.filter(opponent => opponent.id !== user.id);
-    // console.log(
-    //   'opponents====>',
-    //   NavigationService.push('Callpage', {opponents}),
-    // );
     NavigationService.navigate('Callpage');
   };
   return (

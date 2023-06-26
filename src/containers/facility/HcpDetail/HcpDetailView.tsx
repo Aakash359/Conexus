@@ -31,10 +31,8 @@ import {ContactOptionModal} from '../../../components/Modals/ContactOptionModal'
 import ConexusContentList from '../../../components/conexus-content-list';
 import {PhoneCallModal} from '../../../components/Modals/phoneCallModal';
 import Tabs from '../../../components/customTab';
-import CallService from '../../../services/connectycubeServices/call-service';
-import PushNotificationsService from '../../../services/connectycubeServices/pushnotifications-service';
-import PermissionsService from '../../../services/connectycubeServices/permissions-service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import {
   candidateSubmissionsService,
   initiatePhoneCallService,
@@ -426,19 +424,19 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const showPhoneCallModal = async () => {
     // const userData = await AsyncStorage.getItem('userData');
 
-    // NavigationService.navigate('Callpage');
+    NavigationService.navigate('Callpage');
 
     setContactOptionModalVisible(false);
     setPhoneCallModalVisible(true);
   };
 
   const makeCall = (candidate: any) => {
-    CallService.init();
+   // PermissionsService.checkAndRequestDrawOverlaysPermission();
     // console.log('CallService====>', CallService);
-
+   // CallService.init();
     // PushNotificationsService.init();
     // PermissionsService.checkAndRequestDrawOverlaysPermission();
-    NavigationService.push('Callpage', candidate);
+    // NavigationService.push('Callpage', candidate);
     // setCalling(true);
     // Keyboard.dismiss();
     // try {

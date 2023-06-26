@@ -4,6 +4,9 @@ import {Dispatch} from 'react';
 import {defaultBaseUrl} from '../../redux/constants';
 import {Alert} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import PushNotificationsService from '../../services/connectycubeServices/pushnotifications-service';
+import PermissionsService from '../../services/connectycubeServices/permissions-service';
+import CallService from '../../services/connectycubeServices/call-service';
 
 export interface UserModel {
   firstName: string;
@@ -37,6 +40,7 @@ export const loginRequest = (data: {
   App: boolean;
 }) => {
   const {username, password} = data;
+  // const newPass = '1234'
   const sessionData = {
     appId: 7109,
     authKey: 'gr87NajH9M5VEzy',
@@ -51,18 +55,15 @@ export const loginRequest = (data: {
   };
   return async (dispatch: Dispatch<UserAction>) => {
     const storeUser = async (
-      userCredentials: any,
       sessionToken: any,
       createUser: any,
-      signInData: any,
     ) => {
       try {
-        const userValue = JSON.stringify(userCredentials);
+        const session = JSON.stringify(sessionToken);
         const profile = JSON.stringify(createUser);
-        const userData = JSON.stringify(signInData.user);
-        await AsyncStorage.setItem('userValue', userValue);
-        await AsyncStorage.setItem('userData', userData);
-        await AsyncStorage.setItem('sessionToken', sessionToken);
+        console.log("Data===>",session,profile);
+        
+        await AsyncStorage.setItem('session', session);
         await AsyncStorage.setItem('profile', profile);
       } catch (e) {
         console.error('_storeUser error: ', e);
@@ -79,27 +80,27 @@ export const loginRequest = (data: {
           payload: 'Login issue with API',
         });
       } else {
-        await ConnectyCube.init(sessionData, config);
-        await ConnectyCube.createSession(sessionData)
-          .then(async (session: any) => {
+        await ConnectyCube.init(sessionData, config)
+        await ConnectyCube.createSession(sessionData).then(async (session: any) => {
             const sessionToken = session.token;
             console.log('sessionToken', sessionToken);
-            ConnectyCube.users
-              .signup(createUser)
+            ConnectyCube.users.signup(createUser)
               .then(async (signInData: any) => {
                 console.log('Profile created successfully !', signInData.user);
                 const userCredentials = {
                   id: signInData.user.id,
                   password: password,
                 };
+                PermissionsService.checkAndRequestDrawOverlaysPermission();
+                PushNotificationsService.init();
+                CallService.init();
+                
                 await storeUser(
-                  userCredentials,
                   sessionToken,
                   createUser,
-                  signInData,
                 );
-                ConnectyCube.createSession(userCredentials)
-                  .then((session: any) => {
+               
+                ConnectyCube.createSession(userCredentials).then((session: any) => {
                     console.log('login successfully', session);
                   })
                   .catch((error: any) => {
@@ -111,7 +112,7 @@ export const loginRequest = (data: {
               });
           })
           .catch((error: any) => {
-            console.log('error', error);
+            console.log('Session error', error);
           });
 
         dispatch({
@@ -124,8 +125,8 @@ export const loginRequest = (data: {
         type: 'ON_ERROR',
         payload: error,
       });
-      // console.log("Error===>",error?.response?.data?.description)
-      Alert.alert('Error', error?.response?.data?.description);
+     console.log("Error===>",error?.response?.data?.description)
+     Alert.alert('Error', error?.response?.data?.description);
     }
   };
 };

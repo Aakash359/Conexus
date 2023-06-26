@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   KeyboardAvoidingView,
@@ -12,14 +12,14 @@ import {
   ScrollView,
 } from 'react-native';
 import NavigationService from '../../../navigation/NavigationService';
-import {ActionButton} from '../../../components/action-button';
+import { ActionButton } from '../../../components/action-button';
 import Toast from 'react-native-toast-message';
 import variables from '../../../theme';
-import {Field, Passwordfield} from '../../../components/field';
-import {windowDimensions} from '../../../common';
-import theme, {AppFonts, AppColors} from '../../../theme';
-import {useDispatch} from 'react-redux';
-import {loginRequest} from '../../../redux/actions/userAction';
+import { Field, Passwordfield } from '../../../components/field';
+import { windowDimensions } from '../../../common';
+import theme, { AppFonts, AppColors } from '../../../theme';
+import { useDispatch } from 'react-redux';
+import { loginRequest } from '../../../redux/actions/userAction';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
@@ -51,11 +51,12 @@ const LoginScreen = () => {
     password: '',
   });
   const dispatch = useDispatch();
+
   const handleOnchange = (text: any, input: any) => {
-    setInputs((prevState: any) => ({...prevState, [input]: text}));
+    setInputs((prevState: any) => ({ ...prevState, [input]: text }));
   };
   const handleError = (error: any, input: any) => {
-    setErrors((prevState: any) => ({...prevState, [input]: error}));
+    setErrors((prevState: any) => ({ ...prevState, [input]: error }));
   };
   const setPasswordVisibility = () => {
     setHidePassword(!hidePassword);
@@ -69,7 +70,7 @@ const LoginScreen = () => {
     let token = await AsyncStorage.getItem('authToken');
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
   const validate = () => {
     Keyboard.dismiss();
@@ -106,6 +107,7 @@ const LoginScreen = () => {
         setTimeout(() => {
           setLoading(false);
           dispatch(loginRequest(data));
+
         }, 1000);
       } catch (error) {
         setLoading(false);
@@ -149,7 +151,7 @@ const LoginScreen = () => {
                   onTextChange={(text: any) => handleOnchange(text, 'email')}
                   onFocus={() => handleError(null, 'email')}
                   error={errors.email}
-                  customStyle={{fontSize: 16}}
+                  customStyle={{ fontSize: 16 }}
                   returnKeyType="next"
                 />
               </View>
@@ -158,7 +160,7 @@ const LoginScreen = () => {
                   placeholder="Password"
                   autoCapitalize="none"
                   error={errors.password}
-                  customStyle={{fontSize: 16}}
+                  customStyle={{ fontSize: 16 }}
                   onSubmit={setPasswordVisibility}
                   hidePassword={hidePassword}
                   onTextChange={(text: any) => handleOnchange(text, 'password')}

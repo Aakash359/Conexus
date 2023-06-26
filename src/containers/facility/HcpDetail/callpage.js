@@ -18,33 +18,32 @@ import {getUserById, showToast, isCurrentRoute} from '../../../common/utils';
 import {store} from '../../../redux/store';
 import {setCurrentUser} from '../../../redux/actions/currentUser';
 
-export default function callpage({route, navigation}) {
-  const opponents = route.params.userId;
-  // const [selectedOpponents, setSelectedOpponents] = useState([]);
+export default function Callpage({route, navigation}) {
+  // const opponents = route.params.userId;
+  const [selectedOpponents, setSelectedOpponents] = useState([]);
 
-  // const callSession = useSelector(store => store.activeCall.session);
-  // const isIcoming = useSelector(store => store.activeCall.isIcoming);
-  // const isEarlyAccepted = useSelector(
-  //   store => store.activeCall.isEarlyAccepted,
-  // );
-  // const currentUser = useSelector(store => store.currentUser);
-
-  // useEffect(() => {
-  //   if (isIcoming && !isEarlyAccepted) {
-  //     const isAlreadyOnIncomingCallScreen = isCurrentRoute(
-  //       navigation,
-  //       'IncomingCallScreen',
-  //     );
-  //     const isAlreadyOnVideoScreenScreen = isCurrentRoute(
-  //       navigation,
-  //       'VideoScreen',
-  //     );
-  //     if (!isAlreadyOnIncomingCallScreen && !isAlreadyOnVideoScreenScreen) {
-  //       // incoming call
-  //       navigation.push('IncomingCallScreen', {});
-  //     }
-  //   }
-  // }, [callSession, isIcoming, isEarlyAccepted]);
+  const callSession = useSelector(store => store.activeCall.session);
+  const isIcoming = useSelector(store => store.activeCall.isIcoming);
+  const isEarlyAccepted = useSelector(
+    store => store.activeCall.isEarlyAccepted,
+  );
+  const currentUser = useSelector(store => store.currentUser);
+  useEffect(() => {
+    if (isIcoming && !isEarlyAccepted) {
+      const isAlreadyOnIncomingCallScreen = isCurrentRoute(
+        navigation,
+        'IncomingCallScreen',
+      );
+      const isAlreadyOnVideoScreenScreen = isCurrentRoute(
+        navigation,
+        'VideoScreen',
+      );
+      if (!isAlreadyOnIncomingCallScreen && !isAlreadyOnVideoScreenScreen) {
+        // incoming call
+        navigation.push('IncomingCallScreen', {});
+      }
+    }
+  }, [callSession, isIcoming, isEarlyAccepted]);
 
   // useEffect(() => {
   //   if (isEarlyAccepted) {
@@ -52,29 +51,28 @@ export default function callpage({route, navigation}) {
   //   }
   // }, [isEarlyAccepted]);
 
-  // const selectUser = opponent => {
-  //   setSelectedOpponents([...selectedOpponents, opponent]);
-  // };
+  const selectUser = opponent => {
+    setSelectedOpponents([...selectedOpponents, opponent]);
+  };
 
-  // const unselectUser = opponent => {
-  //   setSelectedOpponents(selectedOpponents.filter(op => op.id !== opponent.id));
-  // };
+  const unselectUser = opponent => {
+    setSelectedOpponents(selectedOpponents.filter(op => op.id !== opponent.id));
+  };
 
-  // const logout = async () => {
-  //   await AuthService.logout();
-  //   PushNotificationsService.deleteSubscription();
+  const logout = async () => {
+    await AuthService.logout();
+    PushNotificationsService.deleteSubscription();
 
-  //   store.dispatch(setCurrentUser(null));
+    store.dispatch(setCurrentUser(null));
 
-  //   navigation.popToTop();
-  // };
+    navigation.popToTop();
+  };
 
   const startAudioCall = async () => {
     await startCall(ConnectyCube.videochat.CallType.AUDIO);
   };
 
   const startVideoCall = async () => {
-    console.log('Calling===>', ConnectyCube.videochat.CallType.VIDEO);
     await startCall(ConnectyCube.videochat.CallType.VIDEO);
   };
 
@@ -86,7 +84,7 @@ export default function callpage({route, navigation}) {
 
     const selectedOpponentsIds = selectedOpponents.map(op => op.id);
 
-    ConnectyCube.videochat.CallType.AUDIO;
+   ConnectyCube.videochat.CallType.AUDIO;
 
     // 1. initiate a call
     //
@@ -96,7 +94,7 @@ export default function callpage({route, navigation}) {
     );
 
     // 2. send push notitification to opponents
-    //
+    
     const pushParams = {
       message: `Incoming call from ${currentUser.full_name}`,
       ios_voip: 1,
@@ -120,27 +118,36 @@ export default function callpage({route, navigation}) {
       <StatusBar backgroundColor="black" barStyle="light-content" />
       <View style={styles.container}>
         <Text style={styles.title}>Select users to start a call</Text>
+        {/* {opponents.map(opponent => {
+          const id = opponent.id;
+          const user = getUserById(id);
+          const selected = selectedOpponents.some(
+            opponent => id === opponent.id,
+          );
+          const type = selected
+            ? 'radio-button-checked'
+            : 'radio-button-unchecked';
+          const onPress = selected ? unselectUser : selectUser;
 
-        <TouchableOpacity
-          key={opponents.userId}
-          style={styles.userLabel()}
-          onPress={() => onPress(opponents)}
-        >
-          <Text style={styles.userName}>{opponents.full_name}</Text>
-          {/* <MaterialIcon name={type} size={20} color="white" /> */}
-        </TouchableOpacity>
-
+          return (
+            <TouchableOpacity
+              key={id}
+              style={styles.userLabel(user.color)}
+              onPress={() => onPress(opponent)}>
+              <Text style={styles.userName}>{user.full_name}</Text>
+              <MaterialIcon name={type} size={20} color="white" />
+            </TouchableOpacity>
+          );
+        })} */}
         <View style={styles.startCallButtonsContainer}>
           <TouchableOpacity
             style={[styles.buttonStartCall]}
-            onPress={() => startAudioCall()}
-          >
+            onPress={startAudioCall}>
             <MaterialIcon name={'call'} size={32} color="white" />
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.buttonStartCall]}
-            onPress={() => startVideoCall()}
-          >
+            onPress={startVideoCall}>
             <MaterialIcon name={'videocam'} size={32} color="white" />
           </TouchableOpacity>
         </View>

@@ -16,6 +16,7 @@ import {
 import {phoneFormatter} from '../../common/phone-formatter';
 import {ConexusIconButton} from '../../components/conexus-icon-button';
 import {showYesNoAlert} from '../../common';
+import {useSelector} from '../../redux/reducers/index';
 import {UserStore, VideoStore} from '../../stores';
 import {logger} from 'react-native-logs';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -29,7 +30,6 @@ import {
   loadTextMessageService,
   sendTextMessageService,
 } from '../../services/ApiServices';
-
 import {useNavigation} from '@react-navigation/native';
 
 let moment = require('moment');
@@ -79,7 +79,8 @@ const ConversationContainer = (
   const [messageList, setMessageList] = useState([]);
   const [sendEnabled, setSendEnabled] = useState(false);
   const [showFooterActions, setShowFooterActions] = useState(false);
-  const [callbackNumber, setCallBackNumber] = useState('');
+   const userInfo = useSelector(state => state.userReducer);
+  const [callbackNumber, setCallBackNumber] = useState( userInfo?.user?.phoneNumber || '',);
   const [messageText, setMessageTexts] = useState('');
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -89,6 +90,7 @@ const ConversationContainer = (
   const params = props?.route?.params ? props?.route?.params : {};
   const {conversationId, candidate} = params ? params : '';
   const navigation = useNavigation();
+  
   useEffect(() => {
     setTimeout(() => {
       loadMessages();
@@ -156,7 +158,7 @@ const ConversationContainer = (
     const duration = 100;
 
     if (AppSizes.isIPhoneX) {
-      currentKeyboardHeight -= AppSizes.iPhoneXFooterSize;
+      currentKeyboardHeight = AppSizes.iPhoneXFooterSize;
     }
 
     Animated.parallel([
@@ -535,24 +537,25 @@ const ConversationContainer = (
     );
   };
 
-  const makeCall = async () => {
-    setCalling(true);
-    try {
-      setLoading(true);
-      const {data} = await initiatePhoneCallService({
-        conversationId: '',
-        submissionId: submissionId,
-        callbackNumber: callbackNumber,
-        messageTypeId: '2',
-      });
-      console.log('response', data);
-      setPhoneCallModalVisible(false);
-      setLoading(false);
-    } catch (error) {
-      setPhoneCallModalVisible(false);
-      setLoading(false);
-      console.log('Error', error);
-    }
+  const makeCall = () => {
+    // NavigationService.navigate('Callpage');
+    // setCalling(true);
+    // try {
+    //   setLoading(true);
+    //   const {data} = await initiatePhoneCallService({
+    //     conversationId: '',
+    //     submissionId: submissionId,
+    //     callbackNumber: callbackNumber,
+    //     messageTypeId: '2',
+    //   });
+    //   console.log('response', data);
+    //   setPhoneCallModalVisible(false);
+    //   setLoading(false);
+    // } catch (error) {
+    //   setPhoneCallModalVisible(false);
+    //   setLoading(false);
+    //   console.log('Error', error);
+    // }
   };
 
   const onCallbackChangeText = (callbackNumber: any) => {
@@ -592,7 +595,7 @@ const ConversationContainer = (
             disabled={!validPhone}
             onRequestClose={() => setPhoneCallModalVisible(false)}
             onDismiss={() => setPhoneCallModalVisible(false)}
-            onClose={() => setPhoneCallModalVisible(false)}
+            onClose={() =>  NavigationService.navigate('Callpage')}
           />
         )}
         {messageList.map((message, index) => {
