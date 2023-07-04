@@ -21,7 +21,11 @@ import theme, { AppFonts, AppColors } from '../../../theme';
 import { useDispatch } from 'react-redux';
 import { loginRequest } from '../../../redux/actions/userAction';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import PushNotificationsService from '../../../services/connectycubeServices/pushnotifications-service';
+import CallService from '../../../services/connectycubeServices/call-service';
+import PermissionsService from '../../../services/connectycubeServices/permissions-service';
+import { getStoredUser } from '../../../redux/actions/userAction';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 const SafeAreaView = require('react-native').SafeAreaView;
 
@@ -45,6 +49,7 @@ const SafeAreaView = require('react-native').SafeAreaView;
 const LoginScreen = () => {
   const [loading, setLoading] = useState(false);
   const [hidePassword, setHidePassword] = useState(true);
+  const [isChecked, setIsChecked] = useState(true);
   const [errors, setErrors] = useState('');
   const [inputs, setInputs] = useState({
     email: '',
@@ -62,15 +67,16 @@ const LoginScreen = () => {
     setHidePassword(!hidePassword);
   };
 
-  const saveToken = async () => {
-    await AsyncStorage.setItem('authToken', userInfo?.user?.authToken);
-  };
+  useEffect(() => {
+    getStoredUser().then(storedUser => {
+      if (storedUser) {
+        // auto login
+        signInFn(storedUser);
+      }
+    });
+    PermissionsService.checkAndRequestDrawOverlaysPermission();
+  }, []);
 
-  const getToken = async () => {
-    let token = await AsyncStorage.getItem('authToken');
-  };
-
-  useEffect(() => { }, []);
 
   const validate = () => {
     Keyboard.dismiss();
@@ -103,6 +109,8 @@ const LoginScreen = () => {
           password: inputs.password,
           App: true,
         };
+        CallService.init();
+        PushNotificationsService.init();
         setLoading(true);
         setTimeout(() => {
           setLoading(false);
@@ -168,13 +176,19 @@ const LoginScreen = () => {
                   returnKeyType="done"
                 />
               </View>
-              <TouchableOpacity onPress={forgotPasswordFn} activeOpacity={1}>
-                <Text style={style.forgotPass}>FORGOT PASSWORD?</Text>
-              </TouchableOpacity>
-              {/* {this.props.deviceStore.isDebugEnabled
-              ? this.renderEnvironentToggle()
-              : null} */}
+              <View style={style.rememberMe}>
+                <TouchableOpacity onPress={() => setCheckBox(isChecked)} activeOpacity={1}>
+                  <Text style={style.rememberMeText}>REMEMBER ME ?</Text>
+                  <Icon
+                    name={isChecked ? 'check-box' : 'check-box-outline-blank'}
+                    style={{ color: AppColors.blue, fontSize: 22, bottom: 17, left: 100 }}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
+            <TouchableOpacity onPress={forgotPasswordFn} activeOpacity={1}>
+              <Text style={style.forgotPass}>FORGOT PASSWORD?</Text>
+            </TouchableOpacity>
             <ActionButton
               textColor={variables.blue}
               customTitleStyle={loading ? style.loadingTitle : style.title}
@@ -183,6 +197,7 @@ const LoginScreen = () => {
               title="SIGN IN"
               onPress={validate}
             />
+
             <TouchableOpacity onPress={requestAccount} activeOpacity={1}>
               <Text style={style.newUser}>
                 New to Conexus? Request an account now!
@@ -208,6 +223,17 @@ const style = StyleSheet.create({
     height: 45,
     width: '50%',
     borderRadius: 28,
+  },
+  rememberMe: {
+    justifyContent: 'flex-end',
+    // backgroundColor: 'red',
+    flexDirection: 'row',
+  },
+  rememberMeText: {
+    marginTop: 10,
+    fontSize: 12,
+    marginRight: 30,
+    color: AppColors.blue,
   },
   loginBtn: {
     backgroundColor: AppColors.blue,
@@ -240,9 +266,8 @@ const style = StyleSheet.create({
     marginTop: 150,
   },
   forgotPass: {
-    marginTop: 10,
     fontSize: 12,
-    textAlign: 'right',
+    textAlign: 'center',
     color: AppColors.blue,
   },
   newUser: {

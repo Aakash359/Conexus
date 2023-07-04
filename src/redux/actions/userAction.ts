@@ -4,9 +4,8 @@ import {Dispatch} from 'react';
 import {defaultBaseUrl} from '../../redux/constants';
 import {Alert} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import PushNotificationsService from '../../services/connectycubeServices/pushnotifications-service';
-import PermissionsService from '../../services/connectycubeServices/permissions-service';
-import CallService from '../../services/connectycubeServices/call-service';
+import {setCurrentUser} from '../../redux/actions/currentUser';
+import {store} from '../../redux/store';
 
 export interface UserModel {
   firstName: string;
@@ -40,82 +39,83 @@ export const loginRequest = (data: {
   App: boolean;
 }) => {
   const {username, password} = data;
-  // const newPass = '1234'
+  const newPass = '1234'
   const sessionData = {
-    appId: 7109,
-    authKey: 'gr87NajH9M5VEzy',
-    authSecret: 'fZztP7YQdryQ6rQ',
+    name: "RNVideoChat",
+    displayName: "RNVideoChat",
+    senderID: "147299227261",
+    connectyCubeConfig: [
+    {
+       appId: 7109,
+       authKey: "gr87NajH9M5VEzy",
+       authSecret: "fZztP7YQdryQ6rQ"
+    },
+    {
+      debug: {
+        mode: 1
+      }
+    }
+  ]
   };
   const config = {
     debug: {mode: 1},
   };
-  const createUser = {
-    email: username,
-    password: password,
-  };
+  // const createUser = {
+  //   email: username,
+  //   password: password.concat(newPass)
+  // };
+//   const amit={
+//     color: "#34ad86",
+//     full_name: "Amit",
+//     id: 8852814,
+//     login: "pant123",
+//     password: "Admin@123",
+// }
+  const akash={
+    color: "#34ad86",
+    full_name: "akash",
+    id: 8852928,
+    login: "akash",
+    password: "Admin@123",
+}
   return async (dispatch: Dispatch<UserAction>) => {
-    const storeUser = async (
-      sessionToken: any,
-      createUser: any,
-    ) => {
-      try {
-        const session = JSON.stringify(sessionToken);
-        const profile = JSON.stringify(createUser);
-        console.log("Data===>",session,profile);
-        
-        await AsyncStorage.setItem('session', session);
-        await AsyncStorage.setItem('profile', profile);
-      } catch (e) {
-        console.error('_storeUser error: ', e);
-      }
+    const storeUser = async (akash:any) => {
+      try{
+        const user = JSON.stringify(akash);
+         await AsyncStorage.setItem('@currentUser', user);
+       }
+       catch (e) {
+      console.error("_storeUser error: ", e)
+    }
+       
     };
     try {
+      
       const response = await axios.post<UserModel>(
         `${defaultBaseUrl}/user/login-with-credentials`,
         data,
       );
+       console.log('response', response);
       if (!response) {
         dispatch({
           type: 'ON_ERROR',
           payload: 'Login issue with API',
         });
       } else {
-        await ConnectyCube.init(sessionData, config)
-        await ConnectyCube.createSession(sessionData).then(async (session: any) => {
-            const sessionToken = session.token;
-            console.log('sessionToken', sessionToken);
-            ConnectyCube.users.signup(createUser)
-              .then(async (signInData: any) => {
-                console.log('Profile created successfully !', signInData.user);
-                const userCredentials = {
-                  id: signInData.user.id,
-                  password: password,
-                };
-                PermissionsService.checkAndRequestDrawOverlaysPermission();
-                PushNotificationsService.init();
-                CallService.init();
-                
-                await storeUser(
-                  sessionToken,
-                  createUser,
-                );
-               
-                ConnectyCube.createSession(userCredentials).then((session: any) => {
-                    console.log('login successfully', session);
-                  })
-                  .catch((error: any) => {
-                    console.log('login error', error);
-                  });
-              })
-              .catch((error: any) => {
-                console.log('Error in profile creation', error);
-              });
-          })
-          .catch((error: any) => {
-            console.log('Session error', error);
-          });
-
-        dispatch({
+          await ConnectyCube.createSession(akash).then(async(session:any) => {
+            store.dispatch(setCurrentUser(akash));
+            await ConnectyCube.chat.connect({
+              userId: 8852928,
+              password: "Admin@123",
+            }).catch((error:any) => {
+              console.log('chat error', error);
+            }); 
+            await storeUser(akash) 
+            })
+            .catch((error:any) => {
+              console.log('session error', error);
+            });
+          dispatch({
           type: 'ON_LOGIN',
           payload: response.data,
         });
@@ -131,6 +131,23 @@ export const loginRequest = (data: {
   };
 };
 
+ export const getStoredUser= async()=> {
+    try {
+      const jsonValue = await AsyncStorage.getItem('@currentUser')
+      return jsonValue != null ? JSON.parse(jsonValue) : null;
+    } catch(e) {
+      console.error("_getStoredUser error: ", e)
+    }
+  }
+
+ export const removeStoredUser=async()=> {
+    try {
+      await AsyncStorage.removeItem('@currentUser')
+    } catch (e) {
+      console.error("_removeStoredUser error: ", e)
+    }
+  }
+
 export const logoutRequest = (data: {authToken: string}) => {
   return async (dispatch: Dispatch<UserAction>) => {
     dispatch({
@@ -139,3 +156,7 @@ export const logoutRequest = (data: {authToken: string}) => {
     });
   };
 };
+
+
+
+

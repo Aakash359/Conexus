@@ -1,6 +1,7 @@
 import ConnectyCube from 'react-native-connectycube';
 import InCallManager from 'react-native-incall-manager';
 import Sound from 'react-native-sound';
+import {Dispatch} from 'react';
 import {getApplicationName} from 'react-native-device-info';
 import RNCallKeep, {CONSTANTS as CK_CONSTANTS} from 'react-native-callkeep';
 import userDefaults from 'react-native-user-defaults';
@@ -10,8 +11,9 @@ import {
   getUserById,
   getCallRecipientString,
 } from '../../common/utils';
-import store from '../../redux/store';
+import {store} from '../../redux/store';
 import {
+
   addOrUpdateStreams,
   removeStream,
   resetActiveCall,
@@ -23,7 +25,9 @@ import {
 
 const LOCAL_STREAM_USER_ID = 'localStream';
 
+
 class CallService {
+  
   static MEDIA_OPTIONS = {audio: true, video: {facingMode: 'user'}};
 
   mediaDevices = [];
@@ -78,7 +82,7 @@ class CallService {
     };
 
     RNCallKeep.setup(options)
-      .then(accepted => {
+      .then(_accepted => {
         console.log('[CallKitService][setup] Ok');
       })
       .catch(err => {
@@ -124,13 +128,21 @@ class CallService {
   // Call API
   //
 
-  async startCall(usersIds, callType, options = {}) {
+  async startCall( usersIds, callType, options = {}) {
+    
+    try{
     const session = ConnectyCube.videochat.createNewSession(
-      usersIds,
+     [8852814],
       callType,
       options,
     );
-    store.dispatch(setCallSession(session));
+   
+      console.log("Session==>",session);
+     store.dispatch(setCallSession(session));
+    } 
+    catch (err) {
+      console.log("Error",err);
+    }
 
     await this.setMediaDevices();
 
@@ -243,7 +255,7 @@ class CallService {
             platform: Platform.OS,
             recipientId: this.callSession.initiatorID,
           })
-          .then(res => {
+          .then(_res => {
             console.log(
               '[CallKitService][rejectCall] [callRejectRequest] done',
             );
@@ -417,9 +429,8 @@ class CallService {
   // Call callbacks
   //
 
-  _onCallListener(session, extension) {
+  _onCallListener(session, _extension) {
     // if already on a call
-
     if (this.callSession && !this.isDummySession) {
       console.log('[CallService][_onCallListener] reject, already_on_call');
       this.rejectCall(session, {already_on_call: true});
@@ -442,7 +453,7 @@ class CallService {
     store.dispatch(setCallSession(session, true));
   }
 
-  async _onAcceptCallListener(session, userId, extension) {
+  async _onAcceptCallListener(_session, userId, _extension) {
     console.log('_onAcceptCallListener', userId);
 
     if (this.callSession) {
@@ -452,7 +463,7 @@ class CallService {
     showToast(`${getUserById(userId, 'full_name')} has accepted the call`);
   }
 
-  async _onRejectCallListener(session, userId, extension) {
+  async _onRejectCallListener(_session, userId, extension) {
     store.dispatch(removeStream({userId}));
 
     const userName = getUserById(userId, 'full_name');
@@ -463,7 +474,7 @@ class CallService {
     showToast(message);
   }
 
-  async _onStopCallListener(session, userId, extension) {
+  async _onStopCallListener(session, userId, _extension) {
     this.stopSounds();
 
     const userName = getUserById(userId, 'full_name');
@@ -484,13 +495,13 @@ class CallService {
     }
   }
 
-  async _onUserNotAnswerListener(session, userId) {
+  async _onUserNotAnswerListener(_session, userId) {
     showToast(`${getUserById(userId, 'full_name')} did not answer`);
 
     store.dispatch(removeStream({userId}));
   }
 
-  async _onRemoteStreamListener(session, userId, stream) {
+  async _onRemoteStreamListener(_session, userId, stream) {
     store.dispatch(addOrUpdateStreams([{userId, stream}]));
   }
 
@@ -544,7 +555,7 @@ class CallService {
               platform: Platform.OS,
               recipientId: initiatorId,
             })
-            .then(res => {
+            .then(_res => {
               console.log(
                 '[CallKitService][onEndCallAction] [callRejectRequest] done',
               );

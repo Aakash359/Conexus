@@ -19,20 +19,28 @@ import {store} from '../../../redux/store';
 import {setCurrentUser} from '../../../redux/actions/currentUser';
 
 export default function Callpage({route, navigation}) {
-  // const opponents = route.params.userId;
-  const [selectedOpponents, setSelectedOpponents] = useState([]);
 
+  const opponents = [{
+    color: "#34ad86",
+    full_name: "Amit",
+    id: 8852814,
+    login: "pant123",
+    password: "Admin@123",
+  }]
+  const [selectedOpponents, setSelectedOpponents] = useState([]);
   const callSession = useSelector(store => store.activeCall.session);
+  console.log("Callsession===>",callSession);
   const isIcoming = useSelector(store => store.activeCall.isIcoming);
   const isEarlyAccepted = useSelector(
     store => store.activeCall.isEarlyAccepted,
   );
   const currentUser = useSelector(store => store.currentUser);
+
   useEffect(() => {
     if (isIcoming && !isEarlyAccepted) {
       const isAlreadyOnIncomingCallScreen = isCurrentRoute(
         navigation,
-        'IncomingCallScreen',
+        'IncomingCall',
       );
       const isAlreadyOnVideoScreenScreen = isCurrentRoute(
         navigation,
@@ -43,13 +51,13 @@ export default function Callpage({route, navigation}) {
         navigation.push('IncomingCallScreen', {});
       }
     }
-  }, [callSession, isIcoming, isEarlyAccepted]);
+  }, );
 
-  // useEffect(() => {
-  //   if (isEarlyAccepted) {
-  //     navigation.push('VideoScreen', {});
-  //   }
-  // }, [isEarlyAccepted]);
+  useEffect(() => {
+    if (isEarlyAccepted) {
+      navigation.push('VideoScreen', {});
+    }
+  }, [isEarlyAccepted]);
 
   const selectUser = opponent => {
     setSelectedOpponents([...selectedOpponents, opponent]);
@@ -59,14 +67,14 @@ export default function Callpage({route, navigation}) {
     setSelectedOpponents(selectedOpponents.filter(op => op.id !== opponent.id));
   };
 
-  const logout = async () => {
-    await AuthService.logout();
-    PushNotificationsService.deleteSubscription();
+  // const logout = async () => {
+  //   await AuthService.logout();
+  //   PushNotificationsService.deleteSubscription();
 
-    store.dispatch(setCurrentUser(null));
+  //   store.dispatch(setCurrentUser(null));
 
-    navigation.popToTop();
-  };
+  //   navigation.popToTop();
+  // };
 
   const startAudioCall = async () => {
     await startCall(ConnectyCube.videochat.CallType.AUDIO);
@@ -77,21 +85,21 @@ export default function Callpage({route, navigation}) {
   };
 
   const startCall = async callType => {
+    
     if (selectedOpponents.length === 0) {
       showToast('Please select at least one user');
       return;
     }
 
     const selectedOpponentsIds = selectedOpponents.map(op => op.id);
-
    ConnectyCube.videochat.CallType.AUDIO;
 
     // 1. initiate a call
-    //
     const callSession = await CallService.startCall(
       selectedOpponentsIds,
       callType,
     );
+    console.log("Session===>",callSession);
 
     // 2. send push notitification to opponents
     
@@ -118,8 +126,9 @@ export default function Callpage({route, navigation}) {
       <StatusBar backgroundColor="black" barStyle="light-content" />
       <View style={styles.container}>
         <Text style={styles.title}>Select users to start a call</Text>
-        {/* {opponents.map(opponent => {
+        {opponents.map(opponent => {
           const id = opponent.id;
+        
           const user = getUserById(id);
           const selected = selectedOpponents.some(
             opponent => id === opponent.id,
@@ -132,13 +141,13 @@ export default function Callpage({route, navigation}) {
           return (
             <TouchableOpacity
               key={id}
-              style={styles.userLabel(user.color)}
+              // style={styles.userLabel(user.color)}
               onPress={() => onPress(opponent)}>
               <Text style={styles.userName}>{user.full_name}</Text>
               <MaterialIcon name={type} size={20} color="white" />
             </TouchableOpacity>
           );
-        })} */}
+        })}
         <View style={styles.startCallButtonsContainer}>
           <TouchableOpacity
             style={[styles.buttonStartCall]}

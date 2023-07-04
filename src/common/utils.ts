@@ -1,15 +1,24 @@
-import {users} from './../components/config.user';
+import {users} from '../containers/Facility/HcpDetail/config-users'
 import {Platform, ToastAndroid} from 'react-native';
 import Toast from 'react-native-toast-message';
 
-export function getUserById(userId, key) {
+export function getUserById(userId:any, key:any) {
+
+  const users = [{
+    color: "#34ad86",
+    full_name: "Amit",
+    id: 8852814,
+    login: "pant123",
+    password: "Admin@123",
+  }]
   const user = users.find(user => user.id == userId);
+            
 
   if (typeof key === 'string') {
     return user[key];
   }
 
-  return user;
+  return user
 }
 
 export function getCallRecipientString(usersIds) {

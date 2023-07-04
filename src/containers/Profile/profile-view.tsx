@@ -1,16 +1,17 @@
-import React, {useState, useEffect} from 'react';
-import {Text, StyleSheet, Image, View, Alert, ToastAndroid} from 'react-native';
-import {useDispatch} from 'react-redux';
-import {windowDimensions} from '../../common';
-import {useNavigation} from '@react-navigation/native';
+import React, { useState, useEffect } from 'react';
+import { Text, StyleSheet, Image, View, Alert, ToastAndroid } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { windowDimensions } from '../../common';
+import { useNavigation } from '@react-navigation/native';
 import Styles from '../../theme/styles';
 import NavigationService from '../../navigation/NavigationService';
-import variable, {AppColors} from '../../theme';
-import {ActionButton} from '../../components/action-button';
+import variable, { AppColors } from '../../theme';
+import { ActionButton } from '../../components/action-button';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {logoutRequest} from '../../redux/actions/userAction';
+import { logoutRequest } from '../../redux/actions/userAction';
 import theme from '../../theme';
-import {getProfileService} from '../../services/ApiServices';
+import { getProfileService } from '../../services/ApiServices';
+import { removeStoredUser } from '../../redux/actions/userAction';
 import ConnectyCube from 'react-native-connectycube';
 
 interface ProfileState {
@@ -34,7 +35,7 @@ const Profile: React.FC<ProfileState> = () => {
 
   const getProfile = async () => {
     try {
-      const {data} = await getProfileService();
+      const { data } = await getProfileService();
       setProfileData(data);
     } catch (error) {
       console.log('Error', error);
@@ -52,29 +53,9 @@ const Profile: React.FC<ProfileState> = () => {
 
   const onPressLogout = async () => {
     setLoading(true);
-     const session = await AsyncStorage.getItem('session');
-     const profile = await AsyncStorage.getItem('profile');
-    // console.log('Ok====>', session,JSON.parse(profile));
-
-    // ConnectyCube.destroySession(session)
-    //   .then((session: any) => {
-    //     console.log('session destroyed', session);
-    //   })
-    //   .catch((error: any) => {
-    //     console.log('login error', error);
-    //   });
-    // ConnectyCube.users.delete(JSON.parse(profile))
-    //   .then((result: any) => {
-    //     console.log('user deleted', result);
-    //   })
-    //   .catch((error: any) => {
-    //     console.log('error', error);
-    //   });
-  //     ConnectyCube.users.delete()
-  // .then((result:any) => {console.log('user deleted', result);})
-  // .catch((error:any) => {console.log('error', error);});
-
-  
+    ConnectyCube.chat.disconnect();
+    await ConnectyCube.destroySession();
+    await removeStoredUser();
     await AsyncStorage.removeItem('authToken');
     const payload = {
       authToken: '',
@@ -86,7 +67,7 @@ const Profile: React.FC<ProfileState> = () => {
     }, 1500);
   };
 
-  const openEditProfile = (profileData: {error: any; user: any}) => {
+  const openEditProfile = (profileData: { error: any; user: any }) => {
     NavigationService.navigate('EditProfile', profileData);
   };
 
@@ -111,7 +92,7 @@ const Profile: React.FC<ProfileState> = () => {
           <ActionButton
             title="EDIT"
             customStyle={style.editEnable}
-            customTitleStyle={{color: AppColors.blue, fontSize: 15}}
+            customTitleStyle={{ color: AppColors.blue, fontSize: 15 }}
             onPress={() => openEditProfile(profileData)}
           />
         </View>

@@ -5,7 +5,7 @@ import invokeApp from 'react-native-invoke-app';
 
 import PermissionsService from './permissions-service';
 import {setCallSession} from '../../redux/actions/activeCall';
-import store from '../../redux/store';
+import {store} from '../../redux/store';
 
 class PushNotificationsService {
   constructor() {
@@ -192,6 +192,7 @@ class PushNotificationsService {
   }
 
   subscribeToPushNotifications(deviceToken) {
+    console.log("Jaa rha hai yanha pe");
     const params = {
       notification_channel: Platform.OS === 'ios' ? 'apns' : 'gcm',
       device: {

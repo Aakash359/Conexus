@@ -6,6 +6,7 @@ install! 'cocoapods', :deterministic_uuids => false
 
 target 'Conexus' do
   config = use_native_modules!
+  pod 'react-native-webrtc', :path => '../node_modules/react-native-webrtc'
 
   # Changes By Aakash
   #  react-native-permissions permission handlers

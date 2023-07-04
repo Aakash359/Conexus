@@ -19,7 +19,7 @@ PODS:
     - AppCenter/Core (= 4.4.3)
   - Base64 (1.1.2)
   - boost (1.76.0)
-  - BVLinearGradient (2.6.2):
+  - BVLinearGradient (2.7.3):
     - React-Core
   - CocoaAsyncSocket (7.6.5)
   - CodePush (7.1.0):
@@ -114,15 +114,15 @@ PODS:
   - OneSignalXCFramework/OneSignalOutcomes (3.12.4):
     - OneSignalXCFramework/OneSignalCore
   - OpenSSL-Universal (1.1.1100)
-  - Permission-Camera (3.8.0):
+  - Permission-Camera (3.8.1):
     - RNPermissions
-  - Permission-Microphone (3.8.0):
+  - Permission-Microphone (3.8.1):
     - RNPermissions
-  - Permission-Notifications (3.8.0):
+  - Permission-Notifications (3.8.1):
     - RNPermissions
-  - Permission-PhotoLibrary (3.8.0):
+  - Permission-PhotoLibrary (3.8.1):
     - RNPermissions
-  - Permission-Reminders (3.8.0):
+  - Permission-Reminders (3.8.1):
     - RNPermissions
   - RCT-Folly (2021.06.28.00-v2):
     - boost
@@ -341,7 +341,7 @@ PODS:
     - React-Core
   - react-native-keep-awake (4.0.0):
     - React
-  - react-native-netinfo (9.3.10):
+  - react-native-netinfo (9.3.11):
     - React-Core
   - react-native-notifications (4.3.5):
     - React-Core
@@ -350,7 +350,7 @@ PODS:
     - React (< 1.0.0, >= 0.13.0)
   - react-native-pager-view (6.2.0):
     - React-Core
-  - react-native-safe-area-context (4.5.3):
+  - react-native-safe-area-context (4.6.3):
     - RCT-Folly
     - RCTRequired
     - RCTTypeSafety
@@ -436,9 +436,9 @@ PODS:
     - React-perflogger (= 0.69.1)
   - ReactNativeIncallManager (4.0.1):
     - React-Core
-  - RNCallKeep (4.3.8):
+  - RNCallKeep (4.3.9):
     - React
-  - RNCAsyncStorage (1.18.1):
+  - RNCAsyncStorage (1.18.2):
     - React-Core
   - RNCMaskedView (0.1.11):
     - React
@@ -450,12 +450,12 @@ PODS:
     - React-Core
   - RNGestureHandler (1.10.3):
     - React-Core
-  - RNNotifee (7.7.1):
+  - RNNotifee (7.8.0):
     - React-Core
-    - RNNotifee/NotifeeCore (= 7.7.1)
-  - RNNotifee/NotifeeCore (7.7.1):
+    - RNNotifee/NotifeeCore (= 7.8.0)
+  - RNNotifee/NotifeeCore (7.8.0):
     - React-Core
-  - RNPermissions (3.8.0):
+  - RNPermissions (3.8.1):
     - React-Core
   - RNReanimated (2.17.0):
     - DoubleConversion
@@ -484,7 +484,7 @@ PODS:
     - React-RCTText
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNScreens (3.20.0):
+  - RNScreens (3.22.0):
     - React-Core
     - React-RCTImage
   - RNSound (0.11.2):
@@ -773,7 +773,7 @@ SPEC CHECKSUMS:
   AppCenterReactNativeShared: f395caeabde0dc3a11609dbcb737d0f14cd40e79
   Base64: cecfb41a004124895a7bcee567a89bae5a89d49b
   boost: a7c83b31436843459a1961bfd74b96033dc77234
-  BVLinearGradient: 34a999fda29036898a09c6a6b728b0b4189e1a44
+  BVLinearGradient: fbe308a1d19a8133f69e033abc85d8008644f5e3
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   CodePush: dce1b253fde81078249ea9cd4b948e4ac7b761a9
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
@@ -795,11 +795,11 @@ SPEC CHECKSUMS:
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   OneSignalXCFramework: 087934ab0d4d7445fcf1c015c7c782359e26c020
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
-  Permission-Camera: e6d142d7d8b714afe0a83e5e6ae17eb949f1e3e9
-  Permission-Microphone: 644b1de8bcc2afcaf934e09a22bee507a95796a7
-  Permission-Notifications: aa91ec29236626ff59cb60e08389c0a59a9d32c5
-  Permission-PhotoLibrary: 31787bbe77d0d3ae6a5267b8435e4a2e9ef78f1d
-  Permission-Reminders: be7699ff02c2ef670647204c0f759258cdfad07c
+  Permission-Camera: 7e6f6b84c8f08d81e012f9f122b6541633308e2c
+  Permission-Microphone: d1d510e0e98232caf31c7a7b7ce218d13f2515e2
+  Permission-Notifications: 3f51a1f7fdee600c6aeb5ffeafbdb7614f0d13ee
+  Permission-PhotoLibrary: 3e76aece6fb9bc2736e4c7bf1f455b1e1124fcbb
+  Permission-Reminders: ba161a9c9b0dcab3ac08d64789b57e2912341f93
   RCT-Folly: b9d9fe1fc70114b751c076104e52f3b1b5e5a95a
   RCTRequired: ae07282b2ec9c90d7eb98251603bc3f82403d239
   RCTSystemSetting: 5107b7350d63b3f7b42a1277d07e4e5d9df879be
@@ -818,11 +818,11 @@ SPEC CHECKSUMS:
   React-logger: ca970551cb7eea2fd814d0d5f6fc1a471eb53b76
   react-native-image-picker: 60f4246eb5bb7187fc15638a8c1f13abd3820695
   react-native-keep-awake: afad8a51dfef9fe9655a6344771be32c8596d774
-  react-native-netinfo: ccbe1085dffd16592791d550189772e13bf479e2
+  react-native-netinfo: 3a48f51c18dbd9253440621955e11de71bc51b32
   react-native-notifications: 504143d59f9628c3b0c22fd0ccf34b65b9182d01
   react-native-onesignal: 7bd44dbd031d8d57110c0203836ffc37ddead526
   react-native-pager-view: 0ccb8bf60e2ebd38b1f3669fa3650ecce81db2df
-  react-native-safe-area-context: b8979f5eda6ed5903d4dbc885be3846ea3daa753
+  react-native-safe-area-context: 36cc67648134e89465663b8172336a19eeda493d
   react-native-slider: 33b8d190b59d4f67a541061bb91775d53d617d9d
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
   react-native-video: c26780b224543c62d5e1b2a7244a5cd1b50e8253
@@ -840,17 +840,17 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: 27f468c5576eaf05ffb7a907528e44c75a3fcbae
   ReactCommon: e30ec17dfb1d4c4f3419eac254350d6abca6d5a2
   ReactNativeIncallManager: 0d2cf9f4d50359728a30c08549762fe67a2efb81
-  RNCallKeep: bf4040e9e5785469cd581d95c386fd2ca7e0507f
-  RNCAsyncStorage: b90b71f45b8b97be43bc4284e71a6af48ac9f547
+  RNCallKeep: 7c86d916fbc6b2184a5cf47967a240928994547e
+  RNCAsyncStorage: ddc4ee162bfd41b0d2c68bf2d95acd81dd7f1f93
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNCPushNotificationIOS: 64218f3c776c03d7408284a819b2abfda1834bc8
   RNDateTimePicker: 65e1d202799460b286ff5e741d8baf54695e8abd
   RNDeviceInfo: 1e3f62b9ec32f7754fac60bd06b8f8a27124e7f0
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
-  RNNotifee: 05692d7bb42b6c718a3906aeb8431c48ff2e8097
-  RNPermissions: 215c54462104b3925b412b0fb3c9c497b21c358b
+  RNNotifee: f3c01b391dd8e98e67f539f9a35a9cbcd3bae744
+  RNPermissions: b471c990fd2bc1c5550af807d9f4e0313ee0b081
   RNReanimated: c6f8f70e96dd6ca21b65aef9b3e4efe4965db905
-  RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f
+  RNScreens: 68fd1060f57dd1023880bf4c05d74784b5392789
   RNSound: 6c156f925295bdc83e8e422e7d8b38d33bc71852
   RNSVG: d7d7bc8229af3842c9cfc3a723c815a52cdd1105
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
@@ -859,6 +859,6 @@ SPEC CHECKSUMS:
   Yoga: 7ab6e3ee4ce47d7b789d1cb520163833e515f452
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: e5cbe057a2b87280d9dc69c9807815c11619faab
+PODFILE CHECKSUM: d37c8dab6c9332ef01e16ba5a062d3a33ddf1b85
 
 COCOAPODS: 1.12.1
