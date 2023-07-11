@@ -30,7 +30,7 @@ import {
   loadTextMessageService,
   sendTextMessageService,
 } from '../../services/ApiServices';
-import { users } from '../../containers/Facility/HcpDetail/config-users';
+import {users} from '../../containers/facility/HcpDetail/config-users';
 import { useNavigation } from '@react-navigation/native';
 
 let moment = require('moment');

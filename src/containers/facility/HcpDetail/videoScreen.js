@@ -2,12 +2,11 @@ import React, { useEffect } from 'react';
 import { SafeAreaView, StatusBar } from 'react-native';
 import { useSelector } from 'react-redux'
 import ConnectyCube from 'react-native-connectycube';
-
-import VideoGrid from '../generic/video-grid';
-import CallService from '../../services/call-service';
-import VideoToolBar from '../generic/video-toolbar';
-import Loader from '../generic/loader';
-import { showToast } from '../../utils'
+import VideoGrid from '../../../components/generics/videoGrid';
+import CallService from '../../../services/connectycubeServices/call-service';
+import VideoToolBar from '../../../components/generics/videoToolbar';
+import Loader from '../../../components/generics/loader';
+import { showToast } from '../../../common/utils';
 
 
 export default function VideoScreen ({ navigation }) {
