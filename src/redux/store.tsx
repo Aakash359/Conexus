@@ -15,11 +15,12 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 const middlewares = [];
 const enhancers = [];
 
-middlewares.push(logger);
+// middlewares.push(logger);
 
 const store = createStore(
   persistedReducer,
-  applyMiddleware(...middlewares, thunk),
+  // applyMiddleware(...middlewares, thunk),
+  applyMiddleware(thunk),
 );
 
 

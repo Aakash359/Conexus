@@ -21,8 +21,8 @@ import theme, { AppFonts, AppColors } from '../../../theme';
 import { useDispatch } from 'react-redux';
 import { loginRequest } from '../../../redux/actions/userAction';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import PushNotificationsService from '../../../services/connectycubeServices/pushnotifications-service';
-import CallService from '../../../services/connectycubeServices/call-service';
+// import PushNotificationsService from '../../../services/connectycubeServices/pushnotifications-service';
+// import CallService from '../../../services/connectycubeServices/call-service';
 import PermissionsService from '../../../services/connectycubeServices/permissions-service';
 import { getStoredUser } from '../../../redux/actions/userAction';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -109,8 +109,8 @@ const LoginScreen = () => {
           password: inputs.password,
           App: true,
         };
-        CallService.init();
-        PushNotificationsService.init();
+        // CallService.init();
+        // PushNotificationsService.init();
         setLoading(true);
         setTimeout(() => {
           setLoading(false);

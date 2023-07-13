@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import ConnectyCube from 'react-native-connectycube';
 import {
   StyleSheet,
@@ -13,12 +13,12 @@ import {
 } from 'react-native';
 import Toast from 'react-native-toast-message';
 import variables from '../../../theme';
-import { Field } from '../../../components/field';
-import { windowDimensions } from '../../../common';
-import { AppColors } from '../../../theme';
+import {Field} from '../../../components/field';
+import {windowDimensions} from '../../../common';
+import {AppColors} from '../../../theme';
 import NavigationService from '../../../navigation/NavigationService';
-import { ActionButton } from '../../../components/action-button';
-import { signUp } from '../../../services/ApiServices';
+import {ActionButton} from '../../../components/action-button';
+import {signUp} from '../../../services/ApiServices';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SafeAreaView = require('react-native').SafeAreaView;
@@ -100,20 +100,16 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
         authSecret: 'fZztP7YQdryQ6rQ',
       };
       const config = {
-        debug: { mode: 1 },
+        debug: {mode: 1},
       };
       const createUser = {
         email: eMail,
         password: 'travel',
       };
 
-
       try {
         setLoading(true);
-        const storeUser = async (
-          sessionToken: any,
-          createUser: any,
-        ) => {
+        const storeUser = async (sessionToken: any, createUser: any) => {
           try {
             const session = JSON.stringify(sessionToken);
             const profile = JSON.stringify(createUser);
@@ -124,13 +120,14 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
             console.error('_storeUser error: ', e);
           }
         };
-        ConnectyCube.createSession(sessionData).then((result: any) => {
-          console.log("ok", JSON.stringify(result))
-          ConnectyCube.users.signup(createUser)
+        ConnectyCube.createSession().then((result: any) => {
+          console.log('ok', JSON.stringify(result));
+          ConnectyCube.users
+            .signup(createUser)
             .then(async (signInData: any) => {
               console.log('Profile created successfully !', signInData.user.id);
-              const callingUserId = signInData.user.id
-              const { data } = await signUp(payload, callingUserId);
+              const callingUserId = signInData.user.id;
+              const {data} = await signUp(payload, callingUserId);
               if (data.Success) {
                 setLoading(false);
                 NavigationService.goBack();
@@ -156,14 +153,11 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
                   autoHide: true,
                 });
               }
-              await storeUser(
-                sessionToken,
-                createUser,
-              ).catch((error: any) => {
+              await storeUser(sessionToken, createUser).catch((error: any) => {
                 console.log('login error', error);
               });
-            })
-        })
+            });
+        });
       } catch (e) {
         setLoading(false);
         console.log('Error', error);
@@ -181,7 +175,7 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
   };
 
   return (
-    <SafeAreaView style={[{ flex: 1, backgroundColor: AppColors.white }]}>
+    <SafeAreaView style={[{flex: 1, backgroundColor: AppColors.white}]}>
       <ScrollView keyboardShouldPersistTaps="handled">
         <KeyboardAvoidingView behavior="position" style={style.rootContainer}>
           <View style={style.content}>
@@ -266,25 +260,25 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
               loading={loading}
               disabled={
                 firstName &&
-                  lastName &&
-                  company &&
-                  title &&
-                  eMail &&
-                  phoneNumber &&
-                  howHeard
+                lastName &&
+                company &&
+                title &&
+                eMail &&
+                phoneNumber &&
+                howHeard
                   ? loading
                   : 'false'
               }
               onPress={submitAccount}
-              customTitleStyle={{ color: AppColors.white, fontSize: 18 }}
+              customTitleStyle={{color: AppColors.white, fontSize: 18}}
               customStyle={
                 firstName &&
-                  lastName &&
-                  company &&
-                  title &&
-                  eMail &&
-                  phoneNumber &&
-                  howHeard
+                lastName &&
+                company &&
+                title &&
+                eMail &&
+                phoneNumber &&
+                howHeard
                   ? style.submitEnable
                   : style.submitDisable
               }
