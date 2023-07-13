@@ -6,6 +6,8 @@ import {Alert} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {setCurrentUser} from '../../redux/actions/currentUser';
 import {store} from '../../redux/store';
+import PushNotificationsService from '../../services/connectycubeServices/pushnotifications-service';
+import CallService from '../../services/connectycubeServices/call-service';
 
 export interface UserModel {
   firstName: string;
@@ -39,23 +41,23 @@ export const loginRequest = (data: {
   App: boolean;
 }) => {
   const {username, password} = data;
-  const newPass = '1234'
+  const newPass = '1234';
   const sessionData = {
-    name: "RNVideoChat",
-    displayName: "RNVideoChat",
-    senderID: "147299227261",
+    name: 'RNVideoChat',
+    displayName: 'RNVideoChat',
+    senderID: '147299227261',
     connectyCubeConfig: [
-    {
-       appId: 7109,
-       authKey: "gr87NajH9M5VEzy",
-       authSecret: "fZztP7YQdryQ6rQ"
-    },
-    {
-      debug: {
-        mode: 1
-      }
-    }
-  ]
+      {
+        appId: 7109,
+        authKey: 'gr87NajH9M5VEzy',
+        authSecret: 'fZztP7YQdryQ6rQ',
+      },
+      {
+        debug: {
+          mode: 1,
+        },
+      },
+    ],
   };
   const config = {
     debug: {mode: 1},
@@ -64,58 +66,65 @@ export const loginRequest = (data: {
   //   email: username,
   //   password: password.concat(newPass)
   // };
-  const amit={
-    color: "#34ad86",
-    full_name: "Amit",
+  const amitUser = {
+    color: '#34ad86',
+    full_name: 'Amit',
     id: 8852814,
-    login: "pant123",
-    password: "Admin@123",
-}
-//   const akash={
-//     color: "#34ad86",
-//     full_name: "akash",
-//     id: 8852928,
-//     login: "akash",
-//     password: "Admin@123",
-// }
+    login: 'pant123',
+    password: 'Admin@123',
+  };
+  const akashUser = {
+    color: '#34ad86',
+    full_name: 'akash',
+    id: 8852928,
+    login: 'akash',
+    password: 'Admin@123',
+  };
+  const akash =
+    username === 'appletester@conexussolutions.com' ? akashUser : amitUser;
   return async (dispatch: Dispatch<UserAction>) => {
-    const storeUser = async (amit:any) => {
-      try{
-        const user = JSON.stringify(amit);
-         await AsyncStorage.setItem('@currentUser', user);
-       }
-       catch (e) {
-      console.error("_storeUser error: ", e)
-    }
-       
+    const storeUser = async (akash: any) => {
+      try {
+        const user = JSON.stringify(akash);
+        await AsyncStorage.setItem('@currentUser', user);
+      } catch (e) {
+        console.error('_storeUser error: ', e);
+      }
     };
     try {
-      
       const response = await axios.post<UserModel>(
         `${defaultBaseUrl}/user/login-with-credentials`,
         data,
       );
-       console.log('response', response);
+      console.log('response', response);
       if (!response) {
         dispatch({
           type: 'ON_ERROR',
           payload: 'Login issue with API',
         });
       } else {
-          await ConnectyCube.createSession(amit).then(async(session:any) => {
-            store.dispatch(setCurrentUser(amit));
-            await ConnectyCube.chat.connect({
-              userId:  8852814,
-              password: "Admin@123",
-            }).catch((error:any) => {
-              console.log('chat error', error);
-            }); 
-            await storeUser(amit) 
-            })
-            .catch((error:any) => {
-              console.log('session error', error);
-            });
-          dispatch({
+        await ConnectyCube.createSession(akash)
+          .then(async () => {
+            CallService.init();
+            PushNotificationsService.init();
+            store.dispatch(setCurrentUser(akash));
+            // await ConnectyCube.chat
+            //   .connect({
+            //     userId: session.user_id,
+            //     password: 'Admin@123',
+            //   })
+            //   .then(() => {
+            //     console.log('Connected Success');
+            //   })
+            //   .catch((error: any) => {
+            //     console.log('chat error', error);
+            //   });
+            await storeUser(akash);
+          })
+          .catch((error: any) => {
+            console.log('session error', error);
+          });
+        dispatch({
           type: 'ON_LOGIN',
           payload: response.data,
         });
@@ -125,28 +134,28 @@ export const loginRequest = (data: {
         type: 'ON_ERROR',
         payload: error,
       });
-     console.log("Error===>",error?.response?.data?.description)
-     Alert.alert('Error', error?.response?.data?.description);
+      console.log('Error===>', error?.response?.data?.description);
+      Alert.alert('Error', error?.response?.data?.description);
     }
   };
 };
 
- export const getStoredUser= async()=> {
-    try {
-      const jsonValue = await AsyncStorage.getItem('@currentUser')
-      return jsonValue != null ? JSON.parse(jsonValue) : null;
-    } catch(e) {
-      console.error("_getStoredUser error: ", e)
-    }
+export const getStoredUser = async () => {
+  try {
+    const jsonValue = await AsyncStorage.getItem('@currentUser');
+    return jsonValue != null ? JSON.parse(jsonValue) : null;
+  } catch (e) {
+    console.error('_getStoredUser error: ', e);
   }
+};
 
- export const removeStoredUser=async()=> {
-    try {
-      await AsyncStorage.removeItem('@currentUser')
-    } catch (e) {
-      console.error("_removeStoredUser error: ", e)
-    }
+export const removeStoredUser = async () => {
+  try {
+    await AsyncStorage.removeItem('@currentUser');
+  } catch (e) {
+    console.error('_removeStoredUser error: ', e);
   }
+};
 
 export const logoutRequest = (data: {authToken: string}) => {
   return async (dispatch: Dispatch<UserAction>) => {
@@ -156,7 +165,3 @@ export const logoutRequest = (data: {authToken: string}) => {
     });
   };
 };
-
-
-
-

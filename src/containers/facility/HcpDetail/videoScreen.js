@@ -10,6 +10,7 @@ import Loader from '../../../components/generics/loader';
 
 export default function VideoScreen ({ navigation }) {
   const streams = useSelector(store => store.activeCall.streams);
+  console.log("Line number 14 ===============================================>");
   const callSession = useSelector(store => store.activeCall.session);
   const isEarlyAccepted = useSelector(store => store.activeCall.isEarlyAccepted);
 

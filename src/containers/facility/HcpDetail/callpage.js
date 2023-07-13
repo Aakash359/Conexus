@@ -25,6 +25,7 @@ export default function Callpage({route, navigation}) {
     password: "Admin@123",
   }]
   const [selectedOpponents, setSelectedOpponents] = useState([]);
+  console.log("Line number 31 ===============================================>");
   const callSession = useSelector(store => store.activeCall.session);
  
   const isIcoming = useSelector(store => store.activeCall.isIcoming);
@@ -85,14 +86,13 @@ export default function Callpage({route, navigation}) {
   };
 
   const startCall = async callType => {
-    
     if (selectedOpponents.length === 0) {
       showToast('Please select at least one user');
       return;
     }
 
     const selectedOpponentsIds = selectedOpponents.map(op => op.id);
-   ConnectyCube.videochat.CallType.AUDIO;
+    ConnectyCube.videochat.CallType.AUDIO;
 
     // 1. initiate a call
     const callSession = await CallService.startCall(

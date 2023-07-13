@@ -13,7 +13,6 @@ import {
 } from '../../common/utils';
 import {store} from '../../redux/store';
 import {
-
   addOrUpdateStreams,
   removeStream,
   resetActiveCall,
@@ -25,9 +24,7 @@ import {
 
 const LOCAL_STREAM_USER_ID = 'localStream';
 
-
 class CallService {
-  
   static MEDIA_OPTIONS = {audio: true, video: {facingMode: 'user'}};
 
   mediaDevices = [];
@@ -102,7 +99,8 @@ class CallService {
   }
 
   get callSession() {
-    return store.getState().activeCall.session;
+    const sess = store.getState().activeCall.session;
+    return sess;
   }
 
   get streams() {
@@ -128,20 +126,30 @@ class CallService {
   // Call API
   //
 
-  async startCall( usersIds, callType, options = {}) {
-    
-    try{
-    const session = ConnectyCube.videochat.createNewSession(
-     [8852814],
-      callType,
-      options,
-    );
-   
-      console.log("Session==>",session);
-     store.dispatch(setCallSession(session));
-    } 
-    catch (err) {
-      console.log("Error",err);
+  async startCall(usersIds, callType, options = {}) {
+    console.log('131:- ', usersIds);
+    try {
+      await ConnectyCube.chat
+        .connect({
+          userId: 8852928,
+          password: 'Admin@123',
+        })
+        .then(async () => {
+          console.log('Connected Success');
+          const newSession = await ConnectyCube.videochat.createNewSession(
+            [8852814],
+            callType,
+            options,
+          );
+          console.log('139');
+          console.log('Session==>', newSession);
+          store.dispatch(setCallSession(newSession));
+        })
+        .catch(error => {
+          console.log('chat error', error);
+        });
+    } catch (err) {
+      console.log('144 Error:- ', err);
     }
 
     await this.setMediaDevices();
@@ -165,7 +173,7 @@ class CallService {
     // report to CallKit (iOS only)
     this.reportStartCall(
       this.callSession.ID,
-      this.currentUser.full_name,
+      'akash',//this.currentUser.full_name,
       getCallRecipientString(usersIds),
       'generic',
       callType === 'video',
@@ -176,7 +184,7 @@ class CallService {
     this.setSpeakerphoneOn(
       this.callSession.callType === ConnectyCube.videochat.CallType.VIDEO,
     );
-
+    console.log('186 session:- ', session);
     return session;
   }
 
@@ -434,6 +442,7 @@ class CallService {
     // if already on a call
     if (this.callSession && !this.isDummySession) {
       console.log('[CallService][_onCallListener] reject, already_on_call');
+      console.log('443 session:- ', session);
       this.rejectCall(session, {already_on_call: true});
       return;
     }
@@ -450,7 +459,7 @@ class CallService {
         this.acceptCall();
       });
     }
-
+    console.log('460 session:- ', session);
     store.dispatch(setCallSession(session, true));
   }
 
@@ -489,6 +498,7 @@ class CallService {
 
       // report to CallKit (iOS only)
       //
+      console.log('499 session:- ', session);
       this.reportEndCallWithoutUserInitiating(
         session.ID,
         CK_CONSTANTS.END_CALL_REASONS.REMOTE_ENDED,
