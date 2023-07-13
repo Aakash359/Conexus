@@ -20,7 +20,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import InterviewQuestionDetail from '../containers/InterviewQuestions/interviewQuestionsDetails';
 import AddQuestion from '../containers/InterviewQuestions/AddQuestion';
 import HcpDetailView from '../containers/Facility/HcpDetail/hcpDetailView';
-import Callpage from '../containers/Facility/HcpDetail/callpage';
+import Callpage from '../containers/Facility/HcpDetail/callpage'
 import ImageGalleries from '../containers/Facility/HcpDetail/imageGallery';
 import ConversationContainer from '../containers/MessageCenter/conversation';
 import VideoPlayer from '../containers/VideoPlayer/videoPlayer';
@@ -29,7 +29,7 @@ import VideoCalling from '../containers/VideoCalling/calling';
 import VideoScreen from '../containers/Facility/HcpDetail/videoScreen';
 import { useSelector } from '../redux/reducers/index';
 import NurseHome from '../containers/NurseHome/nurseHome';
-import AnswerRatings from '../containers/Facility/HcpDetail/answerRating';
+import AnswerRatings from '../containers/Facility/HcpDetail/answerRating'
 import NurseInterview from '../containers/NurseHome/interviews/nurse-interview';
 import VideoRecorder from '../containers/VideoRecorder/videoRecoder';
 import IncomingCall from '../containers/incoming-call';

@@ -1,4 +1,4 @@
-import React, {useEffect, useState, createRef} from 'react';
+import React, { useEffect, useState, createRef } from 'react';
 import {
   StyleSheet,
   ScrollView,
@@ -13,23 +13,23 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from 'react-native';
-import {phoneFormatter} from '../../../common/phone-formatter';
-import {windowDimensions} from '../../../common';
+import { phoneFormatter } from '../../../common/phone-formatter';
+import { windowDimensions } from '../../../common';
 import variables from '../../../theme';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Styles from '../../../theme/styles';
-import {AppFonts, AppSizes, AppColors} from '../../../theme';
-import {ConexusIconButton} from '../../../components/conexus-icon-button';
-import {ActionButton} from '../../../components/action-button';
-import {CandidateResponseRow} from './candidate-response-row';
+import { AppFonts, AppSizes, AppColors } from '../../../theme';
+import { ConexusIconButton } from '../../../components/conexus-icon-button';
+import { ActionButton } from '../../../components/action-button';
+import { CandidateResponseRow } from './candidate-response-row';
 import moment from 'moment';
-import {useSelector} from '../../../redux/reducers/index';
+import { useSelector } from '../../../redux/reducers/index';
 import NavigationService from '../../../navigation/NavigationService';
-import {NotInterestedModal} from '../../../components/Modals/NotInterestedModal';
-import {MakeOfferModal} from '../../../components/Modals/MakeOfferModal';
-import {ContactOptionModal} from '../../../components/Modals/ContactOptionModal';
+import { NotInterestedModal } from '../../../components/Modals/NotInterestedModal';
+import { MakeOfferModal } from '../../../components/Modals/MakeOfferModal';
+import { ContactOptionModal } from '../../../components/Modals/ContactOptionModal';
 import ConexusContentList from '../../../components/conexus-content-list';
-import {PhoneCallModal} from '../../../components/Modals/phoneCallModal';
+import { PhoneCallModal } from '../../../components/Modals/phoneCallModal';
 import Tabs from '../../../components/customTab';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -80,16 +80,16 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const submissionId = props?.route?.params?.submissionId;
   const validPhone = phoneFormatter.isValid10DigitPhoneNumber(callbackNumber);
 
-  const {onMessageSendCallback, navigation} = props;
+  const { onMessageSendCallback, navigation } = props;
 
   const responses = (): any => {
     if (!candidate) {
       return [];
     }
     const result: any[] = [];
-    candidate.sections.forEach((section: {questions: any[]}) => {
+    candidate.sections.forEach((section: { questions: any[] }) => {
       section.questions.forEach(
-        (question: {answerVideoUrl: any; answerAudioPath: any}) => {
+        (question: { answerVideoUrl: any; answerAudioPath: any }) => {
           if (question.answerVideoUrl || question.answerAudioPath) {
             result.push(question);
           }
@@ -116,7 +116,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
           new Promise((resolve, reject) => {
             console.log(
               'Pre-loading candidate resume image: ' +
-                candidate.resumePages.originalPdf,
+              candidate.resumePages.originalPdf,
             );
             return imageCacheManager
               .downloadAndCacheUrl(candidate.resumePages.originalPdf)
@@ -136,7 +136,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     setRefreshing(true);
     setLoadingSummary(true);
     try {
-      const {data} = await candidateSubmissionsService(submissionId);
+      const { data } = await candidateSubmissionsService(submissionId);
       setCandidate(data);
       preloadResumePages(data);
       setRefreshing(false);
@@ -240,7 +240,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const renderQuestions = (candidate: any) => {
     const responses = [];
 
-    candidate.sections.forEach((section: {questions: any[]}) => {
+    candidate.sections.forEach((section: { questions: any[] }) => {
       section.questions.forEach(response => {
         responses.push(response);
       });
@@ -268,9 +268,9 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     return (
       <FlatList
         scrollEnabled={false}
-        contentContainerStyle={{marginTop: 40}}
+        contentContainerStyle={{ marginTop: 40 }}
         data={responses}
-        renderItem={({item, index}) => (
+        renderItem={({ item, index }) => (
           <CandidateResponseRow
             response={item}
             onPlayResponse={() => showAnswers(index)}
@@ -291,7 +291,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const callNotInterested = async () => {
     try {
       setLoading(true);
-      const {data} = await notInterestedService({
+      const { data } = await notInterestedService({
         declineSubmission: true,
         submissionId: submissionId,
       });
@@ -306,7 +306,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const onClickMakeOffer = async (result: any) => {
     try {
       setLoading(false);
-      const {data} = await makeOfferService({
+      const { data } = await makeOfferService({
         startDate: result,
         submissionId: submissionId,
         offerSubmission: true,
@@ -323,7 +323,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const Summary = () => {
     return (
       <View
-        style={{flex: 1, backgroundColor: AppColors.baseGray, marginTop: 40}}
+        style={{ flex: 1, backgroundColor: AppColors.baseGray, marginTop: 40 }}
       >
         {loadingSummary && renderLoading(100)}
         <ConexusContentList
@@ -336,7 +336,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   const VirtualInterView = () => {
     return (
       <View
-        style={{flex: 1, backgroundColor: AppColors.baseGray, marginTop: 15}}
+        style={{ flex: 1, backgroundColor: AppColors.baseGray, marginTop: 15 }}
       >
         {renderQuestions(candidate || [])}
       </View>
@@ -375,15 +375,15 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
             style={
               !candidate || !candidate.conversationAllowed
                 ? [
-                    {
-                      width: 25,
-                      height: 25,
-                      tintColor: AppColors.gray,
-                      marginHorizontal: 20,
-                      marginTop: 5,
-                      alignSelf: 'center',
-                    },
-                  ]
+                  {
+                    width: 25,
+                    height: 25,
+                    tintColor: AppColors.gray,
+                    marginHorizontal: 20,
+                    marginTop: 5,
+                    alignSelf: 'center',
+                  },
+                ]
                 : [styles.image]
             }
             disabled={!candidate || !candidate.conversationAllowed}
@@ -398,7 +398,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
             title={'Make Offer'}
             value={date}
             onMakeOffer={(result: any) => onClickMakeOffer(result)}
-            source={{uri: candidate.photoUrl}}
+            source={{ uri: candidate.photoUrl }}
             candidateTitle={candidate.display.title}
             onRequestClose={() => setOfferModalVisible(false)}
             onDismiss={() => setOfferModalVisible(false)}
@@ -431,9 +431,9 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   };
 
   const makeCall = (candidate: any) => {
-   // PermissionsService.checkAndRequestDrawOverlaysPermission();
+    // PermissionsService.checkAndRequestDrawOverlaysPermission();
     // console.log('CallService====>', CallService);
-   // CallService.init();
+    // CallService.init();
     // PushNotificationsService.init();
     // PermissionsService.checkAndRequestDrawOverlaysPermission();
     // NavigationService.push('Callpage', candidate);
@@ -481,14 +481,14 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
 
   let videoChat =
     (Object.keys(candidate).length > 0 &&
-      communicationTypes.filter((type: {typeId: string}) => {
+      communicationTypes.filter((type: { typeId: string }) => {
         return type.typeId == '1';
       })[0].available) ||
     false;
 
   let videoCall =
     (Object.keys(candidate).length > 0 &&
-      communicationTypes.filter((type: {typeId: string}) => {
+      communicationTypes.filter((type: { typeId: string }) => {
         return type.typeId == '2';
       })[0].available) ||
     false;
@@ -497,7 +497,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     return (
       <ActivityIndicator
         color={AppColors.blue}
-        style={{flex: 1, alignSelf: 'center', paddingTop}}
+        style={{ flex: 1, alignSelf: 'center', paddingTop }}
       />
     );
   };
@@ -547,18 +547,18 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
           </TouchableOpacity>
 
           <Image
-            source={{uri: candidate.photoUrl}}
+            source={{ uri: candidate.photoUrl }}
             style={styles.circleStyle}
           />
-          <Text style={[AppFonts.bodyTextXtraLarge, {marginTop: 15}]}>
+          <Text style={[AppFonts.bodyTextXtraLarge, { marginTop: 15 }]}>
             {Object.keys(candidate).length > 0 && candidate.display.title}
           </Text>
           {Object.keys(candidate).length > 0 && renderActionHeader(candidate)}
         </View>
-        <View style={{marginTop: 5}}>
+        <View style={{ marginTop: 5 }}>
           {Object.keys(candidate).length > 0 && (
             <Tabs
-              data={PROFILETAB.map(_ => ({..._}))}
+              data={PROFILETAB.map(_ => ({ ..._ }))}
               navigation={navigation}
             />
           )}
@@ -597,7 +597,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
       {phoneCallModalVisible && (
         <PhoneCallModal
           title={candidate.display.title}
-          source={{uri: candidate.photoUrl}}
+          source={{ uri: candidate.photoUrl }}
           value={phoneFormatter.format10Digit(callbackNumber)}
           onChangeText={(text: any) => onCallbackChangeText(text)}
           disabled={!validPhone}

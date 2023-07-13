@@ -1,10 +1,10 @@
-import React, {createRef} from 'react';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import React, { createRef } from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Feather';
-import {DrawerActions} from '@react-navigation/native';
+import { DrawerActions } from '@react-navigation/native';
 import Icons from 'react-native-vector-icons/Ionicons';
-import {AppColors, AppFonts} from '.././theme';
-import {TouchableOpacity} from 'react-native';
+import { AppColors, AppFonts } from '.././theme';
+import { TouchableOpacity } from 'react-native';
 import NavigationService from './NavigationService';
 import Positions from '../containers/Facility/Positions/positions';
 import ReviewCandidateContainer from '../containers/Facility/ReviewCandidateHome/reviewCandidateContainer';
@@ -17,8 +17,8 @@ const TabNavigator = () => {
       screenOptions={{
         headerShown: true,
         tabBarShowLabel: true,
-        tabBarStyle: {backgroundColor: AppColors.white},
-        tabBarLabelStyle: {fontWeight: 'bold', fontSize: 10},
+        tabBarStyle: { backgroundColor: AppColors.white },
+        tabBarLabelStyle: { fontWeight: 'bold', fontSize: 10 },
         tabBarActiveTintColor: AppColors.blue,
         tabBarInactiveTintColor: AppColors.mediumGray,
       }}
@@ -27,7 +27,7 @@ const TabNavigator = () => {
         name="Review"
         component={ReviewCandidateContainer}
         options={{
-          tabBarIcon: ({color, focused, size}) => (
+          tabBarIcon: ({ color, focused, size }) => (
             <Icons
               color={focused ? AppColors.blue : AppColors.mediumGray}
               size={26}
@@ -42,7 +42,7 @@ const TabNavigator = () => {
             >
               <Icons
                 color={AppColors.blue}
-                style={{marginRight: 20}}
+                style={{ marginRight: 20 }}
                 size={26}
                 name="chatbubble-outline"
               />
@@ -57,7 +57,7 @@ const TabNavigator = () => {
             >
               <Icon
                 color={AppColors.black}
-                style={{marginLeft: 10}}
+                style={{ marginLeft: 10 }}
                 size={26}
                 name="menu"
               />
@@ -69,7 +69,7 @@ const TabNavigator = () => {
         name="Positions"
         component={Positions}
         options={{
-          tabBarIcon: ({color, size, focused}) => (
+          tabBarIcon: ({ color, size, focused }) => (
             <Icon
               color={focused ? AppColors.blue : AppColors.mediumGray}
               size={26}
@@ -86,7 +86,7 @@ const TabNavigator = () => {
             >
               <Icon
                 color={AppColors.black}
-                style={{marginLeft: 10}}
+                style={{ marginLeft: 10 }}
                 size={26}
                 name="menu"
               />
@@ -99,7 +99,7 @@ const TabNavigator = () => {
             >
               <Icons
                 color={AppColors.blue}
-                style={{marginRight: 20}}
+                style={{ marginRight: 20 }}
                 size={26}
                 name="chatbubble-outline"
               />
