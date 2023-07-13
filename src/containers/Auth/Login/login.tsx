@@ -20,7 +20,6 @@ import { windowDimensions } from '../../../common';
 import theme, { AppFonts, AppColors } from '../../../theme';
 import { useDispatch } from 'react-redux';
 import { loginRequest } from '../../../redux/actions/userAction';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import PushNotificationsService from '../../../services/connectycubeServices/pushnotifications-service';
 import CallService from '../../../services/connectycubeServices/call-service';
 import PermissionsService from '../../../services/connectycubeServices/permissions-service';
@@ -71,6 +70,8 @@ const LoginScreen = () => {
     getStoredUser().then(storedUser => {
       if (storedUser) {
         // auto login
+        console.log("storedUser===>", storedUser);
+
         signInFn(storedUser);
       }
     });

@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { RTCView } from 'react-native-connectycube';
 
 import Loader from './loader';
-import { getUserById } from '../../utils'
+import { getUserById } from '../../common/utils'
 
 export default ({streams}) => {
   const RTCViewRendered = ({userId, stream}) => {

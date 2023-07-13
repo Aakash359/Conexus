@@ -412,6 +412,7 @@ class CallService {
   //   DECLINED_ELSEWHERE: 5 | 2,
   //   MISSED: 2 | 6
   // }
+  
   reportEndCallWithoutUserInitiating(callUUID, reason) {
     if (Platform.OS !== 'ios') {
       return;

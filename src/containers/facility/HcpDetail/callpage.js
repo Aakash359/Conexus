@@ -13,10 +13,7 @@ import {useSelector} from 'react-redux';
 
 import CallService from '../../../services/connectycubeServices/call-service';
 import PushNotificationsService from '../../../services/connectycubeServices/pushnotifications-service';
-import AuthService from '../../../services/connectycubeServices/auth-service';
 import {getUserById, showToast, isCurrentRoute} from '../../../common/utils';
-import {store} from '../../../redux/store';
-import {setCurrentUser} from '../../../redux/actions/currentUser';
 
 export default function Callpage({route, navigation}) {
 
@@ -29,15 +26,18 @@ export default function Callpage({route, navigation}) {
   }]
   const [selectedOpponents, setSelectedOpponents] = useState([]);
   const callSession = useSelector(store => store.activeCall.session);
-  console.log("Callsession===>",callSession);
+ 
   const isIcoming = useSelector(store => store.activeCall.isIcoming);
+   console.log("Callsession===>",isIcoming);
   const isEarlyAccepted = useSelector(
     store => store.activeCall.isEarlyAccepted,
   );
   const currentUser = useSelector(store => store.currentUser);
 
   useEffect(() => {
+  
     if (isIcoming && !isEarlyAccepted) {
+        console.log("Aa raha hai");
       const isAlreadyOnIncomingCallScreen = isCurrentRoute(
         navigation,
         'IncomingCall',
@@ -99,7 +99,7 @@ export default function Callpage({route, navigation}) {
       selectedOpponentsIds,
       callType,
     );
-    console.log("Session===>",callSession);
+    
 
     // 2. send push notitification to opponents
     

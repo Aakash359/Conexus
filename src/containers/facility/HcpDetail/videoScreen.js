@@ -3,11 +3,11 @@ import { SafeAreaView, StatusBar } from 'react-native';
 import { useSelector } from 'react-redux'
 import ConnectyCube from 'react-native-connectycube';
 
-import VideoGrid from '../generic/video-grid';
-import CallService from '../../services/call-service';
-import VideoToolBar from '../generic/video-toolbar';
-import Loader from '../generic/loader';
-import { showToast } from '../../utils'
+import VideoGrid from '../../../components/generics/videoGrid';
+import CallService from '../../../services/connectycubeServices/call-service';
+import VideoToolBar from '../../../components/generics/videoToolbar';
+import Loader from '../../../components/generics/loader';
+import Toast from 'react-native-toast-message';
 
 
 export default function VideoScreen ({ navigation }) {
@@ -28,7 +28,7 @@ export default function VideoScreen ({ navigation }) {
   function navigateBack() {
     navigation.pop();
 
-    showToast("Call is ended")
+    Toast("Call is ended")
   }
 
   function stopCall(){

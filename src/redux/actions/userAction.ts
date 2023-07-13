@@ -64,24 +64,24 @@ export const loginRequest = (data: {
   //   email: username,
   //   password: password.concat(newPass)
   // };
-//   const amit={
-//     color: "#34ad86",
-//     full_name: "Amit",
-//     id: 8852814,
-//     login: "pant123",
-//     password: "Admin@123",
-// }
-  const akash={
+  const amit={
     color: "#34ad86",
-    full_name: "akash",
-    id: 8852928,
-    login: "akash",
+    full_name: "Amit",
+    id: 8852814,
+    login: "pant123",
     password: "Admin@123",
 }
+//   const akash={
+//     color: "#34ad86",
+//     full_name: "akash",
+//     id: 8852928,
+//     login: "akash",
+//     password: "Admin@123",
+// }
   return async (dispatch: Dispatch<UserAction>) => {
-    const storeUser = async (akash:any) => {
+    const storeUser = async (amit:any) => {
       try{
-        const user = JSON.stringify(akash);
+        const user = JSON.stringify(amit);
          await AsyncStorage.setItem('@currentUser', user);
        }
        catch (e) {
@@ -102,15 +102,15 @@ export const loginRequest = (data: {
           payload: 'Login issue with API',
         });
       } else {
-          await ConnectyCube.createSession(akash).then(async(session:any) => {
-            store.dispatch(setCurrentUser(akash));
+          await ConnectyCube.createSession(amit).then(async(session:any) => {
+            store.dispatch(setCurrentUser(amit));
             await ConnectyCube.chat.connect({
-              userId: 8852928,
+              userId:  8852814,
               password: "Admin@123",
             }).catch((error:any) => {
               console.log('chat error', error);
             }); 
-            await storeUser(akash) 
+            await storeUser(amit) 
             })
             .catch((error:any) => {
               console.log('session error', error);
