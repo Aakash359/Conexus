@@ -10,12 +10,12 @@ import {
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import ConnectyCube from 'react-native-connectycube';
 import {useSelector} from 'react-redux';
-
+import NavigationService from '../../../navigation/NavigationService';
 import CallService from '../../../services/connectycubeServices/call-service';
 import PushNotificationsService from '../../../services/connectycubeServices/pushnotifications-service';
 import {getUserById, showToast, isCurrentRoute} from '../../../common/utils';
 
-export default function Callpage({route, navigation}) {
+export default function Callpage({route,navigation}) {
 
   const opponents = [{
     color: "#34ad86",
@@ -29,16 +29,17 @@ export default function Callpage({route, navigation}) {
   const callSession = useSelector(store => store.activeCall.session);
  
   const isIcoming = useSelector(store => store.activeCall.isIcoming);
-   console.log("Callsession===>",isIcoming);
+  
   const isEarlyAccepted = useSelector(
     store => store.activeCall.isEarlyAccepted,
   );
+   console.log("isIcoming===>",isEarlyAccepted,isIcoming);
   const currentUser = useSelector(store => store.currentUser);
 
   useEffect(() => {
   
     if (isIcoming && !isEarlyAccepted) {
-        console.log("Aa raha hai");
+        console.log("Aa raha hai",isIcoming ,!isEarlyAccepted);
       const isAlreadyOnIncomingCallScreen = isCurrentRoute(
         navigation,
         'IncomingCall',
@@ -47,16 +48,18 @@ export default function Callpage({route, navigation}) {
         navigation,
         'VideoScreen',
       );
+      console.log("isAlreadyOnVideoScreenScreen====>",isAlreadyOnVideoScreenScreen);
       if (!isAlreadyOnIncomingCallScreen && !isAlreadyOnVideoScreenScreen) {
         // incoming call
-        navigation.push('IncomingCallScreen', {});
+        NavigationService.navigate('IncomingCallScreen', {});
       }
     }
   }, );
 
   useEffect(() => {
+    console.log("isEarlyAccepted2===>",isEarlyAccepted);
     if (isEarlyAccepted) {
-      navigation.push('VideoScreen', {});
+      NavigationService.navigate('VideoScreen', {});
     }
   }, [isEarlyAccepted]);
 
@@ -117,7 +120,7 @@ export default function Callpage({route, navigation}) {
       selectedOpponentsIds,
       pushParams,
     );
-
+   
     navigation.push('VideoScreen', {});
   };
 

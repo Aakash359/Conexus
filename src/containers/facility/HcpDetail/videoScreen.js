@@ -6,7 +6,7 @@ import VideoGrid from '../../../components/generics/videoGrid';
 import CallService from '../../../services/connectycubeServices/call-service';
 import VideoToolBar from '../../../components/generics/videoToolbar';
 import Loader from '../../../components/generics/loader';
-
+import {showToast} from '../../../common/utils';
 
 export default function VideoScreen ({ navigation }) {
   const streams = useSelector(store => store.activeCall.streams);
@@ -27,7 +27,7 @@ export default function VideoScreen ({ navigation }) {
   function navigateBack() {
     navigation.pop();
 
-    Toast("Call is ended")
+    showToast("Call is ended")
   }
 
   function stopCall(){

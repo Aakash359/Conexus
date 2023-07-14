@@ -40,32 +40,7 @@ export const loginRequest = (data: {
   password: string;
   App: boolean;
 }) => {
-  const {username, password} = data;
-  const newPass = '1234';
-  const sessionData = {
-    name: 'RNVideoChat',
-    displayName: 'RNVideoChat',
-    senderID: '147299227261',
-    connectyCubeConfig: [
-      {
-        appId: 7109,
-        authKey: 'gr87NajH9M5VEzy',
-        authSecret: 'fZztP7YQdryQ6rQ',
-      },
-      {
-        debug: {
-          mode: 1,
-        },
-      },
-    ],
-  };
-  const config = {
-    debug: {mode: 1},
-  };
-  // const createUser = {
-  //   email: username,
-  //   password: password.concat(newPass)
-  // };
+  const {username} = data;
   const amitUser = {
     color: '#34ad86',
     full_name: 'Amit',
@@ -104,7 +79,7 @@ export const loginRequest = (data: {
         });
       } else {
         await ConnectyCube.createSession(akash)
-          .then(async () => {
+          .then(async (session:any) => {
             CallService.init();
             PushNotificationsService.init();
             store.dispatch(setCurrentUser(akash));

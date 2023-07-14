@@ -603,7 +603,7 @@ const ConversationContainer = (
                 ? candidate.photoUrl
                 : props?.route?.params?.conversation?.hcpPhotoUrl,
             }}
-            onPress={makeCall(max)}
+            onPress={() => makeCall(max)}
             title={
               candidate
                 ? candidate.display.title
