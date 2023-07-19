@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const VideoScreen=()=> {
+const IncomingCall=()=> {
   return (
     <View>
       <Text>callpage</Text>
@@ -9,4 +9,4 @@ const VideoScreen=()=> {
   )
 }
 
-export default VideoScreen
+export default IncomingCall

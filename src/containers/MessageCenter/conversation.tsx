@@ -540,17 +540,10 @@ const ConversationContainer = (
     );
   };
 
-  const makeCall = (max: any) => {
-    const john = [{
-      id: 8831451,
-      full_name: 'john',
-      login: 'john',
-      password: 'lily@123#',
-      color: '#34ad86',
-    }]
-    const opponents = john.filter(opponent => opponent.id !== max.id);
+  const makeCall = (user: any) => {
 
-    NavigationService.push('Callpage', opponents);
+
+    NavigationService.navigate('Callpage',);
     // setCalling(true);
     // try {
     //   setLoading(true);
@@ -575,13 +568,6 @@ const ConversationContainer = (
   };
 
   const renderMessageScrollView = () => {
-    const max = {
-      id: 8831460,
-      full_name: 'max',
-      login: 'max',
-      password: 'lily@123#',
-      color: '#34ad86',
-    }
     return (
       <ScrollView
         style={style.messageListView}
@@ -597,13 +583,13 @@ const ConversationContainer = (
         }
       >
         {phoneCallModalVisible && (
-          users.map(user => <PhoneCallModal
+          <PhoneCallModal
             source={{
               uri: candidate
                 ? candidate.photoUrl
                 : props?.route?.params?.conversation?.hcpPhotoUrl,
             }}
-            onPress={() => makeCall(max)}
+            onPress={() => makeCall()}
             title={
               candidate
                 ? candidate.display.title
@@ -615,7 +601,7 @@ const ConversationContainer = (
             onRequestClose={() => setPhoneCallModalVisible(false)}
             onDismiss={() => setPhoneCallModalVisible(false)}
             onClose={() => setPhoneCallModalVisible(false)}
-          />)
+          />
         )}
         {messageList.map((message, index) => {
           if (message.messageTypeId === '1') {

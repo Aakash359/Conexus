@@ -1,13 +1,13 @@
 import React from 'react';
-import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import {
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
-import {AppColors, AppFonts} from '.././theme';
+import { AppColors, AppFonts } from '.././theme';
 import Icons from 'react-native-vector-icons/Feather';
 import NavigationService from '../navigation/NavigationService';
-import {useSelector} from '../redux/reducers/index';
+import { useSelector } from '../redux/reducers/index';
 
 export const AVATAR_ICON_SIZE = 45;
 
@@ -24,10 +24,10 @@ const CustomDrawer = props => {
     NavigationService.navigate('AgentMessage');
   };
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <DrawerContentScrollView
         {...props}
-        contentContainerStyle={{marginTop: 50}}
+        contentContainerStyle={{ marginTop: 50 }}
       >
         <Image
           style={styles.logo}
@@ -40,10 +40,10 @@ const CustomDrawer = props => {
       <View style={styles.footerContainer}>
         <TouchableOpacity
           onPress={openChouaeLea}
-          style={{paddingVertical: 15}}
+          style={{ paddingVertical: 15 }}
           activeOpacity={0.8}
         >
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Image
               style={styles.image}
               source={require('../components/Images/bg.png')}
@@ -62,7 +62,7 @@ const CustomDrawer = props => {
               >
                 Your Account Manager is
               </Text>
-              <Text style={[styles.text, {color: AppColors.mediumGray}]}>
+              <Text style={[styles.text, { color: AppColors.mediumGray }]}>
                 {userInfo?.user?.userFacilities?.[0]?.manager?.acctManagerName}
               </Text>
             </View>
@@ -80,10 +80,10 @@ const CustomDrawer = props => {
         <View style={[styles.footerContainer]} />
         <TouchableOpacity
           onPress={openFeedback}
-          style={{paddingVertical: 20}}
+          style={{ paddingVertical: 20 }}
           activeOpacity={0.8}
         >
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <View style={styles.circle}>
               <Icons
                 style={{
@@ -99,14 +99,14 @@ const CustomDrawer = props => {
             <Text style={[styles.text]}>Send Feedback</Text>
           </View>
         </TouchableOpacity>
-        <View style={[styles.footerContainer, {padding: 10}]} />
+        <View style={[styles.footerContainer, { padding: 10 }]} />
         <TouchableOpacity
           onPress={openProfile}
-          style={{paddingVertical: 15}}
+          style={{ paddingVertical: 15 }}
           activeOpacity={0.8}
         >
           <View
-            style={{flexDirection: 'row', alignItems: 'center', bottom: 10}}
+            style={{ flexDirection: 'row', alignItems: 'center', bottom: 10 }}
           >
             <Image
               style={styles.image}
@@ -117,7 +117,7 @@ const CustomDrawer = props => {
             <View style={styles.iconWrapper}>
               <Text style={[styles.text]}>Account Preference</Text>
               <Icons
-                style={{color: AppColors.blue, marginLeft: 10, marginTop: 2}}
+                style={{ color: AppColors.blue, marginLeft: 10, marginTop: 2 }}
                 name="settings"
                 size={22}
               />

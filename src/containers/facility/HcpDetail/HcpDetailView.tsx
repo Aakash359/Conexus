@@ -431,12 +431,6 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
   };
 
   const makeCall = (candidate: any) => {
-    // PermissionsService.checkAndRequestDrawOverlaysPermission();
-    // console.log('CallService====>', CallService);
-    // CallService.init();
-    // PushNotificationsService.init();
-    // PermissionsService.checkAndRequestDrawOverlaysPermission();
-    // NavigationService.push('Callpage', candidate);
     // setCalling(true);
     // Keyboard.dismiss();
     // try {

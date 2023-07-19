@@ -11,8 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { logoutRequest } from '../../redux/actions/userAction';
 import theme from '../../theme';
 import { getProfileService } from '../../services/ApiServices';
-import { removeStoredUser } from '../../redux/actions/userAction';
-import ConnectyCube from 'react-native-connectycube';
+
 
 interface ProfileState {
   avatar: any;
@@ -53,9 +52,6 @@ const Profile: React.FC<ProfileState> = () => {
 
   const onPressLogout = async () => {
     setLoading(true);
-    ConnectyCube.chat.disconnect();
-    await ConnectyCube.destroySession();
-    await removeStoredUser();
     await AsyncStorage.removeItem('authToken');
     const payload = {
       authToken: '',
