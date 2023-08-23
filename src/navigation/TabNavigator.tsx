@@ -38,7 +38,7 @@ const TabNavigator = () => {
           headerRight: () => (
             <TouchableOpacity
               activeOpacity={0.8}
-              onPress={() => NavigationService.navigate('MessageCenter')}
+              onPress={() => NavigationService.navigate('MessageStack')}
             >
               <Icons
                 color={AppColors.blue}
@@ -95,7 +95,7 @@ const TabNavigator = () => {
           headerRight: () => (
             <TouchableOpacity
               activeOpacity={0.8}
-              onPress={() => NavigationService.navigate('MessageCenter')}
+              onPress={() => NavigationService.navigate('MessageStack')}
             >
               <Icons
                 color={AppColors.blue}

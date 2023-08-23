@@ -9,33 +9,32 @@ import {
 } from '../stores/message-center/conversation-store';
 import {showYesNoAlert} from './cancel-retry-alert';
 import {ScreenType} from './constants';
-import PushNotification from 'react-native-push-notification';
-import {PushNotificationIOS, Platform} from 'react-native';
+import {Platform} from 'react-native';
 import {userStoreInstance} from '../stores';
 import {userService} from '../services/user-service';
 import Sound from 'react-native-sound';
 const log = logger.createLogger();
 
-const PushIOS: any = PushNotificationIOS;
+// const PushIOS: any = PushNotificationIOS;
 
-PushNotification.configure({
-  permissions: {
-    alert: true,
-    badge: true,
-    sound: true,
-  },
-  popInitialNotification: true,
-  requestPermissions: true,
-  // (optional) Called when Token is generated (iOS and Android)
-  onRegister: function(token) {
-    log.info('TOKEN:', token);
-  },
-  // (required) Called when a remote or local notification is opened or received
-  onNotification: function(notification) {
-    log.info('NOTIFICATION:', notification);
-    notification.finish(PushIOS.FetchResult.NoData);
-  },
-});
+// PushNotification.configure({
+//   permissions: {
+//     alert: true,
+//     badge: true,
+//     sound: true,
+//   },
+//   popInitialNotification: true,
+//   requestPermissions: true,
+//   // (optional) Called when Token is generated (iOS and Android)
+//   onRegister: function(token) {
+//     log.info('TOKEN:', token);
+//   },
+//   // (required) Called when a remote or local notification is opened or received
+//   onNotification: function(notification) {
+//     log.info('NOTIFICATION:', notification);
+//     notification.finish(PushIOS.FetchResult.NoData);
+//   },
+// });
 
 const handleIncomingCall = (data, caller, autoAnswer) => {
   let photoUrl: string = caller.photo || '';

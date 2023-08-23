@@ -340,7 +340,7 @@ const DrawerStack = () => {
           headerRight: () => (
             <TouchableOpacity
               activeOpacity={0.8}
-              onPress={() => NavigationService.navigate('MessageCenter')}
+              onPress={() => NavigationService.navigate('MessageStack')}
             >
               <Icons
                 color={AppColors.blue}
@@ -364,7 +364,7 @@ const DrawerStack = () => {
         }}
       />
       <Drawer.Screen
-        name="Message Center"
+        name="MessageStack"
         component={MessageStack}
         options={{
           headerShown: false,

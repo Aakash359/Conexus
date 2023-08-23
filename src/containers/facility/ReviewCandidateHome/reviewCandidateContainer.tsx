@@ -4,11 +4,11 @@ import {View, ActivityIndicator, Alert} from 'react-native';
 import {UserStore} from '../../../stores/userStore';
 import {useSelector} from '../../../redux/reducers/index';
 import NavigationService from '../../../navigation/NavigationService';
-import PushNotification from 'react-native-push-notification';
 import {AppColors} from '../../../theme';
 import {CandidateList} from './candidateList';
 import OneSignal from 'react-native-onesignal';
 import {facilitySubmissionsService} from '../../../services/ApiServices';
+
 interface ReviewContainerProps {
   userStore: UserStore;
   forceRefresh?: boolean;
