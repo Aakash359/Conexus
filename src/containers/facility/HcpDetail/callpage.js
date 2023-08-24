@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const callpage=()=> {
+const Callpage=()=> {
   return (
     <View>
       <Text>callpage</Text>
@@ -9,4 +9,4 @@ const callpage=()=> {
   )
 }
 
-export default callpage
+export default Callpage

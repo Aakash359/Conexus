@@ -6,7 +6,6 @@ import {useSelector} from '../../../redux/reducers/index';
 import NavigationService from '../../../navigation/NavigationService';
 import {AppColors} from '../../../theme';
 import {CandidateList} from './candidateList';
-import OneSignal from 'react-native-onesignal';
 import {facilitySubmissionsService} from '../../../services/ApiServices';
 
 interface ReviewContainerProps {
@@ -43,11 +42,6 @@ const ReviewCandidateContainer = (
     setTimeout(() => {
       load(true);
     }, 2000);
-
-    OneSignal.setAppId('e1de43b0-7a53-48e2-bf45-3a501f8bbf94');
-    OneSignal.setNotificationOpenedHandler(notification => {
-      console.log('OneSignal: notification opened:', notification);
-    });
   }, []);
 
   // const selectedFacility = () => {

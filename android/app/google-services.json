@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "574541025895",
-    "project_id": "conexus-bd2f6",
-    "storage_bucket": "conexus-bd2f6.appspot.com"
+    "project_number": "64548261859",
+    "project_id": "conexus-29d7d",
+    "storage_bucket": "conexus-29d7d.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:574541025895:android:20267100adce7366e13ac2",
+        "mobilesdk_app_id": "1:64548261859:android:4e8f729d831341137cdad6",
         "android_client_info": {
           "package_name": "com.conexus"
         }
       },
       "oauth_client": [
         {
-          "client_id": "574541025895-r3i3v0fbe5e0qc2i71gsng25lthtlab3.apps.googleusercontent.com",
+          "client_id": "64548261859-75sn4ilqru1sm517e5d3jh7m130i4otq.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAODbgPlvx-TJvYznRFmeRpxwLHvgN_0ok"
+          "current_key": "AIzaSyAbtrSM8YlzPXyaxzK_fiWoutdMqEMejFM"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "574541025895-r3i3v0fbe5e0qc2i71gsng25lthtlab3.apps.googleusercontent.com",
+              "client_id": "64548261859-75sn4ilqru1sm517e5d3jh7m130i4otq.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
