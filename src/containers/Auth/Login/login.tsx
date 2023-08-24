@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   KeyboardAvoidingView,
@@ -12,15 +12,15 @@ import {
   ScrollView,
 } from 'react-native';
 import NavigationService from '../../../navigation/NavigationService';
-import { ActionButton } from '../../../components/action-button';
+import {ActionButton} from '../../../components/action-button';
 import Toast from 'react-native-toast-message';
 import variables from '../../../theme';
-import { Field, Passwordfield } from '../../../components/field';
-import { windowDimensions } from '../../../common';
-import theme, { AppFonts, AppColors } from '../../../theme';
-import { useDispatch } from 'react-redux';
-import { loginRequest } from '../../../redux/actions/userAction';
-import { getStoredUser } from '../../../redux/actions/userAction';
+import {Field, Passwordfield} from '../../../components/field';
+import {windowDimensions} from '../../../common';
+import theme, {AppFonts, AppColors} from '../../../theme';
+import {useDispatch} from 'react-redux';
+import {loginRequest} from '../../../redux/actions/userAction';
+import {getStoredUser} from '../../../redux/actions/userAction';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 const SafeAreaView = require('react-native').SafeAreaView;
@@ -45,7 +45,6 @@ const SafeAreaView = require('react-native').SafeAreaView;
 const LoginScreen = () => {
   const [loading, setLoading] = useState(false);
   const [hidePassword, setHidePassword] = useState(true);
-  const [isChecked, setIsChecked] = useState(true);
   const [errors, setErrors] = useState('');
   const [inputs, setInputs] = useState({
     email: '',
@@ -54,10 +53,10 @@ const LoginScreen = () => {
   const dispatch = useDispatch();
 
   const handleOnchange = (text: any, input: any) => {
-    setInputs((prevState: any) => ({ ...prevState, [input]: text }));
+    setInputs((prevState: any) => ({...prevState, [input]: text}));
   };
   const handleError = (error: any, input: any) => {
-    setErrors((prevState: any) => ({ ...prevState, [input]: error }));
+    setErrors((prevState: any) => ({...prevState, [input]: error}));
   };
   const setPasswordVisibility = () => {
     setHidePassword(!hidePassword);
@@ -98,7 +97,6 @@ const LoginScreen = () => {
         setTimeout(() => {
           setLoading(false);
           dispatch(loginRequest(data));
-
         }, 1000);
       } catch (error) {
         setLoading(false);
@@ -142,7 +140,7 @@ const LoginScreen = () => {
                   onTextChange={(text: any) => handleOnchange(text, 'email')}
                   onFocus={() => handleError(null, 'email')}
                   error={errors.email}
-                  customStyle={{ fontSize: 16 }}
+                  customStyle={{fontSize: 16}}
                   returnKeyType="next"
                 />
               </View>
@@ -151,7 +149,7 @@ const LoginScreen = () => {
                   placeholder="Password"
                   autoCapitalize="none"
                   error={errors.password}
-                  customStyle={{ fontSize: 16 }}
+                  customStyle={{fontSize: 16}}
                   onSubmit={setPasswordVisibility}
                   hidePassword={hidePassword}
                   onTextChange={(text: any) => handleOnchange(text, 'password')}
@@ -159,19 +157,13 @@ const LoginScreen = () => {
                   returnKeyType="done"
                 />
               </View>
-              <View style={style.rememberMe}>
-                <TouchableOpacity onPress={() => setCheckBox(isChecked)} activeOpacity={1}>
-                  <Text style={style.rememberMeText}>REMEMBER ME ?</Text>
-                  <Icon
-                    name={isChecked ? 'check-box' : 'check-box-outline-blank'}
-                    style={{ color: AppColors.blue, fontSize: 22, bottom: 17, left: 100 }}
-                  />
+              <View style={style.forgotPassView}>
+                <TouchableOpacity onPress={forgotPasswordFn} activeOpacity={1}>
+                  <Text style={style.forgotPass}>FORGOT PASSWORD?</Text>
                 </TouchableOpacity>
               </View>
             </View>
-            <TouchableOpacity onPress={forgotPasswordFn} activeOpacity={1}>
-              <Text style={style.forgotPass}>FORGOT PASSWORD?</Text>
-            </TouchableOpacity>
+
             <ActionButton
               textColor={variables.blue}
               customTitleStyle={loading ? style.loadingTitle : style.title}
@@ -207,17 +199,12 @@ const style = StyleSheet.create({
     width: '50%',
     borderRadius: 28,
   },
-  rememberMe: {
+  forgotPassView: {
     justifyContent: 'flex-end',
-    // backgroundColor: 'red',
+    marginTop: 10,
     flexDirection: 'row',
   },
-  rememberMeText: {
-    marginTop: 10,
-    fontSize: 12,
-    marginRight: 30,
-    color: AppColors.blue,
-  },
+
   loginBtn: {
     backgroundColor: AppColors.blue,
     justifyContent: 'center',

@@ -1,16 +1,14 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Platform,
   Text,
-  Alert,
-  View,
+
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
 import theme from '../theme';
-import variables from '../theme';
-import {AppFonts, AppColors} from '../theme';
+import { AppColors } from '../theme';
 
 interface buttonProps {
   title: string;
@@ -33,7 +31,6 @@ interface buttonProps {
   customStyle: any;
   customTitleStyle: any;
 }
-// const textStyleDisabled = props.textStyleDisabled|| variables.gray
 export const ActionButton = (props: buttonProps) => {
   const {
     title,
@@ -57,9 +54,9 @@ export const ActionButton = (props: buttonProps) => {
         size: 'small',
         color: loadingColor,
       }}
-      style={[styles.btnStyle, {borderColor: borderColor}, {...customStyle}]}
+      style={[styles.btnStyle, { borderColor: borderColor }, { ...customStyle }]}
     >
-      <Text style={[styles.primaryButtonText, {...customTitleStyle}]}>
+      <Text style={[styles.primaryButtonText, { ...customTitleStyle }]}>
         {title}
       </Text>
       {loading && (

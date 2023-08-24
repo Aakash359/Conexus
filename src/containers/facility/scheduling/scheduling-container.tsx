@@ -1,35 +1,17 @@
 import React from 'react';
-import {ViewProperties} from 'react-native';
-// import { inject, observer } from 'mobx-react'
-// import { Actions } from 'react-native-router-flux'
-import {ScreenType} from '../../../common';
-import {UserStore, UserFacilityModel} from '../../../stores';
-import {
-  FacilitySelectionContainer,
-  ScreenFooterButton,
-} from '../../../components';
 
-export interface SchedulingContainerProps extends ViewProperties {
-  userStore: UserStore;
-}
+import {ScreenFooterButton} from '../../../components';
 
-export interface SchedulingContainerState {
-  refreshing: boolean;
-}
+export class SchedulingContainer extends React.Component {
+  // get selectedFacility(): typeof UserFacilityModel.Type {
+  //   const {userStore} = this.props;
 
-export class SchedulingContainer extends React.Component<
-  SchedulingContainerProps,
-  SchedulingContainerState
-> {
-  get selectedFacility(): typeof UserFacilityModel.Type {
-    const {userStore} = this.props;
+  //   if (userStore.selectedFacilityId) {
+  //     return userStore.selectedFacility;
+  //   }
 
-    if (userStore.selectedFacilityId) {
-      return userStore.selectedFacility;
-    }
-
-    return null;
-  }
+  //   return null;
+  // }
 
   get showNoData(): boolean {
     return true;
@@ -62,7 +44,8 @@ export class SchedulingContainer extends React.Component<
         facilityHeaderCaption="Showing schedules for"
         refreshing={this.state.refreshing}
         onRefresh={this.load.bind(this, true)}
-        onFacilityChosen={(facilityId: string) => this.forceUpdate()}>
+        onFacilityChosen={(facilityId: string) => this.forceUpdate()}
+      >
         <ScreenFooterButton
           title="Schedule Availability"
           onPress={this.showScheduleAvailability.bind(this)}

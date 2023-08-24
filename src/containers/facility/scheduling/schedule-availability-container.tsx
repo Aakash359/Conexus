@@ -1,28 +1,13 @@
 import React from 'react';
-import {
-  Platform,
-  ViewProperties,
-  ActivityIndicator,
-  StyleSheet,
-  View,
-  KeyboardAvoidingView,
-  TouchableOpacity,
-  Alert,
-  ScrollView,
-  Keyboard,
-} from 'react-native';
-// import {Actions} from 'react-native-router-flux';
+import {Platform, StyleSheet, View, ScrollView} from 'react-native';
 import {Calendar} from 'react-native-calendars';
-// import {inject, observer} from 'mobx-react';
 import {AppFonts, AppColors} from '../../../theme';
-import {ScreenType} from '../../../common/constants';
 import {
   ConexusIcon,
   ScreenFooterButton,
   ModalHeader,
   ConexusIconButton,
 } from '../../../components';
-import {showYesNoAlert} from '../../../common';
 let moment = require('moment');
 
 import {logger} from 'react-native-logs';
@@ -137,13 +122,6 @@ export class ScheduleAvailabilityContainer extends React.Component<
   renderCalendar() {
     return (
       <Calendar
-        // Initially visible month. Default = Date()
-
-        // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined
-        // minDate={'2012-05-10'}
-        // // Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined
-        // maxDate={'2012-05-30'}
-        // Handler which gets executed on day press. Default = undefined
         onDayPress={day => {
           const markedDates = {...this.state.markedDates};
 
@@ -163,7 +141,6 @@ export class ScheduleAvailabilityContainer extends React.Component<
           }
 
           if (selection.marked) {
-            // Calendar needs a new reference or it won't update
             markedDates[day.dateString] = {...selection};
           }
 
@@ -179,27 +156,13 @@ export class ScheduleAvailabilityContainer extends React.Component<
 
           this.setState({markedDates});
         }}
-        // Month format in calendar title. Formatting values: http://arshaw.com/xdate/#Formatting
         monthFormat={'MMMM yyyy'}
-        // Handler which gets executed when visible month changes in calendar. Default = undefined
         onMonthChange={month => {
           log.info('month changed', month);
         }}
-        // Replace default arrows with custom ones (direction can be 'left' or 'right')
-        //renderArrow={(direction) => (<Arrow />)}
-        // Do not show days of other months in month page. Default = false
-        // If hideArrows=false and hideExtraDays=false do not switch month when tapping on greyed out
-        // day from another month that is visible in calendar page. Default = false
         disableMonthChange={true}
-        // If firstDay=1 week starts from Monday. Note that dayNames and dayNamesShort should still start from Sunday.
         firstDay={1}
-        // Hide day names. Default = false
         hideDayNames={false}
-        // Show week numbers to the left. Default = false
-        // // Handler which gets executed when press arrow icon left. It receive a callback can go back month
-        // onPressArrowLeft={substractMonth => substractMonth()}
-        // // Handler which gets executed when press arrow icon left. It receive a callback can go next month
-        // onPressArrowRight={addMonth => addMonth()}
         markedDates={this.state.markedDates}
         style={{
           borderBottomWidth: 1,
@@ -214,8 +177,6 @@ export class ScheduleAvailabilityContainer extends React.Component<
   }
 
   render() {
-    const {loading} = this.state;
-
     return (
       <Container>
         <ModalHeader

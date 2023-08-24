@@ -9,7 +9,7 @@ import {
   Platform,
 } from 'react-native';
 import Slider from '@react-native-community/slider';
-import {AppColors, AppFonts, AppSizes} from '../../theme';
+import {AppColors, AppFonts} from '../../theme';
 import {ConexusIconButton, Avatar} from '../../components';
 import Icon from 'react-native-vector-icons/Ionicons';
 import SystemSetting from 'react-native-system-setting';
@@ -208,8 +208,6 @@ const AudioPlayer = (props: AudioPlayerProps, state: AudioPlayerState) => {
                     /> */}
       </View>
     </>
-
-    // </ConexusLightbox>
   );
 };
 

@@ -1,20 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   Text,
   StyleSheet,
   View,
   Image,
   TouchableHighlight,
-  Falsy,
-  ImageStyle,
-  RecursiveArray,
-  RegisteredStyle,
-  ViewStyle,
   TouchableOpacity,
 } from 'react-native';
 import variables, {AppColors} from '../../../theme';
 import ImageSlider from 'react-native-image-slider';
-import {ConexusIconButton} from '../../../components/conexus-icon-button';
 import {ModalHeader} from '../../../components/modal-header';
 import {AppFonts} from '../../../theme';
 import {CachedImage} from 'react-native-cached-image';
@@ -84,14 +78,6 @@ const ImageGalleries = (props: ImageGalleryProps, state: ImageGalleryState) => {
         </Text>
       </View>
     );
-  };
-
-  const renderImage = (imageProps: any, imageDimensions: any) => {
-    return <CachedImage {...imageProps} />;
-  };
-
-  const onChangeImage = (index: React.SetStateAction<number>) => {
-    setIndex(index);
   };
 
   return (

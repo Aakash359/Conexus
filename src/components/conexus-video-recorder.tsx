@@ -2,9 +2,8 @@ import React, {useState, useEffect, useMemo} from 'react';
 import {StyleSheet, View, Text, FlexAlignType} from 'react-native';
 import {ActionButton} from '../components';
 import Icon from 'react-native-vector-icons/Ionicons';
-// import {Camera, sortDevices} from 'react-native-vision-camera';
+import {Camera, sortDevices} from 'react-native-vision-camera';
 import {AppColors, AppSizes} from '../theme';
-import {VideoStore} from '../stores';
 import {windowDimensions} from '../common';
 import NavigationService from '../navigation/NavigationService';
 
@@ -17,7 +16,6 @@ interface ConexusVideoRecorderProps {
   recordedData: any;
   onRecordStep?: () => any;
   onErrorStep?: () => any;
-  videoStore?: VideoStore;
   onComplete: (success: any, data: any) => any;
 }
 
@@ -36,7 +34,7 @@ export const ConexusVideoRecorder = (
   props: ConexusVideoRecorderProps,
   state: VideoRecorderState,
 ) => {
-  // const camera = React.useRef(null);
+  const camera = React.useRef(null);
   const [devices, setDevices] = useState([]);
   const [recordingState, setRecordingState] = useState([
     'Default',
@@ -46,14 +44,14 @@ export const ConexusVideoRecorder = (
     'Stop',
   ]);
 
-  // const getPermisson = async () => {
-  //   const newCameraPermission = await Camera.requestCameraPermission();
-  //   const newMicrophonePermission = await Camera.requestMicrophonePermission();
-  // };
+  const getPermisson = async () => {
+    const newCameraPermission = await Camera.requestCameraPermission();
+    const newMicrophonePermission = await Camera.requestMicrophonePermission();
+  };
 
-  // const device = useMemo(() => devices.find(d => d.position === 'front'), [
-  //   devices,
-  // ]);
+  const device = useMemo(() => devices.find(d => d.position === 'front'), [
+    devices,
+  ]);
   const [permissons, setPermissons] = useState(false);
   const {text, recordedData} = props;
   useEffect(() => {
@@ -62,72 +60,72 @@ export const ConexusVideoRecorder = (
     } else {
       setRecordingState('default');
     }
-    // loadDevices();
-    // getPermisson();
+    loadDevices();
+    getPermisson();
   }, [recordingState]);
 
-  // const loadDevices = async () => {
-  //   try {
-  //     const availableCameraDevices = await Camera.getAvailableCameraDevices();
-  //     const sortedDevices = availableCameraDevices.sort(sortDevices);
-  //     setDevices(sortedDevices);
-  //   } catch (e) {
-  //     console.error('Failed to get available devices!', e);
-  //   }
-  // };
+  const loadDevices = async () => {
+    try {
+      const availableCameraDevices = await Camera.getAvailableCameraDevices();
+      const sortedDevices = availableCameraDevices.sort(sortDevices);
+      setDevices(sortedDevices);
+    } catch (e) {
+      console.error('Failed to get available devices!', e);
+    }
+  };
 
-  // const getPermissons = async () => {
-  //   const cameraPermission = await Camera.getCameraPermissionStatus();
-  //   const microphonePermission = await Camera.getMicrophonePermissionStatus();
-  //   if (
-  //     microphonePermission === 'authorized' &&
-  //     cameraPermission === 'authorized'
-  //   ) {
-  //     setPermissons(true);
-  //   }
-  // };
+  const getPermissons = async () => {
+    const cameraPermission = await Camera.getCameraPermissionStatus();
+    const microphonePermission = await Camera.getMicrophonePermissionStatus();
+    if (
+      microphonePermission === 'authorized' &&
+      cameraPermission === 'authorized'
+    ) {
+      setPermissons(true);
+    }
+  };
 
-  // const startRecodingHandler = () => {
-  //   camera.current.startRecording(
-  //     {
-  //       flash: 'off',
-  //       onRecordingFinished: (video: any) => recordedData(video),
+  const startRecodingHandler = () => {
+    camera.current.startRecording(
+      {
+        flash: 'off',
+        onRecordingFinished: (video: any) => recordedData(video),
 
-  //       onRecordingError: (error: any) => console.error(error, 'video error'),
-  //     },
-  //     setRecordingState('Stop'),
-  //   );
-  //   setRecordingState('Playing');
-  // };
+        onRecordingError: (error: any) => console.error(error, 'video error'),
+      },
+      setRecordingState('Stop'),
+    );
+    setRecordingState('Playing');
+  };
 
-  // const stopRecodingHandler = async () => {
-  //   await camera.current.stopRecording();
-  //   setRecordingState('Stop');
-  // };
+  const stopRecodingHandler = async () => {
+    await camera.current.stopRecording();
+    setRecordingState('Stop');
+  };
 
-  // const onFinished = (archiveId: string, videoUrl: string) => {
-  //   const {videoMessage} = this.props;
+  const onFinished = (archiveId: string, videoUrl: string) => {
+    const {videoMessage} = this.props;
 
-  //   if (videoMessage && !this.videoMessageSendComplete) {
-  //     return this.sendVideoMessage(archiveId, videoUrl);
-  //   }
+    if (videoMessage && !this.videoMessageSendComplete) {
+      return this.sendVideoMessage(archiveId, videoUrl);
+    }
 
-  //   if (this.props.onFinished && this.props.onFinished.call) {
-  //     this.props.onFinished(archiveId, videoUrl);
-  //   }
+    if (this.props.onFinished && this.props.onFinished.call) {
+      this.props.onFinished(archiveId, videoUrl);
+    }
 
-  //   StatusBar.setHidden(false);
-  //   return Actions.pop();
-  // };
+    StatusBar.setHidden(false);
+    return Actions.pop();
+  };
 
-  // if (device == null) {
-  //   return null;
-  // }
+  if (device == null) {
+    return null;
+  }
 
   return (
     <>
       <View style={recorderStyle.headerViews}>
-        {/* <Camera
+        <Camera
           ref={camera}
           style={StyleSheet.absoluteFill}
           device={device}
@@ -135,7 +133,7 @@ export const ConexusVideoRecorder = (
           video={true}
           audio={false}
           setIsPressingButton={true}
-        /> */}
+        />
         <Icon
           style={recorderStyle.closeButton}
           name="ios-close-circle-sharp"

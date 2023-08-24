@@ -88,7 +88,6 @@ const ConversationContainer = (
   const [sendEnabled, setSendEnabled] = useState(false);
   const [showFooterActions, setShowFooterActions] = useState(false);
   const userInfo = useSelector(state => state.userReducer);
-  const currentUser = useSelector(state => state.currentUser);
   const [callbackNumber, setCallBackNumber] = useState(
     userInfo?.user?.phoneNumber || '',
   );
@@ -101,7 +100,6 @@ const ConversationContainer = (
   const params = props?.route?.params ? props?.route?.params : {};
   const {conversationId, candidate} = params ? params : '';
   const navigation = useNavigation();
-  const callingId = currentUser?.id;
 
   useEffect(() => {
     setTimeout(() => {
@@ -129,9 +127,6 @@ const ConversationContainer = (
       );
     }
   };
-  // const conversationId =
-
-  // this.applyMeasurements();
 
   const hcpUserId = (): string => {
     return messageList ? messageList.hcpUserId : userId;
@@ -333,41 +328,8 @@ const ConversationContainer = (
         message: 'The message could not be sent. Please try again.',
         yesTitle: 'Try Again',
         noTitle: 'Cancel',
-        // onYes: this.sendTextMessage.bind(this),
         onNo: () => {},
       });
-    }
-  };
-
-  const videoCall = async (data: any, userId: any, submissionId: any) => {
-    try {
-      const payload = {
-        submissionId,
-        userId: userId ? [userId] : '',
-      };
-
-      const {data} = await initVideoConferenceService(payload);
-      let result = {
-        sessionId: data.sessionId,
-        token: data.token,
-        autoAnswer: true,
-        isOutgoing: true,
-      };
-      NavigationService.navigate('VideoCalling', result);
-      setRefreshing(false);
-    } catch (error) {
-      console.log(error);
-      // setRefreshing(false);
-      // setMessageTexts(messageText);
-      // setSendEnabled(!!messageText);
-      // showYesNoAlert({
-      //   title: 'Send Error',
-      //   message: 'The message could not be sent. Please try again.',
-      //   yesTitle: 'Try Again',
-      //   noTitle: 'Cancel',
-      //   // onYes: this.sendTextMessage.bind(this),
-      //   onNo: () => {},
-      // });
     }
   };
 
@@ -481,13 +443,6 @@ const ConversationContainer = (
 
   const initPhoneCall = () => {
     setPhoneCallModalVisible(true);
-    // if (this.canMakePhoneCall) {
-    //   // Actions.push(ScreenType.HCP_PHONE_CALL_LIGHTBOX, {
-    //   //     submissionId: this.submissionId,
-    //   //     photoUrl: this.recipientPhotoUrl,
-    //   //     title: this.recipientName
-    //   // })
-    // }
   };
 
   const renderAudioMessageView = (message: any, index: number) => {
@@ -631,23 +586,6 @@ const ConversationContainer = (
 
   const makeCall = (user: any) => {
     NavigationService.navigate('Callpage');
-    // setCalling(true);
-    // try {
-    //   setLoading(true);
-    //   const {data} = await initiatePhoneCallService({
-    //     conversationId: '',
-    //     submissionId: submissionId,
-    //     callbackNumber: callbackNumber,
-    //     messageTypeId: '2',
-    //   });
-    //   console.log('response', data);
-    //   setPhoneCallModalVisible(false);
-    //   setLoading(false);
-    // } catch (error) {
-    //   setPhoneCallModalVisible(false);
-    //   setLoading(false);
-    //   console.log('Error', error);
-    // }
   };
 
   const onCallbackChangeText = (callbackNumber: any) => {

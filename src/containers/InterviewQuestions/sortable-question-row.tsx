@@ -1,15 +1,12 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import {
   Text,
   StyleSheet,
   View,
   Platform,
   Animated,
-  Easing,
-  ViewStyle,
   TouchableOpacity,
 } from 'react-native';
-import {Circle} from '../../components/circle';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {AppFonts, AppColors} from '../../theme';
 

@@ -1,18 +1,16 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {
   Text,
-  Alert,
   StyleSheet,
   View,
   TouchableOpacity,
   Image,
 } from 'react-native';
-import {AppFonts, AppColors} from '../theme';
-import {ConexusIcon} from '../components/conexus-icon';
-import {Avatar} from '../components/avatar';
+import { AppFonts, AppColors } from '../theme';
+
 import Icon from 'react-native-vector-icons/Ionicons';
 import NavigationService from '../navigation/NavigationService';
-import {useSelector} from '../redux/reducers/index';
+import { useSelector } from '../redux/reducers/index';
 
 export interface FacilitySelectionItem {
   facilityId: string;
@@ -26,10 +24,10 @@ export interface FacilityListHeaderItemProps {
   overrideFacilities?: FacilitySelectionItem[];
 }
 
-export interface FacilityListHeaderItemState {}
+export interface FacilityListHeaderItemState { }
 
 const FacilityListHeaderItem = (props: FacilityListHeaderItemProps) => {
-  const {caption} = props;
+  const { caption } = props;
   const userInfo = useSelector(state => state.userReducer);
 
   const facilities = (): FacilitySelectionItem[] => {
@@ -39,14 +37,14 @@ const FacilityListHeaderItem = (props: FacilityListHeaderItemProps) => {
 
     return !!userInfo?.user?.user && !!userInfo?.user?.user?.userFacilities
       ? userInfo?.user?.user?.userFacilities.map(
-          (i: {facilityId: any; facilityName: any; photoUrl: any}) => {
-            return {
-              facilityId: i.facilityId,
-              facilityName: i.facilityName,
-              photoUrl: i.photoUrl,
-            };
-          },
-        )
+        (i: { facilityId: any; facilityName: any; photoUrl: any }) => {
+          return {
+            facilityId: i.facilityId,
+            facilityName: i.facilityName,
+            photoUrl: i.photoUrl,
+          };
+        },
+      )
       : [];
   };
 
@@ -103,7 +101,7 @@ const FacilityListHeaderItem = (props: FacilityListHeaderItemProps) => {
 
   const chooseFacility = () => {
     const items = facilities.map(
-      (i: {facilityId: any; facilityName: any; photoUrl: any}) => {
+      (i: { facilityId: any; facilityName: any; photoUrl: any }) => {
         return {
           value: i.facilityId,
           title: i.facilityName,
@@ -139,7 +137,7 @@ const FacilityListHeaderItem = (props: FacilityListHeaderItemProps) => {
           name="chevron-down"
           size={25}
           color={AppColors.white}
-          style={{alignSelf: 'center'}}
+          style={{ alignSelf: 'center' }}
         />
       </View>
     </TouchableOpacity>
