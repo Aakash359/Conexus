@@ -34,7 +34,6 @@ export const ViewHeader = (props: ViewHeaderProps) => {
     titleStyle,
     descriptionStyle,
     style,
-    first,
   } = props;
 
   return (

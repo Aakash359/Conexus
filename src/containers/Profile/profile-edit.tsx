@@ -11,6 +11,7 @@ import {
   Image,
   Keyboard,
   PermissionsAndroid,
+  Platform,
 } from 'react-native';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -58,7 +59,6 @@ const EditProfile = (props: EditProfileProps) => {
             message: 'App needs camera permission',
           },
         );
-        // If CAMERA Permission is granted
         return granted === PermissionsAndroid.RESULTS.GRANTED;
       } catch (err) {
         console.warn(err);
@@ -101,7 +101,6 @@ const EditProfile = (props: EditProfileProps) => {
     const payload = {
       base64Image: response?.assets?.[0]?.base64,
       fileExt: ext,
-      // token: userInfo.user?.authToken,
     };
     console.log('image payload', payload);
     if (response.didCancel) {

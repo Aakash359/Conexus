@@ -5,18 +5,12 @@ import {
   Text,
   FlatList,
   RefreshControl,
-  Alert,
   Image,
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
 import {AppColors, AppFonts, AppSizes} from '../../theme';
-import {ScreenType, showYesNoAlert, windowDimensions} from '../../common';
-import {
-  QuestionSectionModel,
-  FacilityQuestionsStore,
-  FacilityModel,
-} from '../../stores/facility/';
+import {showYesNoAlert, windowDimensions} from '../../common';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import Icons from 'react-native-vector-icons/Ionicons';
 import {ActionButton} from '../../components/action-button';
@@ -88,7 +82,7 @@ const InterviewQuestions = (
 
   const renderSection = ({item, index}) => {
     const questionCount = item.questions.length + item.defaultQuestions.length;
-    const section = item as typeof QuestionSectionModel.Type;
+    const section = item;
     return (
       <TouchableOpacity
         key={`${section.sectionId}-${index}`}

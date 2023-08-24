@@ -13,10 +13,8 @@ import {
   ScrollView,
 } from 'react-native';
 import {AppFonts, AppColors} from '../../theme';
-import {FacilityQuestionsStore} from '../../stores/facility';
-import {UserStore, VideoStore} from '../../stores';
 import {ActionButton} from '../../components/action-button';
-import {showYesNoAlert, windowDimensions} from '../../common';
+import {windowDimensions} from '../../common';
 import {SelectUnitModal} from '../../components/Modals/selectUnitModal';
 import NavigationService from '../../navigation/NavigationService';
 
@@ -26,9 +24,6 @@ export interface CatalogQuestionContainerProps {
   needId?: string;
   onSave?: () => any;
   onClose?: () => any;
-  facilityQuestionsStore?: typeof FacilityQuestionsStore.Type;
-  userStore?: UserStore;
-  videoStore?: VideoStore;
 }
 
 const AddQuestion = (props: CatalogQuestionContainerProps) => {

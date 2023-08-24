@@ -9,14 +9,15 @@ import {
   View,
 } from 'react-native';
 
-import ConexusVideoPlayer from '../../components/conexus-video-player';
+import ConexusVideoPlayer, {
+  ConexusVideoActionButton,
+} from '../../components/conexus-video-player';
 import QuestionPlaybackHeader from '../../components/question-playback-header';
-import NavigationService from '../../navigation/NavigationService';
-import {AppColors, AppSizes, AppFonts} from '../../theme';
+import {AppColors, AppSizes} from '../../theme';
 
 interface VideoPlayer {
   videoUrl?: string;
-  closeable;
+  closeable: any;
 }
 
 interface VideoPlayerState {
@@ -77,7 +78,13 @@ const VideoPlayer = (props: VideoPlayer, state: VideoPlayerState) => {
   };
 
   const renderQuestionHeader = () => {
-    return <QuestionPlaybackHeader showAvatar={false} showCountdown={false} />;
+    return (
+      <QuestionPlaybackHeader
+        showAvatar={false}
+        showCountdown={false}
+        style={undefined}
+      />
+    );
   };
 
   const activityIndicator = (

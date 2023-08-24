@@ -12,21 +12,12 @@ import {
 } from 'react-native';
 import {ActionButton} from '../../components/action-button';
 import {useSelector} from '../../redux/reducers/index';
-import {AppColors, AppFonts} from '../../theme';
+import {AppColors} from '../../theme';
 import {windowDimensions} from '../../common/window-dimensions';
 import NavigationService from '../../navigation/NavigationService';
 import {sendMessageService} from '../../services/ApiServices';
 
 const SafeAreaView = require('react-native').SafeAreaView;
-
-interface AgentMessageModalProps extends ViewProperties {
-  userStore: UserStore;
-}
-
-interface AgentMessageModalState {
-  messageText: string;
-  sending: boolean;
-}
 
 const AgentMessage = () => {
   const userInfo = useSelector(state => state.userReducer);

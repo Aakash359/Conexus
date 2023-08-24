@@ -1,6 +1,3 @@
-// @flow
-// import color from './colors'
-
 import {Platform, Dimensions, PixelRatio} from 'react-native';
 import Fonts from './fonts';
 import {calcLineHeight} from './fonts';

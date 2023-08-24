@@ -7,23 +7,10 @@ import {AppColors, AppFonts} from '../../../theme';
 import {TouchableOpacity} from 'react-native';
 
 const SafeAreaView = require('react-native').SafeAreaView;
-interface SelectAccountProps {
-  accountType: string;
-}
-interface SelectAccountState {
-  accountType: string;
-}
-const SelectAccount = (
-  props: SelectAccountProps,
-  state: SelectAccountState,
-) => {
+
+const SelectAccount = () => {
   const [accountType, setAccountType] = useState(-1);
 
-  // handleChange(value: string) {
-  //   this.setState({
-  //     accountType: value,
-  //   });
-  // }
   useEffect(() => {
     setAccountType(-1);
   });

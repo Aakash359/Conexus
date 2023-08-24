@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {Alert, View, StyleSheet, Text} from 'react-native';
+import React, {useState} from 'react';
+import {View, StyleSheet} from 'react-native';
 import {ViewHeader} from '../../../components/view-header';
 import {CandidateComparisonList} from './candidateComparisonList';
 import CandidateItem from './candidateItem';

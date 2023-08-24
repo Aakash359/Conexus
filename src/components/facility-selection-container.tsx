@@ -2,19 +2,13 @@ import React from 'react';
 import {
   StyleSheet,
   View,
-  Text,
   FlatList,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
-import {FacilitySelectionItem, ScreenFooterButton} from '../components';
 
-import {useSelector} from '../redux/reducers/index';
-import {AppColors} from '../theme';
-import {UserStore, FacilityModel} from '../stores';
-import {logger} from 'react-native-logs';
-// import {Actions} from 'react-native-router-flux';
-import {ScreenType, StoreType} from '../common';
+import { useSelector } from '../redux/reducers/index';
+import { AppColors } from '../theme';
+import { UserStore, } from '../stores';
 import FacilityListHeaderItem from './facility-list-header-item';
 import IconTitleBlock from './icon-title-block';
 
@@ -36,7 +30,7 @@ interface FacilitySelectionContainerProps {
 
 const FacilitySelectionContainer = (props: FacilitySelectionContainerProps) => {
   const userInfo = useSelector(state => state.userReducer);
-  const {overrideFacilities} = props;
+  const { overrideFacilities } = props;
 
   const showNoData = (boolean: any) => {
     return props.showNoData;
@@ -59,22 +53,22 @@ const FacilitySelectionContainer = (props: FacilitySelectionContainerProps) => {
   };
 
   const onFacilityChosen = (selectedFacilityId: string) => {
-    const {onFacilityChosen} = props;
+    const { onFacilityChosen } = props;
     if (onFacilityChosen && onFacilityChosen.call) {
       return onFacilityChosen;
     }
 
-    return (selectedFacilityId: string) => {};
+    return (selectedFacilityId: string) => { };
   };
 
   const onRefresh = (selectedFacilityId: string) => {
-    const {onRefresh} = props;
+    const { onRefresh } = props;
 
     if (onRefresh && onRefresh.call) {
       return onRefresh;
     }
 
-    return function(selectedFacilityId: string) {};
+    return function (selectedFacilityId: string) { };
   };
 
   const selectedFacilityId = () => {
@@ -90,9 +84,9 @@ const FacilitySelectionContainer = (props: FacilitySelectionContainerProps) => {
   };
 
   const showFacilitySelector = () => {
-    const {expectOverrideFacilities} = props;
+    const { expectOverrideFacilities } = props;
     if (expectOverrideFacilities) {
-      const {overrideFacilities} = props;
+      const { overrideFacilities } = props;
       return overrideFacilities;
     }
 
@@ -102,12 +96,12 @@ const FacilitySelectionContainer = (props: FacilitySelectionContainerProps) => {
   const renderEmpty = () => {
     return (
       <FlatList
-        contentContainerStyle={[styles.containerCenter, {marginBottom: 200}]}
+        contentContainerStyle={[styles.containerCenter, { marginBottom: 200 }]}
         refreshControl={<ActivityIndicator color={AppColors.blue} />}
-        data={[{id: '1'}]}
+        data={[{ id: '1' }]}
         // refreshing={refreshing}
         onRefresh={() => onRefresh(selectedFacilityId)}
-        renderItem={({item, index}) => {
+        renderItem={({ item, index }) => {
           return (
             <IconTitleBlock
               key={item.id}
@@ -146,7 +140,7 @@ const FacilitySelectionContainer = (props: FacilitySelectionContainerProps) => {
       {showLoading() && (
         <ActivityIndicator
           color={AppColors.blue}
-          style={{flex: 1, justifyContent: 'center', alignSelf: 'center'}}
+          style={{ flex: 1, justifyContent: 'center', alignSelf: 'center' }}
         />
       )}
       {!showLoading &&

@@ -1,7 +1,6 @@
 import OneSignal from 'react-native-onesignal';
 import {logger} from 'react-native-logs';
 import {Actions} from 'react-native-router-flux';
-import {deviceStore} from '../stores/deviceStore';
 import {videoStore} from '../stores/videoStore';
 import {
   ConversationStore,

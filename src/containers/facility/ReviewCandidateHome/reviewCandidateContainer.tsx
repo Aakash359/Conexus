@@ -1,28 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {View, ActivityIndicator, Alert} from 'react-native';
-import {UserStore} from '../../../stores/userStore';
 import {useSelector} from '../../../redux/reducers/index';
-import NavigationService from '../../../navigation/NavigationService';
 import {AppColors} from '../../../theme';
 import {CandidateList} from './candidateList';
-import OneSignal from 'react-native-onesignal';
 import {facilitySubmissionsService} from '../../../services/ApiServices';
 
-interface ReviewContainerProps {
-  userStore: UserStore;
-  forceRefresh?: boolean;
-}
-
-interface ReviewContainerState {
-  refreshing: boolean;
-}
 let submissionsStorePromise: Promise<any>;
 
-const ReviewCandidateContainer = (
-  props: ReviewContainerProps,
-  state: ReviewContainerState,
-) => {
+const ReviewCandidateContainer = () => {
   const userInfo = useSelector(state => state.userReducer);
   const [facilityId, setFacilityId] = useState('');
   const [refreshing, setRefreshing] = useState(false);
@@ -43,51 +29,7 @@ const ReviewCandidateContainer = (
     setTimeout(() => {
       load(true);
     }, 2000);
-
-    OneSignal.setAppId('e1de43b0-7a53-48e2-bf45-3a501f8bbf94');
-    OneSignal.setNotificationOpenedHandler(notification => {
-      console.log('OneSignal: notification opened:', notification);
-    });
   }, []);
-
-  // const selectedFacility = () => {
-
-  //   if (data) {
-  //     return data.find(
-  //       facility => facility.facilityId === userStore.selectedFacilityId,
-  //     );
-  //   }
-
-  //   return null;
-  // };
-
-  // const showNoData =(): boolean => {
-  //   const {facilitySubmissionsStore} = props;
-  //   if (refreshing || facilitySubmissionsStore.loading) {
-  //     return false;
-  //   }
-
-  //   return (
-  //     !this.selectedFacility || this.selectedFacility.positions.length === 0
-  //   );
-  // }
-
-  const showLoading = (): boolean => {
-    const {facilitySubmissionsStore} = this.props;
-
-    if (refreshing) {
-      return false;
-    }
-    return facilitySubmissionsStore.loading;
-  };
-
-  const logOutFromApp = async () => {
-    Alert.alert(
-      'Your app has been logged out due to session expire so you have to login again',
-    );
-    await AsyncStorage.removeItem('authToken');
-    NavigationService.navigate('LoginScreen');
-  };
 
   const load = async () => {
     if (!submissionsStorePromise) {
@@ -126,7 +68,6 @@ const ReviewCandidateContainer = (
           error?.response?.data?.invalidConexusToken == true
         )
           global.message = error?.response?.data?.invalidConexusToken;
-        // logOutFromApp();
         setLoading(false);
       }
     } else {

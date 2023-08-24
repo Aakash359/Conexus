@@ -5,7 +5,6 @@ import {
   View,
   RefreshControl,
   ScrollView,
-  Alert,
   FlatList,
   Text,
 } from 'react-native';

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   Alert,
   StyleSheet,
@@ -13,25 +13,25 @@ import {
   Text,
   View,
 } from 'react-native';
-import { phoneFormatter } from '../../common/phone-formatter';
-import { ConexusIconButton } from '../../components/conexus-icon-button';
-import { showYesNoAlert } from '../../common';
-import { useSelector } from '../../redux/reducers/index';
-import { UserStore, VideoStore } from '../../stores';
-import { logger } from 'react-native-logs';
+import {phoneFormatter} from '../../common/phone-formatter';
+import {ConexusIconButton} from '../../components/conexus-icon-button';
+import {showYesNoAlert} from '../../common';
+import {useSelector} from '../../redux/reducers/index';
+import {UserStore, VideoStore} from '../../stores';
+import {logger} from 'react-native-logs';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { AppFonts, AppSizes, AppColors } from '../../theme';
-import { TouchableOpacity } from 'react-native';
+import {AppFonts, AppSizes, AppColors} from '../../theme';
+import {TouchableOpacity} from 'react-native';
 import NavigationService from '../../navigation/NavigationService';
-import { PhoneCallModal } from '../../components/Modals/phoneCallModal';
+import {PhoneCallModal} from '../../components/Modals/phoneCallModal';
 import {
   initiatePhoneCallService,
   initVideoConferenceService,
   loadTextMessageService,
   sendTextMessageService,
 } from '../../services/ApiServices';
-import { users } from '../../containers/facility/HcpDetail/config-users';
-import { useNavigation } from '@react-navigation/native';
+import {users} from '../../containers/facility/HcpDetail/config-users';
+import {useNavigation} from '@react-navigation/native';
 
 let moment = require('moment');
 const SafeAreaView = require('react-native').SafeAreaView;
@@ -81,18 +81,18 @@ const ConversationContainer = (
   const [sendEnabled, setSendEnabled] = useState(false);
   const [showFooterActions, setShowFooterActions] = useState(false);
   const userInfo = useSelector(state => state.userReducer);
-  const currentUser = useSelector(state => state.currentUser);
-  const [callbackNumber, setCallBackNumber] = useState(userInfo?.user?.phoneNumber || '',);
+  const [callbackNumber, setCallBackNumber] = useState(
+    userInfo?.user?.phoneNumber || '',
+  );
   const [messageText, setMessageTexts] = useState('');
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [phoneCallModalVisible, setPhoneCallModalVisible] = useState(false);
   const validPhone = phoneFormatter.isValid10DigitPhoneNumber(callbackNumber);
-  const { startVideoMessage } = props;
+  const {startVideoMessage} = props;
   const params = props?.route?.params ? props?.route?.params : {};
-  const { conversationId, candidate } = params ? params : '';
+  const {conversationId, candidate} = params ? params : '';
   const navigation = useNavigation();
-  const callingId = currentUser?.id
 
   useEffect(() => {
     setTimeout(() => {
@@ -105,7 +105,7 @@ const ConversationContainer = (
   const loadMessages = async () => {
     try {
       setLoading(true);
-      const { data } = await loadTextMessageService(conversationId);
+      const {data} = await loadTextMessageService(conversationId);
       Keyboard.dismiss();
       setMessageList(data?.messages);
       setRefreshing(false);
@@ -120,9 +120,6 @@ const ConversationContainer = (
       );
     }
   };
-  // const conversationId =
-
-  // this.applyMeasurements();
 
   const hcpUserId = (): string => {
     return messageList ? messageList.hcpUserId : userId;
@@ -216,7 +213,7 @@ const ConversationContainer = (
   };
 
   const onInputContentSizeChange = (event: {
-    nativeEvent: { contentSize: { height: number } };
+    nativeEvent: {contentSize: {height: number}};
   }) => {
     let newInputHeight = event.nativeEvent.contentSize.height + 12;
     if (newInputHeight > inputMaxHeight) {
@@ -244,7 +241,7 @@ const ConversationContainer = (
   };
 
   const playVideoMessage = (videoUrl: string, message: any) => {
-    const parms = { videoUrl, audioUrl: undefined };
+    const parms = {videoUrl, audioUrl: undefined};
     log.info('ConversationContainer', 'playVideoMessage', parms);
     NavigationService.navigate('VideoPlayer', parms);
     log.info('Marking video viewed');
@@ -272,7 +269,7 @@ const ConversationContainer = (
   const toggleFooterActions = () => {
     setTimeout(() => {
       if (scrollRef.current && !showFooterActions) {
-        scrollRef.current.scrollToEnd({ animated: true });
+        scrollRef.current.scrollToEnd({animated: true});
       }
     }, 200);
     setShowFooterActions(!showFooterActions);
@@ -281,7 +278,7 @@ const ConversationContainer = (
 
   const onVideoMessageSent = (archiveId: string, videoUrl: string) => {
     try {
-      scrollRef.current.scrollToEnd({ animated: true });
+      scrollRef.current.scrollToEnd({animated: true});
     } catch (error) {
       log.info('ConversationContainer', 'onVideoMessageSent', 'Error', error);
     }
@@ -306,7 +303,7 @@ const ConversationContainer = (
     }
     clearMessageText();
     try {
-      const { data } = await sendTextMessageService({
+      const {data} = await sendTextMessageService({
         conversationId: conversationId || null,
         submissionId: null,
         messageText: messageText.replace(/\s+$/g, ''),
@@ -324,68 +321,17 @@ const ConversationContainer = (
         message: 'The message could not be sent. Please try again.',
         yesTitle: 'Try Again',
         noTitle: 'Cancel',
-        // onYes: this.sendTextMessage.bind(this),
-        onNo: () => { },
+        onNo: () => {},
       });
     }
   };
 
-  const videoCall = async (data: any, userId: any, submissionId: any) => {
-    try {
-      const payload = {
-        submissionId,
-        userId: userId ? [userId] : '',
-      };
+  const videoCall = async (data: any, userId: any, submissionId: any) => {};
 
-      const { data } = await initVideoConferenceService(payload);
-      let result = {
-        sessionId: data.sessionId,
-        token: data.token,
-        autoAnswer: true,
-        isOutgoing: true,
-      };
-      NavigationService.navigate('VideoCalling', result);
-      setRefreshing(false);
-    } catch (error) {
-      console.log(error);
-      // setRefreshing(false);
-      // setMessageTexts(messageText);
-      // setSendEnabled(!!messageText);
-      // showYesNoAlert({
-      //   title: 'Send Error',
-      //   message: 'The message could not be sent. Please try again.',
-      //   yesTitle: 'Try Again',
-      //   noTitle: 'Cancel',
-      //   // onYes: this.sendTextMessage.bind(this),
-      //   onNo: () => {},
-      // });
-    }
-  };
-
-  const initVideoCall = () => {
-    NavigationService.navigate('VideoCalling');
-    // let hcpUserId = messageList ? messageList.hcpUserId : userId;
-    // let submissionId = messageList
-    //   ? messageList.submissionId
-    //   : props.submissionId;
-    // const payload = {
-    //   title: '',
-    //   name: recipientName || '',
-    //   subTitle: '',
-    //   photo: photoUrl || '',
-    // };
-    // return videoCall(payload, userId, submissionId);
-  };
+  const initVideoCall = () => {};
 
   const initPhoneCall = () => {
     setPhoneCallModalVisible(true);
-    // if (this.canMakePhoneCall) {
-    //   // Actions.push(ScreenType.HCP_PHONE_CALL_LIGHTBOX, {
-    //   //     submissionId: this.submissionId,
-    //   //     photoUrl: this.recipientPhotoUrl,
-    //   //     title: this.recipientName
-    //   // })
-    // }
   };
 
   const renderAudioMessageView = (message: any, index: number) => {
@@ -473,7 +419,7 @@ const ConversationContainer = (
             message.sentByMe ? style.videoMessageWrapperFromMe : {},
           ]}
         >
-          <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
             <Icon
               style={{
                 alignSelf: 'center',
@@ -540,28 +486,7 @@ const ConversationContainer = (
     );
   };
 
-  const makeCall = (user: any) => {
-
-
-    NavigationService.navigate('Callpage',);
-    // setCalling(true);
-    // try {
-    //   setLoading(true);
-    //   const {data} = await initiatePhoneCallService({
-    //     conversationId: '',
-    //     submissionId: submissionId,
-    //     callbackNumber: callbackNumber,
-    //     messageTypeId: '2',
-    //   });
-    //   console.log('response', data);
-    //   setPhoneCallModalVisible(false);
-    //   setLoading(false);
-    // } catch (error) {
-    //   setPhoneCallModalVisible(false);
-    //   setLoading(false);
-    //   console.log('Error', error);
-    // }
-  };
+  const makeCall = (user: any) => {};
 
   const onCallbackChangeText = (callbackNumber: any) => {
     setCallBackNumber(phoneFormatter.stripFormatting(callbackNumber));
@@ -573,7 +498,7 @@ const ConversationContainer = (
         style={style.messageListView}
         ref={scrollRef}
         onContentSizeChange={() =>
-          scrollRef.current?.scrollToEnd({ animated: true })
+          scrollRef.current?.scrollToEnd({animated: true})
         }
         refreshControl={
           <RefreshControl
@@ -651,7 +576,7 @@ const ConversationContainer = (
             },
           ]}
         >
-          <ActivityIndicator color={AppColors.blue} style={{ flex: 1 }} />
+          <ActivityIndicator color={AppColors.blue} style={{flex: 1}} />
         </Animated.View>
       );
     }
@@ -691,7 +616,7 @@ const ConversationContainer = (
     return (
       <Animated.View key="footer" style={[footerStyle.footerView]}>
         <Animated.View
-          style={[footerStyle.inputRow, { height: footerInputHeight }]}
+          style={[footerStyle.inputRow, {height: footerInputHeight}]}
         >
           <View style={footerStyle.inputWrapper}>
             <ConexusIconButton
@@ -777,9 +702,9 @@ const ConversationContainer = (
   };
 
   return (
-    <SafeAreaView style={[{ flex: 1, backgroundColor: 'white' }]}>
+    <SafeAreaView style={[{flex: 1, backgroundColor: 'white'}]}>
       <Animated.View
-        style={{ flex: 1, paddingBottom: paddingBottom }}
+        style={{flex: 1, paddingBottom: paddingBottom}}
         onLayout={onLayout()}
         ref={animatableRef}
       >
@@ -793,34 +718,34 @@ const ConversationContainer = (
 const getMessageShadows = () => {
   return Platform.OS === 'android'
     ? {
-      elevation: 2,
-    }
+        elevation: 2,
+      }
     : {
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 0.8 },
-      shadowOpacity: 0.1,
-      shadowRadius: 1,
-    };
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 0.8},
+        shadowOpacity: 0.1,
+        shadowRadius: 1,
+      };
 };
 
 const getFooterShadows = () => {
   return Platform.OS === 'android'
     ? {
-      elevation: 4,
-    }
+        elevation: 4,
+      }
     : {
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: -0.8 },
-      shadowOpacity: 0.1,
-      shadowRadius: 1,
-    };
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: -0.8},
+        shadowOpacity: 0.1,
+        shadowRadius: 1,
+      };
 };
 
 const getInputStyle = () => {
   return Platform.OS === 'android'
     ? {
-      padding: 0,
-    }
+        padding: 0,
+      }
     : {};
 };
 

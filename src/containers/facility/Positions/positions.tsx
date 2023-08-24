@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Text,
   StyleSheet,
@@ -10,11 +10,11 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import { AppColors, AppFonts } from '../../../theme';
-import { ViewHeader } from '../../../components/view-header';
-import { ActionButton } from '../../../components/action-button';
+import {AppColors, AppFonts} from '../../../theme';
+import {ViewHeader} from '../../../components/view-header';
+import {ActionButton} from '../../../components/action-button';
 import NavigationService from '../../../navigation/NavigationService';
-import { facilityNeedService } from '../../../services/ApiServices';
+import {facilityNeedService} from '../../../services/ApiServices';
 
 export interface PositionState {
   refreshing: boolean;
@@ -30,35 +30,6 @@ const Positions = (state: PositionState) => {
   const [refreshing, setRefreshing] = useState(false);
   const [needs, setNeeds] = useState([]);
 
-  // const selectedFacility = (): any => {
-  //   const {facilityNeedsStore, userStore} = this.props;
-
-  //   if (facilityNeedsStore.loading) {
-  //     return null;
-  //   }
-
-  //   if (userStore.selectedFacilityId) {
-  //     return facilityNeedsStore.facilities.find(
-  //       (i: {facilityId: any}) => i.facilityId === userStore.selectedFacilityId,
-  //     );
-  //   }
-
-  //   return null;
-  // };
-
-  // const showNoData = (): boolean => {
-  //   const {facilityNeedsStore} = this.props;
-  //   if (this.state.refreshing || facilityNeedsStore.loading) {
-  //     return false;
-  //   }
-
-  //   return (
-  //     !this.selectedFacility ||
-  //     facilityNeedsStore.loading ||
-  //     this.selectedFacility.needs.length === 0
-  //   );
-  // };
-
   useEffect(() => {
     load(false);
   }, []);
@@ -67,7 +38,7 @@ const Positions = (state: PositionState) => {
     setLoading(true);
     if (!needsStorePromise) {
       try {
-        const { data } = await facilityNeedService();
+        const {data} = await facilityNeedService();
         setNeeds(data?.[0]?.needs);
         setLoading(false);
       } catch (error) {
@@ -115,16 +86,16 @@ const Positions = (state: PositionState) => {
           justifyContent: 'center',
         }}
       >
-        <Text style={{ ...AppFonts.bodyTextXtraSmall, paddingBottom: 4 }}>
+        <Text style={{...AppFonts.bodyTextXtraSmall, paddingBottom: 4}}>
           {title}
         </Text>
-        <Text style={{ ...AppFonts.bodyTextXtraLarge }}>{description}</Text>
+        <Text style={{...AppFonts.bodyTextXtraLarge}}>{description}</Text>
       </View>
     );
   };
 
   const renderNeedBody = (need: any) => {
-    return need.stats.map((stat: { title: string; description: string }) =>
+    return need.stats.map((stat: {title: string; description: string}) =>
       renderNeedBodyMetric(stat.title, stat.description),
     );
   };
@@ -141,7 +112,7 @@ const Positions = (state: PositionState) => {
     return (
       <View
         key={`need-${options.id}-details`}
-        style={[{ flex: 1, marginBottom: 6, paddingBottom }]}
+        style={[{flex: 1, marginBottom: 6, paddingBottom}]}
       >
         <ActionButton
           customStyle={styles.editVirtualBtn}
@@ -181,12 +152,12 @@ const Positions = (state: PositionState) => {
       );
     }
     const cardStyle = expanded
-      ? [styles.listItemExpanded, { ...getCardShadows() }]
-      : [styles.listItem, { ...getCardShadows() }];
+      ? [styles.listItemExpanded, {...getCardShadows()}]
+      : [styles.listItem, {...getCardShadows()}];
     return (
       <View
         key={`need-${item.needId}`}
-        style={{ flex: 1, margin: 8, paddingBottom }}
+        style={{flex: 1, margin: 8, paddingBottom}}
       >
         <TouchableOpacity
           onPress={() => toggleExpandedNeedId(item.needId)}
@@ -229,7 +200,7 @@ const Positions = (state: PositionState) => {
   };
 
   const renderNeedSection = (data: any) => {
-    const { item, index } = data;
+    const {item, index} = data;
 
     return (
       <View key={index}>
@@ -259,7 +230,7 @@ const Positions = (state: PositionState) => {
     //   onFacilityChosen={(facilityId: string) => forceUpdate()}>
 
     // </FacilitySelectionContainer>
-    <View style={{ flex: 1, backgroundColor: AppColors.baseGray }}>
+    <View style={{flex: 1, backgroundColor: AppColors.baseGray}}>
       {loading && (
         <ActivityIndicator
           style={{
@@ -292,15 +263,15 @@ const Positions = (state: PositionState) => {
 const getCardShadows = () => {
   return Platform.OS === 'android'
     ? {
-      elevation: 2,
-      //marginHorizontal: 30,
-    }
+        elevation: 2,
+        //marginHorizontal: 30,
+      }
     : {
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 0.8 },
-      shadowOpacity: 0.1,
-      shadowRadius: 1,
-    };
+        shadowColor: '#000',
+        shadowOffset: {width: 0, height: 0.8},
+        shadowOpacity: 0.1,
+        shadowRadius: 1,
+      };
 };
 
 const cardDefaults = {

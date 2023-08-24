@@ -2,7 +2,6 @@
 import React, {useState, useEffect} from 'react';
 import {StyleSheet, ActivityIndicator, StatusBar, Alert} from 'react-native';
 import {AppColors, AppSizes} from '../../theme';
-import {VideoStore} from '../stores';
 import {ConexusVideoActionButton, ConexusVideoRecorder} from '../../components';
 import ConexusVideoPlayer from '../../components/conexus-video-player';
 import NavigationService from '../../navigation/NavigationService';
@@ -13,7 +12,6 @@ import {
 
 interface VideoRecorderProps {
   finishedButtonTitle?: string;
-  videoStore?: VideoStore;
   onFinished?: (archiveId: string, videoUrl: string) => {};
   onCanceled?: () => {};
   videoMessage?: boolean;

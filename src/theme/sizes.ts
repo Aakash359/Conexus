@@ -1,9 +1,8 @@
-import { Dimensions, Platform,   NativeModules } from 'react-native';
+import {Dimensions, Platform, NativeModules} from 'react-native';
 
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 const screenHeight = width < height ? height : width;
 const screenWidth = width < height ? width : height;
-
 
 // See https://mydevice.io/devices/ for device dimensions
 const X_WIDTH = 375;
@@ -11,9 +10,9 @@ const X_HEIGHT = 812;
 const PAD_WIDTH = 768;
 const PAD_HEIGHT = 1024;
 
-const { height: D_HEIGHT, width: D_WIDTH } = Dimensions.get('window');
+const {height: D_HEIGHT, width: D_WIDTH} = Dimensions.get('window');
 
-const { PlatformConstants = {} } = NativeModules;
+const {PlatformConstants = {}} = NativeModules;
 
 const isIPhoneX = (() => {
   if (Platform.OS === 'web') return false;
@@ -41,7 +40,6 @@ const isIPad = (() => {
   return true;
 })();
 
-
 export default {
   // Window Dimensions
   screen: {
@@ -54,11 +52,11 @@ export default {
     widthThreeQuarters: screenWidth * 0.75,
   },
   conexusFooterButtonHeight: 80,
-  navbarHeight: (Platform.OS === 'ios') ? 64 : 54,
-  statusBarHeight: (Platform.OS === 'ios') ? 16 : 0,
+  navbarHeight: Platform.OS === 'ios' ? 64 : 54,
+  statusBarHeight: Platform.OS === 'ios' ? 16 : 0,
   padding: 20,
   paddingSml: 10,
   isIPhoneX,
   isIPad,
-  iPhoneXFooterSize: 44
+  iPhoneXFooterSize: 44,
 };
