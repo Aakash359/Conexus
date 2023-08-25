@@ -6,6 +6,7 @@ import {Provider} from 'react-redux';
 import {LogBox} from 'react-native';
 import OneSignal from 'react-native-onesignal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import notifee from '@notifee/react-native';
 
 // LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 // LogBox.ignoreAllLogs(); //Ignore all log notifications
@@ -20,6 +21,18 @@ const App = () => {
   useEffect(() => {
     getDevice();
   }, []);
+
+  useEffect(() => {
+    getNotifeePermission();
+  }, []);
+
+  const getNotifeePermission = async () => {
+    // Request Permission
+    // setTimeout(async () => {
+    //   await notifee.requestPermission();
+    // }, 100);
+    await notifee.requestPermission();
+  };
 
   const getDevice = async () => {
     const oneSignalToken = await AsyncStorage.getItem('oneSignalToken');

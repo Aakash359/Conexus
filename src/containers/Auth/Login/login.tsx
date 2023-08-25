@@ -98,7 +98,7 @@ const LoginScreen = () => {
           setLoading(false);
           dispatch(loginRequest(data));
         }, 1000);
-      } catch (error) {
+      } catch (error: any) {
         setLoading(false);
         console.log('Error', error);
         Alert.alert(

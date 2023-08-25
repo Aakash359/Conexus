@@ -248,7 +248,7 @@ const MessageStack = () => {
 };
 
 const DrawerStack = () => {
-  const userInfo = useSelector(state => state.userReducer);
+  const userInfo: any = useSelector(state => state.userReducer);
   const userType = (userInfo?.user?.userType).toUpperCase();
   return (
     <Drawer.Navigator
@@ -293,7 +293,7 @@ const DrawerStack = () => {
           headerRight: () => (
             <TouchableOpacity
               activeOpacity={0.8}
-              onPress={() => NavigationService.navigate('MessageStack')}
+              onPress={() => NavigationService.navigate('Message Center')}
             >
               <Icons
                 color={AppColors.blue}
