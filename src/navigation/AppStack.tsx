@@ -29,6 +29,8 @@ import NurseHome from '../containers/NurseHome/nurseHome';
 import AnswerRatings from '../containers/facility/HcpDetail/answerRating';
 import NurseInterview from '../containers/NurseHome/interviews/nurse-interview';
 import VideoRecorder from '../containers/VideoRecorder/videoRecoder';
+import CallPage from '../containers/VideoCalling/CallPage';
+import MeetingRoom from '../containers/VideoCalling/MeetingRoom';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -205,6 +207,20 @@ const AppStack = () => {
             },
           }}
         />
+        <Stack.Screen
+          name="CallPage"
+          component={CallPage}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="MeetingRoom"
+          component={MeetingRoom}
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -224,8 +240,7 @@ const MessageStack = () => {
               activeOpacity={0.8}
               onPress={() =>
                 NavigationService.dispatch(DrawerActions.openDrawer())
-              }
-            >
+              }>
               <Icons
                 color={AppColors.black}
                 style={{marginLeft: -10, top: 1}}
@@ -265,8 +280,7 @@ const DrawerStack = () => {
           marginLeft: 10,
           fontSize: 18,
         },
-      }}
-    >
+      }}>
       {userType === 'HCP' ? (
         <Drawer.Screen
           name="NurseHome"
@@ -293,8 +307,7 @@ const DrawerStack = () => {
           headerRight: () => (
             <TouchableOpacity
               activeOpacity={0.8}
-              onPress={() => NavigationService.navigate('Message Center')}
-            >
+              onPress={() => NavigationService.navigate('Message Center')}>
               <Icons
                 color={AppColors.blue}
                 style={{marginRight: 20}}

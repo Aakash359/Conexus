@@ -402,13 +402,13 @@ const ConversationContainer = (
 
   const initVideoCall = () => {
     const API_URL =
-      'https://97f1-2405-201-4-b871-883f-fc04-b513-1dd.ngrok-free.app';
+      'https://c138-2405-201-4-b871-88b2-36ec-df0-ed5a.ngrok-free.app';
     _checkPermissions(() => {
       fetch(`${API_URL}/getToken?userName=Vishal&room=testRoom`)
         .then(response => {
           if (response.ok) {
             response.text().then(jwt => {
-              NavigationService.navigate('VideoCalling', {
+              NavigationService.navigate('MeetingRoom', {
                 token: jwt,
                 roomName: 'testRoom',
               });

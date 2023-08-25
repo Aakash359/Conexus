@@ -18,7 +18,7 @@ import {
 
 const dimensions = Dimensions.get('window');
 
-const VideoCalling = (navigation) => {
+const MeetingRoom = (navigation) => {
   const twilioVideo = useRef(null);
   const {token, roomName} = navigation.route.params;
   const [status, setStatus] = useState('disconnected');
@@ -96,14 +96,14 @@ const VideoCalling = (navigation) => {
         onRoomDidDisconnect={() => {
           setStatus('disconnected');
           setTimeout(() => {
-            navigation.navigation.goBack();
+            navigation.navigation.popToTop();
           }, 500);
         }}
         onRoomDidFailToConnect={error => {
           Alert.alert('Error', error.error);
           setStatus('disconnected');
           setTimeout(() => {
-            navigation.navigation.goBack();
+            navigation.navigation.popToTop();
           }, 500);
         }}
         onParticipantAddedVideoTrack={({participant, track}) => {
@@ -173,4 +173,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default VideoCalling;
+export default MeetingRoom;
