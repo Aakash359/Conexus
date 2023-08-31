@@ -15,7 +15,7 @@ import {CachedImage} from 'react-native-cached-image';
 import Icon from 'react-native-vector-icons/Ionicons';
 import NavigationService from '../../../navigation/NavigationService';
 import {Platform} from 'react-native';
-
+import {Strings} from '../../../common/Strings';
 interface ImageGalleryProps {
   images: Array<string>;
   title?: string;
@@ -29,7 +29,7 @@ interface ImageGalleryState {
   closeButtonImageSource?: any;
   showGallery: boolean;
 }
-
+const {IMAGE_ERROR} = Strings;
 // const images = [
 //   {
 //     id: 1,
@@ -74,7 +74,7 @@ const ImageGalleries = (props: ImageGalleryProps, state: ImageGalleryState) => {
             fontStyle: 'italic',
           }}
         >
-          This image cannot be displayed...
+          {IMAGE_ERROR}
         </Text>
       </View>
     );

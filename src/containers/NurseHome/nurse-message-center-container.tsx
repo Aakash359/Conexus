@@ -4,18 +4,13 @@ let moment = require('moment');
 import {Avatar, Circle} from '../../components';
 import {UserStore} from '../../stores';
 import {AppFonts, AppColors} from '../../theme';
-import {
-  ConversationStore,
-  ConversationModel,
-} from '../../stores/message-center';
+
 import {logger} from 'react-native-logs';
+import {Strings} from '../../common/Strings';
 
 const log = logger.createLogger();
-interface NurseMessageCenterProps {
-  conversationStore?: typeof ConversationStore.Type;
-  userStore?: UserStore;
-}
 
+const {CONVERSATION_LOADING_ERROR} = Strings;
 interface NurseMessageCenterState {
   refreshing: boolean;
   loaded: boolean;
@@ -23,10 +18,9 @@ interface NurseMessageCenterState {
 }
 
 export class NurseMessageCenterContainer extends React.Component<
-  NurseMessageCenterProps,
   NurseMessageCenterState
 > {
-  constructor(props: NurseMessageCenterProps, state: NurseMessageCenterState) {
+  constructor(props: any, state: NurseMessageCenterState) {
     super(props, state);
     this.state = {
       refreshing: false,
@@ -40,7 +34,7 @@ export class NurseMessageCenterContainer extends React.Component<
   }
 
   _renderConversationItem({item, index}) {
-    let conversation = item as typeof ConversationModel.Type;
+    let conversation = item as any;
     let lastMessageDate = moment(conversation.recentMessageDateTime).fromNow();
 
     return (
@@ -90,10 +84,7 @@ export class NurseMessageCenterContainer extends React.Component<
       .catch(error => {
         this.setState({refreshing: false, loading: false});
         log.info(error);
-        Alert.alert(
-          'Message Center Error',
-          'We are having trouble loading your conversations. Please try again.',
-        );
+        Alert.alert('Message Center Error', CONVERSATION_LOADING_ERROR);
       });
   }
 

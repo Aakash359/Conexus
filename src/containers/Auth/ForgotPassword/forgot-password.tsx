@@ -19,11 +19,14 @@ import NavigationService from '../../../navigation/NavigationService';
 import {ActionButton} from '../../../components/action-button';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {forgotPassword} from '../../../services/ApiServices';
+import {Strings} from '../../../common/Strings';
 
 interface ForgotPasswordProps {
   username?: string;
   onPress: Function;
 }
+
+const {EMPTY_EMAIL_USERNAME, EMAIL_USERNAME, RECOVER_NOW} = Strings;
 const SafeAreaView = require('react-native').SafeAreaView;
 
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
@@ -47,7 +50,7 @@ const ForgotPassword = () => {
     Keyboard.dismiss();
     let isValid = true;
     if (!inputs.email) {
-      handleError('Please enter email', 'email');
+      handleError(EMPTY_EMAIL_USERNAME, 'email');
       isValid = false;
     }
     // else if (!inputs.email.match(emailRegex)) {
@@ -111,7 +114,7 @@ const ForgotPassword = () => {
           <View style={style.content}>
             <View style={style.form}>
               <Field
-                placeholder="Email Address"
+                placeholder={EMAIL_USERNAME}
                 onTextChange={(text: any) => handleOnchange(text, 'email')}
                 onFocus={() => handleError(null, 'email')}
                 error={errors.email}
@@ -127,7 +130,7 @@ const ForgotPassword = () => {
 
             <ActionButton
               textColor={variables.blue}
-              title="RECOVER NOW"
+              title={RECOVER_NOW}
               loading={loading}
               disabled={
                 inputs.email ? {loading, isRecoveringPassword} : 'false'

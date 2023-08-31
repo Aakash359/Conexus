@@ -16,9 +16,10 @@ import {AppColors} from '../../theme';
 import {windowDimensions} from '../../common/window-dimensions';
 import NavigationService from '../../navigation/NavigationService';
 import {sendMessageService} from '../../services/ApiServices';
+import {Strings} from '../../common/Strings';
 
 const SafeAreaView = require('react-native').SafeAreaView;
-
+const {MESSAGE_SENT, TYPE_MESSAGE, API_ERROR, INVALID_MSG, SEND} = Strings;
 const AgentMessage = () => {
   const userInfo = useSelector(state => state.userReducer);
   const [loading, setLoading] = useState(false);
@@ -60,10 +61,10 @@ const AgentMessage = () => {
           setLoading(false);
           setMessageText('');
           NavigationService.navigate('ReviewCandidateHomeScreen');
-          ToastAndroid.show('Message sent successfully!', ToastAndroid.SHORT);
+          ToastAndroid.show(MESSAGE_SENT, ToastAndroid.SHORT);
         } else {
           setLoading(false);
-          ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
+          ToastAndroid.show(API_ERROR, ToastAndroid.SHORT);
         }
       } catch (error) {
         setLoading(false);
@@ -74,39 +75,9 @@ const AgentMessage = () => {
         );
       }
     } else {
-      Alert.alert(
-        'Invalid message',
-        'Invalid message please type a message to send.',
-      );
+      Alert.alert('Invalid message', INVALID_MSG);
     }
   };
-
-  // _sendMessage() {
-  //   const {userStore} = this.props;
-  //   const {messageText} = this.state;
-
-  //   if (!!!messageText.trim()) {
-  //     return Promise.resolve(
-  //       Alert.alert('Invalid Message', 'Please type a message to send.'),
-  //     );
-  //   }
-
-  //   return userStore.selectedFacility.sendMessage(messageText).then(
-  //     () => {
-  //       this.setState({sending: false});
-  //       Alert.alert('Success', 'Your message has been sent.');
-  //       // Actions.pop()
-  //     },
-  //     error => {
-  //       this.setState({sending: false});
-  //       Alert.alert(
-  //         'Error',
-  //         'An error occurred while sending your message. Please try again.',
-  //       );
-  //       console.error(error);
-  //     },
-  //   );
-  // }
 
   const renderForm = () => {
     return (
@@ -115,7 +86,7 @@ const AgentMessage = () => {
           style={style.textInput}
           maxLength={1000}
           rowSpan={12}
-          placeholder="Type your message"
+          placeholder={TYPE_MESSAGE}
           placeholderTextColor={AppColors.mediumGray}
           value={messageText}
           returnKeyType="done"
@@ -133,7 +104,7 @@ const AgentMessage = () => {
       <View style={style.footer}>
         <ActionButton
           loading={loading}
-          title="SEND"
+          title={SEND}
           customStyle={style.btnEnable}
           onPress={onSendMessage}
         />

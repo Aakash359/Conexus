@@ -21,7 +21,7 @@ import _ from 'lodash';
 import SortableQuestionRow from './sortable-question-row';
 import NavigationService from '../../navigation/NavigationService';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {useIsFocused} from '@react-navigation/native';
+import {Strings} from '../../common/Strings';
 import {
   deleteInterviewQuestionsService,
   deleteNeedInterviewQuestionsService,
@@ -30,7 +30,11 @@ import {
 } from '../../services/ApiServices';
 
 const Tab = createMaterialTopTabNavigator();
-
+const {
+  QUESTIONS_LOADING_ERROR,
+  ADD_QUESTION,
+  QUESTIONS_DELETING_ERROR,
+} = Strings;
 export interface InterviewQuestionDetailProps {
   questionSectionId: string;
   needId: string;
@@ -111,7 +115,7 @@ const InterviewQuestionDetail = (
       setRefreshing(false);
       showYesNoAlert({
         title: `We're Sorry`,
-        message: 'An error occurred while loading available questions.',
+        message: QUESTIONS_LOADING_ERROR,
         onYes: () => load(refreshing),
         yesTitle: 'Retry',
         noTitle: 'Canel',
@@ -129,7 +133,7 @@ const InterviewQuestionDetail = (
       setRefreshing(false);
       setLoading(false);
     } catch (error) {
-      console.log('Load questions error', error);
+      console.log(QUESTIONS_LOADING_ERROR, error);
       setRefreshing(false);
       setLoading(false);
     }
@@ -241,7 +245,7 @@ const InterviewQuestionDetail = (
           onYes: () => tryDelete(questionId, needId, facilityId),
           noTitle: 'Cancel',
           title: 'Delete Error',
-          message: 'An error occurred while deleting the question.',
+          message: QUESTIONS_DELETING_ERROR,
         });
       }
     };
@@ -269,7 +273,6 @@ const InterviewQuestionDetail = (
         setRefreshing(false);
         load();
         setLoading(false);
-        console.log('interview Question Deleted response====>', data);
       } catch (error) {
         console.log('Load questions error', error);
         setRefreshing(false);
@@ -279,7 +282,7 @@ const InterviewQuestionDetail = (
           onYes: () => tryDelete(questionId),
           noTitle: 'Cancel',
           title: 'Delete Error',
-          message: 'An error occurred while deleting the question.',
+          message: QUESTIONS_DELETING_ERROR,
         });
       }
     };
@@ -627,7 +630,7 @@ const InterviewQuestionDetail = (
       {!editing && (
         <View style={styles.footer}>
           <ActionButton
-            title="ADD QUESTION"
+            title={ADD_QUESTION}
             loading={loading}
             customTitleStyle={styles.title}
             onPress={() => newQuestion()}

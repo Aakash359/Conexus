@@ -11,13 +11,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {logoutRequest} from '../../redux/actions/userAction';
 import theme from '../../theme';
 import {getProfileService} from '../../services/ApiServices';
-
+import {Strings} from '../../common/Strings';
 interface ProfileState {
   avatar: any;
   authToken: string;
 }
 
 const SafeAreaView = require('react-native').SafeAreaView;
+
+const {LOGOUT, EDIT} = Strings;
 
 const Profile: React.FC<ProfileState> = () => {
   const [loading, setLoading] = useState(false);
@@ -85,7 +87,7 @@ const Profile: React.FC<ProfileState> = () => {
         {renderTitle()}
         <View style={style.editView}>
           <ActionButton
-            title="EDIT"
+            title={EDIT}
             customStyle={style.editEnable}
             customTitleStyle={{color: AppColors.blue, fontSize: 15}}
             onPress={() => openEditProfile(profileData)}
@@ -99,7 +101,7 @@ const Profile: React.FC<ProfileState> = () => {
           customTitleStyle={loading ? style.loadingTitle : style.title}
           customStyle={loading ? style.loadingBtn : style.logoutBtn}
           loading={loading}
-          title="LOGOUT"
+          title={LOGOUT}
           onPress={() => onPressLogout()}
         />
       </View>

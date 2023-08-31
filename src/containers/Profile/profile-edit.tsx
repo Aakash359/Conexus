@@ -22,6 +22,7 @@ import {ActionButton} from '../../components/action-button';
 import {Field} from '../../components/field';
 import NavigationService from '../../navigation/NavigationService';
 import {updateProfile, uploadPhoto} from '../../services/ApiServices';
+import {Strings} from '../../common/Strings';
 
 interface EditProfileProps {
   firstName: string;
@@ -33,6 +34,24 @@ interface EditProfileProps {
   route: any;
   params: any;
 }
+const {
+  CAMERA_PERMISSION,
+  APP_NEED_CAMERA,
+  PHOTO_SAVING_ERROR,
+  STORAGE_PERMISSION,
+  WRITE_PERMISSION,
+  VALIDATE_FIRST_NAME,
+  VALIDATE_LAST_NAME,
+  VALIDATE_TITLE,
+  VALIDATE_PHONE_NO,
+  PROFILE_UPDATED,
+  CHOOSE_PROFILE_PHOTO,
+  FIRST_NAME,
+  LAST_NAME,
+  PHONE_NUMBER,
+  SAVE,
+  TITLE,
+} = Strings;
 
 const SafeAreaView = require('react-native').SafeAreaView;
 
@@ -55,8 +74,8 @@ const EditProfile = (props: EditProfileProps) => {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.CAMERA,
           {
-            title: 'Camera Permission',
-            message: 'App needs camera permission',
+            title: CAMERA_PERMISSION,
+            message: APP_NEED_CAMERA,
           },
         );
         return granted === PermissionsAndroid.RESULTS.GRANTED;
@@ -73,15 +92,15 @@ const EditProfile = (props: EditProfileProps) => {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
           {
-            title: 'External Storage Write Permission',
-            message: 'App needs write permission',
+            title: STORAGE_PERMISSION,
+            message: WRITE_PERMISSION,
           },
         );
         // If WRITE_EXTERNAL_STORAGE Permission is granted
         return granted === PermissionsAndroid.RESULTS.GRANTED;
       } catch (err) {
         console.warn(err);
-        alert('Write permission err', err);
+        alert('Write permission error', err);
       }
       return false;
     } else return true;
@@ -136,8 +155,7 @@ const EditProfile = (props: EditProfileProps) => {
       setLoading(false);
       showApiErrorAlert({
         defaultTitle: error?.response?.data?.statusText,
-        defaultDescription:
-          'An unexpected error occurred while saving your profile photo. Please try again.',
+        defaultDescription: PHOTO_SAVING_ERROR,
         error: error,
         loggerTitle: EDIT_PROFILE_COMPONENT_NAME,
         loggerName: 'selectImage',
@@ -157,7 +175,6 @@ const EditProfile = (props: EditProfileProps) => {
     let isStoragePermitted = await requestExternalWritePermission();
     if (isCameraPermitted && isStoragePermitted) {
       let response = await launchCamera(options);
-      console.log('camera picture data====>', response);
 
       let ext = response?.assets?.[0]?.type.split('/')[1] || 'jpg';
       const payload = {
@@ -198,8 +215,7 @@ const EditProfile = (props: EditProfileProps) => {
         setLoading(false);
         showApiErrorAlert({
           defaultTitle: error?.response?.data?.statusText,
-          defaultDescription:
-            'An unexpected error occurred while saving your profile photo. Please try again.',
+          defaultDescription: PHOTO_SAVING_ERROR,
           error: error,
           loggerTitle: EDIT_PROFILE_COMPONENT_NAME,
           loggerName: 'selectImage',
@@ -219,19 +235,19 @@ const EditProfile = (props: EditProfileProps) => {
     Keyboard.dismiss();
     let isValid = true;
     if (!inputs.firstName) {
-      handleError('Please enter first name', 'firstName');
+      handleError(VALIDATE_FIRST_NAME, 'firstName');
       isValid = false;
     }
     if (!inputs.lastName) {
-      handleError('Please enter first last', 'lastName');
+      handleError(VALIDATE_LAST_NAME, 'lastName');
       isValid = false;
     }
     if (!inputs.title) {
-      handleError('Please enter title', 'title');
+      handleError(VALIDATE_TITLE, 'title');
       isValid = false;
     }
     if (!inputs.phoneNumber) {
-      handleError('Please enter phone number', 'phoneNumber');
+      handleError(VALIDATE_PHONE_NO, 'phoneNumber');
       isValid = false;
     }
     if (isValid) {
@@ -252,10 +268,7 @@ const EditProfile = (props: EditProfileProps) => {
       setLoading(true);
       const {data} = await updateProfile(payload);
       NavigationService.goBack();
-      Alert.alert(
-        'Profile updated Successfully!',
-        'Profile updated Successfully!',
-      );
+      Alert.alert(PROFILE_UPDATED);
     } catch (error) {
       setLoading(false);
       console.log('Error', error);
@@ -292,14 +305,14 @@ const EditProfile = (props: EditProfileProps) => {
                 activeOpacity={1}
               >
                 <Text style={style.changePhotoButton}>
-                  CHOOSE PROFILE PHOTO
+                  {CHOOSE_PROFILE_PHOTO}
                 </Text>
               </TouchableOpacity>
             </View>
 
             <View style={style.top} />
             <Field
-              placeholder="First Name"
+              placeholder={FIRST_NAME}
               autoCapitalize="words"
               returnKeyType="done"
               value={inputs.firstName}
@@ -315,7 +328,7 @@ const EditProfile = (props: EditProfileProps) => {
             />
             <View style={style.top} />
             <Field
-              placeholder="Last Name"
+              placeholder={LAST_NAME}
               autoCapitalize="words"
               returnKeyType="done"
               value={inputs.lastName}
@@ -331,7 +344,7 @@ const EditProfile = (props: EditProfileProps) => {
             />
             <View style={style.top} />
             <Field
-              placeholder="Title"
+              placeholder={TITLE}
               autoCapitalize="words"
               returnKeyType="done"
               value={inputs.title}
@@ -347,7 +360,7 @@ const EditProfile = (props: EditProfileProps) => {
             />
             <View style={style.top} />
             <Field
-              placeholder="Phone Number"
+              placeholder={PHONE_NUMBER}
               autoCapitalize="none"
               keyboardType={'number-pad'}
               returnKeyType="done"
@@ -366,7 +379,7 @@ const EditProfile = (props: EditProfileProps) => {
             <View style={style.footer}>
               <ActionButton
                 loading={loading}
-                title="SAVE"
+                title={SAVE}
                 customStyle={style.btnEnable}
                 style={{marginTop: 40}}
                 onPress={validate}

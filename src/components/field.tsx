@@ -51,8 +51,7 @@ export const Field = (props: TextFieldProps) => {
         style={[
           styles.container,
           {borderColor: isFocused ? AppColors.gray : AppColors.lightBlue},
-        ]}
-      >
+        ]}>
         <TextInput
           placeholder={placeholder}
           value={value}
@@ -113,7 +112,6 @@ export const Passwordfield = (props: TextFieldProps) => {
     returnKeyType,
     keyboardType,
     error,
-    password,
     onFocus = () => {},
     customStyle,
   } = props;
@@ -124,8 +122,7 @@ export const Passwordfield = (props: TextFieldProps) => {
         style={[
           passwordstyles.container,
           {borderColor: isFocused ? AppColors.gray : AppColors.lightBlue},
-        ]}
-      >
+        ]}>
         <TextInput
           placeholder={placeholder}
           value={value}
@@ -146,8 +143,7 @@ export const Passwordfield = (props: TextFieldProps) => {
         <TouchableOpacity
           activeOpacity={0.8}
           style={passwordstyles.touachableButton}
-          onPress={onSubmit}
-        >
+          onPress={onSubmit}>
           <Icon
             name={hidePassword ? 'eye-off' : 'eye'}
             style={{color: AppColors.blue, fontSize: 22}}

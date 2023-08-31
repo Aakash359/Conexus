@@ -15,11 +15,13 @@ import {ViewHeader} from '../../../components/view-header';
 import {ActionButton} from '../../../components/action-button';
 import NavigationService from '../../../navigation/NavigationService';
 import {facilityNeedService} from '../../../services/ApiServices';
+import {Strings} from '../../../common/Strings';
 
 export interface PositionState {
   refreshing: boolean;
   expandedNeedId: string;
 }
+const {NEED_ERROR, NEED_UNAVAILABLE, EDIT_VIRTUAL_INTERVIEW} = Strings;
 
 let needsStorePromise: Promise<any>;
 
@@ -47,14 +49,8 @@ const Positions = (state: PositionState) => {
           setLoading(false);
         } else {
           setLoading(false);
-          console.log(
-            'NeedContainer',
-            'Not mounted so doing nothing after data loaded.',
-          );
-          Alert.alert(
-            'Error',
-            'We are having trouble loading needs. Please try again.',
-          );
+          console.log('NeedContainer', NEED_ERROR);
+          Alert.alert('Error', NEED_UNAVAILABLE);
         }
       }
     }
@@ -117,7 +113,7 @@ const Positions = (state: PositionState) => {
         <ActionButton
           customStyle={styles.editVirtualBtn}
           customTitleStyle={styles.editVirtualBtnTxt}
-          title={'EDIT VIRTUAL INTERVIEW'}
+          title={EDIT_VIRTUAL_INTERVIEW}
           onPress={options.onPress}
         />
       </View>
@@ -141,7 +137,7 @@ const Positions = (state: PositionState) => {
       cardButtons.push(
         renderCardButton({
           id: item.needId,
-          title: 'Edit Virtual Interview',
+          title: EDIT_VIRTUAL_INTERVIEW,
           onPress: () => {
             showNeedQuestions(item);
           },

@@ -1,4 +1,4 @@
-export * from './constants';
+export * from './Strings';
 export * from './window-dimensions';
 export * from './api-error-response-handler';
 export * from './handle-input-change';

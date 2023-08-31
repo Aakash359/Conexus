@@ -5,8 +5,10 @@ import variables from '../../../theme';
 import {windowDimensions} from '../../../common';
 import {AppColors, AppFonts} from '../../../theme';
 import {TouchableOpacity} from 'react-native';
-
+import {Strings} from '../../../common/Strings';
 const SafeAreaView = require('react-native').SafeAreaView;
+
+const {FACILITY, JOB_CANDIDATE, I_AM} = Strings;
 
 const SelectAccount = () => {
   const [accountType, setAccountType] = useState(-1);
@@ -30,14 +32,14 @@ const SelectAccount = () => {
             source={require('../../../components/Images/conexus-logo.jpg')}
           />
           <View style={style.picker}>
-            <Text style={style.iam}>I am a...</Text>
+            <Text style={style.iam}>{I_AM}</Text>
           </View>
           <TouchableOpacity
             onPress={requestFacilityAccount}
             activeOpacity={0.8}
           >
             <View style={style.btnContainer}>
-              <Text style={style.facility}>FACILITY</Text>
+              <Text style={style.facility}>{FACILITY}</Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity
@@ -47,7 +49,7 @@ const SelectAccount = () => {
             <View
               style={[style.btnContainer, {backgroundColor: AppColors.blue}]}
             >
-              <Text style={style.facility}>JOB CANDIDATE</Text>
+              <Text style={style.facility}>{JOB_CANDIDATE}</Text>
             </View>
           </TouchableOpacity>
         </View>

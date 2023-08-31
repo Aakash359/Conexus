@@ -16,12 +16,13 @@ import InterviewComplete from './components/interview-complete';
 import NavigationService from '../../../navigation/NavigationService';
 import QuestionAnswerRecorder from './components/question-answer-recorder';
 import {nurseInterviewQuestionService} from '../../../services/ApiServices';
+import {Strings} from '../../../common/Strings';
 
 export interface NurseInterviewProps {
   submissionId: string;
   onClose?: () => any;
 }
-
+const {INTERVIEW_QUESTION_LOADING_ERROR} = Strings;
 export interface NurseInterviewState {
   loading: boolean;
   closeable: boolean;
@@ -139,10 +140,7 @@ const NurseInterview = (
     } catch (error) {
       console.log('Error', error);
       setIsLoading(false);
-      Alert.alert(
-        'Error',
-        'An error occurred while loading the interview questions. Please try again.',
-      );
+      Alert.alert('Error', INTERVIEW_QUESTION_LOADING_ERROR);
     }
   };
 

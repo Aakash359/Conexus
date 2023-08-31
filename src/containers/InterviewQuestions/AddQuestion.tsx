@@ -17,6 +17,7 @@ import {ActionButton} from '../../components/action-button';
 import {windowDimensions} from '../../common';
 import {SelectUnitModal} from '../../components/Modals/selectUnitModal';
 import NavigationService from '../../navigation/NavigationService';
+import {Strings} from '../../common/Strings';
 
 export interface CatalogQuestionContainerProps {
   questionId: string;
@@ -25,6 +26,13 @@ export interface CatalogQuestionContainerProps {
   onSave?: () => any;
   onClose?: () => any;
 }
+const {
+  ENTER_TEXT,
+  CHOOSE_UNIT,
+  DEFAULT_UNIT_QUESTION,
+  INVALID_MSG,
+  RECORD_QUESTIONS,
+} = Strings;
 
 const AddQuestion = (props: CatalogQuestionContainerProps) => {
   const [loading, setLoading] = useState(false);
@@ -61,15 +69,12 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
 
   const validate = () => {
     if (!(propsData?.questionText || '').trim() && !messageText.trim()) {
-      Alert.alert(
-        'Validation Error',
-        'Please enter the text of your question.',
-      );
+      Alert.alert('Validation Error', ENTER_TEXT);
       return false;
     }
 
     if (!propsData.questionUnitId && !unitValue) {
-      Alert.alert('Validation Error', 'Please choose a unit.');
+      Alert.alert('Validation Error', CHOOSE_UNIT);
       return false;
     }
     return true;
@@ -104,9 +109,7 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
         />
 
         <TouchableOpacity>
-          <Text style={styles.switchLabel}>
-            Default question for this unit.
-          </Text>
+          <Text style={styles.switchLabel}>{DEFAULT_UNIT_QUESTION}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -137,7 +140,7 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
             returnKeyType="done"
             onSubmitEditing={Keyboard.dismiss}
             onBlur={messageTextBlur}
-            errorMessage={'Invalid Message please type a message to send.'}
+            errorMessage={INVALID_MSG}
             multiline={true}
             onChangeText={(text: any) => {
               setMessageText(text);
@@ -185,7 +188,7 @@ const AddQuestion = (props: CatalogQuestionContainerProps) => {
         {
           <View style={styles.footer}>
             <ActionButton
-              title="RECORD YOUR QUESTION"
+              title={RECORD_QUESTIONS}
               loading={loading}
               customTitleStyle={{fontSize: 16}}
               onPress={() => recordQuestion()}

@@ -25,12 +25,10 @@ import {TouchableOpacity} from 'react-native';
 import NavigationService from '../../navigation/NavigationService';
 import {PhoneCallModal} from '../../components/Modals/phoneCallModal';
 import {
-  initiatePhoneCallService,
-  initVideoConferenceService,
   loadTextMessageService,
   sendTextMessageService,
 } from '../../services/ApiServices';
-import {users} from '../../containers/facility/HcpDetail/config-users';
+import {Strings} from '../../common/Strings';
 import {useNavigation} from '@react-navigation/native';
 import {
   checkMultiple,
@@ -42,6 +40,14 @@ import {
 
 let moment = require('moment');
 const SafeAreaView = require('react-native').SafeAreaView;
+
+const {
+  MESSAGE_CENTER_ERROR,
+  SEND_MESSAGE_ERROR,
+  HARDWARE_ACCESS_ERROR,
+  FIRST_CONVERSATIONS,
+  SEND,
+} = Strings;
 
 interface ConversationContainerProps {
   route: any;
@@ -109,6 +115,7 @@ const ConversationContainer = (
       }
     }, 100);
   }, []);
+
   const loadMessages = async () => {
     try {
       setLoading(true);
@@ -121,10 +128,7 @@ const ConversationContainer = (
       console.log(error);
       setRefreshing(false);
       setLoading(false);
-      Alert.alert(
-        'Message Center Error',
-        'We are having trouble loading your conversation. Please try again.',
-      );
+      Alert.alert('Message Center Error', MESSAGE_CENTER_ERROR);
     }
   };
 
@@ -196,18 +200,6 @@ const ConversationContainer = (
     }
   };
 
-  //   setTimeout(() => {
-  //     if (this.scrollView) {
-  //       this.scrollView.scrollToEnd();
-  //     }
-  //   }, 400);
-  // };
-
-  // const keyboardWillHide = event => {
-  //   this.currentKeyboardHeight = 0;
-  //   this.applyMeasurements();
-  // };
-
   const setMessageText = (messageText: string) => {
     messageText = messageText || '';
     setMessageTexts(messageText);
@@ -269,8 +261,6 @@ const ConversationContainer = (
       avatarDescription,
     };
     NavigationService.navigate('AudioPlayer', parms);
-
-    // Actions[ScreenType.AUDIO_PLAYER_LIGHTBOX](parms)
   };
 
   const toggleFooterActions = () => {
@@ -293,14 +283,13 @@ const ConversationContainer = (
 
   const sendVideoMessage = () => {
     Keyboard.dismiss();
-
     NavigationService.navigate('VideoRecorder', {
       finishedButtonTitle: 'Send',
       videoMessage: true,
       conversationId,
       submissionId: props?.route?.params?.candidate?.submissionId || '',
       onFinished: onVideoMessageSent(),
-      // onMessageSendCallback: onMessageSend(),
+      onMessageSendCallback: onMessageSend(),
     });
   };
 
@@ -325,7 +314,7 @@ const ConversationContainer = (
       setSendEnabled(!!messageText);
       showYesNoAlert({
         title: 'Send Error',
-        message: 'The message could not be sent. Please try again.',
+        message: SEND_MESSAGE_ERROR,
         yesTitle: 'Try Again',
         noTitle: 'Cancel',
         onNo: () => {},
@@ -356,10 +345,7 @@ const ConversationContainer = (
         statuses[CAMERA] === RESULTS.BLOCKED ||
         statuses[AUDIO] === RESULTS.BLOCKED
       ) {
-        Alert.alert(
-          'Error',
-          'Permission to access hardware was blocked, please grant manually',
-        );
+        Alert.alert('Error', HARDWARE_ACCESS_ERROR);
       } else {
         if (
           statuses[CAMERA] === RESULTS.DENIED &&
@@ -424,21 +410,7 @@ const ConversationContainer = (
         .catch(error => {
           Alert.alert('API not available');
         });
-      // Below is used to disconnect room
-      // fetch(`${API_URL}/rooms/${roomName}?status=completed`, { method: 'POST' })
     });
-    // NavigationService.navigate('VideoCalling');
-    // let hcpUserId = messageList ? messageList.hcpUserId : userId;
-    // let submissionId = messageList
-    //   ? messageList.submissionId
-    //   : props.submissionId;
-    // const payload = {
-    //   title: '',
-    //   name: recipientName || '',
-    //   subTitle: '',
-    //   photo: photoUrl || '',
-    // };
-    // return videoCall(payload, userId, submissionId);
   };
 
   const initPhoneCall = () => {
@@ -461,20 +433,23 @@ const ConversationContainer = (
           style.messageView,
           style.audioMessageView,
           message.sentByMe ? style.messageFromMeView : {},
-        ]}>
+        ]}
+      >
         <TouchableHighlight
           activeOpacity={0.8}
           onPress={() => playAudioMessage(message)}
           style={[
             style.audioMessageWrapper,
             message.sentByMe ? style.audioMessageWrapperFromMe : {},
-          ]}>
+          ]}
+        >
           <View
             style={{
               flex: 1,
               flexDirection: 'row',
               alignItems: 'center',
-            }}>
+            }}
+          >
             <Icon
               style={{
                 alignItems: 'center',
@@ -488,13 +463,15 @@ const ConversationContainer = (
               style={[
                 style.audioMessageText,
                 message.sentByMe ? style.audioMessageTextFromMe : {},
-              ]}>
+              ]}
+            >
               Audio Message
             </Text>
           </View>
         </TouchableHighlight>
         <Text
-          style={[style.caption, message.sentByMe ? style.captionFrom : {}]}>
+          style={[style.caption, message.sentByMe ? style.captionFrom : {}]}
+        >
           {caption}
         </Text>
       </View>
@@ -516,13 +493,15 @@ const ConversationContainer = (
           style.messageView,
           style.videoMessageView,
           message.sentByMe ? style.messageFromMeView : {},
-        ]}>
+        ]}
+      >
         <TouchableHighlight
           onPress={() => playVideoMessage(message.tokBoxArchiveUrl, message)}
           style={[
             style.videoMessageWrapper,
             message.sentByMe ? style.videoMessageWrapperFromMe : {},
-          ]}>
+          ]}
+        >
           <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
             <Icon
               style={{
@@ -537,13 +516,15 @@ const ConversationContainer = (
               style={[
                 style.videoMessageText,
                 message.sentByMe ? style.videoMessageTextFromMe : {},
-              ]}>
+              ]}
+            >
               Video Message {message.read ? '' : ' *'}
             </Text>
           </View>
         </TouchableHighlight>
         <Text
-          style={[style.caption, message.sentByMe ? style.captionFrom : {}]}>
+          style={[style.caption, message.sentByMe ? style.captionFrom : {}]}
+        >
           {caption}
         </Text>
       </View>
@@ -561,23 +542,27 @@ const ConversationContainer = (
           style.messageView,
           style.textMessageView,
           message.sentByMe ? style.messageFromMeView : {},
-        ]}>
+        ]}
+      >
         <View
           style={[
             style.textMessageTextWrapper,
             message.sentByMe ? style.textMessageTextWrapperFromMe : {},
-          ]}>
+          ]}
+        >
           <Text
             selectable
             style={[
               style.textMessageText,
               message.sentByMe ? style.textMessageTextFromMe : {},
-            ]}>
+            ]}
+          >
             {message.messageText}
           </Text>
         </View>
         <Text
-          style={[style.caption, message.sentByMe ? style.captionFrom : {}]}>
+          style={[style.caption, message.sentByMe ? style.captionFrom : {}]}
+        >
           {caption}
         </Text>
       </View>
@@ -605,7 +590,8 @@ const ConversationContainer = (
             refreshing={refreshing}
             onRefresh={() => loadMessages(true)}
           />
-        }>
+        }
+      >
         {phoneCallModalVisible && (
           <PhoneCallModal
             source={{
@@ -658,7 +644,8 @@ const ConversationContainer = (
               justifyContent: 'center',
               backgroundColor: AppColors.baseGray,
             },
-          ]}>
+          ]}
+        >
           {renderMessageScrollView()}
         </Animated.View>
       );
@@ -672,7 +659,8 @@ const ConversationContainer = (
               justifyContent: 'center',
               backgroundColor: AppColors.baseGray,
             },
-          ]}>
+          ]}
+        >
           <ActivityIndicator color={AppColors.blue} style={{flex: 1}} />
         </Animated.View>
       );
@@ -687,7 +675,8 @@ const ConversationContainer = (
             justifyContent: 'center',
             backgroundColor: AppColors.baseGray,
           },
-        ]}>
+        ]}
+      >
         {
           <View
             style={{
@@ -695,10 +684,9 @@ const ConversationContainer = (
               alignItems: 'center',
               justifyContent: 'center',
               paddingBottom: 180,
-            }}>
-            {recipientName() && (
-              <Text>This is your first conversation with</Text>
-            )}
+            }}
+          >
+            {recipientName() && <Text>{FIRST_CONVERSATIONS}</Text>}
             {recipientName && <Text>{recipientName()}</Text>}
             {!recipientName && <Text>No Messages Available</Text>}
           </View>
@@ -711,7 +699,8 @@ const ConversationContainer = (
     return (
       <Animated.View key="footer" style={[footerStyle.footerView]}>
         <Animated.View
-          style={[footerStyle.inputRow, {height: footerInputHeight}]}>
+          style={[footerStyle.inputRow, {height: footerInputHeight}]}
+        >
           <View style={footerStyle.inputWrapper}>
             <ConexusIconButton
               imageSource={require('../../components/Images/more.png')}
@@ -737,13 +726,15 @@ const ConversationContainer = (
               footerStyle.sendButton,
               !sendEnabled && footerStyle.sendButtonDisabled,
             ])}
-            onPress={() => sendTextMessage()}>
+            onPress={() => sendTextMessage()}
+          >
             <Text
               style={[
                 footerStyle.sendButtonText,
                 !sendEnabled && footerStyle.sendButtonTextDisabled,
-              ]}>
-              SEND
+              ]}
+            >
+              {SEND}
             </Text>
           </TouchableOpacity>
         </Animated.View>
@@ -759,34 +750,30 @@ const ConversationContainer = (
               style={footerStyle.image}
               textStyle={footerStyle.actionButtonText}
             />
-            {
-              // canMakeVideoCall() && (
-              <ConexusIconButton
-                disabled={!showFooterActions}
-                title="Video Call"
-                style={footerStyle.image}
-                imageSource={require('../../components/Images/video-call.png')}
-                iconSize={24}
-                color={AppColors.blue}
-                onPress={() => initVideoCall()}
-                textStyle={footerStyle.actionButtonText}
-              />
-              // )
-            }
-            {
-              // canMakePhoneCall() && (
-              <ConexusIconButton
-                disabled={!showFooterActions}
-                title="Phone Call"
-                style={footerStyle.image}
-                imageSource={require('../../components/Images/phone-call.png')}
-                iconSize={24}
-                color={AppColors.blue}
-                onPress={() => initPhoneCall()}
-                textStyle={footerStyle.actionButtonText}
-              />
-              // )
-            }
+            {/* {canMakeVideoCall() && ( */}
+            <ConexusIconButton
+              disabled={!showFooterActions}
+              title="Video Call"
+              style={footerStyle.image}
+              imageSource={require('../../components/Images/video-call.png')}
+              iconSize={24}
+              color={AppColors.blue}
+              onPress={() => initVideoCall()}
+              textStyle={footerStyle.actionButtonText}
+            />
+            {/* )} */}
+            {/* {canMakePhoneCall() && ( */}
+            <ConexusIconButton
+              disabled={!showFooterActions}
+              title="Phone Call"
+              style={footerStyle.image}
+              imageSource={require('../../components/Images/phone-call.png')}
+              iconSize={24}
+              color={AppColors.blue}
+              onPress={() => initPhoneCall()}
+              textStyle={footerStyle.actionButtonText}
+            />
+            {/* )} */}
           </View>
         )}
       </Animated.View>
@@ -798,7 +785,8 @@ const ConversationContainer = (
       <Animated.View
         style={{flex: 1, paddingBottom: paddingBottom}}
         onLayout={onLayout()}
-        ref={animatableRef}>
+        ref={animatableRef}
+      >
         {renderMessageList()}
         {renderFooter()}
       </Animated.View>
