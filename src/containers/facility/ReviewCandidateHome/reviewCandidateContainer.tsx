@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {View, ActivityIndicator, Alert} from 'react-native';
+import {View, ActivityIndicator, Alert, Keyboard} from 'react-native';
 import {useSelector} from '../../../redux/reducers/index';
 import {AppColors} from '../../../theme';
 import {CandidateList} from './candidateList';

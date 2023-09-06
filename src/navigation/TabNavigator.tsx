@@ -8,7 +8,7 @@ import {TouchableOpacity} from 'react-native';
 import NavigationService from './NavigationService';
 import Positions from '../containers/facility/Positions/positions';
 import ReviewCandidateContainer from '../containers/facility/ReviewCandidateHome/reviewCandidateContainer';
-
+import {REVIEW_TAB, POSITIONS_TAB} from './Routes';
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
@@ -21,9 +21,10 @@ const TabNavigator = () => {
         tabBarLabelStyle: {fontWeight: 'bold', fontSize: 10},
         tabBarActiveTintColor: AppColors.blue,
         tabBarInactiveTintColor: AppColors.mediumGray,
-      }}>
+      }}
+    >
       <Tab.Screen
-        name="Review"
+        name={REVIEW_TAB}
         component={ReviewCandidateContainer}
         options={{
           tabBarIcon: ({color, focused, size}) => (
@@ -37,7 +38,8 @@ const TabNavigator = () => {
           headerRight: () => (
             <TouchableOpacity
               activeOpacity={0.8}
-              onPress={() => NavigationService.navigate('Message Center')}>
+              onPress={() => NavigationService.navigate('Message Center')}
+            >
               <Icons
                 color={AppColors.blue}
                 style={{marginRight: 20}}
@@ -51,7 +53,8 @@ const TabNavigator = () => {
               activeOpacity={0.8}
               onPress={() =>
                 NavigationService.dispatch(DrawerActions.openDrawer())
-              }>
+              }
+            >
               <Icon
                 color={AppColors.black}
                 style={{marginLeft: 10}}
@@ -63,7 +66,7 @@ const TabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Positions"
+        name={POSITIONS_TAB}
         component={Positions}
         options={{
           tabBarIcon: ({color, size, focused}) => (
@@ -79,7 +82,8 @@ const TabNavigator = () => {
               activeOpacity={0.8}
               onPress={() =>
                 NavigationService.dispatch(DrawerActions.openDrawer())
-              }>
+              }
+            >
               <Icon
                 color={AppColors.black}
                 style={{marginLeft: 10}}
@@ -91,7 +95,8 @@ const TabNavigator = () => {
           headerRight: () => (
             <TouchableOpacity
               activeOpacity={0.8}
-              onPress={() => NavigationService.navigate('Message Center')}>
+              onPress={() => NavigationService.navigate('Message Center')}
+            >
               <Icons
                 color={AppColors.blue}
                 style={{marginRight: 20}}

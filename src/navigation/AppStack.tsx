@@ -1,22 +1,12 @@
-import React, {useState} from 'react';
-import {createDrawerNavigator} from '@react-navigation/drawer';
-import CustomDrawer from '../components/CustomDrawer';
+import React from 'react';
 import {AppColors} from '.././theme';
-import {TouchableOpacity} from 'react-native';
-import {DrawerActions} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import MessageCenter from '../containers/MessageCenter/messageCenter';
-import NavigationService, {navigationRef} from './NavigationService';
-import TabNavigator from './TabNavigator';
 import {NavigationContainer} from '@react-navigation/native';
 import Profile from '../containers/Profile/profile-view';
 import AppFeedback from '../containers/SendFeedback/appFeedback';
 import AgentMessage from '../containers/AgentMessage/agentMessage';
 import EditProfile from '../containers/Profile/profile-edit';
 import InterviewQuestions from '../containers/InterviewQuestions/interviewQuestions';
-import {windowDimensions} from '../common/window-dimensions';
-import Icons from 'react-native-vector-icons/Ionicons';
-import Icon from 'react-native-vector-icons/Feather';
 import InterviewQuestionDetail from '../containers/InterviewQuestions/interviewQuestionsDetails';
 import AddQuestion from '../containers/InterviewQuestions/AddQuestion';
 import HcpDetailView from '../containers/facility/HcpDetail/HcpDetailView';
@@ -24,15 +14,34 @@ import ImageGalleries from '../containers/facility/HcpDetail/imageGallery';
 import ConversationContainer from '../containers/MessageCenter/conversation';
 import VideoPlayer from '../containers/VideoPlayer/videoPlayer';
 import AudioPlayer from '../containers/AudioPlayer/audioPlayer';
-import {useSelector} from '../redux/reducers/index';
-import NurseHome from '../containers/NurseHome/nurseHome';
 import AnswerRatings from '../containers/facility/HcpDetail/answerRating';
 import NurseInterview from '../containers/NurseHome/interviews/nurse-interview';
 import VideoRecorder from '../containers/VideoRecorder/videoRecoder';
-import CallPage from '../containers/VideoCalling/CallPage';
+import CallScreen from '../containers/VideoCalling/CallScreen';
 import MeetingRoom from '../containers/VideoCalling/MeetingRoom';
+import DrawerStack from '../navigation/DrawerStack';
+import {navigationRef} from './NavigationService';
+import {
+  DRAWER,
+  AGENT_MESSAGE,
+  APP_FEEDBACK,
+  PROFILE,
+  EDIT_PROFILE,
+  ADD_QUESTIONS,
+  INTERVIEW_QUESTIONS_DETAIL,
+  INTERVIEW_QUESTIONS,
+  HCP_DETAIL_VIEW,
+  IMAGE_GALLERY,
+  CONVERSATION_CONTAINER,
+  ANSWER_RATINGS,
+  AUDIO_PLAYER,
+  VIDEO_PLAYER,
+  VIDEO_RECORDER,
+  NURSE_INTERVIEW,
+  MEETING_ROOM,
+  CALL_SCREEN,
+} from './Routes';
 
-const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
 
 const AppStack = () => {
@@ -40,12 +49,12 @@ const AppStack = () => {
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator>
         <Stack.Screen
-          name="DrawerStack"
+          name={DRAWER}
           component={DrawerStack}
           options={{headerShown: false}}
         />
         <Stack.Screen
-          name="AgentMessage"
+          name={AGENT_MESSAGE}
           component={AgentMessage}
           options={{
             title: 'New Message',
@@ -57,7 +66,7 @@ const AppStack = () => {
           }}
         />
         <Stack.Screen
-          name="AppFeedback"
+          name={APP_FEEDBACK}
           component={AppFeedback}
           options={{
             title: 'App Feedback',
@@ -69,7 +78,7 @@ const AppStack = () => {
           }}
         />
         <Stack.Screen
-          name="Profile"
+          name={PROFILE}
           component={Profile}
           options={{
             title: 'Your Profile',
@@ -81,7 +90,7 @@ const AppStack = () => {
           }}
         />
         <Stack.Screen
-          name="EditProfile"
+          name={EDIT_PROFILE}
           component={EditProfile}
           options={{
             title: 'Edit Your Profile',
@@ -93,7 +102,7 @@ const AppStack = () => {
           }}
         />
         <Stack.Screen
-          name="AddQuestion"
+          name={ADD_QUESTIONS}
           component={AddQuestion}
           options={({route}) => ({
             title: route?.params?.title
@@ -102,7 +111,7 @@ const AppStack = () => {
           })}
         />
         <Stack.Screen
-          name="InterviewQuestionDetail"
+          name={INTERVIEW_QUESTIONS_DETAIL}
           component={InterviewQuestionDetail}
           options={({route}) => ({
             title:
@@ -112,7 +121,7 @@ const AppStack = () => {
           })}
         />
         <Stack.Screen
-          name="HcpDetailView"
+          name={HCP_DETAIL_VIEW}
           component={HcpDetailView}
           options={{
             headerShown: false,
@@ -125,7 +134,7 @@ const AppStack = () => {
         />
 
         <Stack.Screen
-          name="ImageGallery"
+          name={IMAGE_GALLERY}
           component={ImageGalleries}
           options={{
             headerShown: false,
@@ -137,7 +146,7 @@ const AppStack = () => {
           }}
         />
         <Stack.Screen
-          name="ConversationContainer"
+          name={CONVERSATION_CONTAINER}
           component={ConversationContainer}
           options={({route}) => ({
             title:
@@ -147,21 +156,21 @@ const AppStack = () => {
           })}
         />
         <Stack.Screen
-          name="VideoPlayer"
+          name={VIDEO_PLAYER}
           component={VideoPlayer}
           options={{
             headerShown: false,
           }}
         />
         <Stack.Screen
-          name="AudioPlayer"
+          name={AUDIO_PLAYER}
           component={AudioPlayer}
           options={{
             headerShown: false,
           }}
         />
         <Stack.Screen
-          name="AnswerRatings"
+          name={ANSWER_RATINGS}
           component={AnswerRatings}
           options={{
             headerShown: false,
@@ -169,7 +178,7 @@ const AppStack = () => {
         />
 
         <Stack.Screen
-          name="InterviewQuestions"
+          name={INTERVIEW_QUESTIONS}
           component={InterviewQuestions}
           options={{
             headerShown: true,
@@ -182,7 +191,7 @@ const AppStack = () => {
           }}
         />
         <Stack.Screen
-          name="VideoRecorder"
+          name={VIDEO_RECORDER}
           component={VideoRecorder}
           options={{
             headerShown: false,
@@ -195,7 +204,7 @@ const AppStack = () => {
           }}
         />
         <Stack.Screen
-          name="NurseInterview"
+          name={NURSE_INTERVIEW}
           component={NurseInterview}
           options={{
             headerShown: true,
@@ -208,14 +217,14 @@ const AppStack = () => {
           }}
         />
         <Stack.Screen
-          name="CallPage"
-          component={CallPage}
+          name={CALL_SCREEN}
+          component={CallScreen}
           options={{
             headerShown: false,
           }}
         />
         <Stack.Screen
-          name="MeetingRoom"
+          name={MEETING_ROOM}
           component={MeetingRoom}
           options={{
             headerShown: false,
@@ -223,120 +232,6 @@ const AppStack = () => {
         />
       </Stack.Navigator>
     </NavigationContainer>
-  );
-};
-
-const MessageStack = () => {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="MessageCenter"
-        component={MessageCenter}
-        options={{
-          headerShown: true,
-          title: 'Message Center',
-          headerLeft: () => (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() =>
-                NavigationService.dispatch(DrawerActions.openDrawer())
-              }>
-              <Icons
-                color={AppColors.black}
-                style={{marginLeft: -10, top: 1}}
-                size={32}
-                name="menu-outline"
-              />
-            </TouchableOpacity>
-          ),
-        }}
-      />
-      <Stack.Screen
-        name="AudioPlayer"
-        component={AudioPlayer}
-        options={{
-          headerShown: true,
-        }}
-      />
-    </Stack.Navigator>
-  );
-};
-
-const DrawerStack = () => {
-  const userInfo: any = useSelector(state => state.userReducer);
-  const userType = (userInfo?.user?.userType).toUpperCase();
-  return (
-    <Drawer.Navigator
-      drawerContent={props => <CustomDrawer {...props} />}
-      screenOptions={{
-        headerShown: true,
-        drawerActiveBackgroundColor: AppColors.blue,
-        drawerStyle: {
-          width: windowDimensions.width * 0.8,
-        },
-        drawerActiveTintColor: '#fff',
-        drawerInactiveTintColor: AppColors.blue,
-        drawerLabelStyle: {
-          marginLeft: 10,
-          fontSize: 18,
-        },
-      }}>
-      {userType === 'HCP' ? (
-        <Drawer.Screen
-          name="NurseHome"
-          component={NurseHome}
-          options={{
-            headerShown: true,
-            title: 'Nurse',
-          }}
-        />
-      ) : (
-        <Drawer.Screen
-          name="Review Candidates"
-          component={TabNavigator}
-          options={{
-            headerShown: false,
-          }}
-        />
-      )}
-
-      <Drawer.Screen
-        name="Interview Questions"
-        component={InterviewQuestions}
-        options={{
-          headerRight: () => (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() => NavigationService.navigate('Message Center')}>
-              <Icons
-                color={AppColors.blue}
-                style={{marginRight: 20}}
-                size={26}
-                name="chatbubble-outline"
-              />
-            </TouchableOpacity>
-          ),
-          headerLeft: () => (
-            <Icon
-              color={AppColors.black}
-              style={{marginLeft: 10}}
-              size={26}
-              name="menu"
-              onPress={() =>
-                NavigationService.dispatch(DrawerActions.openDrawer())
-              }
-            />
-          ),
-        }}
-      />
-      <Drawer.Screen
-        name="Message Center"
-        component={MessageStack}
-        options={{
-          headerShown: false,
-        }}
-      />
-    </Drawer.Navigator>
   );
 };
 

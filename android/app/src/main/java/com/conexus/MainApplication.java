@@ -14,6 +14,8 @@ import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import android.os.Bundle;
+import android.util.Log;
+// import com.conexus.MyStripeReactManager;
 import com.microsoft.codepush.react.CodePush;
 import com.oblador.vectoricons.VectorIconsPackage;
 
@@ -32,8 +34,11 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
           @SuppressWarnings("UnnecessaryLocalVariable")
           List<ReactPackage> packages = new PackageList(this).getPackages();
-          new SplashScreenReactPackage(); // SplashScreen Snippets
-          new VectorIconsPackage();
+            Log.d("hello size",String.valueOf(packages.size()));
+            new SplashScreenReactPackage();
+//            new MyStripeReactManager();// SplashScreen Snippets
+
+            // Log.d("hello size after",String.valueOf(packages.size()));
           return packages;
         }
 

@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import {debounce} from 'lodash';
 import {
   StyleSheet,
   KeyboardAvoidingView,
@@ -21,6 +22,7 @@ import theme, {AppFonts, AppColors} from '../../../theme';
 import {useDispatch} from 'react-redux';
 import {loginRequest} from '../../../redux/actions/userAction';
 import {Strings} from '../../../common/Strings';
+// import {NativeModules} from 'react-native';
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 const SafeAreaView = require('react-native').SafeAreaView;
 
@@ -55,6 +57,7 @@ const {
 
 const LoginScreen = () => {
   const [loading, setLoading] = useState(false);
+  const [count, setCount] = useState(0);
   const [hidePassword, setHidePassword] = useState(true);
   const [errors, setErrors] = useState('');
   const [inputs, setInputs] = useState({
@@ -62,6 +65,7 @@ const LoginScreen = () => {
     password: '',
   });
   const dispatch = useDispatch();
+  // const {MyStripeModule} = NativeModules;
 
   const handleOnchange = (text: any, input: any) => {
     setInputs((prevState: any) => ({...prevState, [input]: text}));
@@ -129,9 +133,23 @@ const LoginScreen = () => {
   const forgotPasswordFn = () => {
     NavigationService.navigate('ForgotPassword');
   };
-  const requestAccount = () => {
-    NavigationService.navigate('SelectAccount');
-  };
+
+  const requestAccount = debounce(() => {
+    setCount(count + 1);
+  }, 100);
+
+  // MyStripeModule.getPaymentId(
+  //   '4242424242424242',
+  //   '123',
+  //   1,
+  //   2024,
+  //   (err: any, res: any) => {
+  //     console.log('====================================');
+  //     console.log('Date===>', err, res);
+  //     console.log('====================================');
+  //   },
+  // );
+  // NavigationService.navigate('SelectAccount');
 
   return (
     <SafeAreaView style={style.splash}>
@@ -168,9 +186,15 @@ const LoginScreen = () => {
                   returnKeyType="done"
                 />
               </View>
+              <Text>Count: {count}</Text>
+
               <View style={style.forgotPassView}>
-                <TouchableOpacity onPress={forgotPasswordFn} activeOpacity={1}>
+                <TouchableOpacity
+                  onPress={() => forgotPasswordFn}
+                  activeOpacity={1}
+                >
                   <Text style={style.forgotPass}>{FORGOT_PASSWORD}</Text>
+                  <Text>Increment Count (Debounced)</Text>
                 </TouchableOpacity>
               </View>
             </View>
