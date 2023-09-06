@@ -292,7 +292,6 @@ dependencies {
     implementation project(':react-native-permissions')
     implementation project(':react-native-splash-screen')
     implementation "androidx.appcompat:appcompat:1.0.0"
-    implementation( "com.stripe:stripe-android:20.29.0")
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation project(':react-native-vector-icons')
