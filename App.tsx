@@ -3,7 +3,7 @@ import codePush from 'react-native-code-push';
 import {store} from './src/redux/store';
 import AppRouter from './src/navigation/AppRouter';
 import {Provider} from 'react-redux';
-import {LogBox} from 'react-native';
+import {LogBox, Platform} from 'react-native';
 import OneSignal from 'react-native-onesignal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -23,7 +23,14 @@ const App = () => {
 
   const getDevice = async () => {
     const oneSignalToken = await AsyncStorage.getItem('oneSignalToken');
-    console.log('oneSignalToken:- ', oneSignalToken);
+    if(Platform.OS === "ios") {
+      console.log('oneSignalToken iOS:- ', oneSignalToken);
+      await OneSignal.addSubscriptionObserver(event => {
+        console.log('event:- ', JSON.stringify(event));
+      });
+    } else {
+      console.log('oneSignalToken Android:- ', oneSignalToken);
+    }
 
     if (!oneSignalToken) {
       try {

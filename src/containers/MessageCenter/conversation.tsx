@@ -72,6 +72,110 @@ const inputMinHeight = 55;
 const inputMaxHeight = 164;
 const log = logger.createLogger();
 
+const _checkPermissions = (callback: any) => {
+  const iosPermissions = [PERMISSIONS.IOS.CAMERA, PERMISSIONS.IOS.MICROPHONE];
+  const androidPermissions = [
+    PERMISSIONS.ANDROID.CAMERA,
+    PERMISSIONS.ANDROID.RECORD_AUDIO,
+  ];
+  checkMultiple(
+    Platform.OS === 'ios' ? iosPermissions : androidPermissions,
+  ).then(statuses => {
+    const [CAMERA, AUDIO] =
+      Platform.OS === 'ios' ? iosPermissions : androidPermissions;
+    if (
+      statuses[CAMERA] === RESULTS.UNAVAILABLE ||
+      statuses[AUDIO] === RESULTS.UNAVAILABLE
+    ) {
+      Alert.alert('Error', 'Hardware to support video calls is not available');
+    } else if (
+      statuses[CAMERA] === RESULTS.BLOCKED ||
+      statuses[AUDIO] === RESULTS.BLOCKED
+    ) {
+      Alert.alert(
+        'Error',
+        'Permission to access hardware was blocked, please grant manually',
+      );
+    } else {
+      if (
+        statuses[CAMERA] === RESULTS.DENIED &&
+        statuses[AUDIO] === RESULTS.DENIED
+      ) {
+        requestMultiple(
+          Platform.OS === 'ios' ? iosPermissions : androidPermissions,
+        ).then(newStatuses => {
+          if (
+            newStatuses[CAMERA] === RESULTS.GRANTED &&
+            newStatuses[AUDIO] === RESULTS.GRANTED
+          ) {
+            callback && callback();
+          } else {
+            Alert.alert('Error', 'One of the permissions was not granted');
+          }
+        });
+      } else if (
+        statuses[CAMERA] === RESULTS.DENIED ||
+        statuses[AUDIO] === RESULTS.DENIED
+      ) {
+        request(statuses[CAMERA] === RESULTS.DENIED ? CAMERA : AUDIO).then(
+          result => {
+            if (result === RESULTS.GRANTED) {
+              callback && callback();
+            } else {
+              Alert.alert('Error', 'Permission not granted');
+            }
+          },
+        );
+      } else if (
+        statuses[CAMERA] === RESULTS.GRANTED ||
+        statuses[AUDIO] === RESULTS.GRANTED
+      ) {
+        callback && callback();
+      }
+    }
+  });
+};
+
+export function initVideoCall(userName: string, roomId: string) {
+  const API_URL =
+    'https://67c6-2405-201-4-b871-39fa-cedf-69e9-a0c9.ngrok-free.app';
+  _checkPermissions(() => {
+    fetch(`${API_URL}/getToken?userName=${userName}&room=${roomId}`)
+      .then(response => {
+        if (response.ok) {
+          response.text().then(jwt => {
+            NavigationService.navigate('MeetingRoom', {
+              token: jwt,
+              roomName: 'testRoom',
+            });
+
+            return true;
+          });
+        } else {
+          response.text().then(error => {
+            Alert.alert(error);
+          });
+        }
+      })
+      .catch(error => {
+        Alert.alert('API not available');
+      });
+    // Below is used to disconnect room
+    // fetch(`${API_URL}/rooms/${roomName}?status=completed`, { method: 'POST' })
+  });
+  // let hcpUserId = messageList ? messageList.hcpUserId : userId;
+  // let submissionId = messageList
+  //   ? messageList.submissionId
+  //   : props.submissionId;
+  // const payload = {
+  //   title: '',
+  //   name: recipientName || '',
+  //   subTitle: '',
+  //   photo: photoUrl || '',
+  // };
+  // return videoCall(payload, userId, submissionId);
+}
+
 const ConversationContainer = (
   props: ConversationContainerProps,
   state: ConversationContainerState,
@@ -331,114 +435,6 @@ const ConversationContainer = (
         onNo: () => {},
       });
     }
-  };
-
-  const _checkPermissions = (callback: any) => {
-    const iosPermissions = [PERMISSIONS.IOS.CAMERA, PERMISSIONS.IOS.MICROPHONE];
-    const androidPermissions = [
-      PERMISSIONS.ANDROID.CAMERA,
-      PERMISSIONS.ANDROID.RECORD_AUDIO,
-    ];
-    checkMultiple(
-      Platform.OS === 'ios' ? iosPermissions : androidPermissions,
-    ).then(statuses => {
-      const [CAMERA, AUDIO] =
-        Platform.OS === 'ios' ? iosPermissions : androidPermissions;
-      if (
-        statuses[CAMERA] === RESULTS.UNAVAILABLE ||
-        statuses[AUDIO] === RESULTS.UNAVAILABLE
-      ) {
-        Alert.alert(
-          'Error',
-          'Hardware to support video calls is not available',
-        );
-      } else if (
-        statuses[CAMERA] === RESULTS.BLOCKED ||
-        statuses[AUDIO] === RESULTS.BLOCKED
-      ) {
-        Alert.alert(
-          'Error',
-          'Permission to access hardware was blocked, please grant manually',
-        );
-      } else {
-        if (
-          statuses[CAMERA] === RESULTS.DENIED &&
-          statuses[AUDIO] === RESULTS.DENIED
-        ) {
-          requestMultiple(
-            Platform.OS === 'ios' ? iosPermissions : androidPermissions,
-          ).then(newStatuses => {
-            if (
-              newStatuses[CAMERA] === RESULTS.GRANTED &&
-              newStatuses[AUDIO] === RESULTS.GRANTED
-            ) {
-              callback && callback();
-            } else {
-              Alert.alert('Error', 'One of the permissions was not granted');
-            }
-          });
-        } else if (
-          statuses[CAMERA] === RESULTS.DENIED ||
-          statuses[AUDIO] === RESULTS.DENIED
-        ) {
-          request(statuses[CAMERA] === RESULTS.DENIED ? CAMERA : AUDIO).then(
-            result => {
-              if (result === RESULTS.GRANTED) {
-                callback && callback();
-              } else {
-                Alert.alert('Error', 'Permission not granted');
-              }
-            },
-          );
-        } else if (
-          statuses[CAMERA] === RESULTS.GRANTED ||
-          statuses[AUDIO] === RESULTS.GRANTED
-        ) {
-          callback && callback();
-        }
-      }
-    });
-  };
-
-  const initVideoCall = () => {
-    const API_URL =
-      'https://c138-2405-201-4-b871-88b2-36ec-df0-ed5a.ngrok-free.app';
-    _checkPermissions(() => {
-      fetch(`${API_URL}/getToken?userName=Vishal&room=testRoom`)
-        .then(response => {
-          if (response.ok) {
-            response.text().then(jwt => {
-              NavigationService.navigate('MeetingRoom', {
-                token: jwt,
-                roomName: 'testRoom',
-              });
-
-              return true;
-            });
-          } else {
-            response.text().then(error => {
-              Alert.alert(error);
-            });
-          }
-        })
-        .catch(error => {
-          Alert.alert('API not available');
-        });
-      // Below is used to disconnect room
-      // fetch(`${API_URL}/rooms/${roomName}?status=completed`, { method: 'POST' })
-    });
-    // NavigationService.navigate('VideoCalling');
-    // let hcpUserId = messageList ? messageList.hcpUserId : userId;
-    // let submissionId = messageList
-    //   ? messageList.submissionId
-    //   : props.submissionId;
-    // const payload = {
-    //   title: '',
-    //   name: recipientName || '',
-    //   subTitle: '',
-    //   photo: photoUrl || '',
-    // };
-    // return videoCall(payload, userId, submissionId);
   };
 
   const initPhoneCall = () => {
@@ -768,7 +764,7 @@ const ConversationContainer = (
                 imageSource={require('../../components/Images/video-call.png')}
                 iconSize={24}
                 color={AppColors.blue}
-                onPress={() => initVideoCall()}
+                onPress={() => initVideoCall('Vishal', 'testRoom')}
                 textStyle={footerStyle.actionButtonText}
               />
               // )
