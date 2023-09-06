@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import {debounce} from 'lodash';
 import {
   StyleSheet,
   KeyboardAvoidingView,
@@ -20,8 +21,7 @@ import {windowDimensions} from '../../../common';
 import theme, {AppFonts, AppColors} from '../../../theme';
 import {useDispatch} from 'react-redux';
 import {loginRequest} from '../../../redux/actions/userAction';
-import {getStoredUser} from '../../../redux/actions/userAction';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import {Strings} from '../../../common/Strings';
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 const SafeAreaView = require('react-native').SafeAreaView;
 
@@ -42,8 +42,21 @@ const SafeAreaView = require('react-native').SafeAreaView;
 // 2- Email : appletester@conexussolutions.com
 // Password: travel
 
+const {
+  PASS_LENGTH,
+  PASSWORD,
+  EMAIL_USERNAME,
+  FORGOT_PASSWORD,
+  SIGN_IN,
+  EMPTY_EMAIL_USERNAME,
+  VALID_EMAIL_USERNAME,
+  EMPTY_PASS,
+  REQUEST_ACCOUNT,
+} = Strings;
+
 const LoginScreen = () => {
   const [loading, setLoading] = useState(false);
+  const [count, setCount] = useState(0);
   const [hidePassword, setHidePassword] = useState(true);
   const [errors, setErrors] = useState('');
   const [inputs, setInputs] = useState({
@@ -66,17 +79,17 @@ const LoginScreen = () => {
     Keyboard.dismiss();
     let isValid = true;
     if (!inputs.email) {
-      handleError('Please enter email', 'email');
+      handleError(EMPTY_EMAIL_USERNAME, 'email');
       isValid = false;
     } else if (!inputs.email.match(emailRegex)) {
-      handleError('Please enter a valid email', 'email');
+      handleError(VALID_EMAIL_USERNAME, 'email');
       isValid = false;
     }
     if (!inputs.password) {
-      handleError('Please input password', 'password');
+      handleError(EMPTY_PASS, 'password');
       isValid = false;
     } else if (inputs.password.length < 4) {
-      handleError('Min password length of 4', 'password');
+      handleError(PASS_LENGTH, 'password');
       isValid = false;
     }
 
@@ -98,7 +111,7 @@ const LoginScreen = () => {
           setLoading(false);
           dispatch(loginRequest(data));
         }, 1000);
-      } catch (error: any) {
+      } catch (error) {
         setLoading(false);
         console.log('Error', error);
         Alert.alert(
@@ -118,10 +131,10 @@ const LoginScreen = () => {
   const forgotPasswordFn = () => {
     NavigationService.navigate('ForgotPassword');
   };
+
   const requestAccount = () => {
     NavigationService.navigate('SelectAccount');
   };
-
   return (
     <SafeAreaView style={style.splash}>
       <ScrollView keyboardShouldPersistTaps="handled">
@@ -132,10 +145,10 @@ const LoginScreen = () => {
                 style={style.logo}
                 source={require('../../../components/Images/conexus-logo.jpg')}
               />
-              <Text style={style.title}>Sign-In</Text>
+              <Text style={style.title}>{SIGN_IN}</Text>
               <View style={style.field}>
                 <Field
-                  placeholder="Email Address"
+                  placeholder={EMAIL_USERNAME}
                   autoCapitalize="none"
                   onTextChange={(text: any) => handleOnchange(text, 'email')}
                   onFocus={() => handleError(null, 'email')}
@@ -146,7 +159,7 @@ const LoginScreen = () => {
               </View>
               <View style={style.field}>
                 <Passwordfield
-                  placeholder="Password"
+                  placeholder={PASSWORD}
                   autoCapitalize="none"
                   error={errors.password}
                   customStyle={{fontSize: 16}}
@@ -157,9 +170,14 @@ const LoginScreen = () => {
                   returnKeyType="done"
                 />
               </View>
+              <Text>Count: {count}</Text>
+
               <View style={style.forgotPassView}>
-                <TouchableOpacity onPress={forgotPasswordFn} activeOpacity={1}>
-                  <Text style={style.forgotPass}>FORGOT PASSWORD?</Text>
+                <TouchableOpacity
+                  onPress={() => forgotPasswordFn}
+                  activeOpacity={1}
+                >
+                  <Text style={style.forgotPass}>{FORGOT_PASSWORD}</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -169,14 +187,12 @@ const LoginScreen = () => {
               customTitleStyle={loading ? style.loadingTitle : style.title}
               customStyle={loading ? style.loadingBtn : style.loginBtn}
               loading={loading}
-              title="SIGN IN"
+              title={SIGN_IN}
               onPress={validate}
             />
 
             <TouchableOpacity onPress={requestAccount} activeOpacity={1}>
-              <Text style={style.newUser}>
-                New to Conexus? Request an account now!
-              </Text>
+              <Text style={style.newUser}>{REQUEST_ACCOUNT}</Text>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>

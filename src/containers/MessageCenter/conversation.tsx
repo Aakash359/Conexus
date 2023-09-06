@@ -25,12 +25,10 @@ import {TouchableOpacity} from 'react-native';
 import NavigationService from '../../navigation/NavigationService';
 import {PhoneCallModal} from '../../components/Modals/phoneCallModal';
 import {
-  initiatePhoneCallService,
-  initVideoConferenceService,
   loadTextMessageService,
   sendTextMessageService,
 } from '../../services/ApiServices';
-import {users} from '../../containers/facility/HcpDetail/config-users';
+import {Strings} from '../../common/Strings';
 import {useNavigation} from '@react-navigation/native';
 import {
   checkMultiple,
@@ -42,6 +40,14 @@ import {
 
 let moment = require('moment');
 const SafeAreaView = require('react-native').SafeAreaView;
+
+const {
+  MESSAGE_CENTER_ERROR,
+  SEND_MESSAGE_ERROR,
+  HARDWARE_ACCESS_ERROR,
+  FIRST_CONVERSATIONS,
+  SEND,
+} = Strings;
 
 interface ConversationContainerProps {
   route: any;
@@ -213,6 +219,7 @@ const ConversationContainer = (
       }
     }, 100);
   }, []);
+
   const loadMessages = async () => {
     try {
       setLoading(true);
@@ -225,10 +232,7 @@ const ConversationContainer = (
       console.log(error);
       setRefreshing(false);
       setLoading(false);
-      Alert.alert(
-        'Message Center Error',
-        'We are having trouble loading your conversation. Please try again.',
-      );
+      Alert.alert('Message Center Error', MESSAGE_CENTER_ERROR);
     }
   };
 
@@ -300,18 +304,6 @@ const ConversationContainer = (
     }
   };
 
-  //   setTimeout(() => {
-  //     if (this.scrollView) {
-  //       this.scrollView.scrollToEnd();
-  //     }
-  //   }, 400);
-  // };
-
-  // const keyboardWillHide = event => {
-  //   this.currentKeyboardHeight = 0;
-  //   this.applyMeasurements();
-  // };
-
   const setMessageText = (messageText: string) => {
     messageText = messageText || '';
     setMessageTexts(messageText);
@@ -373,8 +365,6 @@ const ConversationContainer = (
       avatarDescription,
     };
     NavigationService.navigate('AudioPlayer', parms);
-
-    // Actions[ScreenType.AUDIO_PLAYER_LIGHTBOX](parms)
   };
 
   const toggleFooterActions = () => {
@@ -397,14 +387,13 @@ const ConversationContainer = (
 
   const sendVideoMessage = () => {
     Keyboard.dismiss();
-
     NavigationService.navigate('VideoRecorder', {
       finishedButtonTitle: 'Send',
       videoMessage: true,
       conversationId,
       submissionId: props?.route?.params?.candidate?.submissionId || '',
       onFinished: onVideoMessageSent(),
-      // onMessageSendCallback: onMessageSend(),
+      onMessageSendCallback: onMessageSend(),
     });
   };
 
@@ -429,7 +418,7 @@ const ConversationContainer = (
       setSendEnabled(!!messageText);
       showYesNoAlert({
         title: 'Send Error',
-        message: 'The message could not be sent. Please try again.',
+        message: SEND_MESSAGE_ERROR,
         yesTitle: 'Try Again',
         noTitle: 'Cancel',
         onNo: () => {},
@@ -692,9 +681,7 @@ const ConversationContainer = (
               justifyContent: 'center',
               paddingBottom: 180,
             }}>
-            {recipientName() && (
-              <Text>This is your first conversation with</Text>
-            )}
+            {recipientName() && <Text>{FIRST_CONVERSATIONS}</Text>}
             {recipientName && <Text>{recipientName()}</Text>}
             {!recipientName && <Text>No Messages Available</Text>}
           </View>
@@ -739,7 +726,7 @@ const ConversationContainer = (
                 footerStyle.sendButtonText,
                 !sendEnabled && footerStyle.sendButtonTextDisabled,
               ]}>
-              SEND
+              {SEND}
             </Text>
           </TouchableOpacity>
         </Animated.View>

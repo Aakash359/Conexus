@@ -1,6 +1,9 @@
 import React from 'react';
+import {Strings} from '../../../common/Strings';
 
 import {ScreenFooterButton} from '../../../components';
+
+const {UNAVAILABLE_SCHEDULING} = Strings;
 
 export class SchedulingContainer extends React.Component {
   // get selectedFacility(): typeof UserFacilityModel.Type {
@@ -40,7 +43,7 @@ export class SchedulingContainer extends React.Component {
       <FacilitySelectionContainer
         showNoData={false} //this.showNoData}
         showLoading={this.showLoading}
-        noDataText="Scheduling not yet available."
+        noDataText={UNAVAILABLE_SCHEDULING}
         facilityHeaderCaption="Showing schedules for"
         refreshing={this.state.refreshing}
         onRefresh={this.load.bind(this, true)}

@@ -14,6 +14,7 @@ import {ConexusIconButton, Avatar} from '../../components';
 import Icon from 'react-native-vector-icons/Ionicons';
 import SystemSetting from 'react-native-system-setting';
 import NavigationService from '../../navigation/NavigationService';
+import {Strings} from '../../common/Strings';
 
 interface AudioPlayerProps extends ViewProperties {
   audioUrl: string;
@@ -33,6 +34,8 @@ interface AudioPlayerState {
   seekerValue: number;
   paused: boolean;
 }
+
+const {AUDIO_ERROR} = Strings;
 
 const AudioPlayer = (props: AudioPlayerProps, state: AudioPlayerState) => {
   const player: Video = null;
@@ -96,10 +99,7 @@ const AudioPlayer = (props: AudioPlayerProps, state: AudioPlayerState) => {
 
   const onMediaError = err => {
     log.info('AudioPlaybackError', err);
-    Alert.alert(
-      'Playback Failure',
-      'An error while playing the selected audio.',
-    );
+    Alert.alert('Playback Failure', AUDIO_ERROR);
     // Actions.pop()
   };
 

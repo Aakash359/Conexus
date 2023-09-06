@@ -16,6 +16,7 @@ import {ViewHeader} from '../../components/view-header';
 import variables, {AppFonts, AppColors} from '../../theme';
 import NavigationService from '../../navigation/NavigationService';
 import {conversationsService} from '../../services/ApiServices';
+import {Strings} from '../../common/Strings';
 
 interface MessageCenterProps {}
 
@@ -23,6 +24,8 @@ interface MessageCenterState {
   refreshing: boolean;
   loading: boolean;
 }
+
+const {MESSAGE_CENTER_ERROR} = Strings;
 
 const MessageCenter = (
   props: MessageCenterProps,
@@ -173,10 +176,7 @@ const MessageCenter = (
     } catch (error) {
       console.log(error);
       setLoading(false);
-      Alert.alert(
-        'Message Center Error',
-        'We are having trouble loading your conversations. Please try again.',
-      );
+      Alert.alert('Message Center Error', MESSAGE_CENTER_ERROR);
     }
   };
 

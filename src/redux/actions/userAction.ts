@@ -2,8 +2,10 @@ import axios from 'axios';
 import {Dispatch} from 'react';
 import {defaultBaseUrl} from '../../redux/constants';
 import {Alert} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import {
+  setPreferences,
+  USER_ACCESS_TOKEN,
+} from '../../utils/AsyncStorageHelper';
 
 export interface UserModel {
   firstName: string;
@@ -34,22 +36,24 @@ export const loginRequest = (data: {
   password: string;
   App: boolean;
 }) => {
-return async (dispatch: Dispatch<UserAction>) => {
+  return async (dispatch: Dispatch<UserAction>) => {
     try {
       const response = await axios.post<UserModel>(
         `${defaultBaseUrl}/user/login-with-credentials`,
         data,
       );
-      console.log('response', response);
-      if (!response) {
-        dispatch({
-          type: 'ON_ERROR',
-          payload: 'Login issue with API',
-        });
+      if (response && response?.data) {
+        if (response?.data.authToken) {
+          setPreferences(USER_ACCESS_TOKEN, response?.data.authToken);
+          dispatch({
+            type: 'ON_LOGIN',
+            payload: response.data,
+          });
+        }
       } else {
         dispatch({
-          type: 'ON_LOGIN',
-          payload: response.data,
+          type: 'ON_ERROR',
+          payload: error,
         });
       }
     } catch (error) {
@@ -60,23 +64,6 @@ return async (dispatch: Dispatch<UserAction>) => {
       Alert.alert('Error', error?.response?.data?.description);
     }
   };
-};
-
-export const getStoredUser = async () => {
-  try {
-    const jsonValue = await AsyncStorage.getItem('@currentUser');
-    return jsonValue != null ? JSON.parse(jsonValue) : null;
-  } catch (e) {
-    console.error('_getStoredUser error: ', e);
-  }
-};
-
-export const removeStoredUser = async () => {
-  try {
-    await AsyncStorage.removeItem('@currentUser');
-  } catch (e) {
-    console.error('_removeStoredUser error: ', e);
-  }
 };
 
 export const logoutRequest = (data: {authToken: string}) => {

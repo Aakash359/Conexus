@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   KeyboardAvoidingView,
@@ -10,14 +10,13 @@ import {
 } from 'react-native';
 import Toast from 'react-native-toast-message';
 import variables from '../../../theme';
-import { Field } from '../../../components/field';
-import { windowDimensions } from '../../../common';
-import { AppColors } from '../../../theme';
+import {Field} from '../../../components/field';
+import {windowDimensions} from '../../../common';
+import {AppColors} from '../../../theme';
 import NavigationService from '../../../navigation/NavigationService';
-import { ActionButton } from '../../../components/action-button';
-import { signUp } from '../../../services/ApiServices';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import {ActionButton} from '../../../components/action-button';
+import {signUp} from '../../../services/ApiServices';
+import {Strings} from '../../../common/Strings';
 const SafeAreaView = require('react-native').SafeAreaView;
 const eMailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
@@ -32,6 +31,20 @@ interface RequestAccountProps {
   howHeard?: string;
   userType: string;
 }
+
+const {
+  REGISTERED,
+  REGISTERED_NOTIFY,
+  FIRST_NAME,
+  LAST_NAME,
+  COMPANY,
+  TITLE,
+  E_MAIL,
+  PHONE_NUMBER,
+  HOW_KNOW,
+  SUBMIT,
+  API_ERROR,
+} = Strings;
 
 const RequestAccount: React.FC<RequestAccountProps> = props => {
   const [loading, setLoading] = useState(false);
@@ -93,25 +106,11 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
       };
       try {
         setLoading(true);
-        const storeUser = async (sessionToken: any, createUser: any) => {
-          try {
-            const session = JSON.stringify(sessionToken);
-            const profile = JSON.stringify(createUser);
-
-            await AsyncStorage.setItem('session', session);
-            await AsyncStorage.setItem('profile', profile);
-          } catch (e) {
-            console.error('_storeUser error: ', e);
-          }
-        };
-        const { data } = await signUp(payload);
+        const {data} = await signUp(payload);
         if (data.Success) {
           setLoading(false);
           NavigationService.goBack();
-          Alert.alert(
-            'Registered Successfully',
-            'Thank you for your request. A Conexus Account Manager will be in touch with you shortly',
-          );
+          Alert.alert(REGISTERED, REGISTERED_NOTIFY);
           Toast.show({
             type: 'success',
             text2: data.description,
@@ -136,7 +135,7 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
         // Alert.alert(error?.response?.data?.error?.description);
         Toast.show({
           type: 'error',
-          text2: 'Something went wrong!',
+          text2: API_ERROR,
           visibilityTime: 2000,
           autoHide: true,
         });
@@ -147,7 +146,7 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
   };
 
   return (
-    <SafeAreaView style={[{ flex: 1, backgroundColor: AppColors.white }]}>
+    <SafeAreaView style={[{flex: 1, backgroundColor: AppColors.white}]}>
       <ScrollView keyboardShouldPersistTaps="handled">
         <KeyboardAvoidingView behavior="position" style={style.rootContainer}>
           <View style={style.content}>
@@ -158,7 +157,7 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
               />
               <View style={style.field}>
                 <Field
-                  placeholder="First Name"
+                  placeholder={FIRST_NAME}
                   autoCapitalize="words"
                   onTextChange={setFirstName}
                   value={firstName}
@@ -167,7 +166,7 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
               </View>
               <View style={style.field}>
                 <Field
-                  placeholder="Last Name"
+                  placeholder={LAST_NAME}
                   autoCapitalize="words"
                   onTextChange={setLastName}
                   value={lastName}
@@ -177,7 +176,7 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
               {props.route.params.userType == '1' && (
                 <View style={style.field}>
                   <Field
-                    placeholder="Company"
+                    placeholder={COMPANY}
                     autoCapitalize="words"
                     onTextChange={setCompany}
                     value={company}
@@ -188,7 +187,7 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
               {props.route.params.userType == '1' && (
                 <View style={style.field}>
                   <Field
-                    placeholder="Title"
+                    placeholder={TITLE}
                     autoCapitalize="words"
                     onTextChange={setTitle}
                     value={title}
@@ -198,7 +197,7 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
               )}
               <View style={style.field}>
                 <Field
-                  placeholder="E-Mail"
+                  placeholder={E_MAIL}
                   autoCapitalize="none"
                   onTextChange={setEmail}
                   value={eMail}
@@ -207,7 +206,7 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
               </View>
               <View style={style.field}>
                 <Field
-                  placeholder="Phone Number"
+                  placeholder={PHONE_NUMBER}
                   autoCapitalize="none"
                   keyboardType="phone-pad"
                   maxLength={12}
@@ -218,7 +217,7 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
               </View>
               <View style={style.field}>
                 <Field
-                  placeholder="How did you hear about us?"
+                  placeholder={HOW_KNOW}
                   autoCapitalize="words"
                   onTextChange={setHowHeard}
                   value={howHeard}
@@ -228,29 +227,29 @@ const RequestAccount: React.FC<RequestAccountProps> = props => {
             </View>
             <ActionButton
               textColor={variables.blue}
-              title="SUBMIT"
+              title={SUBMIT}
               loading={loading}
               disabled={
                 firstName &&
-                  lastName &&
-                  company &&
-                  title &&
-                  eMail &&
-                  phoneNumber &&
-                  howHeard
+                lastName &&
+                company &&
+                title &&
+                eMail &&
+                phoneNumber &&
+                howHeard
                   ? loading
                   : 'false'
               }
               onPress={submitAccount}
-              customTitleStyle={{ color: AppColors.white, fontSize: 18 }}
+              customTitleStyle={{color: AppColors.white, fontSize: 18}}
               customStyle={
                 firstName &&
-                  lastName &&
-                  company &&
-                  title &&
-                  eMail &&
-                  phoneNumber &&
-                  howHeard
+                lastName &&
+                company &&
+                title &&
+                eMail &&
+                phoneNumber &&
+                howHeard
                   ? style.submitEnable
                   : style.submitDisable
               }
@@ -269,7 +268,6 @@ const style = StyleSheet.create({
   errorTxt: {
     fontSize: 12,
     color: AppColors.red,
-    // fontFamily: AppFonts.h3,
   },
   rootContainer: {
     flex: 1,

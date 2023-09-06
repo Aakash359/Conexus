@@ -8,6 +8,7 @@ import {
   ModalHeader,
   ConexusIconButton,
 } from '../../../components';
+import {Strings} from '../../../common/Strings';
 let moment = require('moment');
 
 import {logger} from 'react-native-logs';
@@ -22,7 +23,7 @@ interface MarkedDateIndex {
     dotColor?: string;
   };
 }
-
+const {ADD_TIME, NEXT} = Strings;
 export interface ScheduleAvailabilityContainerProps extends ViewProperties {
   title: string;
   onSave?: () => any;
@@ -113,7 +114,7 @@ export class ScheduleAvailabilityContainer extends React.Component<
 
     return (
       <View style={{flex: 1}}>
-        <Text style={styles.addTimeHeader}>Add Time to These Days</Text>
+        <Text style={styles.addTimeHeader}>{ADD_TIME}</Text>
         {items}
       </View>
     );
@@ -194,7 +195,7 @@ export class ScheduleAvailabilityContainer extends React.Component<
           {this.renderSelections()}
         </ScrollView>
         <ScreenFooterButton
-          title="Next"
+          title={NEXT}
           disabled={!this.canGoNext}
           onPress={this.goNext.bind(this)}
         />

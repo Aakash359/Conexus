@@ -14,12 +14,12 @@ import {AppColors} from '../../theme';
 import {windowDimensions} from '../../common/window-dimensions';
 import NavigationService from '../../navigation/NavigationService';
 import {appFeedbackService} from '../../services/ApiServices';
-
+import {Strings} from '../../common/Strings';
 interface AppFeedbackModalState {
   messageText: string;
 }
 const SafeAreaView = require('react-native').SafeAreaView;
-
+const {FEEDBACK_NOTIFY, SEND, API_ERROR, INVALID_MSG, TYPE_FEEDBACK} = Strings;
 const SendFeedback = (props: AppFeedbackModalState) => {
   const userInfo = useSelector(state => state.userReducer);
   const [loading, setLoading] = useState(false);
@@ -38,13 +38,10 @@ const SendFeedback = (props: AppFeedbackModalState) => {
           Keyboard.dismiss();
           setMessageText('');
           NavigationService.navigate('ReviewCandidateHomeScreen');
-          ToastAndroid.show(
-            'Feedback submitted successfully!',
-            ToastAndroid.SHORT,
-          );
+          ToastAndroid.show(FEEDBACK_NOTIFY, ToastAndroid.SHORT);
         } else {
           setLoading(false);
-          ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
+          ToastAndroid.show(API_ERROR, ToastAndroid.SHORT);
         }
       } catch (error) {
         setLoading(false);
@@ -55,10 +52,7 @@ const SendFeedback = (props: AppFeedbackModalState) => {
         );
       }
     } else {
-      Alert.alert(
-        'Invalid message',
-        'Invalid message please type a message to send.',
-      );
+      Alert.alert('Invalid message', INVALID_MSG);
     }
   };
 
@@ -69,7 +63,7 @@ const SendFeedback = (props: AppFeedbackModalState) => {
           style={style.textInput}
           maxLength={1000}
           rowSpan={12}
-          placeholder="Type your feedback here"
+          placeholder={TYPE_FEEDBACK}
           placeholderTextColor={AppColors.mediumGray}
           autoFocus={false}
           value={messageText}
@@ -87,7 +81,7 @@ const SendFeedback = (props: AppFeedbackModalState) => {
       <View style={style.footer}>
         <ActionButton
           loading={loading}
-          title="SEND"
+          title={SEND}
           customStyle={style.btnEnable}
           onPress={onSendFeedback}
         />

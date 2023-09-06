@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
 import LoginScreen from '../containers/Auth/Login/login';
@@ -7,6 +7,13 @@ import SelectAccount from '../containers/Auth/SignIn/select-account';
 import RequestAccount from '../containers/Auth/SignIn/request-account';
 import {navigationRef} from './NavigationService';
 import {AppColors} from '../theme';
+import {
+  LOGIN,
+  SELECT_ACCOUNT,
+  REQUEST_ACCOUNT,
+  AUTH_NAVIGATOR,
+  FORGOT_PASSWORD,
+} from './Routes';
 
 const Stack = createNativeStackNavigator();
 const OtherStack = createNativeStackNavigator();
@@ -15,17 +22,17 @@ const AuthNavigator = () => {
   return (
     <OtherStack.Navigator screenOptions={{headerShown: true}}>
       <Stack.Screen
-        name="Login"
+        name={LOGIN}
         component={LoginScreen}
         options={{headerShown: false}}
       />
       <Stack.Screen
-        name="ForgotPassword"
+        name={FORGOT_PASSWORD}
         component={ForgotPassword}
         options={{headerShown: false}}
       />
       <Stack.Screen
-        name="SelectAccount"
+        name={SELECT_ACCOUNT}
         component={SelectAccount}
         options={{
           title: 'Account Type',
@@ -37,7 +44,7 @@ const AuthNavigator = () => {
         }}
       />
       <Stack.Screen
-        name="RequestAccount"
+        name={REQUEST_ACCOUNT}
         component={RequestAccount}
         options={{
           title: 'Request Account',
@@ -56,7 +63,7 @@ const AuthStack = () => {
   return (
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name="AuthNavigator" component={AuthNavigator} />
+        <Stack.Screen name={AUTH_NAVIGATOR} component={AuthNavigator} />
       </Stack.Navigator>
     </NavigationContainer>
   );

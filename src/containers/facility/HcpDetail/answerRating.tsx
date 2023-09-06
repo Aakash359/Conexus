@@ -17,6 +17,7 @@ import PagerView from 'react-native-pager-view';
 import NavigationService from '../../../navigation/NavigationService';
 import ConexusVideoPlayer from '../../../components/conexus-video-player';
 import {Platform} from 'react-native';
+import {Strings} from '../../../common/Strings';
 
 export interface AnswerRatingItem {
   id: string;
@@ -39,6 +40,8 @@ interface AnswerRatingsState {
   switchingQuestions: boolean;
   videoLoaded: boolean;
 }
+
+const {SAVING_RATING_ERROR, VIDEO_PLAYING_ERROR} = Strings;
 
 export const AnswerIndicator = () => {
   const settingCurrent: boolean = false;
@@ -145,10 +148,7 @@ const AnswerRatings = (
         goNext();
       })
       .catch(error => {
-        Alert.alert(
-          'Rating Error',
-          'An error occurred while saving your rating. Please try again.',
-        );
+        Alert.alert('Rating Error', SAVING_RATING_ERROR);
         console.log('Error', error);
         setSwitchingQuestions(false);
       });
@@ -222,7 +222,7 @@ const AnswerRatings = (
             showActionsOnEnd={true}
             volumeLocation={'top-right'}
             hideErrorIcon={true}
-            errorDisplayText="This response is currently unavailable."
+            errorDisplayText={VIDEO_PLAYING_ERROR}
             menuButtons={menuButtons}
             onLoad={() => onVideoLoad()}
             overlayContentStyle={{

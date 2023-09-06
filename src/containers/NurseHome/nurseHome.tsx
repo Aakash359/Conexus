@@ -18,14 +18,13 @@ import SubmissionCardList from './submission-card-list';
 import PastSubmissionsTabList from './past-submissions-tab-list';
 import NavigationService from '../../navigation/NavigationService';
 import {nurseDataLoadService} from '../../services/ApiServices';
-
-interface NurseHomeProps {}
+import {Strings} from '../../common/Strings';
 
 interface NurseHomeState {
   refreshing: boolean;
 }
-
-const NurseHome = (props: NurseHomeProps, state: NurseHomeState) => {
+const {CONVERSATION_LOADING_ERROR} = Strings;
+const NurseHome = (props: any, state: NurseHomeState) => {
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [nurseData, setNurseData] = useState([]);
@@ -64,10 +63,7 @@ const NurseHome = (props: NurseHomeProps, state: NurseHomeState) => {
       console.log('Error', error);
       setIsLoading(false);
       setRefreshing(false);
-      Alert.alert(
-        'Message Center Error',
-        'We are having trouble loading your conversations. Please try again.',
-      );
+      Alert.alert('Message Center Error', CONVERSATION_LOADING_ERROR);
       // Alert.alert(error?.response?.data?.error?.description);
     }
   };

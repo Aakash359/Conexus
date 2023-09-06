@@ -18,6 +18,7 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import NavigationService from '../../navigation/NavigationService';
 import {InterViewFacilityChooseModal} from '../../components/Modals/InterViewFacilityChooseModal';
 import {facilityQuestionsService} from '../../services/ApiServices';
+import {Strings} from '../../common/Strings';
 
 export interface InterviewQuestionsProps {
   needId?: string;
@@ -28,6 +29,7 @@ export interface InterviewQuestionsState {
   loading: boolean;
   refreshing: boolean;
 }
+const {QUESTIONS_LOADING_ERROR, ADD_QUESTION} = Strings;
 
 const InterviewQuestions = (
   props: InterviewQuestionsProps,
@@ -59,7 +61,7 @@ const InterviewQuestions = (
       setRefreshing(false);
       showYesNoAlert({
         title: `We're Sorry`,
-        message: 'An error occurred while loading available questions.',
+        message: QUESTIONS_LOADING_ERROR,
         onYes: () => load(refreshing),
         yesTitle: 'Retry',
         noTitle: 'Canel',
@@ -158,7 +160,7 @@ const InterviewQuestions = (
         </View>
         <View style={styles.footer}>
           <ActionButton
-            title="ADD QUESTION"
+            title={ADD_QUESTION}
             loading={loading}
             customTitleStyle={styles.title}
             onPress={() => showNewQuestion()}
@@ -225,7 +227,7 @@ const InterviewQuestions = (
               {modalVisible && chooseFacility(i)}
               <View style={styles.footer}>
                 <ActionButton
-                  title="ADD QUESTION"
+                  title={ADD_QUESTION}
                   loading={loading}
                   customTitleStyle={styles.title}
                   onPress={(section: any) => showNewQuestion(section)}

@@ -31,7 +31,7 @@ import {ContactOptionModal} from '../../../components/Modals/ContactOptionModal'
 import ConexusContentList from '../../../components/conexus-content-list';
 import {PhoneCallModal} from '../../../components/Modals/phoneCallModal';
 import Tabs from '../../../components/customTab';
-
+import {Strings} from '../../../common/Strings';
 import {
   candidateSubmissionsService,
   makeOfferService,
@@ -52,6 +52,14 @@ interface HcpDetailState {
   loadingSummary: boolean;
   candidate?: any;
 }
+
+const {
+  UNAVAILABLE_ANSWER_ERROR,
+  MO_RESPONSE,
+  INTERESTED_CANDIDATE,
+  MAKE_OFFER,
+  CONTACT_OPTIONS,
+} = Strings;
 
 const preloadResumeCount = 3;
 // const imageCacheManager = ImageCacheManager();
@@ -206,10 +214,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
     const answerPlaylist = getAnswerPlaylist();
 
     if (answerPlaylist.length === 0) {
-      Alert.alert(
-        'Interviews Unavailable',
-        'The answers for the specified interview questions are currently unavailable.',
-      );
+      Alert.alert('Interviews Unavailable', UNAVAILABLE_ANSWER_ERROR);
     } else {
       if (answerPlaylist[initialIndex].audioUrl) {
         playAudioAnswer(initialIndex);
@@ -256,9 +261,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
           }}
         >
           <Icon name="information-circle" style={Styles.cnxNoDataIcon} />
-          <Text style={Styles.cnxNoDataMessageText}>
-            No Responses Available
-          </Text>
+          <Text style={Styles.cnxNoDataMessageText}>{MO_RESPONSE}</Text>
         </View>
       );
     }
@@ -388,12 +391,12 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
             onPress={() => setOfferModalVisible(true)}
             imageSource={require('../../../components/Images/offer_icon.png')}
             iconSize={20}
-            title="Make Offer"
+            title={MAKE_OFFER}
           />
         </View>
         {offerModalVisible && (
           <MakeOfferModal
-            title={'Make Offer'}
+            title={MAKE_OFFER}
             value={date}
             onMakeOffer={(result: any) => onClickMakeOffer(result)}
             source={{uri: candidate.photoUrl}}
@@ -407,7 +410,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
         )}
         {modalVisible && (
           <NotInterestedModal
-            title={'Are you sure you are not interested in this candidate?'}
+            title={INTERESTED_CANDIDATE}
             onRequestClose={() => setModalVisible(false)}
             onPress={() => callNotInterested()}
             onDismiss={() => setModalVisible(false)}
@@ -552,7 +555,7 @@ const HcpDetailView = (props: HcpDetailProps, state: HcpDetailState) => {
       )}
       {contactOptionModalVisible && (
         <ContactOptionModal
-          title={'Contact Options'}
+          title={CONTACT_OPTIONS}
           videoCall={videoCall}
           videoChat={videoChat}
           onRequestClose={() => setContactOptionModalVisible(false)}
