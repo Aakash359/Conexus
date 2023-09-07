@@ -78,6 +78,110 @@ const inputMinHeight = 55;
 const inputMaxHeight = 164;
 const log = logger.createLogger();
 
+const _checkPermissions = (callback: any) => {
+  const iosPermissions = [PERMISSIONS.IOS.CAMERA, PERMISSIONS.IOS.MICROPHONE];
+  const androidPermissions = [
+    PERMISSIONS.ANDROID.CAMERA,
+    PERMISSIONS.ANDROID.RECORD_AUDIO,
+  ];
+  checkMultiple(
+    Platform.OS === 'ios' ? iosPermissions : androidPermissions,
+  ).then(statuses => {
+    const [CAMERA, AUDIO] =
+      Platform.OS === 'ios' ? iosPermissions : androidPermissions;
+    if (
+      statuses[CAMERA] === RESULTS.UNAVAILABLE ||
+      statuses[AUDIO] === RESULTS.UNAVAILABLE
+    ) {
+      Alert.alert('Error', 'Hardware to support video calls is not available');
+    } else if (
+      statuses[CAMERA] === RESULTS.BLOCKED ||
+      statuses[AUDIO] === RESULTS.BLOCKED
+    ) {
+      Alert.alert(
+        'Error',
+        'Permission to access hardware was blocked, please grant manually',
+      );
+    } else {
+      if (
+        statuses[CAMERA] === RESULTS.DENIED &&
+        statuses[AUDIO] === RESULTS.DENIED
+      ) {
+        requestMultiple(
+          Platform.OS === 'ios' ? iosPermissions : androidPermissions,
+        ).then(newStatuses => {
+          if (
+            newStatuses[CAMERA] === RESULTS.GRANTED &&
+            newStatuses[AUDIO] === RESULTS.GRANTED
+          ) {
+            callback && callback();
+          } else {
+            Alert.alert('Error', 'One of the permissions was not granted');
+          }
+        });
+      } else if (
+        statuses[CAMERA] === RESULTS.DENIED ||
+        statuses[AUDIO] === RESULTS.DENIED
+      ) {
+        request(statuses[CAMERA] === RESULTS.DENIED ? CAMERA : AUDIO).then(
+          result => {
+            if (result === RESULTS.GRANTED) {
+              callback && callback();
+            } else {
+              Alert.alert('Error', 'Permission not granted');
+            }
+          },
+        );
+      } else if (
+        statuses[CAMERA] === RESULTS.GRANTED ||
+        statuses[AUDIO] === RESULTS.GRANTED
+      ) {
+        callback && callback();
+      }
+    }
+  });
+};
+
+export function initVideoCall(userName: string, roomId: string) {
+  const API_URL =
+    'https://67c6-2405-201-4-b871-39fa-cedf-69e9-a0c9.ngrok-free.app';
+  _checkPermissions(() => {
+    fetch(`${API_URL}/getToken?userName=${userName}&room=${roomId}`)
+      .then(response => {
+        if (response.ok) {
+          response.text().then(jwt => {
+            NavigationService.navigate('MeetingRoom', {
+              token: jwt,
+              roomName: 'testRoom',
+            });
+
+            return true;
+          });
+        } else {
+          response.text().then(error => {
+            Alert.alert(error);
+          });
+        }
+      })
+      .catch(error => {
+        Alert.alert('API not available');
+      });
+    // Below is used to disconnect room
+    // fetch(`${API_URL}/rooms/${roomName}?status=completed`, { method: 'POST' })
+  });
+  // let hcpUserId = messageList ? messageList.hcpUserId : userId;
+  // let submissionId = messageList
+  //   ? messageList.submissionId
+  //   : props.submissionId;
+  // const payload = {
+  //   title: '',
+  //   name: recipientName || '',
+  //   subTitle: '',
+  //   photo: photoUrl || '',
+  // };
+  // return videoCall(payload, userId, submissionId);
+}
+
 const ConversationContainer = (
   props: ConversationContainerProps,
   state: ConversationContainerState,
@@ -322,97 +426,6 @@ const ConversationContainer = (
     }
   };
 
-  const _checkPermissions = (callback: any) => {
-    const iosPermissions = [PERMISSIONS.IOS.CAMERA, PERMISSIONS.IOS.MICROPHONE];
-    const androidPermissions = [
-      PERMISSIONS.ANDROID.CAMERA,
-      PERMISSIONS.ANDROID.RECORD_AUDIO,
-    ];
-    checkMultiple(
-      Platform.OS === 'ios' ? iosPermissions : androidPermissions,
-    ).then(statuses => {
-      const [CAMERA, AUDIO] =
-        Platform.OS === 'ios' ? iosPermissions : androidPermissions;
-      if (
-        statuses[CAMERA] === RESULTS.UNAVAILABLE ||
-        statuses[AUDIO] === RESULTS.UNAVAILABLE
-      ) {
-        Alert.alert(
-          'Error',
-          'Hardware to support video calls is not available',
-        );
-      } else if (
-        statuses[CAMERA] === RESULTS.BLOCKED ||
-        statuses[AUDIO] === RESULTS.BLOCKED
-      ) {
-        Alert.alert('Error', HARDWARE_ACCESS_ERROR);
-      } else {
-        if (
-          statuses[CAMERA] === RESULTS.DENIED &&
-          statuses[AUDIO] === RESULTS.DENIED
-        ) {
-          requestMultiple(
-            Platform.OS === 'ios' ? iosPermissions : androidPermissions,
-          ).then(newStatuses => {
-            if (
-              newStatuses[CAMERA] === RESULTS.GRANTED &&
-              newStatuses[AUDIO] === RESULTS.GRANTED
-            ) {
-              callback && callback();
-            } else {
-              Alert.alert('Error', 'One of the permissions was not granted');
-            }
-          });
-        } else if (
-          statuses[CAMERA] === RESULTS.DENIED ||
-          statuses[AUDIO] === RESULTS.DENIED
-        ) {
-          request(statuses[CAMERA] === RESULTS.DENIED ? CAMERA : AUDIO).then(
-            result => {
-              if (result === RESULTS.GRANTED) {
-                callback && callback();
-              } else {
-                Alert.alert('Error', 'Permission not granted');
-              }
-            },
-          );
-        } else if (
-          statuses[CAMERA] === RESULTS.GRANTED ||
-          statuses[AUDIO] === RESULTS.GRANTED
-        ) {
-          callback && callback();
-        }
-      }
-    });
-  };
-
-  const initVideoCall = () => {
-    const API_URL =
-      'https://c138-2405-201-4-b871-88b2-36ec-df0-ed5a.ngrok-free.app';
-    _checkPermissions(() => {
-      fetch(`${API_URL}/getToken?userName=Vishal&room=testRoom`)
-        .then(response => {
-          if (response.ok) {
-            response.text().then(jwt => {
-              NavigationService.navigate('MeetingRoom', {
-                token: jwt,
-                roomName: 'testRoom',
-              });
-
-              return true;
-            });
-          } else {
-            response.text().then(error => {
-              Alert.alert(error);
-            });
-          }
-        })
-        .catch(error => {
-          Alert.alert('API not available');
-        });
-    });
-  };
-
   const initPhoneCall = () => {
     setPhoneCallModalVisible(true);
   };
@@ -433,23 +446,20 @@ const ConversationContainer = (
           style.messageView,
           style.audioMessageView,
           message.sentByMe ? style.messageFromMeView : {},
-        ]}
-      >
+        ]}>
         <TouchableHighlight
           activeOpacity={0.8}
           onPress={() => playAudioMessage(message)}
           style={[
             style.audioMessageWrapper,
             message.sentByMe ? style.audioMessageWrapperFromMe : {},
-          ]}
-        >
+          ]}>
           <View
             style={{
               flex: 1,
               flexDirection: 'row',
               alignItems: 'center',
-            }}
-          >
+            }}>
             <Icon
               style={{
                 alignItems: 'center',
@@ -463,15 +473,13 @@ const ConversationContainer = (
               style={[
                 style.audioMessageText,
                 message.sentByMe ? style.audioMessageTextFromMe : {},
-              ]}
-            >
+              ]}>
               Audio Message
             </Text>
           </View>
         </TouchableHighlight>
         <Text
-          style={[style.caption, message.sentByMe ? style.captionFrom : {}]}
-        >
+          style={[style.caption, message.sentByMe ? style.captionFrom : {}]}>
           {caption}
         </Text>
       </View>
@@ -493,15 +501,13 @@ const ConversationContainer = (
           style.messageView,
           style.videoMessageView,
           message.sentByMe ? style.messageFromMeView : {},
-        ]}
-      >
+        ]}>
         <TouchableHighlight
           onPress={() => playVideoMessage(message.tokBoxArchiveUrl, message)}
           style={[
             style.videoMessageWrapper,
             message.sentByMe ? style.videoMessageWrapperFromMe : {},
-          ]}
-        >
+          ]}>
           <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
             <Icon
               style={{
@@ -516,15 +522,13 @@ const ConversationContainer = (
               style={[
                 style.videoMessageText,
                 message.sentByMe ? style.videoMessageTextFromMe : {},
-              ]}
-            >
+              ]}>
               Video Message {message.read ? '' : ' *'}
             </Text>
           </View>
         </TouchableHighlight>
         <Text
-          style={[style.caption, message.sentByMe ? style.captionFrom : {}]}
-        >
+          style={[style.caption, message.sentByMe ? style.captionFrom : {}]}>
           {caption}
         </Text>
       </View>
@@ -542,27 +546,23 @@ const ConversationContainer = (
           style.messageView,
           style.textMessageView,
           message.sentByMe ? style.messageFromMeView : {},
-        ]}
-      >
+        ]}>
         <View
           style={[
             style.textMessageTextWrapper,
             message.sentByMe ? style.textMessageTextWrapperFromMe : {},
-          ]}
-        >
+          ]}>
           <Text
             selectable
             style={[
               style.textMessageText,
               message.sentByMe ? style.textMessageTextFromMe : {},
-            ]}
-          >
+            ]}>
             {message.messageText}
           </Text>
         </View>
         <Text
-          style={[style.caption, message.sentByMe ? style.captionFrom : {}]}
-        >
+          style={[style.caption, message.sentByMe ? style.captionFrom : {}]}>
           {caption}
         </Text>
       </View>
@@ -590,8 +590,7 @@ const ConversationContainer = (
             refreshing={refreshing}
             onRefresh={() => loadMessages(true)}
           />
-        }
-      >
+        }>
         {phoneCallModalVisible && (
           <PhoneCallModal
             source={{
@@ -644,8 +643,7 @@ const ConversationContainer = (
               justifyContent: 'center',
               backgroundColor: AppColors.baseGray,
             },
-          ]}
-        >
+          ]}>
           {renderMessageScrollView()}
         </Animated.View>
       );
@@ -659,8 +657,7 @@ const ConversationContainer = (
               justifyContent: 'center',
               backgroundColor: AppColors.baseGray,
             },
-          ]}
-        >
+          ]}>
           <ActivityIndicator color={AppColors.blue} style={{flex: 1}} />
         </Animated.View>
       );
@@ -675,8 +672,7 @@ const ConversationContainer = (
             justifyContent: 'center',
             backgroundColor: AppColors.baseGray,
           },
-        ]}
-      >
+        ]}>
         {
           <View
             style={{
@@ -684,8 +680,7 @@ const ConversationContainer = (
               alignItems: 'center',
               justifyContent: 'center',
               paddingBottom: 180,
-            }}
-          >
+            }}>
             {recipientName() && <Text>{FIRST_CONVERSATIONS}</Text>}
             {recipientName && <Text>{recipientName()}</Text>}
             {!recipientName && <Text>No Messages Available</Text>}
@@ -699,8 +694,7 @@ const ConversationContainer = (
     return (
       <Animated.View key="footer" style={[footerStyle.footerView]}>
         <Animated.View
-          style={[footerStyle.inputRow, {height: footerInputHeight}]}
-        >
+          style={[footerStyle.inputRow, {height: footerInputHeight}]}>
           <View style={footerStyle.inputWrapper}>
             <ConexusIconButton
               imageSource={require('../../components/Images/more.png')}
@@ -726,14 +720,12 @@ const ConversationContainer = (
               footerStyle.sendButton,
               !sendEnabled && footerStyle.sendButtonDisabled,
             ])}
-            onPress={() => sendTextMessage()}
-          >
+            onPress={() => sendTextMessage()}>
             <Text
               style={[
                 footerStyle.sendButtonText,
                 !sendEnabled && footerStyle.sendButtonTextDisabled,
-              ]}
-            >
+              ]}>
               {SEND}
             </Text>
           </TouchableOpacity>
@@ -750,30 +742,34 @@ const ConversationContainer = (
               style={footerStyle.image}
               textStyle={footerStyle.actionButtonText}
             />
-            {/* {canMakeVideoCall() && ( */}
-            <ConexusIconButton
-              disabled={!showFooterActions}
-              title="Video Call"
-              style={footerStyle.image}
-              imageSource={require('../../components/Images/video-call.png')}
-              iconSize={24}
-              color={AppColors.blue}
-              onPress={() => initVideoCall()}
-              textStyle={footerStyle.actionButtonText}
-            />
-            {/* )} */}
-            {/* {canMakePhoneCall() && ( */}
-            <ConexusIconButton
-              disabled={!showFooterActions}
-              title="Phone Call"
-              style={footerStyle.image}
-              imageSource={require('../../components/Images/phone-call.png')}
-              iconSize={24}
-              color={AppColors.blue}
-              onPress={() => initPhoneCall()}
-              textStyle={footerStyle.actionButtonText}
-            />
-            {/* )} */}
+            {
+              // canMakeVideoCall() && (
+              <ConexusIconButton
+                disabled={!showFooterActions}
+                title="Video Call"
+                style={footerStyle.image}
+                imageSource={require('../../components/Images/video-call.png')}
+                iconSize={24}
+                color={AppColors.blue}
+                onPress={() => initVideoCall('Vishal', 'testRoom')}
+                textStyle={footerStyle.actionButtonText}
+              />
+              // )
+            }
+            {
+              // canMakePhoneCall() && (
+              <ConexusIconButton
+                disabled={!showFooterActions}
+                title="Phone Call"
+                style={footerStyle.image}
+                imageSource={require('../../components/Images/phone-call.png')}
+                iconSize={24}
+                color={AppColors.blue}
+                onPress={() => initPhoneCall()}
+                textStyle={footerStyle.actionButtonText}
+              />
+              // )
+            }
           </View>
         )}
       </Animated.View>
@@ -785,8 +781,7 @@ const ConversationContainer = (
       <Animated.View
         style={{flex: 1, paddingBottom: paddingBottom}}
         onLayout={onLayout()}
-        ref={animatableRef}
-      >
+        ref={animatableRef}>
         {renderMessageList()}
         {renderFooter()}
       </Animated.View>
