@@ -2,24 +2,12 @@ import React from 'react';
 import {AppColors} from '.././theme';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
-import Profile from '../containers/Profile/profile-view';
-import AgentMessage from '../containers/AgentMessage/agentMessage';
-import EditProfile from '../containers/Profile/profile-edit';
 import ImageGalleries from '../containers/facility/HcpDetail/imageGallery';
 import AnswerRatings from '../containers/facility/HcpDetail/answerRating';
 import NurseInterview from '../containers/NurseHome/interviews/nurse-interview';
 import {navigationRef} from './NavigationService';
 
-import {
-  AGENT_MESSAGE,
-  APP_FEEDBACK,
-  PROFILE,
-  EDIT_PROFILE,
-  IMAGE_GALLERY,
-  ANSWER_RATINGS,
-  AUDIO_PLAYER,
-  NURSE_INTERVIEW,
-} from './Routes';
+import {IMAGE_GALLERY, ANSWER_RATINGS, NURSE_INTERVIEW} from './Routes';
 
 const Stack = createNativeStackNavigator();
 
