@@ -40,11 +40,12 @@ import VideoPlayer from '../containers/VideoPlayer/videoPlayer';
 import AddQuestion from '../containers/InterviewQuestions/AddQuestion';
 import InterviewQuestionDetail from '../containers/InterviewQuestions/interviewQuestionsDetails';
 import VideoRecorder from '../containers/VideoRecorder/videoRecoder';
-import CallScreen from '../containers/VideoCalling/CallScreen';
+
 import MeetingRoom from '../containers/VideoCalling/MeetingRoom';
 import Profile from '../containers/Profile/profile-view';
 import AgentMessage from '../containers/AgentMessage/agentMessage';
 import EditProfile from '../containers/Profile/profile-edit';
+import CallScreen from '../containers/VideoCalling/CallPage';
 
 const Drawer = createDrawerNavigator();
 const DrawerStack = () => {
