@@ -1,10 +1,13 @@
-import {AppRegistry, AppState} from 'react-native';
+import React from 'react';
+import {AppRegistry, AppState, Alert} from 'react-native';
 import App from './App';
 import {name as appName} from './app.json';
 import OneSignal from 'react-native-onesignal';
 import NavigationService from './src/navigation/NavigationService';
+import {store} from './src/redux/store';
+import {Provider} from 'react-redux';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
-// OneSignal Initialization
 OneSignal.setAppId('e1de43b0-7a53-48e2-bf45-3a501f8bbf94');
 
 // Method for handling notifications received while app in foreground
@@ -42,4 +45,12 @@ OneSignal.setNotificationOpenedHandler(notification => {
   }
 });
 
-AppRegistry.registerComponent(appName, () => App);
+const AppConfig = () => (
+  <Provider store={store}>
+    <SafeAreaProvider>
+      <App />
+    </SafeAreaProvider>
+  </Provider>
+);
+
+AppRegistry.registerComponent(appName, () => AppConfig);

@@ -5,22 +5,24 @@ import LoginScreen from '../containers/Auth/Login/login';
 import ForgotPassword from '../containers/Auth/ForgotPassword/forgot-password';
 import SelectAccount from '../containers/Auth/SignIn/select-account';
 import RequestAccount from '../containers/Auth/SignIn/request-account';
-import {navigationRef} from './NavigationService';
+import DrawerStack from '../navigation/DrawerStack';
 import {AppColors} from '../theme';
 import {
   LOGIN,
   SELECT_ACCOUNT,
   REQUEST_ACCOUNT,
-  AUTH_NAVIGATOR,
+  AUTH,
   FORGOT_PASSWORD,
+  LAUNCH_SCREEN,
+  DRAWER,
 } from './Routes';
+import LaunchScreen from './LaunchScreen';
 
 const Stack = createNativeStackNavigator();
-const OtherStack = createNativeStackNavigator();
 
-const AuthNavigator = () => {
+const AuthStack = () => {
   return (
-    <OtherStack.Navigator screenOptions={{headerShown: true}}>
+    <Stack.Navigator screenOptions={{headerShown: true}}>
       <Stack.Screen
         name={LOGIN}
         component={LoginScreen}
@@ -55,18 +57,28 @@ const AuthNavigator = () => {
           },
         }}
       />
-    </OtherStack.Navigator>
+    </Stack.Navigator>
   );
 };
 
-const AuthStack = () => {
+const MainNavigator = () => {
   return (
-    <NavigationContainer ref={navigationRef}>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name={AUTH_NAVIGATOR} component={AuthNavigator} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen
+        name={LAUNCH_SCREEN}
+        component={LaunchScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen name={AUTH} component={AuthStack} />
+      <Stack.Screen
+        name={DRAWER}
+        component={DrawerStack}
+        options={{headerShown: false}}
+      />
+    </Stack.Navigator>
   );
 };
 
-export default AuthStack;
+export default MainNavigator;

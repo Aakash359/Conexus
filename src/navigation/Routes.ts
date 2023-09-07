@@ -25,4 +25,6 @@ export const LOGIN = 'Login';
 export const FORGOT_PASSWORD = 'ForgotPassword';
 export const SELECT_ACCOUNT = 'SelectAccount';
 export const REQUEST_ACCOUNT = 'RequestAccount';
-export const AUTH_NAVIGATOR = 'AuthNavigator';
+export const AUTH = 'AuthStack';
+export const LAUNCH_SCREEN = 'LaunchScreen';
+export const APP_STACK = 'AppStack';

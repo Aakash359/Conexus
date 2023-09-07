@@ -4,7 +4,7 @@ import {
   StackActions,
   NavigationAction,
 } from '@react-navigation/native';
-
+import {CommonActions} from '@react-navigation/native';
 // NavigationContainer is referred here - Check NavigationStack
 export const navigationRef = React.createRef<NavigationContainerRef>();
 
@@ -28,10 +28,21 @@ const goBack = () => {
   navigationRef.current?.goBack();
 };
 
+const navigateReset = (key: any) => {
+  try {
+    navigationRef.current.dispatch(
+      CommonActions.reset({
+        routes: [{name: key}],
+      }),
+    );
+  } catch (error) {}
+};
+
 export default {
   navigate,
   goBack,
   push,
   dispatch,
   replace,
+  navigateReset,
 };

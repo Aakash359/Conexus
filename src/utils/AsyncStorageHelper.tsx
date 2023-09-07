@@ -31,6 +31,8 @@ export async function clearLogOutPreferences() {
     await AsyncStorage.multiRemove(removeKeys);
   } catch (e) {
     error = true;
+    console.log('error', e);
+
     // remove error
   }
 

@@ -22,6 +22,7 @@ import theme, {AppFonts, AppColors} from '../../../theme';
 import {useDispatch} from 'react-redux';
 import {loginRequest} from '../../../redux/actions/userAction';
 import {Strings} from '../../../common/Strings';
+import {DRAWER} from '../../../navigation/Routes';
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 const SafeAreaView = require('react-native').SafeAreaView;
 
@@ -54,7 +55,7 @@ const {
   REQUEST_ACCOUNT,
 } = Strings;
 
-const LoginScreen = () => {
+const LoginScreen = (props: any) => {
   const [loading, setLoading] = useState(false);
   const [count, setCount] = useState(0);
   const [hidePassword, setHidePassword] = useState(true);
@@ -98,6 +99,10 @@ const LoginScreen = () => {
     }
   };
 
+  const loginCallBack = () => {
+    props.navigation.replace(DRAWER);
+  };
+
   const signInFn = async () => {
     {
       try {
@@ -109,7 +114,7 @@ const LoginScreen = () => {
         setLoading(true);
         setTimeout(() => {
           setLoading(false);
-          dispatch(loginRequest(data));
+          dispatch(loginRequest(data), loginCallBack());
         }, 1000);
       } catch (error) {
         setLoading(false);
@@ -170,7 +175,6 @@ const LoginScreen = () => {
                   returnKeyType="done"
                 />
               </View>
-              <Text>Count: {count}</Text>
 
               <View style={style.forgotPassView}>
                 <TouchableOpacity

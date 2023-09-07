@@ -13,6 +13,7 @@ import theme from '../../theme';
 import {getProfileService} from '../../services/ApiServices';
 import {Strings} from '../../common/Strings';
 import {clearLogOutPreferences} from '../../utils/AsyncStorageHelper';
+import {AUTH} from '../../navigation/Routes';
 interface ProfileState {
   avatar: any;
   authToken: string;
@@ -62,6 +63,7 @@ const Profile: React.FC<ProfileState> = () => {
     setTimeout(() => {
       setLoading(false);
       dispatch(logoutRequest(payload));
+      NavigationService.navigateReset(AUTH);
       ToastAndroid.show('Logged out successfully!', ToastAndroid.SHORT);
     }, 1500);
   };
