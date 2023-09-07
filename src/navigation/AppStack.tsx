@@ -17,7 +17,7 @@ import AudioPlayer from '../containers/AudioPlayer/audioPlayer';
 import AnswerRatings from '../containers/facility/HcpDetail/answerRating';
 import NurseInterview from '../containers/NurseHome/interviews/nurse-interview';
 import VideoRecorder from '../containers/VideoRecorder/videoRecoder';
-import CallScreen from '../containers/VideoCalling/CallScreen';
+import CallScreen from '../containers/VideoCalling/CallPage';
 import MeetingRoom from '../containers/VideoCalling/MeetingRoom';
 import DrawerStack from '../navigation/DrawerStack';
 import {navigationRef} from './NavigationService';
